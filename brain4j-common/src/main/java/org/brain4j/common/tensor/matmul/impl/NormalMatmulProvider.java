@@ -36,13 +36,12 @@ public class NormalMatmulProvider implements MatmulProvider {
         for (int i = 0; i < rankA - 2; i++) batchA *= shapeA[i];
         for (int i = 0; i < rankB - 2; i++) batchB *= shapeB[i];
         for (int i = 0; i < shapeC.length - 2; i++) batch *= shapeC[i];
-        boolean transposed = b.transposed();
 
         int m = shapeA[rankA - 2];
         int n = shapeA[rankA - 1];
         int p = shapeB[rankB - 1];
 
-        MatmulParameters parameters = new MatmulParameters(A, B, C, m, n, p, transposed, batchA, batchB);
+        MatmulParameters parameters = new MatmulParameters(A, B, C, m, n, p, a.transposed(), b.transposed(), batchA, batchB);
 
         int work = batch * m;
 
@@ -51,7 +50,7 @@ public class NormalMatmulProvider implements MatmulProvider {
         int mp = m * p;
 
         if (!isOverThreshold(work, np)) {
-            matmulBlock(A, B, C, 0, work, transposed, m, n, p, mn, np, mp, batchA, batchB);
+            matmulBlock(A, B, C, 0, work, a.transposed(), b.transposed(), m, n, p, mn, np, mp, batchA, batchB);
             return;
         }
 
@@ -62,7 +61,8 @@ public class NormalMatmulProvider implements MatmulProvider {
     private void matmulBlock(
         float[] A, float[] B, float[] C,
         int start, int end,
-        boolean transpose,
+        boolean aTransposed,
+        boolean bTransposed,
         int m, int n, int p,
         int mn, int np, int mp,
         int batchA, int batchB
@@ -81,20 +81,31 @@ public class NormalMatmulProvider implements MatmulProvider {
             int rowA = offsetA + i * n;
             int rowC = offsetC + i * p;
 
+            
             for (int t = 0; t < n; t++) {
-                float aVal = A[rowA + t];
-
-                if (!transpose) {
-                    int colB = offsetB + t * p;
-
+                float aVal = aTransposed
+                    ? A[offsetA + t * m + i]
+                    : A[offsetA + i * n + t];
+                
+                if (bTransposed) {
+                    int baseOffset = offsetB + t;
                     for (int j = 0; j < p; j++) {
-                        C[rowC + j] += aVal * B[colB + j];
+                        float bVal = B[baseOffset + j * n];
+                        C[rowC + j] += aVal * bVal;
                     }
                 } else {
+                    int baseOffset = offsetB + t * p;
                     for (int j = 0; j < p; j++) {
-                        C[rowC + j] += aVal * B[offsetB + j * n + t];
+                        float bVal = B[baseOffset + j];
+                        C[rowC + j] += aVal * bVal;
                     }
                 }
+//                float aVal = A[rowA + t];
+//                int colB = offsetB + t * p;
+//
+//                for (int j = 0; j < p; j++) {
+//                    C[rowC + j] += aVal * B[colB + j];
+//                }
             }
         }
     }
@@ -123,7 +134,8 @@ public class NormalMatmulProvider implements MatmulProvider {
                 matmulBlock(
                     parameters.A(), parameters.B(), parameters.C(),
                     start, end,
-                    parameters.transpose(),
+                    parameters.aTransposed(),
+                    parameters.bTransposed(),
                     parameters.m(), parameters.n(), parameters.p(),
                     parameters.mn(), parameters.np(), parameters.mp(),
                     parameters.batchA(), parameters.batchB()

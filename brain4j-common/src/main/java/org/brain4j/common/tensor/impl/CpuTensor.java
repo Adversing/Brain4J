@@ -166,7 +166,6 @@ public class CpuTensor extends BaseTensor {
         Tensor result = new CpuTensor(resultShape);
 
         matmulProvider.multiply(pool, this, other, result);
-        // matmulProvider.multiply(pool, batchCount, m, n, p, A, B, C, batchA, batchB, shapeB, other.transposed());
 
         return result;
     }

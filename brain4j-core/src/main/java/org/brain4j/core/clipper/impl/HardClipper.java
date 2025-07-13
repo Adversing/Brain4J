@@ -17,12 +17,7 @@ public class HardClipper implements GradientClipper {
 
     @Override
     public void clipCpu(CpuTensor grad) {
-        float[] gradData = grad.data();
-
-        for (int i = 0; i < grad.elements(); i++) {
-            double clamped = Math.max(-bound, Math.min(bound, gradData[i]));
-            gradData[i] = (float) clamped;
-        }
+        grad.map(x -> Math.max(-bound, Math.min(bound, x)));
     }
 
     @Override

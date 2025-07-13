@@ -20,18 +20,18 @@ public class MatMulOperation implements Operation {
         Tensor a = inputs[0];
         Tensor b = inputs[1];
         
-        System.out.println("====== Grad out ======");
-        System.out.println(gradOutput.toString("%.2f"));
+//        System.out.println("====== Grad out ======");
+//        System.out.println(gradOutput.toString("%.2f"));
         
         // For matrix multiplication: C = A @ B
         // dL/dA = dL/dC @ B.T
-        System.out.println("====== B transposed ======");
-        System.out.println(b.transpose().toString("%.2f"));
+//        System.out.println("====== B transposed ======");
+//        System.out.println(b.transpose().toString("%.2f"));
         
-        System.out.println("transposed? " + b.transposed());
+//        System.out.println("transposed? " + b.transposed());
         Tensor gradA = gradOutput.matmul(b.transpose());
-        System.out.println("====== Grad A ======");
-        System.out.println(gradA.toString("%.2f"));
+//        System.out.println("====== Grad A ======");
+//        System.out.println(gradA.toString("%.2f"));
         
         // dL/dB = A.T @ dL/dC
         Tensor gradB = a.transpose().matmul(gradOutput);

@@ -5,24 +5,30 @@ import org.brain4j.common.tensor.broadcast.impl.*;
 
 public class TensorBroadcast {
 
+    private final static BroadcastAdd ADD_OP = new BroadcastAdd();
+    private final static BroadcastSub SUB_OP = new BroadcastSub();
+    private final static BroadcastMul MUL_OP = new BroadcastMul();
+    private final static BroadcastDiv DIV_OP = new BroadcastDiv();
+    private final static BroadcastPow POW_OP = new BroadcastPow();
+    
     public static Tensor add(Tensor A, Tensor B) {
-        return new BroadcastAdd().defaultOp(A, B);
+        return ADD_OP.defaultOp(A, B);
     }
 
     public static Tensor sub(Tensor A, Tensor B) {
-        return new BroadcastSub().defaultOp(A, B);
+        return SUB_OP.defaultOp(A, B);
     }
 
     public static Tensor mul(Tensor A, Tensor B) {
-        return new BroadcastMul().defaultOp(A, B);
+        return MUL_OP.defaultOp(A, B);
     }
 
     public static Tensor div(Tensor A, Tensor B) {
-        return new BroadcastDiv().defaultOp(A, B);
+        return DIV_OP.defaultOp(A, B);
     }
 
     public static Tensor pow(Tensor A, Tensor B) {
-        return new BroadcastPow().defaultOp(A, B);
+        return POW_OP.defaultOp(A, B);
     }
 
     public static Tensor forward(BroadcastOperation operation, Tensor A, Tensor B) {

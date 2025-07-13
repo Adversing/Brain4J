@@ -9,6 +9,7 @@ import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.common.tensor.autograd.impl.*;
 import org.brain4j.common.tensor.broadcast.TensorBroadcast;
 import org.brain4j.common.tensor.index.Range;
+import org.brain4j.common.tensor.map.ParallelMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -291,7 +292,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor add(double value) {
         for (int i = 0; i < data.length; i++) {
-            data[i] += value;
+            data[i] += (float) value;
         }
 
         return this;
@@ -305,7 +306,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor sub(double value) {
         for (int i = 0; i < data.length; i++) {
-            data[i] -= value;
+            data[i] -= (float) value;
         }
 
         return this;
@@ -319,7 +320,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor mul(double value) {
         for (int i = 0; i < data.length; i++) {
-            data[i] *= value;
+            data[i] *= (float) value;
         }
 
         return this;
@@ -333,7 +334,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor div(double value) {
         for (int i = 0; i < data.length; i++) {
-            data[i] /= value;
+            data[i] /= (float) value;
         }
 
         return this;
@@ -675,10 +676,10 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor map(DoubleToDoubleFunction function) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = (float) function.apply(data[i]);
-        }
-
+        ParallelMap.map(function, data);
+//        for (int i = 0; i < data.length; i++) {
+//            data[i] = (float) function.apply(data[i]);
+//        }
         return this;
     }
 

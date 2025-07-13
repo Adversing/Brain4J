@@ -62,8 +62,8 @@ public class Adam extends Optimizer {
 
         Tensor gradSquared = gradient.times(gradient);
 
-        first.mul(beta1).add(gradient.times(1 - beta1));
-        second.mul(beta2).add(gradSquared.mul(1 - beta2));
+        first = first.mul(beta1).add(gradient.times(1 - beta1));
+        second = second.mul(beta2).add(gradSquared.mul(1 - beta2));
 
         firstMomentum.put(weights, first);
         secondMomentum.put(weights, second);
