@@ -57,55 +57,124 @@ public class NormalMatmulProvider implements MatmulProvider {
         ScalarAction action = new ScalarAction(0, work, parameters);
         pool.invoke(action);
     }
-
+    
     private void matmulBlock(
         float[] A, float[] B, float[] C,
         int start, int end,
-        boolean aTransposed,
-        boolean bTransposed,
+        boolean aT,
+        boolean bT,
+        int m, int n, int p,
+        int mn, int np, int mp,
+        int batchA, int batchB
+    ) {
+        // someone kill me please
+        if (!aT && !bT) {
+            matmul_NN(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
+        } else if (aT && !bT) {
+            matmul_TN(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
+        } else if (!aT) {
+            matmul_NT(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
+        } else {
+            matmul_TT(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
+        }
+    }
+    
+    private void matmul_NN(
+        float[] A, float[] B, float[] C,
+        int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
         int batchA, int batchB
     ) {
         for (int r = start; r < end; r++) {
-            int batchIndex = r / m;
+            int bi = (batchA == 1 ? 0 : r / m) * mn;
+            int bj = (batchB == 1 ? 0 : r / m) * np;
+            int ci = (r / m) * mp;
             int i = r % m;
-
-            int batchIndexA = batchA == 1 ? 0 : batchIndex;
-            int batchIndexB = batchB == 1 ? 0 : batchIndex;
-
-            int offsetA = batchIndexA * mn;
-            int offsetB = batchIndexB * np;
-            int offsetC = batchIndex * mp;
-
-            int rowA = offsetA + i * n;
-            int rowC = offsetC + i * p;
-
+            int rowA = bi + i * n;
+            int rowC = ci + i * p;
             
             for (int t = 0; t < n; t++) {
-                float aVal = aTransposed
-                    ? A[offsetA + t * m + i]
-                    : A[offsetA + i * n + t];
-                
-                if (bTransposed) {
-                    int baseOffset = offsetB + t;
-                    for (int j = 0; j < p; j++) {
-                        float bVal = B[baseOffset + j * n];
-                        C[rowC + j] += aVal * bVal;
-                    }
-                } else {
-                    int baseOffset = offsetB + t * p;
-                    for (int j = 0; j < p; j++) {
-                        float bVal = B[baseOffset + j];
-                        C[rowC + j] += aVal * bVal;
-                    }
+                float aVal = A[rowA + t];
+                int rowB = bj + t * p;
+                for (int j = 0; j < p; j++) {
+                    C[rowC + j] += aVal * B[rowB + j];
                 }
-//                float aVal = A[rowA + t];
-//                int colB = offsetB + t * p;
-//
-//                for (int j = 0; j < p; j++) {
-//                    C[rowC + j] += aVal * B[colB + j];
-//                }
+            }
+        }
+    }
+    
+    private void matmul_TN(
+        float[] A, float[] B, float[] C,
+        int start, int end,
+        int m, int n, int p,
+        int mn, int np, int mp,
+        int batchA, int batchB
+    ) {
+        for (int r = start; r < end; r++) {
+            int bi = (batchA == 1 ? 0 : r / m) * mn;
+            int bj = (batchB == 1 ? 0 : r / m) * np;
+            int ci = (r / m) * mp;
+            int i = r % m;
+            int baseA = bi + i;
+            int rowC = ci + i * p;
+            
+            for (int t = 0; t < n; t++) {
+                float aVal = A[baseA + t * m];
+                int rowB = bj + t * p;
+                for (int j = 0; j < p; j++) {
+                    C[rowC + j] += aVal * B[rowB + j];
+                }
+            }
+        }
+    }
+    
+    private void matmul_NT(
+        float[] A, float[] B, float[] C,
+        int start, int end,
+        int m, int n, int p,
+        int mn, int np, int mp,
+        int batchA, int batchB
+    ) {
+        for (int r = start; r < end; r++) {
+            int bi = (batchA == 1 ? 0 : r / m) * mn;
+            int bj = (batchB == 1 ? 0 : r / m) * np;
+            int ci = (r / m) * mp;
+            int i = r % m;
+            int rowA = bi + i * n;
+            int rowC = ci + i * p;
+            
+            for (int t = 0; t < n; t++) {
+                float aVal = A[rowA + t];
+                int baseB = bj + t;
+                for (int j = 0; j < p; j++) {
+                    C[rowC + j] += aVal * B[baseB + j * n];
+                }
+            }
+        }
+    }
+    
+    private void matmul_TT(
+        float[] A, float[] B, float[] C,
+        int start, int end,
+        int m, int n, int p,
+        int mn, int np, int mp,
+        int batchA, int batchB
+    ) {
+        for (int r = start; r < end; r++) {
+            int bi = (batchA == 1 ? 0 : r / m) * mn;
+            int bj = (batchB == 1 ? 0 : r / m) * np;
+            int ci = (r / m) * mp;
+            int i = r % m;
+            int baseA = bi + i;
+            int rowC = ci + i * p;
+            
+            for (int t = 0; t < n; t++) {
+                float aVal = A[baseA + t*m];
+                int baseB = bj + t;
+                for (int j = 0; j < p; j++) {
+                    C[rowC + j] += aVal * B[baseB + j * n];
+                }
             }
         }
     }

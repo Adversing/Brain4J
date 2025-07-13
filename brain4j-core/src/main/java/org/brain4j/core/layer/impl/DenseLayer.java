@@ -93,7 +93,9 @@ public class DenseLayer extends Layer {
             );
         }
 
-        Tensor output = input.matmulGrad(weights).addGrad(bias);
+        Tensor output = input
+            .matmulGrad(weights)
+            .addGrad(bias);
 
         cache.setPreActivation(this, output);
         return output.activateGrad(activation);

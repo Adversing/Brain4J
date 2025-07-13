@@ -677,9 +677,6 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor map(DoubleToDoubleFunction function) {
         ParallelMap.map(function, data);
-//        for (int i = 0; i < data.length; i++) {
-//            data[i] = (float) function.apply(data[i]);
-//        }
         return this;
     }
 

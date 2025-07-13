@@ -43,7 +43,7 @@ public class BackPropagation {
         int elements = 1;
 
         for (Tensor input : inputs) {
-            elements *= input.shape()[0]; // first element is ALWAYS the batch size
+            elements *= input.shape()[0];
         }
 
         optimizer.postBatch();

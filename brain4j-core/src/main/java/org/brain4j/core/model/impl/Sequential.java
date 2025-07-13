@@ -29,6 +29,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
 import static org.brain4j.common.constants.Constants.*;
@@ -266,15 +267,17 @@ public class Sequential extends Layer implements Model {
             int finalEpoch = epoch;
 
             AtomicReference<Double> totalForBatch = new AtomicReference<>(0.0);
-
-            backPropagation.iteration(train, (batch, took) -> {
+            
+            BiConsumer<Integer, Double> consumer = (batch, took) -> {
                 totalForBatch.set(totalForBatch.get() + took);
                 double average = totalForBatch.get() / batch;
-
+                
                 if (Brain4J.logging()) {
                     printProgress(train, finalEpoch, epoches, batch, average);
                 }
-            });
+            };
+            
+            backPropagation.iteration(train, consumer);
 
             if (epoch % evaluateEvery == 0) {
                 if (Brain4J.logging()) {
