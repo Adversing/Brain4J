@@ -1,7 +1,7 @@
 package org.brain4j.common.data;
 
 import org.brain4j.common.Pair;
-import org.brain4j.common.device.Device;
+import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.lang.LineSplitting;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.Tensors;

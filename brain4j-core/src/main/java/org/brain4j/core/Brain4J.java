@@ -2,9 +2,9 @@ package org.brain4j.core;
 
 import ch.qos.logback.classic.Level;
 import org.brain4j.common.activation.Activation;
-import org.brain4j.common.device.Device;
-import org.brain4j.common.device.DeviceUtils;
-import org.brain4j.common.kernel.GpuContextHandler;
+import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.gpu.device.DeviceUtils;
+import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.core.activation.Activations;
 import org.jocl.cl_context;
 import org.jocl.cl_program;
@@ -70,16 +70,12 @@ public class Brain4J {
             Activation function = activation.function();
             String prefix = function.kernelPrefix();
 
-            GpuContextHandler.register(device, prefix + "_forward", activationsProgram);
-            GpuContextHandler.register(device, prefix + "_backward", activationsProgram);
+            GpuContext.register(device, prefix + "_forward", activationsProgram);
+            GpuContext.register(device, prefix + "_backward", activationsProgram);
         }
 
-        GpuContextHandler.register(device, "hard_clip", gradientClipProgram);
-        GpuContextHandler.register(device, "l2_clip", gradientClipProgram);
-    }
-
-    public static Device currentDevice() {
-        return DeviceUtils.currentDevice();
+        GpuContext.register(device, "hard_clip", gradientClipProgram);
+        GpuContext.register(device, "l2_clip", gradientClipProgram);
     }
 
     public static Device findDevice(String deviceName) {

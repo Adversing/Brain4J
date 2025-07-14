@@ -51,7 +51,7 @@ public class NormalMatmulProvider implements MatmulProvider {
         int mp = m * p;
 
         if (!isOverThreshold(work, np)) {
-            matmulBlock(A, B, C, 0, work, a.transposed(), b.transposed(), m, n, p, mn, np, mp, batchA, batchB);
+            matmulBlock(A, B, C, 0, work, m, n, p, mn, np, mp, batchA, batchB, a.transposed(), b.transposed());
             return;
         }
         
@@ -70,10 +70,10 @@ public class NormalMatmulProvider implements MatmulProvider {
     private void matmulBlock(
         float[] a, float[] b, float[] c,
         int start, int end,
-        boolean transposedA, boolean transposedB,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB
+        int batchA, int batchB,
+        boolean transposedA, boolean transposedB
     ) {
         if (batchA == 1 && batchB == 1) {
             matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp, transposedA, transposedB);
@@ -174,11 +174,10 @@ public class NormalMatmulProvider implements MatmulProvider {
                 matmulBlock(
                     parameters.A(), parameters.B(), parameters.C(),
                     start, end,
-                    parameters.transposedA(),
-                    parameters.transposedB(),
                     parameters.m(), parameters.n(), parameters.p(),
                     parameters.mn(), parameters.np(), parameters.mp(),
-                    parameters.batchA(), parameters.batchB()
+                    parameters.batchA(), parameters.batchB(),
+                    parameters.transposedA(), parameters.transposedB()
                 );
             }
         }

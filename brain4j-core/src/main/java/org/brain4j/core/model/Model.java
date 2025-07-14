@@ -1,7 +1,7 @@
 package org.brain4j.core.model;
 
 import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.device.Device;
+import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;

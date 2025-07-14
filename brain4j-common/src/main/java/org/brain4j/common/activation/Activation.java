@@ -1,13 +1,13 @@
 package org.brain4j.common.activation;
 
-import org.brain4j.common.device.Device;
-import org.brain4j.common.kernel.GpuContextHandler;
-import org.brain4j.common.kernel.KernelFactory;
+import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.gpu.GpuContext;
+import org.brain4j.common.gpu.kernel.KernelFactory;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.weightsinit.WeightInitialization;
-import org.jocl.cl_command_queue;
 import org.jocl.cl_kernel;
 
 public interface Activation {
@@ -70,11 +70,12 @@ public interface Activation {
             Device device = gpuInput.device();
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
-            cl_command_queue queue = GpuContextHandler.queue(device);
-            cl_kernel kernel = GpuContextHandler.kernel(device, kernelPrefix() + "_forward");
+            try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+                cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
 
-            KernelFactory factory = createKernel(kernel, gpuInput, result);
-            factory.launch(queue, 1, gpuInput.size());
+                KernelFactory factory = createKernel(kernel, gpuInput, result);
+                factory.launch(queue, 1, gpuInput.size());
+            }
 
             return result;
         }
@@ -99,11 +100,12 @@ public interface Activation {
             Device device = gpuInput.device();
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
-            cl_command_queue queue = GpuContextHandler.queue(device);
-            cl_kernel kernel = GpuContextHandler.kernel(device, kernelPrefix() + "_backward");
+            try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+                cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
 
-            KernelFactory factory = createKernel(kernel, gpuInput, result);
-            factory.launch(queue, 1, gpuInput.size());
+                KernelFactory factory = createKernel(kernel, gpuInput, result);
+                factory.launch(queue, 1, gpuInput.size());
+            }
 
             return result;
         }

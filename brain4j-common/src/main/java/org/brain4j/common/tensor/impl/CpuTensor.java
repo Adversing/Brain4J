@@ -1,6 +1,6 @@
 package org.brain4j.common.tensor.impl;
 
-import org.brain4j.common.device.Device;
+import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.broadcast.TensorBroadcast;
@@ -59,33 +59,39 @@ public class CpuTensor extends BaseTensor {
     
     @Override
     public Tensor transpose() {
+        // Unfortunately, SIMD does not support non-contiguous data, therefore transposing
+        // the data in a contiguous space is required for SIMD matmul to work
         if (matmulProvider instanceof NormalMatmulProvider) {
             return super.transpose();
         }
-        
+
         int rank = shape.length;
-        
+
         if (rank == 1) {
             return reshape(1, elements());
         }
-        
+
         int[] newShape = shape.clone();
-        
+
         int rows = shape[rank - 2];
         int cols = shape[rank - 1];
-        
+
         newShape[rank - 2] = cols;
         newShape[rank - 1] = rows;
-        
+
         BaseTensor result = (BaseTensor) Tensors.create(newShape);
-        
+
+        if (usesGrad()) {
+            result.setAutogradContext(autogradContext);
+        }
+
         int bound = 1 << 16;
-        
+
         if (elements() >= bound) {
             ParallelTranspose.transpose(this, result);
             return result;
         }
-        
+
         float[] source = this.data;
         float[] dest = result.data;
 

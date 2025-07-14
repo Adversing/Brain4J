@@ -1,6 +1,6 @@
 package org.brain4j.core.layer.impl.transformer;
 
-import org.brain4j.common.device.Device;
+import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.ForwardContext;

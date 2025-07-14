@@ -3,8 +3,8 @@ package org.brain4j.core.model.impl;
 import org.brain4j.common.Commons;
 import org.brain4j.common.Pair;
 import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.device.Device;
-import org.brain4j.common.kernel.GpuContextHandler;
+import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.impl.GpuTensor;
@@ -271,7 +271,7 @@ public class Sequential extends Layer implements Model {
             BiConsumer<Integer, Double> consumer = (batch, took) -> {
                 totalForBatch.set(totalForBatch.get() + took);
                 double average = totalForBatch.get() / batch;
-                
+
                 if (Brain4J.logging()) {
                     printProgress(train, finalEpoch, epoches, batch, average);
                 }
@@ -295,7 +295,7 @@ public class Sequential extends Layer implements Model {
         Tensor result = input.to(device).withGrad();
 
         if (device != null) {
-            GpuContextHandler.updateQueue(device, cache.commandQueue());
+            GpuContext.updateQueue(device, cache.commandQueue());
         }
 
         for (int i = 0; i < flattened.size(); i++) {
@@ -309,7 +309,7 @@ public class Sequential extends Layer implements Model {
         }
 
         if (!training && device != null) {
-            GpuContextHandler.closeQueue(device);
+            GpuContext.closeQueue(device);
         }
 
         return result;

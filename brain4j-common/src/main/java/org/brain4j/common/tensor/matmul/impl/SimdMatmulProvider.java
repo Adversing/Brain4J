@@ -1,6 +1,7 @@
 package org.brain4j.common.tensor.matmul.impl;
 
 import jdk.incubator.vector.FloatVector;
+import jdk.incubator.vector.IntVector;
 import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.matmul.MatmulParameters;
@@ -8,10 +9,13 @@ import org.brain4j.common.tensor.matmul.MatmulProvider;
 
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
+import java.util.stream.IntStream;
 
 public class SimdMatmulProvider implements MatmulProvider {
 
-    private static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
+    private static final VectorSpecies<Float> FLOAT_SPECIES = FloatVector.SPECIES_PREFERRED;
+    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_PREFERRED;
+    private static final int VL = INT_SPECIES.length();
 
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int PARALLEL_COMPLEXITY_THRESHOLD = 65536;
@@ -19,7 +23,7 @@ public class SimdMatmulProvider implements MatmulProvider {
 
     private static final int SPLIT_COMPLEXITY_THRESHOLD = 65536 * 4;
     private static final int SPLIT_WORK_THRESHOLD = 2;
-    
+
     private static boolean isOverParallelThreshold(int work, int np) {
         return work > PARALLEL_WORK_THRESHOLD && work * np > PARALLEL_COMPLEXITY_THRESHOLD;
     }
@@ -27,6 +31,8 @@ public class SimdMatmulProvider implements MatmulProvider {
     private static boolean isOverSplitThreshold(int work, int np) {
         return work > SPLIT_WORK_THRESHOLD && work * np > SPLIT_COMPLEXITY_THRESHOLD;
     }
+
+    private final int[] strideArray = new int[VL];
     
     @Override
     public void multiply(Tensor a, Tensor b, Tensor c) {
@@ -62,7 +68,7 @@ public class SimdMatmulProvider implements MatmulProvider {
         int mp = m * p;
         
         if (!isOverParallelThreshold(work, np)) {
-            matmulBlock(A, B, C, 0, work, m, n, p, mn, np, mp, batchA, batchB);
+            matmulBlock(A, B, C, 0, work, m, n, p, mn, np, mp, batchA, batchB, a.transposed(), b.transposed());
             return;
         }
         
@@ -83,12 +89,13 @@ public class SimdMatmulProvider implements MatmulProvider {
         int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB
+        int batchA, int batchB,
+        boolean transposedA, boolean transposedB
     ) {
         if (batchA == 1 && batchB == 1) {
-            matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp);
+            matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp, transposedA, transposedB);
         } else {
-            matmulGeneric(a, b, c, start, end, m, n, p, mn, np, mp, batchA, batchB);
+            matmulGeneric(a, b, c, start, end, m, n, p, mn, np, mp, batchA, batchB, transposedA, transposedB);
         }
     }
     
@@ -96,7 +103,8 @@ public class SimdMatmulProvider implements MatmulProvider {
         float[] a, float[] b, float[] c,
         int start, int end,
         int m, int n, int p,
-        int mn, int np, int mp
+        int mn, int np, int mp,
+        boolean transposedA, boolean transposedB
     ) {
         for (int r = start; r < end; r++) {
             int batch = r / m;
@@ -112,10 +120,10 @@ public class SimdMatmulProvider implements MatmulProvider {
                 int colB = offsetB + t * p;
                 
                 int j = 0;
-                
-                for (; j < SPECIES.loopBound(p); j += SPECIES.length()) {
-                    FloatVector vb = FloatVector.fromArray(SPECIES, b, colB + j);
-                    FloatVector vc = FloatVector.fromArray(SPECIES, c, rowC + j);
+
+                for (; j < FLOAT_SPECIES.loopBound(p); j += FLOAT_SPECIES.length()) {
+                    FloatVector vb = FloatVector.fromArray(FLOAT_SPECIES, b, colB + j);
+                    FloatVector vc = FloatVector.fromArray(FLOAT_SPECIES, c, rowC + j);
                     vc.add(vb.mul(aVal)).intoArray(c, rowC + j);
                 }
                 
@@ -131,7 +139,8 @@ public class SimdMatmulProvider implements MatmulProvider {
         int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB
+        int batchA, int batchB,
+        boolean transposedA, boolean transposedB
     ) {
         for (int r = start; r < end; r++) {
             int bi = (batchA == 1 ? 0 : r / m) * mn;
@@ -147,9 +156,9 @@ public class SimdMatmulProvider implements MatmulProvider {
                 
                 int j = 0;
                 
-                for (; j < SPECIES.loopBound(p); j += SPECIES.length()) {
-                    FloatVector vb = FloatVector.fromArray(SPECIES, b, colB + j);
-                    FloatVector vc = FloatVector.fromArray(SPECIES, c, rowC + j);
+                for (; j < FLOAT_SPECIES.loopBound(p); j += FLOAT_SPECIES.length()) {
+                    FloatVector vb = FloatVector.fromArray(FLOAT_SPECIES, b, colB + j);
+                    FloatVector vc = FloatVector.fromArray(FLOAT_SPECIES, c, rowC + j);
                     vc.add(vb.mul(aVal)).intoArray(c, rowC + j);
                 }
                 
@@ -189,7 +198,8 @@ public class SimdMatmulProvider implements MatmulProvider {
                     start, end,
                     parameters.m(), parameters.n(), parameters.p(),
                     parameters.mn(), parameters.np(), parameters.mp(),
-                    parameters.batchA(), parameters.batchB()
+                    parameters.batchA(), parameters.batchB(),
+                    parameters.transposedA(), parameters.transposedB()
                 );
             }
         }

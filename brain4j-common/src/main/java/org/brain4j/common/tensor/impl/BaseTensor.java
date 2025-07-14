@@ -446,6 +446,10 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         BaseTensor view = (BaseTensor) Tensors.create(newShape, newStrides, data);
         view.transposed = !transposed;
 
+        if (usesGrad()) {
+            view.setAutogradContext(autogradContext);
+        }
+
         return view;
     }
 

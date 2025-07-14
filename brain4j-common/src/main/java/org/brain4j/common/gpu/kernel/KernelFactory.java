@@ -1,6 +1,8 @@
-package org.brain4j.common.kernel;
+package org.brain4j.common.gpu.kernel;
 
-import org.brain4j.common.device.Device;
+import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.gpu.GpuContext;
 import org.jocl.*;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class KernelFactory {
     }
 
     public static KernelFactory create(Device device, String kernelName) {
-        return create(GpuContextHandler.kernel(device, kernelName));
+        return create(GpuContext.kernel(device, kernelName));
     }
 
     public KernelFactory addIntParam(int variable) {
@@ -42,6 +44,14 @@ public class KernelFactory {
     public KernelFactory addMemParam(cl_mem memory) {
         arguments.add(new Argument(arguments.size(), Sizeof.cl_mem, Pointer.to(memory)));
         return this;
+    }
+
+    public void launch(CloseableQueue queue, int workDim, long... globalWorkSize) {
+        launch(queue.clQueue(), workDim, globalWorkSize);
+    }
+
+    public void launch(CloseableQueue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
+        launch(queue.clQueue(), workDim, globalWorkSize, localWorkSize);
     }
 
     public void launch(cl_command_queue queue, int workDim, long... globalWorkSize) {

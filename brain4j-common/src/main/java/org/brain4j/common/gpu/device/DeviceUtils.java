@@ -1,4 +1,4 @@
-package org.brain4j.common.device;
+package org.brain4j.common.gpu.device;
 
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.jocl.*;
@@ -13,8 +13,6 @@ import java.util.List;
 import static org.jocl.CL.*;
 
 public class DeviceUtils {
-
-    private static Device currentDevice;
 
     static {
         CL.setExceptionsEnabled(true);
@@ -92,10 +90,6 @@ public class DeviceUtils {
         }
 
         return deviceNames;
-    }
-
-    public static Device currentDevice() {
-        return currentDevice;
     }
 
     public static String readKernelSource(String resourcePath) {

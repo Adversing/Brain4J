@@ -1,4 +1,4 @@
-package org.brain4j.common.device;
+package org.brain4j.common.gpu.device;
 
 import org.jocl.*;
 
