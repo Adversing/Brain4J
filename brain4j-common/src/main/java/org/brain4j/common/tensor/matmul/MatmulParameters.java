@@ -3,8 +3,8 @@ package org.brain4j.common.tensor.matmul;
 public record MatmulParameters(
     float[] A, float[] B, float[] C,
     int m, int n, int p,
-    boolean aTransposed,
-    boolean bTransposed,
+    boolean transposedA,
+    boolean transposedB,
     int batchA, int batchB
 ) {
     public int mn() {

@@ -2,7 +2,7 @@ package org.brain4j.core.training.wrappers;
 
 import org.brain4j.common.Commons;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 
 import java.util.Map;
 

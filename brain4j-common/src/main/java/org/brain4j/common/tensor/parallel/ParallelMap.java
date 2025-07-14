@@ -1,4 +1,4 @@
-package org.brain4j.common.tensor.map;
+package org.brain4j.common.tensor.parallel;
 
 import org.brain4j.common.lang.DoubleToDoubleFunction;
 
@@ -10,10 +10,17 @@ public class ParallelMap extends RecursiveAction {
     public record MapParameters(DoubleToDoubleFunction function, float[] data) { }
     
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
-    private static final int PARALLEL_COMPLEXITY_THRESHOLD = 1024;
     private static final int PARALLEL_WORK_THRESHOLD = PARALLELISM;
-
-    private static final int SPLIT_COMPLEXITY_THRESHOLD = 1024;
+    private static final int PARALLEL_COMPLEXITY_THRESHOLD = 1 << 12; // 4096
+    private static final int SPLIT_COMPLEXITY_THRESHOLD = 1 << 10; // 1024
+    
+    private static boolean isOverParallelThreshold(int work) {
+        return work > PARALLEL_WORK_THRESHOLD && work > PARALLEL_COMPLEXITY_THRESHOLD;
+    }
+    
+    private static boolean isOverSplitThreshold(int work) {
+        return work > SPLIT_COMPLEXITY_THRESHOLD;
+    }
 
     private final MapParameters parameters;
     private final int start;
@@ -78,13 +85,5 @@ public class ParallelMap extends RecursiveAction {
         for (int i = start; i < end; i++) {
             data[i] = (float) function.apply(data[i]);
         }
-    }
-
-    private static boolean isOverParallelThreshold(int work) {
-        return work > PARALLEL_WORK_THRESHOLD && work > PARALLEL_COMPLEXITY_THRESHOLD;
-    }
-
-    private static boolean isOverSplitThreshold(int work) {
-        return work > SPLIT_COMPLEXITY_THRESHOLD;
     }
 }

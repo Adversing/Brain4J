@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.brain4j.common.Commons;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 import org.brain4j.core.transformer.tokenizers.Tokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

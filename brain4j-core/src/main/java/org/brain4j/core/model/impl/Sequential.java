@@ -6,7 +6,7 @@ import org.brain4j.common.data.ListDataSource;
 import org.brain4j.common.device.Device;
 import org.brain4j.common.kernel.GpuContextHandler;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.Brain4J;

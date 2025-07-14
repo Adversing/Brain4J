@@ -6,5 +6,5 @@ import java.util.concurrent.ForkJoinPool;
 
 public interface MatmulProvider {
 
-    void multiply(ForkJoinPool pool, Tensor a, Tensor b, Tensor c);
+    void multiply(Tensor a, Tensor b, Tensor c);
 }

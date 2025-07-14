@@ -2,10 +2,12 @@ package org.brain4j.common.tensor.impl;
 
 import org.brain4j.common.device.Device;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.broadcast.TensorBroadcast;
 import org.brain4j.common.tensor.matmul.MatmulProvider;
 import org.brain4j.common.tensor.matmul.impl.NormalMatmulProvider;
 import org.brain4j.common.tensor.matmul.impl.SimdMatmulProvider;
+import org.brain4j.common.tensor.parallel.ParallelTranspose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,64 @@ public class CpuTensor extends BaseTensor {
         this.shape = shape;
         this.strides = strides;
     }
+    
+    @Override
+    public Tensor transpose() {
+        if (matmulProvider instanceof NormalMatmulProvider) {
+            return super.transpose();
+        }
+        
+        int rank = shape.length;
+        
+        if (rank == 1) {
+            return reshape(1, elements());
+        }
+        
+        int[] newShape = shape.clone();
+        
+        int rows = shape[rank - 2];
+        int cols = shape[rank - 1];
+        
+        newShape[rank - 2] = cols;
+        newShape[rank - 1] = rows;
+        
+        BaseTensor result = (BaseTensor) Tensors.create(newShape);
+        
+        int bound = 1 << 16;
+        
+        if (elements() >= bound) {
+            ParallelTranspose.transpose(this, result);
+            return result;
+        }
+        
+        float[] source = this.data;
+        float[] dest = result.data;
 
+        int batch = 1;
+
+        for (int i = 0; i < rank-2; i++) batch *= shape[i];
+
+        int planeSize = rows * cols;
+
+        for (int b = 0; b < batch; b++) {
+            int srcOffset = b * planeSize;
+            int dstOffset = b * planeSize;
+
+            for (int i = 0; i < rows; i++) {
+                int rowStart = srcOffset + i * cols;
+
+                for (int j = 0; j < cols; j++) {
+                    int srcIndex = rowStart + j;
+                    int dstIndex = dstOffset + j * rows + i;
+
+                    dest[dstIndex] = source[srcIndex];
+                }
+            }
+        }
+
+        return result;
+    }
+    
     @Override
     public Tensor to(Device device) {
         if (device == null) {
@@ -165,7 +224,7 @@ public class CpuTensor extends BaseTensor {
 
         Tensor result = new CpuTensor(resultShape);
 
-        matmulProvider.multiply(pool, this, other, result);
+        matmulProvider.multiply(this, other, result);
 
         return result;
     }

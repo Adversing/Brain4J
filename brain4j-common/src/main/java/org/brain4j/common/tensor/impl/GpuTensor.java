@@ -6,7 +6,7 @@ import org.brain4j.common.device.DeviceUtils;
 import org.brain4j.common.kernel.GpuContextHandler;
 import org.brain4j.common.kernel.KernelFactory;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 import org.brain4j.common.device.CollectableState;
 import org.jocl.*;
 

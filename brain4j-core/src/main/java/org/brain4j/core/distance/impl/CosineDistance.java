@@ -1,7 +1,7 @@
 package org.brain4j.core.distance.impl;
 
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 import org.brain4j.core.distance.DistanceOperator;
 
 public class CosineDistance implements DistanceOperator {

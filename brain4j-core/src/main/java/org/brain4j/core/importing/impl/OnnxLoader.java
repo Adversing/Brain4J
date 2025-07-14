@@ -1,7 +1,7 @@
 package org.brain4j.core.importing.impl;
 
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;

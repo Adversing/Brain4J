@@ -1,9 +1,12 @@
-package org.brain4j.common.tensor;
+package org.brain4j.common;
 
+import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.CpuTensor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.SplittableRandom;
 
 public class Tensors {
 
@@ -37,9 +40,13 @@ public class Tensors {
         return result;
     }
 
-    public static Tensor random(int...  shape) {
+    public static Tensor random(Random generator, int... shape) {
         Tensor result = Tensors.zeros(shape);
-        return result.map(x -> Math.random() * 2 - 1);
+        return result.map(x -> generator.nextFloat());
+    }
+    
+    public static Tensor random(int...  shape) {
+        return random(Random.from(new SplittableRandom()), shape);
     }
 
     public static Tensor concat(List<Tensor> inputs) {

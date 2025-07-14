@@ -3,13 +3,13 @@ package org.brain4j.common.tensor.impl;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.lang.DoubleToDoubleFunction;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.Tensors;
+import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.autograd.AutogradContext;
 import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.common.tensor.autograd.impl.*;
 import org.brain4j.common.tensor.broadcast.TensorBroadcast;
 import org.brain4j.common.tensor.index.Range;
-import org.brain4j.common.tensor.map.ParallelMap;
+import org.brain4j.common.tensor.parallel.ParallelMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.brain4j.common.tensor.Tensors.ones;
+import static org.brain4j.common.Tensors.ones;
 
 public abstract class BaseTensor implements Tensor, Cloneable {
 
@@ -444,12 +444,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         newStrides[rank - 2] = strides[rank - 1];
 
         BaseTensor view = (BaseTensor) Tensors.create(newShape, newStrides, data);
-        // BaseTensor view = (BaseTensor) Tensors.create(newShape, data);
         view.transposed = !transposed;
-
-//        if (usesGrad()) {
-//            view.setAutogradContext(autogradContext);
-//        }
 
         return view;
     }

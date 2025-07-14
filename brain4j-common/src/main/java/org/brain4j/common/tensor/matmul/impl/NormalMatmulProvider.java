@@ -4,20 +4,21 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.matmul.MatmulParameters;
 import org.brain4j.common.tensor.matmul.MatmulProvider;
 
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
 public class NormalMatmulProvider implements MatmulProvider {
-
-    private static final int WORK_THRESHOLD = 1;
-    private static final int COMPLEXITY_THRESHOLD = 65536;
+    
+    private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
+    private static final int WORK_THRESHOLD = 8;
+    private static final int COMPLEXITY_THRESHOLD = 65536 * 4;
 
     private static boolean isOverThreshold(int work, int np) {
         return work > WORK_THRESHOLD && work * np > COMPLEXITY_THRESHOLD;
     }
 
     @Override
-    public void multiply(ForkJoinPool pool, Tensor a, Tensor b, Tensor c) {
+    public void multiply(Tensor a, Tensor b, Tensor c) {
         float[] A = a.data();
         float[] B = b.data();
         float[] C = c.data();
@@ -53,158 +54,128 @@ public class NormalMatmulProvider implements MatmulProvider {
             matmulBlock(A, B, C, 0, work, a.transposed(), b.transposed(), m, n, p, mn, np, mp, batchA, batchB);
             return;
         }
-
-        ScalarAction action = new ScalarAction(0, work, parameters);
-        pool.invoke(action);
+        
+        int step = work / PARALLELISM;
+        ScalarAction[] actions = new ScalarAction[PARALLELISM];
+        
+        for (int i = 0; i < PARALLELISM; i++) {
+            int startIndex = i * step;
+            int endIndex = Math.min(startIndex + step, work);
+            actions[i] = new ScalarAction(parameters, startIndex, endIndex);
+        }
+        
+        ForkJoinTask.invokeAll(actions);
     }
     
     private void matmulBlock(
-        float[] A, float[] B, float[] C,
+        float[] a, float[] b, float[] c,
         int start, int end,
-        boolean aT,
-        boolean bT,
+        boolean transposedA, boolean transposedB,
         int m, int n, int p,
         int mn, int np, int mp,
         int batchA, int batchB
     ) {
-        // someone kill me please
-        if (!aT && !bT) {
-            matmul_NN(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
-        } else if (aT && !bT) {
-            matmul_TN(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
-        } else if (!aT) {
-            matmul_NT(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
+        if (batchA == 1 && batchB == 1) {
+            matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp, transposedA, transposedB);
         } else {
-            matmul_TT(A, B, C, start, end, m, n, p, mn, np, mp, batchA, batchB);
+            matmulGeneric(a, b, c, start, end, m, n, p, mn, np, mp, batchA, batchB, transposedA, transposedB);
         }
     }
     
-    private void matmul_NN(
-        float[] A, float[] B, float[] C,
+    private void matmulSimple(
+        float[] a, float[] b, float[] c,
         int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB
+        boolean transposedA, boolean transposedB
     ) {
+        int offsetRowA = transposedA ? 1 : n;
+        int offsetAccessA = transposedA ? m : 1;
+        
+        int offsetRowB = transposedB ? 1 : p;
+        int offsetAccessB = transposedB ? n : 1;
+        
         for (int r = start; r < end; r++) {
-            int bi = (batchA == 1 ? 0 : r / m) * mn;
-            int bj = (batchB == 1 ? 0 : r / m) * np;
-            int ci = (r / m) * mp;
+            int batch = r / m;
             int i = r % m;
-            int rowA = bi + i * n;
-            int rowC = ci + i * p;
+            int offsetA = batch * mn;
+            int offsetB = batch * np;
+            int offsetC = batch * mp;
+            int rowA = offsetA + i * offsetRowA;
+            int rowC = offsetC + i * p;
             
             for (int t = 0; t < n; t++) {
-                float aVal = A[rowA + t];
-                int rowB = bj + t * p;
+                float aVal = a[rowA + t * offsetAccessA];
+                int colB = offsetB + t * offsetRowB;
+                
                 for (int j = 0; j < p; j++) {
-                    C[rowC + j] += aVal * B[rowB + j];
+                    c[rowC + j] += aVal * b[colB + j * offsetAccessB];
                 }
             }
         }
     }
     
-    private void matmul_TN(
-        float[] A, float[] B, float[] C,
+    private void matmulGeneric(
+        float[] a, float[] b, float[] c,
         int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB
+        int batchA, int batchB,
+        boolean transposedA, boolean transposedB
     ) {
+        int offsetRowA = transposedA ? 1 : n;
+        int offsetAccessA = transposedA ? m : 1;
+        
+        int offsetRowB = transposedB ? 1 : p;
+        int offsetAccessB = transposedB ? n : 1;
+        
         for (int r = start; r < end; r++) {
-            int bi = (batchA == 1 ? 0 : r / m) * mn;
-            int bj = (batchB == 1 ? 0 : r / m) * np;
+            int offsetA = (batchA == 1 ? 0 : r / m) * mn;
+            int offsetB = (batchB == 1 ? 0 : r / m) * np;
             int ci = (r / m) * mp;
             int i = r % m;
-            int baseA = bi + i;
+            int rowA = offsetA + i * offsetRowA;
             int rowC = ci + i * p;
-            
-            for (int t = 0; t < n; t++) {
-                float aVal = A[baseA + t * m];
-                int rowB = bj + t * p;
-                for (int j = 0; j < p; j++) {
-                    C[rowC + j] += aVal * B[rowB + j];
-                }
-            }
-        }
-    }
-    
-    private void matmul_NT(
-        float[] A, float[] B, float[] C,
-        int start, int end,
-        int m, int n, int p,
-        int mn, int np, int mp,
-        int batchA, int batchB
-    ) {
-        for (int r = start; r < end; r++) {
-            int bi = (batchA == 1 ? 0 : r / m) * mn;
-            int bj = (batchB == 1 ? 0 : r / m) * np;
-            int ci = (r / m) * mp;
-            int i = r % m;
-            int rowA = bi + i * n;
-            int rowC = ci + i * p;
-            
-            for (int t = 0; t < n; t++) {
-                float aVal = A[rowA + t];
-                int baseB = bj + t;
-                for (int j = 0; j < p; j++) {
-                    C[rowC + j] += aVal * B[baseB + j * n];
-                }
-            }
-        }
-    }
-    
-    private void matmul_TT(
-        float[] A, float[] B, float[] C,
-        int start, int end,
-        int m, int n, int p,
-        int mn, int np, int mp,
-        int batchA, int batchB
-    ) {
-        for (int r = start; r < end; r++) {
-            int bi = (batchA == 1 ? 0 : r / m) * mn;
-            int bj = (batchB == 1 ? 0 : r / m) * np;
-            int ci = (r / m) * mp;
-            int i = r % m;
-            int baseA = bi + i;
-            int rowC = ci + i * p;
-            
-            for (int t = 0; t < n; t++) {
-                float aVal = A[baseA + t*m];
-                int baseB = bj + t;
-                for (int j = 0; j < p; j++) {
-                    C[rowC + j] += aVal * B[baseB + j * n];
-                }
-            }
-        }
-    }
 
+            for (int t = 0; t < n; t++) {
+                float aVal = a[rowA + t * offsetAccessA];
+                int colB = offsetB + t * offsetRowB;
+
+                for (int j = 0; j < p; j++) {
+                    c[rowC + j] += aVal * b[colB + j * offsetAccessB];
+                }
+            }
+        }
+    }
+    
     private class ScalarAction extends RecursiveAction {
-        private final int start, end;
-        private final MatmulParameters parameters;
 
-        private ScalarAction(int start, int end, MatmulParameters parameters) {
+        private final MatmulParameters parameters;
+        private final int start, end;
+
+        private ScalarAction(MatmulParameters parameters, int start, int end) {
+            this.parameters = parameters;
             this.start = start;
             this.end = end;
-            this.parameters = parameters;
         }
 
         @Override
         protected void compute() {
+            int np = parameters.np();
             int work = end - start;
 
-            if (isOverThreshold(work, parameters.np())) {
+            if (isOverThreshold(work, np)) {
                 int mid = (start + end) >>> 1;
                 invokeAll(
-                    new ScalarAction(start, mid, parameters),
-                    new ScalarAction(mid, end, parameters)
+                    new ScalarAction(parameters, start, mid),
+                    new ScalarAction(parameters, mid, end)
                 );
             } else {
                 matmulBlock(
                     parameters.A(), parameters.B(), parameters.C(),
                     start, end,
-                    parameters.aTransposed(),
-                    parameters.bTransposed(),
+                    parameters.transposedA(),
+                    parameters.transposedB(),
                     parameters.m(), parameters.n(), parameters.p(),
                     parameters.mn(), parameters.np(), parameters.mp(),
                     parameters.batchA(), parameters.batchB()
