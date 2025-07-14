@@ -2,11 +2,11 @@ package org.brain4j.core.model.impl;
 
 import org.brain4j.common.Commons;
 import org.brain4j.common.Pair;
-import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.gpu.GpuContext;
-import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.Tensors;
+import org.brain4j.common.data.ListDataSource;
+import org.brain4j.common.gpu.GpuContext;
+import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.Brain4J;

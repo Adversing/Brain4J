@@ -1,9 +1,9 @@
 package org.brain4j.common.tensor.impl;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.lang.DoubleToDoubleFunction;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.autograd.AutogradContext;
 import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.common.tensor.autograd.impl.*;

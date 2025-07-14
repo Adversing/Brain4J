@@ -2,9 +2,9 @@ package org.brain4j.core;
 
 import ch.qos.logback.classic.Level;
 import org.brain4j.common.activation.Activation;
+import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.device.DeviceUtils;
-import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.core.activation.Activations;
 import org.jocl.cl_context;
 import org.jocl.cl_program;
@@ -19,14 +19,6 @@ import org.slf4j.LoggerFactory;
  * <p>
  * This class is designed to serve as the main API access point, and will be extended
  * in the future to include global configuration, logging, and other utilities.
- *
- * <h2>Usage</h2>
- * Before using any tensor operations or training functionality, call {@link #initialize()}
- * to ensure proper device setup and runtime configuration.
- *
- * <pre>{@code
- *     Brain4J.initialize();
- * }</pre>
  *
  * @since 3.0
  * @author xEcho1337

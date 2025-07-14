@@ -1,14 +1,14 @@
 package org.brain4j.common.tensor.impl;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.activation.Activation;
-import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.device.DeviceUtils;
-import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.kernel.KernelFactory;
-import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.Tensors;
+import org.brain4j.common.gpu.memory.CloseableQueue;
 import org.brain4j.common.gpu.memory.CollectableState;
+import org.brain4j.common.tensor.Tensor;
 import org.jocl.*;
 
 import java.lang.ref.Cleaner;

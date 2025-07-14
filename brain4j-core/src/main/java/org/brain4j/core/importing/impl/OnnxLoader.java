@@ -1,7 +1,7 @@
 package org.brain4j.core.importing.impl;
 
-import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.Tensors;
+import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
@@ -11,7 +11,7 @@ import org.brain4j.core.model.Model;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.List;
 
 public class OnnxLoader implements ModelLoader {
     

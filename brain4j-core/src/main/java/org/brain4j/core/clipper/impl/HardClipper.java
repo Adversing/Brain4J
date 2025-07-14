@@ -1,9 +1,9 @@
 package org.brain4j.core.clipper.impl;
 
-import org.brain4j.common.gpu.memory.CloseableQueue;
-import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.GpuContext;
+import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.kernel.KernelFactory;
+import org.brain4j.common.gpu.memory.CloseableQueue;
 import org.brain4j.common.tensor.impl.CpuTensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.core.clipper.GradientClipper;

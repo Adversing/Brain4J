@@ -1,8 +1,8 @@
 package org.brain4j.core.transformer.attention;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.Tensors;
 import org.brain4j.common.weightsinit.WeightInitialization;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;

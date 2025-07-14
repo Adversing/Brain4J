@@ -9,7 +9,6 @@ import org.brain4j.common.tensor.matmul.MatmulProvider;
 
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
-import java.util.stream.IntStream;
 
 public class SimdMatmulProvider implements MatmulProvider {
 

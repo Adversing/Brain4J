@@ -1,8 +1,8 @@
 package org.brain4j.common.gpu.kernel;
 
-import org.brain4j.common.gpu.memory.CloseableQueue;
-import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.GpuContext;
+import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.gpu.memory.CloseableQueue;
 import org.jocl.*;
 
 import java.util.ArrayList;

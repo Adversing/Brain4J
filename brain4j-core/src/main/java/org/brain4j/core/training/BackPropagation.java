@@ -2,8 +2,8 @@ package org.brain4j.core.training;
 
 import org.brain4j.common.Pair;
 import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.GpuContext;
+import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.Optimizer;

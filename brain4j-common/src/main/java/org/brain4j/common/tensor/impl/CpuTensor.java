@@ -1,8 +1,8 @@
 package org.brain4j.common.tensor.impl;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.broadcast.TensorBroadcast;
 import org.brain4j.common.tensor.matmul.MatmulProvider;
 import org.brain4j.common.tensor.matmul.impl.NormalMatmulProvider;
@@ -11,7 +11,7 @@ import org.brain4j.common.tensor.parallel.ParallelTranspose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 
 public class CpuTensor extends BaseTensor {
