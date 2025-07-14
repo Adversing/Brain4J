@@ -12,8 +12,7 @@ public class ModelLoaders {
         byte[] data = Files.readAllBytes(Paths.get(path));
         
         OnnxLoader loader = new OnnxLoader();
-        Model model = loader.deserialize(data);
         
-        return model;
+        return loader.deserialize(data);
     }
 }

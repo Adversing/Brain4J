@@ -29,7 +29,7 @@ public class OnnxLoader implements ModelLoader {
 
         for (Onnx.NodeProto node : graph.getNodeList()) {
             Operation operation = OPERATION_MAP.get(node.getOpType());
-
+            
             if (operation == null) {
                 throw new IllegalArgumentException("Unknown or missing operation type: " + node.getOpType());
             }
@@ -48,8 +48,7 @@ public class OnnxLoader implements ModelLoader {
                 node.getOutputList()
             ));
         }
-
-
+        
         List<String> inputs = graph.getInputList().stream()
             .map(Onnx.ValueInfoProto::getName)
             .toList();

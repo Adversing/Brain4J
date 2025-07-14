@@ -361,9 +361,11 @@ public class Sequential extends Layer implements Model {
     @Override
     public Model to(Device device) {
         this.device = device;
-
-        GpuTensor.initKernels(device);
-        Brain4J.initKernels(device);
+        
+        if (device != null) {
+            GpuTensor.initKernels(device);
+            Brain4J.initKernels(device);
+        }
 
         for (Layer layer : flattened) {
             layer.toDevice(device);

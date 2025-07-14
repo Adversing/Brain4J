@@ -2,6 +2,7 @@ package org.brain4j.core.graphs;
 
 import org.brain4j.common.data.ListDataSource;
 import org.brain4j.common.device.Device;
+import org.brain4j.common.kernel.GpuContextHandler;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
@@ -43,18 +44,20 @@ public class GraphModel implements Model {
         if (inputs.length != inputNames.size()) {
             throw new IllegalArgumentException("Expected " + inputNames.size() + " inputs, but got " + inputs.length);
         }
+        
+        if (device != null) {
+            GpuContextHandler.updateQueue(device, cache.commandQueue());
+        }
 
         Map<String, Tensor> computed = new HashMap<>(initializers);
 
         for (int i = 0; i < inputs.length; i++) {
-            computed.put(inputNames.get(i), inputs[i]);
+            computed.put(inputNames.get(i), inputs[i].to(device));
         }
 
         for (GraphNode node : nodes) {
             List<String> inputNames = node.inputs();
             Tensor[] inputTensors = new Tensor[inputNames.size()];
-
-            long start = System.nanoTime();
 
             for (int j = 0; j < inputTensors.length; j++) {
                 Tensor input = computed.get(inputNames.get(j));
@@ -63,19 +66,20 @@ public class GraphModel implements Model {
                     throw new IllegalStateException("Missing tensor for input: " + inputNames.get(j));
                 }
 
-                inputTensors[j] = input;
+                inputTensors[j] = input.to(device);
             }
 
-            double took = (System.nanoTime() - start) / 1e6;
-
-            System.out.println("Start ms: " + took );
             Tensor output = node.operation().compute(inputTensors);
 
             for (String outputName : node.outputs()) {
                 computed.put(outputName, output);
             }
         }
-
+        
+        if (!training && device != null) {
+            GpuContextHandler.closeQueue(device);
+        }
+        
         if (outputNames.size() != 1) {
             throw new UnsupportedOperationException("Only single-output graphs are supported in predict()");
         }
