@@ -89,7 +89,7 @@ public class TransformerEncoder extends Layer {
 
         Tensor added = input.addGrad(attended);
         Tensor normalized = normalizer.forward(new ForwardContext(cache, added, index, true));
-
+        
         Tensor upProjected = upProjection.forward(new ForwardContext(cache, normalized, index, training));
         Tensor downProjected = downProjection.forward(new ForwardContext(cache, upProjected, index, training));
 

@@ -4,12 +4,7 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.autograd.Operation;
 
 public class MatMulOperation implements Operation {
-
-    @Override
-    public int requiredInputs() {
-        return 2;
-    }
-
+    
     @Override
     public Tensor compute(Tensor... inputs) {
         return inputs[0].matmul(inputs[1]);
@@ -20,6 +15,7 @@ public class MatMulOperation implements Operation {
         Tensor a = inputs[0];
         Tensor b = inputs[1];
         
+        // [1, 32, 5] @ [16, 32]
         Tensor gradA = gradOutput.matmul(b.transpose());
         Tensor gradB = a.transpose().matmul(gradOutput);
 

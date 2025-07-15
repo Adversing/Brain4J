@@ -23,7 +23,7 @@ public class DropoutLayer extends Layer {
      * @throws IllegalArgumentException if dropout is outside the range 0-1
      */
     public DropoutLayer(double dropoutRate) {
-        if (dropoutRate <= 0 || dropoutRate >= 1) {
+        if (dropoutRate < 0 || dropoutRate >= 1) {
             throw new IllegalArgumentException("Dropout must be greater than 0 and less than 1!");
         }
 

@@ -106,18 +106,19 @@ public abstract class Layer {
      * @param index the index of this layer
      */
     public void backward(Updater updater, Optimizer optimizer, int index) {
-        if (weights == null) return;
-
-        Tensor weightsGrad = weights.grad();
-        Tensor biasGrad = bias.grad().sum(0, false);
-
-        weightsGrad = optimizer.step(weights, weightsGrad);
-
-        clipper.clip(weightsGrad);
-        clipper.clip(biasGrad);
-
-        updater.change(weights, weightsGrad);
-        updater.change(bias, biasGrad);
+        if (weights != null && weights.grad() != null) {
+            Tensor weightsGrad = optimizer.step(weights, weights.grad());
+            
+            clipper.clip(weightsGrad);
+            updater.change(weights, weightsGrad);
+        }
+        
+        if (bias != null && bias.grad() != null) {
+            Tensor biasGrad = bias.grad().sum(0, false);
+            
+            clipper.clip(biasGrad);
+            updater.change(bias, biasGrad);
+        }
     }
 
     /**

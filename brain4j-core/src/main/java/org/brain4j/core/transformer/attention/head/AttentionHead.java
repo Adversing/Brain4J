@@ -9,6 +9,7 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class AttentionHead {
@@ -42,18 +43,20 @@ public class AttentionHead {
     }
 
     public Tensor attend(Tensor input) {
-        // input = [seq_length, embedding_dim]
-        Tensor Q = input.matmulGrad(queryWeights); // [seq_length, head_dimension]
-        Tensor K = input.matmulGrad(keyWeights); // [seq_length, head_dimension]
-        Tensor V = input.matmulGrad(valueWeights); // [seq_length, head_dimension]
+        // input = [batch_size, seq_length, embedding_dim]
+        Tensor Q = input.matmulGrad(queryWeights); // [batch_size, seq_length, head_dimension]
+        Tensor K = input.matmulGrad(keyWeights); // [batch_size, seq_length, head_dimension]
+        Tensor V = input.matmulGrad(valueWeights); // [batch_size, seq_length, head_dimension]
 
         double normalizer = Math.sqrt(headDimension);
-
-        // [seq_length, seq_length]
-        Tensor scores = Q.matmulGrad(K.transpose()).div(normalizer);
+        
+        // [batch_size, head_dimension, seq_length]
+        Tensor K_T = K.transposeGrad();
+        // [batch_size, seq_length, seq_length]
+        Tensor scores = Q.matmulGrad(K_T).div(normalizer);
         Tensor attentionWeights = scores.activateGrad(new SoftmaxActivation());
 
-        // [seq_length, head_dimension]
+        // [batch_size, seq_length, head_dimension]
         return attentionWeights.matmulGrad(V);
     }
 

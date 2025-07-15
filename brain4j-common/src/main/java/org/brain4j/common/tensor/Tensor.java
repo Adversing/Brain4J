@@ -523,6 +523,12 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor from the operation
      */
     Tensor matmulGrad(Tensor other);
+    
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link TransposeOperation}
+     * @return the resulting tensor from the operation
+     */
+    Tensor transposeGrad();
 
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link ActivationOperation}

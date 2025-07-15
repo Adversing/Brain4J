@@ -1,10 +1,7 @@
 package org.brain4j.core.model.impl;
 
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.layer.impl.transformer.EmbeddingLayer;
-import org.brain4j.core.layer.impl.transformer.OutVocabLayer;
-import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
-import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
+import org.brain4j.core.layer.impl.transformer.*;
 
 /**
  * Represents the transformer architecture as described
@@ -77,20 +74,36 @@ public class Transformer extends Sequential {
             this.dimension = dimension;
             return this;
         }
-
+        
         public Builder addDecoders(int amount, double dropout) {
             if (amount < 1) {
                 throw new IllegalArgumentException("Amount must be greater than 0!");
             }
-
+            
             if (dropout < 0.0 || dropout > 1.0) {
                 throw new IllegalArgumentException("Dropout must be between 0 and 1!");
             }
-
+            
             for (int i = 0; i < amount; i++) {
                 this.layers.add(new TransformerDecoder(heads, dimension, dropout));
             }
-
+            
+            return this;
+        }
+        
+        public Builder addEncoders(int amount, double dropout) {
+            if (amount < 1) {
+                throw new IllegalArgumentException("Amount must be greater than 0!");
+            }
+            
+            if (dropout < 0.0 || dropout > 1.0) {
+                throw new IllegalArgumentException("Dropout must be between 0 and 1!");
+            }
+            
+            for (int i = 0; i < amount; i++) {
+                this.layers.add(new TransformerEncoder(heads, dimension, dropout));
+            }
+            
             return this;
         }
 

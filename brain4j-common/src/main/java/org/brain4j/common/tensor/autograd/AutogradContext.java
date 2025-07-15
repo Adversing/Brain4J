@@ -2,6 +2,8 @@ package org.brain4j.common.tensor.autograd;
 
 import org.brain4j.common.tensor.Tensor;
 
+import java.util.Arrays;
+
 public class AutogradContext {
 
     private final boolean requiresGrad;
@@ -33,7 +35,7 @@ public class AutogradContext {
     
     public void backward(Tensor gradOutput) {
         if (!requiresGrad) return;
-
+        
         this.grad = grad == null ? gradOutput.clone() : grad.plus(gradOutput);
 
         if (operation == null) return;

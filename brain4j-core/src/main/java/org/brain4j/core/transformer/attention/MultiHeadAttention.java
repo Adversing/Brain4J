@@ -32,7 +32,7 @@ public class MultiHeadAttention {
 
         this.headDimension = embeddingDim / headCount;
         this.heads = new ArrayList<>();
-        this.outProjWeights = Tensors.matrix(embeddingDim, embeddingDim);
+        this.outProjWeights = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
 
         initializeHeads();
     }

@@ -446,9 +446,9 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         BaseTensor view = (BaseTensor) Tensors.create(newShape, newStrides, data);
         view.transposed = !transposed;
 
-        if (usesGrad()) {
-            view.setAutogradContext(autogradContext);
-        }
+//        if (usesGrad()) {
+//            view.setAutogradContext(autogradContext);
+//        }
 
         return view;
     }
@@ -850,7 +850,16 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return forward(new MatMulOperation(), other);
     }
-
+    
+    @Override
+    public Tensor transposeGrad() {
+        if (!usesGrad()) {
+            throw new IllegalArgumentException("This teensors should be used with backflow!");
+        }
+        
+        return forward(new TransposeOperation());
+    }
+    
     @Override
     public Tensor activateGrad(Activation activation) {
         if (!usesGrad()) {

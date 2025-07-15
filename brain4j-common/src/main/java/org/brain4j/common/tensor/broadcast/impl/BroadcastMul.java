@@ -50,9 +50,9 @@ public class BroadcastMul implements BroadcastOperation {
         float[] bData = B.data();
 
         int[] broadcastedShape = broadcastShape(shapeA, shapeB);
-
-        if (!Arrays.equals(shapeA, broadcastedShape)) {
-            throw new IllegalArgumentException("Broadcast result does not match shape of A");
+        
+        if (!Arrays.equals(shapeB, broadcastedShape)) {
+            B = B.reshape(broadcastedShape);
         }
 
         int total = A.elements();

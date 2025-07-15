@@ -5,6 +5,7 @@ import org.brain4j.core.model.Model;
 import org.brain4j.core.training.updater.impl.NormalUpdater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
