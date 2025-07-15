@@ -325,8 +325,6 @@ public class Sequential extends Layer implements Model {
         for (int l = count; l >= 0; l--) {
             Layer layer = flattened.get(l);
 
-            if (layer.skipPropagate()) continue;
-
             layer.backward(updater, optimizer, l);
         }
     }
@@ -593,8 +591,6 @@ public class Sequential extends Layer implements Model {
     public void backward(Updater updater, Optimizer optimizer, int index) {
         for (int l = layers.size() - 2; l >= 0; l--) {
             Layer layer = layerAt(l);
-
-            if (layer.skipPropagate()) continue;
 
             layer.backward(updater, optimizer, index - l);
         }

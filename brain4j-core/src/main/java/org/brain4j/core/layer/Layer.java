@@ -134,14 +134,6 @@ public abstract class Layer {
     }
 
     /**
-     * Gets whether the {@linkplain Layer#backward} function should be called for this layer.
-     * @return <code>true</code> if the layer should be skipped, <code>false</code> otherwise
-     */
-    public boolean skipPropagate() {
-        return false;
-    }
-
-    /**
      * Gets the activation function for this layer.
      * @return the activation function
      */

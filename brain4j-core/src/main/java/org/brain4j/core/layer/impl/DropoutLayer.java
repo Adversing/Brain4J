@@ -56,11 +56,6 @@ public class DropoutLayer extends Layer {
         return 0;
     }
 
-    @Override
-    public boolean skipPropagate() {
-        return true;
-    }
-
     /**
      * Scales the input tensor by {@code 1 - input}.
      * @param input the input tensor

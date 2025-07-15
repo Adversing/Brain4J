@@ -18,8 +18,23 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Implementation of a transformer encoder architecture.
- * This class contains a various amount of structures
+ * Implements a single encoder block of the Transformer architecture,
+ * as introduced in the paper "Attention is All You Need".
+ *
+ * <p>It includes a multi-head self-attention layer, along with
+ * residual connections, layer normalization, feed-forward projection
+ * and dropout for regularization.
+ *
+ * <p>The expected input shape is a 3D tensor of shape {@code [batch_size, seq_len, embedding_dim]}.
+ * The output has the same shape.
+ *
+ * @see TransformerDecoder
+ * @see MultiHeadAttention
+ * @see DenseLayer
+ * @see DropoutLayer
+ * @see NormLayer
+ * @author xEcho1337
+ * @since 3.0
  */
 public class TransformerEncoder extends Layer {
 
@@ -31,7 +46,13 @@ public class TransformerEncoder extends Layer {
 
     protected int numHeads;
     protected int embeddingDim;
-
+    
+    /**
+     * Constructs a new encoder block with the specified parameters.
+     * @param numHeads the amount of heads in the attention block
+     * @param embeddingDim the embedding dimension of the input
+     * @param dropout the dropout used when training
+     */
     public TransformerEncoder(int numHeads, int embeddingDim, double dropout) {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;

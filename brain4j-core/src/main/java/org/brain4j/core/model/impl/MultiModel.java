@@ -92,8 +92,6 @@ public class MultiModel extends Sequential {
             for (int l = flattened.size() - 1; l >= 0; l--) {
                 Layer layer = flattened.get(l);
 
-                if (layer.skipPropagate()) continue;
-
                 layer.backward(updater, optimizer, l);
             }
         }
