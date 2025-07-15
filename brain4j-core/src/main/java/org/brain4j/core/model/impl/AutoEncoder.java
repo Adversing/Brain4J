@@ -91,10 +91,8 @@ public class AutoEncoder extends Sequential {
         EvaluationResult result = evaluate(testSource.clone());
 
         String lossMsg = "Loss: " + MAGENTA + "%.4f" + RESET;
-        String accuracyMsg = "Accuracy: " + LIGHT_BLUE + "N/A" + RESET;
-        String f1ScoreMsg = "F1-Score: " + LIGHT_GREEN + "N/A" + RESET;
+        String message = "[%s/%s] " + lossMsg + "\n";
 
-        String message = "[%s/%s] " + lossMsg + " | " + accuracyMsg + " | " + f1ScoreMsg + "\n";
         System.out.printf(message, step, epoches, result.loss(), result.accuracy() * 100, result.f1Score() * 100);
     }
 

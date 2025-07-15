@@ -13,7 +13,7 @@ public class ReshapeOperation implements Operation {
 
     @Override
     public int requiredInputs() {
-        return 2;
+        return 1;
     }
 
     @Override

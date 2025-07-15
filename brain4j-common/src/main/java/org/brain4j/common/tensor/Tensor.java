@@ -327,10 +327,30 @@ public interface Tensor extends Iterable<Float> {
     double distanceSquared(Tensor other);
     
     /**
-     * Squeezes the tensor by removing dimensions which are equal to one.
+     * Squeezes the tensor by removing all dimensions which are equal to one.
      * @return the squeezed tensor
      */
     Tensor squeeze();
+
+    /**
+     * Squeezes the tensor by removing the select dimension if it's equal to one
+     * @param dimension the dimension to remove
+     * @return the squeezed tensor
+     */
+    Tensor squeeze(int dimension);
+
+    /**
+     * Unsqueezes the tensor by adding a dimension with one at the start.
+     * @return the unsqueezed tensor
+     */
+    Tensor unsqueeze();
+
+    /**
+     * Unsqueezes the tensor by adding a dimension with one at the specified dimension
+     * @param dimension the dimension index
+     * @return the unsqueezed tensor
+     */
+    Tensor unsqueeze(int dimension);
 
     /**
      * Computes a lazy-transposition of this tensor.
@@ -374,6 +394,14 @@ public interface Tensor extends Iterable<Float> {
      * @return a new concatenated tensor
      */
     Tensor concat(Tensor other);
+
+    /**
+     * Concatenates this tensor with another tensor along the last dimension.
+     * For this method to work, tensors must have shape <code>[..., a, b]</code> with the same <code>a</code>.
+     * @param other the tensor to concatenate
+     * @return a new concatenated tensor
+     */
+    Tensor concat(Tensor other, int dimension);
 
     /**
      * Activates all the elements of this tensor using the specified activation function.
@@ -550,7 +578,7 @@ public interface Tensor extends Iterable<Float> {
      * @param other the other tensor
      * @return the resulting tensor from the operation
      */
-    Tensor concatGrad(Tensor other);
+    Tensor concatGrad(Tensor other, int dim);
 
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link ReshapeOperation}

@@ -20,4 +20,9 @@ public class MeanAbsoluteError implements LossFunction {
     public Tensor getDelta(Tensor error, Tensor derivative) {
         return error.map(Math::signum);
     }
+
+    @Override
+    public boolean isRegression() {
+        return true;
+    }
 }

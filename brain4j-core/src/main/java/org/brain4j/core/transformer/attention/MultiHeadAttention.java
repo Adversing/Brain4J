@@ -68,7 +68,7 @@ public class MultiHeadAttention {
         Tensor result = outputs[0];
 
         for (int i = 1; i < outputs.length; i++) {
-            result = result.concatGrad(outputs[i]);
+            result = result.concatGrad(outputs[i], -1);
         }
 
         return result.matmulGrad(outProjWeights);

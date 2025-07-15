@@ -20,4 +20,9 @@ public class CrossEntropy implements LossFunction {
     public Tensor getDelta(Tensor error, Tensor derivative) {
         return error;
     }
+
+    @Override
+    public boolean isRegression() {
+        return false;
+    }
 }

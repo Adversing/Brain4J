@@ -1,8 +1,6 @@
 package org.brain4j.core.layer.impl;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 
@@ -31,7 +29,7 @@ public class BatchNormLayer extends Layer {
 
     @Override
     public Tensor forward(ForwardContext context) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

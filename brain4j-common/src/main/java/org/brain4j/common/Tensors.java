@@ -49,53 +49,6 @@ public class Tensors {
         return random(Random.from(new SplittableRandom()), shape);
     }
 
-    public static Tensor concat(List<Tensor> inputs) {
-        Tensor base = inputs.getFirst();
-
-        int[] baseShape = base.shape();
-        int totalColumns = 0;
-        int rank = baseShape.length;;
-
-        for (Tensor input : inputs) {
-            int[] shape = input.shape();
-
-            if (shape.length != rank) {
-                throw new IllegalArgumentException(
-                    "All tensors must have the same dimension!"
-                );
-            }
-
-            for (int i = 0; i < shape.length - 1; i++) {
-                if (shape[i] != baseShape[i]) {
-                    throw new IllegalArgumentException(
-                        "All tensors must have the same base shape! [" + Arrays.toString(input.shape()) + "]"
-                    );
-                }
-            }
-
-            totalColumns += shape[shape.length - 1];
-        }
-
-        int[] paddedShape = new int[rank];
-
-        System.arraycopy(baseShape, 0, paddedShape, 0, paddedShape.length);
-        paddedShape[paddedShape.length - 1] = totalColumns;
-
-        Tensor result = zeros(paddedShape);
-
-        int offset = 0;
-
-        for (Tensor input : inputs) {
-            int size = input.shape()[rank - 1];
-
-            result.setSliceAlongLastDim(offset, input);
-
-            offset += size;
-        }
-
-        return result;
-    }
-
     /**
      * Stacks two matrices into a single tensor.
      * @apiNote The first shape can be different, meanwhile the second shape must be equal for all tensors
@@ -205,5 +158,33 @@ public class Tensors {
         }
 
         return mask;
+    }
+
+    public static Tensor concat(List<Tensor> tensors) {
+        return concat(tensors, -1);
+    }
+
+    public static Tensor concat(List<Tensor> tensors, int dim) {
+        Tensor base = tensors.getFirst();
+
+        for (int i = 1; i < tensors.size(); i++) {
+            base = base.concat(tensors.get(i), dim);
+        }
+
+        return base;
+    }
+
+    public static Tensor concatGrad(List<Tensor> tensors) {
+        return concatGrad(tensors, -1);
+    }
+
+    public static Tensor concatGrad(List<Tensor> tensors, int dim) {
+        Tensor base = tensors.getFirst();
+
+        for (int i = 1; i < tensors.size(); i++) {
+            base = base.concatGrad(tensors.get(i), dim);
+        }
+
+        return base;
     }
 }

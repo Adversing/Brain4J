@@ -18,6 +18,7 @@ public class EvaluationResult {
     private double precision;
     private double recall;
     private double f1Score;
+    private double totalDeviation;
 
     public EvaluationResult(double loss, int classes, Map<Integer, Tensor> classifications) {
         this.loss = loss;
@@ -64,6 +65,33 @@ public class EvaluationResult {
         this.precision = precisionSum / classes;
         this.recall = recallSum / classes;
         this.f1Score = (precision + recall) > 0 ? 2 * (precision * recall) / (precision + recall) : 0;
+        this.totalDeviation = calculateDeviation();
+    }
+
+    private double calculateDeviation() {
+        double sum = 0.0;
+        double total = 0.0;
+        int count = 0;
+
+        for (Tensor tensor : classifications.values()) {
+            for (int i = 0; i < tensor.elements(); i++) {
+                total += tensor.get(i);
+                count++;
+            }
+        }
+
+        if (count == 0) return 0.0;
+
+        double mean = total / count;
+
+        for (Tensor tensor : classifications.values()) {
+            for (int i = 0; i < tensor.elements(); i++) {
+                double diff = tensor.get(i) - mean;
+                sum += diff * diff;
+            }
+        }
+
+        return sum;
     }
 
     public String results() {
@@ -128,6 +156,10 @@ public class EvaluationResult {
         return result;
     }
 
+    public Map<Integer, Tensor> classifications() {
+        return classifications;
+    }
+
     public double loss() {
         return loss;
     }
@@ -160,7 +192,7 @@ public class EvaluationResult {
         return f1Score;
     }
 
-    public Map<Integer, Tensor> classifications() {
-        return classifications;
+    public double totalDeviation() {
+        return totalDeviation;
     }
 }

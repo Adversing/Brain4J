@@ -2,11 +2,14 @@ package org.brain4j.core.layer.impl;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -21,7 +24,7 @@ public class RecurrentLayer extends Layer {
     private final int hiddenDimension;
     private Tensor inputWeights;
     private Tensor hiddenWeights;
-    private Tensor hiddenStateBias;
+    private Tensor hiddenBias;
 
     /**
      * Constructs a new recurrent layer instance.
@@ -39,13 +42,14 @@ public class RecurrentLayer extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        if (previous == null) return this;
+        int size = previous == null ? dimension : previous.size();
 
-        this.inputWeights = Tensors.zeros(hiddenDimension, previous.size()).withGrad();
+        this.inputWeights = Tensors.zeros(size, hiddenDimension).withGrad();
         this.hiddenWeights = Tensors.zeros(hiddenDimension, hiddenDimension).withGrad();
-        this.weights = Tensors.zeros(dimension, hiddenDimension).withGrad();
+        this.hiddenBias = Tensors.zeros(hiddenDimension).withGrad();
+
+        this.weights = Tensors.zeros(hiddenDimension, dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();
-        this.hiddenStateBias = Tensors.zeros(hiddenDimension).withGrad();
 
         return this;
     }
@@ -54,48 +58,46 @@ public class RecurrentLayer extends Layer {
     public void initWeights(Random generator, int input, int output) {
         this.inputWeights.map(x -> weightInit.generate(generator, input, output));
         this.hiddenWeights.map(x -> weightInit.generate(generator, input, output));
+        this.hiddenBias.map(x -> weightInit.generate(generator, input, output));
         this.weights.map(x -> weightInit.generate(generator, input, output));
         this.bias.map(x -> weightInit.generate(generator, input, output));
-        this.hiddenStateBias.map(x -> weightInit.generate(generator, input, output));
     }
 
     @Override
     public Tensor forward(ForwardContext context) {
+        // [batch_size, timesteps, dimension]
         Tensor input = context.input();
-        StatesCache cache = context.cache();
-        int index = context.index();
+        int batch = input.shape()[0];
+        int timesteps = input.shape()[1];
 
-        int batchSize = input.shape()[0];
-        int inputDim = input.shape()[1];
-        int expectedDim = inputWeights.shape()[1];
+        // [batch_size, timesteps, hidden_size]
+        Tensor projectedInput = input.matmulGrad(inputWeights);
+        Tensor hiddenState = Tensors.zeros(batch, hiddenDimension).withGrad();
 
-        if (inputDim != expectedDim) {
-            throw new IllegalArgumentException(
-                "Input dimension mismatch: " + inputDim + " != " + expectedDim
-            );
+        Tensor[] allStates = new Tensor[timesteps];
+
+        for (int t = 0; t < timesteps; t++) {
+            Range[] ranges = new Range[] { Range.all(), Range.point(t), Range.all() };
+
+            Tensor timestepX = projectedInput.slice(ranges).squeeze(1);
+            Tensor timestepH = hiddenState.matmulGrad(hiddenWeights);
+
+            hiddenState = timestepX.addGrad(timestepH).addGrad(hiddenBias).activateGrad(activation);
+            allStates[t] = hiddenState.reshapeGrad(batch, 1, hiddenDimension);
         }
 
-        Tensor previousState = cache.hiddenState(this);
 
-        if (previousState == null) {
-            previousState = Tensors.zeros(batchSize, hiddenDimension);
-        }
+        // [batch_size, timesteps, hidden_dim]
+        Tensor sequence = Tensors.concatGrad(List.of(allStates), 1);
+        Tensor output = sequence.matmulGrad(weights).addGrad(bias);
 
-        // [batch_size, hidden_size]
-        Tensor projectedInput = input.matmulGrad(inputWeights.transpose());
-        // [1, hidden_size]
-        Tensor projectedHiddenState = previousState.matmulGrad(hiddenWeights);
-        Tensor hiddenState = projectedInput
-            .addGrad(projectedHiddenState) // [batch_size, hidden_size]
-            .addGrad(hiddenStateBias) // [batch_size, hidden_size]
-            .activateGrad(activation);
-
-        // [batch_size, output_size]
-        Tensor output = hiddenState.matmulGrad(weights.transpose()).addGrad(bias);
-
-        cache.setHiddenState(this, hiddenState);
-
+        context.cache().setPreActivation(this, output);
         return output;
+    }
+
+    @Override
+    public boolean validateInput(Tensor input) {
+        return input.rank() == 3;
     }
 
     @Override

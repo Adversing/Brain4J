@@ -6,7 +6,11 @@ public class Range {
     private final int step;
 
     public static Range all() {
-        return new Range(0, Integer.MAX_VALUE);
+        return new Range(0, Integer.MAX_VALUE, 1);
+    }
+
+    public static Range point(int i) {
+        return new Range(i, i + 1, 1);
     }
 
     public Range(int start, int end) {

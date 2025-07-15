@@ -443,7 +443,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             if (dim != 1) count++;
         }
         
-        if (count == shape.length) {
+        if (count == rank()) {
             return this;
         }
         
@@ -458,7 +458,52 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         
         return reshape(newShape);
     }
-    
+
+    @Override
+    public Tensor squeeze(int dimension) {
+        if (dimension >= rank()) {
+            throw new IllegalArgumentException("Dimension must be less than the rank!");
+        }
+
+        if (shape[dimension] != 1) {
+            return this;
+        }
+
+        int[] newShape = new int[shape.length - 1];
+        int idx = 0;
+
+        for (int i = 0; i < shape.length; i++) {
+            if (i != dimension) {
+                newShape[idx++] = shape[i];
+            }
+        }
+
+        return reshape(newShape);
+    }
+
+    @Override
+    public Tensor unsqueeze() {
+        return unsqueeze(0);
+    }
+
+    public Tensor unsqueeze(int dim) {
+        if (dim < 0 || dim > shape.length) {
+            throw new IllegalArgumentException("Invalid dimension for unsqueeze: " + dim);
+        }
+
+        int[] newShape = new int[shape.length + 1];
+
+        for (int i = 0, j = 0; i < newShape.length; i++) {
+            if (i == dim) {
+                newShape[i] = 1;
+            } else {
+                newShape[i] = shape[j++];
+            }
+        }
+
+        return Tensors.create(newShape, data());
+    }
+
     @Override
     public Tensor transpose() {
         int rank = shape.length;
@@ -651,6 +696,60 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         }
 
         return Tensors.create(newShape, resultData);
+    }
+
+    @Override
+    public Tensor concat(Tensor other, int dimension) {
+        if (shape.length != other.shape().length) {
+            throw new IllegalArgumentException("Tensors must have the same rank.");
+        }
+
+        int rank = rank();
+
+        if (dimension < 0 || dimension >= rank) {
+            throw new IllegalArgumentException("Invalid dimension: " + dimension);
+        }
+
+        for (int i = 0; i < rank; i++) {
+            if (i != dimension && shape[i] != other.shape()[i]) {
+                throw new IllegalArgumentException("Shapes must match in all dimensions except the concatenation one.");
+            }
+        }
+
+        int[] newShape = Arrays.copyOf(shape, rank);
+        newShape[dimension] += other.shape()[dimension];
+
+        int blockSize = 1;
+        int numBlocks = 1;
+
+        for (int i = dimension + 1; i < rank; i++) blockSize *= shape[i];
+        for (int i = 0; i < dimension; i++) numBlocks *= shape[i];
+
+        int thisDim = shape[dimension];
+        int otherDim = other.shape()[dimension];
+        float[] result = new float[numBlocks * (thisDim + otherDim) * blockSize];
+
+        float[] a = this.data();
+        float[] b = other.data();
+
+        int resultOffset = 0;
+        int thisOffset = 0;
+        int otherOffset = 0;
+
+        for (int i = 0; i < numBlocks; i++) {
+            int thisBlock = thisDim * blockSize;
+            int otherBlock = otherDim * blockSize;
+
+            System.arraycopy(a, thisOffset, result, resultOffset, thisBlock);
+            thisOffset += thisBlock;
+            resultOffset += thisBlock;
+
+            System.arraycopy(b, otherOffset, result, resultOffset, otherBlock);
+            otherOffset += otherBlock;
+            resultOffset += otherBlock;
+        }
+
+        return Tensors.create(newShape, result);
     }
 
     @Override
@@ -898,12 +997,12 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public Tensor concatGrad(Tensor other) {
+    public Tensor concatGrad(Tensor other, int dim) {
         if (!usesGrad() && !other.usesGrad()) {
             throw new IllegalArgumentException("At least one of the two tensors should be used with backflow!");
         }
 
-        return forward(new ConcatOperation(), other);
+        return forward(new ConcatOperation(dim), other);
     }
 
     @Override

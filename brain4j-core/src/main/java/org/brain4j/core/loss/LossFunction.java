@@ -21,4 +21,10 @@ public interface LossFunction {
      * @return the delta tensor
      */
     Tensor getDelta(Tensor error, Tensor derivative);
+
+    /**
+     * Gets whether this loss function is typically used for regression.
+     * @return true if this is used for regression, false otherwise
+     */
+    boolean isRegression();
 }

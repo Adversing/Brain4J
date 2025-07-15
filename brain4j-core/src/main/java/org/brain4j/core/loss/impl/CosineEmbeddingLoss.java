@@ -43,4 +43,9 @@ public class CosineEmbeddingLoss implements LossFunction {
     public Tensor getDelta(Tensor error, Tensor derivative) {
         return error.mul(derivative);
     }
+
+    @Override
+    public boolean isRegression() {
+        return false;
+    }
 }

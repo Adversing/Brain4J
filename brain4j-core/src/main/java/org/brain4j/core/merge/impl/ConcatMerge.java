@@ -14,7 +14,7 @@ public class ConcatMerge implements MergeStrategy {
         Tensor result = inputs[0];
 
         for (int i = 1; i < inputs.length; i++) {
-            result = result.concatGrad(inputs[i]);
+            result = result.concatGrad(inputs[i], -1);
         }
 
         return result;

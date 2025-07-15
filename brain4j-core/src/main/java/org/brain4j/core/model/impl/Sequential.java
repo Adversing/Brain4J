@@ -208,13 +208,23 @@ public class Sequential extends Layer implements Model {
     protected void printEvaluation(int step, int epoches, ListDataSource testSource) {
         EvaluationResult result = evaluate(testSource.clone());
 
+        double r2 = result.loss() / result.totalDeviation();
+        boolean regression = lossFunction.isRegression();
+
         String lossMsg = "Loss: " + MAGENTA + "%.4f" + RESET;
-        String accuracyMsg = "Accuracy: " + LIGHT_BLUE + "%.2f%%" + RESET;
-        String f1ScoreMsg = "F1-Score: " + LIGHT_GREEN + "%.2f%%" + RESET;
+        String firstMetric = regression
+            ? " | Determ Coefficient: " + LIGHT_BLUE + "%.2f" + RESET
+            : " | Accuracy: " + LIGHT_BLUE + "%.2f%%" + RESET;
+
+        String secondMetric = regression ? "" : " | F1-Score: " + LIGHT_GREEN + "%.2f%%" + RESET;
 
         String prefix = "Epoch " + LIGHT_YELLOW + "%s" + WHITE + "/" + LIGHT_YELLOW + "%s " + WHITE;
-        String message = prefix + lossMsg + " | " + accuracyMsg + " | " + f1ScoreMsg + "\n";
-        String formatted = message.formatted(step, epoches, result.loss(), result.accuracy() * 100, result.f1Score() * 100);
+        String message = prefix + lossMsg + firstMetric + secondMetric + "\n";
+        String formatted = message.formatted(step, epoches,
+            result.loss(),
+            regression ? r2 : result.accuracy() * 100,
+            result.f1Score() * 100
+        );
 
         training.info(formatted);
     }

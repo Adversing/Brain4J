@@ -4,11 +4,23 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.common.tensor.index.Range;
 
+import java.util.Arrays;
+
 public class ConcatOperation implements Operation {
+
+    private final int dimension;
+
+    public ConcatOperation(int dimension) {
+        this.dimension = dimension;
+    }
 
     @Override
     public Tensor compute(Tensor... inputs) {
-        return inputs[0].concat(inputs[1]);
+        if (dimension == -1) {
+            return inputs[0].concat(inputs[1]);
+        }
+
+        return inputs[0].concat(inputs[1], dimension);
     }
 
     @Override
@@ -23,25 +35,31 @@ public class ConcatOperation implements Operation {
         int[] shapeA = a.shape();
         int[] shapeB = b.shape();
         int rank = shapeA.length;
-        int lastDim = rank - 1;
 
-        int sizeA = shapeA[lastDim];
-        int sizeB = shapeB[lastDim];
+        if (dimension < 0 || dimension >= rank) {
+            throw new IllegalArgumentException("Invalid concat dimension: " + dimension);
+        }
 
+        int sizeA = shapeA[dimension];
+        int sizeB = shapeB[dimension];
+
+        // Costruisci il range "base"
         Range[] base = new Range[rank];
-        for (int i = 0; i < lastDim; i++) {
+        for (int i = 0; i < rank; i++) {
             base[i] = Range.all();
         }
 
+        // Slice per A: dimensione da 0 a sizeA
         Range[] rangeA = base.clone();
-        Range[] rangeB = base.clone();
+        rangeA[dimension] = new Range(0, sizeA);
 
-        rangeA[lastDim] = new Range(0, sizeA);
-        rangeB[lastDim] = new Range(sizeA, sizeA + sizeB);
+        // Slice per B: dimensione da sizeA a sizeA + sizeB
+        Range[] rangeB = base.clone();
+        rangeB[dimension] = new Range(sizeA, sizeA + sizeB);
 
         Tensor gradA = gradOutput.slice(rangeA);
         Tensor gradB = gradOutput.slice(rangeB);
 
-        return new Tensor[]{gradA, gradB};
+        return new Tensor[]{ gradA, gradB };
     }
 }
