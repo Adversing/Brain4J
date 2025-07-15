@@ -110,7 +110,7 @@ public class Sequential extends Layer implements Model {
             inputSizes[i] = flattenedAt(i - 1).size();
         }
 
-        IntStream.range(1, size).parallel().forEach(i -> {
+        IntStream.range(0, size).parallel().forEach(i -> {
             Layer layer = flattenedAt(i);
 
             int input = inputSizes[i];

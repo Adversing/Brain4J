@@ -39,8 +39,12 @@ public abstract class Updater {
         for (Map.Entry<Tensor, Tensor> entry : weightsGradients.entrySet()) {
             Tensor weights = entry.getKey();
             Tensor gradient = entry.getValue();
-
+            
             if (gradient != null && weights != null) {
+                if (gradient.rank() > weights.rank()) {
+                    gradient = gradient.sum(0, false);
+                }
+                
                 weights.sub(gradient.div(samples).mul(learningRate));
             }
         }

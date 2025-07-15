@@ -372,37 +372,45 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     public Tensor layerNorm(double epsilon) {
         int rank = shape.length;
         int featuresSize = shape[rank - 1];
-
+        
         int batchSize = 1;
-        for (int i = 0; i < rank - 1; i++) {
-            batchSize *= shape[i];
-        }
-
-        float[] data = data();
-
+        
+        for (int i = 0; i < rank - 1; i++) batchSize *= shape[i];
+        
         for (int batchIdx = 0; batchIdx < batchSize; batchIdx++) {
-            int offset = batchIdx * featuresSize;
+            int base = 0;
+            int rem = batchIdx;
+            
+            for (int dim = rank - 2; dim >= 0; dim--) {
+                int idxDim = rem % shape[dim];
+                rem /= shape[dim];
+                base += idxDim * strides[dim];
+            }
+            
             float mean = 0f;
-
+            
             for (int j = 0; j < featuresSize; j++) {
-                mean += data[offset + j];
+                mean += data[base + j * strides[rank - 1]];
             }
-
+            
             mean /= featuresSize;
-
-            float variance = 0f;
-
+            
+            float var = 0f;
+            
             for (int j = 0; j < featuresSize; j++) {
-                float diff = data[offset + j] - mean;
-                variance += diff * diff;
+                float x = data[base + j * strides[rank - 1]];
+                float diff = x - mean;
+                
+                var += diff * diff;
             }
-
-            variance /= featuresSize;
-
-            float denom = (float) Math.sqrt(variance + epsilon);
-
+            
+            var /= featuresSize;
+            
+            float denom = (float)Math.sqrt(var + epsilon);
+            
             for (int j = 0; j < featuresSize; j++) {
-                data[offset + j] = (data[offset + j] - mean) / denom;
+                int idx = base + j * strides[rank - 1];
+                data[idx] = (data[idx] - mean) / denom;
             }
         }
 
@@ -426,7 +434,31 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return sum;
     }
-
+    
+    @Override
+    public Tensor squeeze() {
+        int count = 0;
+        
+        for (int dim : shape) {
+            if (dim != 1) count++;
+        }
+        
+        if (count == shape.length) {
+            return this;
+        }
+        
+        int[] newShape = new int[count];
+        int idx = 0;
+        
+        for (int dim : shape) {
+            if (dim != 1) {
+                newShape[idx++] = dim;
+            }
+        }
+        
+        return reshape(newShape);
+    }
+    
     @Override
     public Tensor transpose() {
         int rank = shape.length;

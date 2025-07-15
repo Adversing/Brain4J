@@ -325,6 +325,12 @@ public interface Tensor extends Iterable<Float> {
      * @throws IllegalArgumentException if shapes do not match
      */
     double distanceSquared(Tensor other);
+    
+    /**
+     * Squeezes the tensor by removing dimensions which are equal to one.
+     * @return the squeezed tensor
+     */
+    Tensor squeeze();
 
     /**
      * Computes a lazy-transposition of this tensor.
@@ -340,7 +346,7 @@ public interface Tensor extends Iterable<Float> {
      * @return true if the tensor is transposed, false otherwise
      */
     boolean transposed();
-
+    
     //=============================================================
     // Statistical operations
     //=============================================================

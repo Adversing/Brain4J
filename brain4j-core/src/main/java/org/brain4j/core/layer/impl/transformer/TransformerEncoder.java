@@ -12,10 +12,15 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.transformer.attention.MultiHeadAttention;
+import org.brain4j.core.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Implementation of a transformer encoder architecture.
+ * This class contains a various amount of structures
+ */
 public class TransformerEncoder extends Layer {
 
     protected DenseLayer upProjection;
@@ -31,6 +36,7 @@ public class TransformerEncoder extends Layer {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;
         this.dropout = new DropoutLayer(dropout);
+        this.weightInit = new UniformXavierInit();
 
         this.normalizer = new NormLayer(embeddingDim);
         this.upProjection = new DenseLayer(embeddingDim * 4, Activations.RELU);
@@ -40,7 +46,7 @@ public class TransformerEncoder extends Layer {
     }
 
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
-        return new MultiHeadAttention(heads, embeddingDim);
+        return new MultiHeadAttention(clipper, heads, embeddingDim);
     }
 
     @Override
@@ -57,6 +63,7 @@ public class TransformerEncoder extends Layer {
         this.normalizer.initWeights(generator, embeddingDim, embeddingDim);
         this.upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
         this.downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
+        this.attention.compile(generator, weightInit);
     }
 
     @Override

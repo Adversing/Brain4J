@@ -4,6 +4,7 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -35,11 +36,12 @@ public class EmbeddingLayer extends Layer {
     public EmbeddingLayer(int vocabSize, int embeddingDim) {
         this.vocabSize = vocabSize;
         this.embeddingDim = embeddingDim;
+        this.weightInit = new UniformXavierInit();
     }
 
     @Override
     public Layer connect(Layer previous) {
-        this.weights = Tensors.zeros(vocabSize, embeddingDim);
+        this.weights = Tensors.zeros(vocabSize, embeddingDim).withGrad();
         return this;
     }
 
@@ -61,35 +63,18 @@ public class EmbeddingLayer extends Layer {
 
         int batchSize = shape[0];
         int seqLength = shape[1];
-
-        // result.shape = [batch_size, seq_length, embedding_dim]
-        Tensor result = Tensors.zeros(batchSize, seqLength, embeddingDim);
-
-        float[] weightsData = weights.data();
-        float[] resultData = result.data();
-
+        
+        Tensor oneHot = Tensors.zeros(batchSize, seqLength, vocabSize).withGrad();
+        
         for (int b = 0; b < batchSize; b++) {
-            int batchOffset = b * seqLength * embeddingDim;
-
             for (int s = 0; s < seqLength; s++) {
                 int tokenId = (int) input.get(b, s);
-
-                if (tokenId < 0 || tokenId >= vocabSize) {
-                    throw new IllegalArgumentException("Token ID out of bounds: " + tokenId);
-                }
-
-                int embeddingOffset = tokenId * embeddingDim;
-                int resultOffset = batchOffset + s * embeddingDim;
-
-                System.arraycopy(weightsData, embeddingOffset, resultData, resultOffset, embeddingDim);
+                oneHot.set(1.0f, b, s, tokenId);
             }
         }
-
-        if (input.usesGrad()) {
-            result = result.withGrad();
-        }
         
-        return result;
+        // [batch_size, seq_length, embedding_dim]
+        return oneHot.matmulGrad(weights);
     }
 
     @Override

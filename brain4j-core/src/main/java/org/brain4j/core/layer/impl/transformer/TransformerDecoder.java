@@ -10,6 +10,6 @@ public class TransformerDecoder extends TransformerEncoder {
     }
 
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
-        return new MaskedMultiHeadAttention(heads, embeddingDim);
+        return new MaskedMultiHeadAttention(clipper, heads, embeddingDim);
     }
 }

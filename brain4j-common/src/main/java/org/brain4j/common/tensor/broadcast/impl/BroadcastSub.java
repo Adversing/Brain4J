@@ -51,8 +51,8 @@ public class BroadcastSub implements BroadcastOperation {
 
         int[] broadcastedShape = broadcastShape(shapeA, shapeB);
         
-        if (!Arrays.equals(shapeB, broadcastedShape)) {
-            B = B.reshape(broadcastedShape);
+        if (!Arrays.equals(shapeA, broadcastedShape)) {
+            throw new IllegalArgumentException("Broadcast result does not match shape of A");
         }
         
         int total = A.elements();

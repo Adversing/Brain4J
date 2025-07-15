@@ -4,6 +4,7 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.weightsinit.WeightInitialization;
+import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
@@ -15,13 +16,15 @@ import java.util.Random;
 
 public class MultiHeadAttention {
 
+    protected final GradientClipper clipper;
     protected final Tensor outProjWeights;
     protected final List<AttentionHead> heads;
     protected final int headCount;
     protected final int embeddingDim;
     protected final int headDimension;
 
-    public MultiHeadAttention(int headCount, int embeddingDim) {
+    public MultiHeadAttention(GradientClipper clipper, int headCount, int embeddingDim) {
+        this.clipper = clipper;
         this.headCount = headCount;
         this.embeddingDim = embeddingDim;
 
@@ -44,7 +47,7 @@ public class MultiHeadAttention {
     }
 
     public AttentionHead createAttentionHead() {
-        return new AttentionHead(embeddingDim, headDimension);
+        return new AttentionHead(clipper, embeddingDim, headDimension);
     }
 
     public void compile(Random generator, WeightInitialization weightInit) {
