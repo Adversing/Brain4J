@@ -46,9 +46,4 @@ public class NormLayer extends Layer {
     public int size() {
         return weights.elements();
     }
-
-    @Override
-    public boolean skipPropagate() {
-        return true;
-    }
 }

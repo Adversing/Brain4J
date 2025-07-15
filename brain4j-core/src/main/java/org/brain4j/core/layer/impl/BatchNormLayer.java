@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.layer.ForwardContext;
@@ -30,34 +31,12 @@ public class BatchNormLayer extends Layer {
 
     @Override
     public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-        int batchSize = input.shape()[0];
-
-        Tensor transposed = input.transpose(); // [dimension, batch_size]
-        Tensor result = transposed.clone();
-
-        for (int i = 0; i < batchSize; i++) {
-            Range range = new Range(i, i + 1);
-
-            Tensor token = transposed.slice(range).vector(); // [batch_size]
-            Tensor normalized = normalize1D(token);
-
-            for (int j = 0; j < normalized.elements(); j++) {
-                result.set(normalized.get(j), i, j);
-            }
-        }
-
-        return result.transpose();
+        throw new NotImplementedException();
     }
 
     @Override
     public int size() {
         return 0;
-    }
-
-    @Override
-    public boolean skipPropagate() {
-        return true;
     }
 
     public Tensor normalize1D(Tensor input) {
