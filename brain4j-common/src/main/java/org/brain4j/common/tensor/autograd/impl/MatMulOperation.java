@@ -15,7 +15,6 @@ public class MatMulOperation implements Operation {
         Tensor a = inputs[0];
         Tensor b = inputs[1];
         
-        // [1, 32, 5] @ [16, 32]
         Tensor gradA = gradOutput.matmul(b.transpose());
         Tensor gradB = a.transpose().matmul(gradOutput);
 
