@@ -1,4 +1,4 @@
-package org.brain4j.core.saving.impl;
+package org.brain4j.core.importing.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -7,28 +7,29 @@ import com.google.gson.JsonParser;
 import org.brain4j.common.Commons;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.core.importing.ModelLoader;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.saving.ModelSerializer;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class SafeTensorsImpl implements ModelSerializer {
+public class SafeTensorsLoader implements ModelLoader {
 
-    private record Metadata(List<String> activations, Map<String, Tensor> structure) {
+    public record Metadata(List<String> activations, Map<String, Tensor> structure) { }
+
+    @Override
+    public Model deserialize(byte[] bytes) throws Exception {
+        return null;
     }
 
-    public static Metadata parseStructure(File file) throws IOException {
+    public static Metadata parseStructure(byte[] bytes) throws IOException {
         Map<String, Tensor> tensors = new HashMap<>();
         List<String> activations = new ArrayList<>();
 
-        try (DataInputStream stream = new DataInputStream(new FileInputStream(file))) {
+        try (DataInputStream stream = new DataInputStream(new ByteArrayInputStream(bytes))) {
             ByteBuffer lenBuffer = ByteBuffer.wrap(stream.readNBytes(8));
             lenBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -75,21 +76,5 @@ public class SafeTensorsImpl implements ModelSerializer {
         }
 
         return new Metadata(activations, tensors);
-    }
-    
-    @Override
-    public void serialize(File file, Model model) throws Exception {
-
-    }
-
-    @Override
-    public Model deserialize(File file, Model model) throws Exception {
-        Metadata metadata = parseStructure(file);
-        Map<String, Tensor> tensors = metadata.structure();
-
-        List<String> keys = tensors.keySet().stream().toList();
-        List<Tensor> values = tensors.values().stream().toList();
-
-        return model;
     }
 }

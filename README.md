@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="brain4j-logo.png" alt="Brain4J Logo">
+  <img src="logos/brain4j-logo.svg" alt="Brain4J Logo">
 </h1>
 
 <h4 align="center">A lightweight, performant & open-source machine learning framework for Java.</h4>
@@ -31,7 +31,7 @@ dependencies {
 }
 ```
 
-See the [installation guide](https://github.com/brain4j-org/brain4j/wiki/Installation) for more.
+See the [installation guide](https://github.com/brain4j-org/brain4j/wiki/Installation) for more information.
 
 
 ## Documentation
