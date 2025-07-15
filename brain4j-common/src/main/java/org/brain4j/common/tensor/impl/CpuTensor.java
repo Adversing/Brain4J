@@ -81,10 +81,6 @@ public class CpuTensor extends BaseTensor {
 
         BaseTensor result = (BaseTensor) Tensors.create(newShape);
 
-        if (usesGrad()) {
-            result.setAutogradContext(autogradContext);
-        }
-
         int bound = 1 << 16;
 
         if (elements() >= bound) {

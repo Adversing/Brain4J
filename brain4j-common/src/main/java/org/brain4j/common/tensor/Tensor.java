@@ -328,7 +328,9 @@ public interface Tensor extends Iterable<Float> {
 
     /**
      * Computes a lazy-transposition of this tensor.
-     * This operation has complexity O(1).
+     * This operation has complexity O(1) if the normal matrix multiplication
+     * provider is used. When SIMD is enabled, this operation delegates to
+     * a high-performance in place transposition.
      * @return a new transposed tensor.
      */
     Tensor transpose();
