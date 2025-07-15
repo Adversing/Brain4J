@@ -1,16 +1,42 @@
-# 🧠 Brain4J
+<h1 align="center">
+  <br>
+  <img src="brain4j-logo.png" alt="Brain4J Logo">
+</h1>
 
-Open-source and free machine learning framework written in Java. Designed with lightweight and speed in mind, it's 
-optimized for high performance and ideal for those looking to implement machine learning solutions in Java.
+<h4 align="center">A lightweight, performant & open-source machine learning framework for Java.</h4>
+
+<p align="center">
+    <a href="https://brain4j.org">Website</a> •
+    <a href="https://github.com/xEcho1337/brain4j/issues/new?template=Blank+issue">Report an Issue</a> •
+    <a href="https://github.com/xEcho1337/brain4j/wiki">Documentation</a> •
+    <a href="https://github.com/xEcho1337/brain4j/blob/main/CONTRIBUTING.md">Contribute</a>
+</p>
+
+Designed with portability and speed in mind, it's optimized for high performance and it's ideal for those looking forward
+to implement machine learning solutions in pure Java.
+
+## Install
+
+Brain4J is available on [JitPack](https://jitpack.io) and [GitHub Packages](https://github.com/brain4j-org/brain4j/packages).
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.brain4j-org.brain4j:brain4j-core:2.9.1'
+    implementation 'com.github.brain4j-org.brain4j:brain4j-math:2.9.1'
+}
+```
+
+See the [installation guide](https://github.com/brain4j-org/brain4j/wiki/Installation) for more.
+
 
 ## Documentation
 
-All the documentation can be found [here](https://github.com/brain4j-org/brain4j/wiki).
-
-## Resources
-
-* [Report an Issue](https://github.com/xEcho1337/brain4j/issues/new?template=Blank+issue)
-* [Documentation](https://github.com/xEcho1337/brain4j/wiki)
+All the documentation can be found on the [GitHub Wiki](https://github.com/brain4j-org/brain4j/wiki).
 
 ## Preview
 
@@ -20,10 +46,6 @@ Screenshots taken from the MNIST example.
   <img height="400px" src="https://github.com/user-attachments/assets/04dc0bc3-f429-4809-ab10-a187004085c5" alt="Training" />
   <img height="400px" src="https://github.com/user-attachments/assets/235cca1a-a1c1-4c48-a340-9bda88faa05b"  alt="Confusion Matrix"/>
 </p>
-
-## Contributing
-
-If you are looking forward to contributing, check the [Contributing Guide](https://github.com/xEcho1337/brain4j/blob/main/CONTRIBUTING.md).
 
 ## Contact
 
