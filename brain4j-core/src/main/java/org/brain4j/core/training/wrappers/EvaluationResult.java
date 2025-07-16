@@ -107,33 +107,40 @@ public class EvaluationResult {
         matrix.append(secondary.formatted("Precision:", "%.4f".formatted(precision)));
         matrix.append(secondary.formatted("Recall:", "%.4f".formatted(recall)));
         matrix.append(secondary.formatted("F1-score:", "%.4f".formatted(f1Score)));
-
+        
         if (!classifications.isEmpty()) {
             divider = Commons.getHeader(" Confusion Matrix ", Commons.getHeaderChar());
             matrix.append(divider);
             matrix.append("First column is the actual class, top row are the predicted classes.\n\n");
-            matrix.append(" ".repeat(7));
-
-            for (int i = 0; i < classes; i++) {
-                matrix.append("%4d".formatted(i)).append(" ");
+            
+            int maxValue = 0;
+            for (Tensor tensor : classifications.values()) {
+                for (int i = 0; i < tensor.elements(); i++) {
+                    maxValue = Math.max(maxValue, (int) tensor.get(i));
+                }
             }
-
-            matrix.append("\n  ");
-            matrix.append("-".repeat(5 + classes * 5)).append("\n");
-
+            
+            int cellWidth = Math.max(String.valueOf(maxValue).length(), 5);
+            
+            matrix.append(" ".repeat(7));
             for (int i = 0; i < classes; i++) {
-                StringBuilder text = new StringBuilder();
+                matrix.append(("%" + cellWidth + "d").formatted(i));
+            }
+            
+            matrix.append("\n  ");
+            matrix.append("-".repeat(4 + 2 + cellWidth * classes)).append("\n");
+            
+            for (int i = 0; i < classes; i++) {
+                matrix.append("%4d | ".formatted(i));
                 Tensor predictions = classifications.get(i);
-
+                
                 for (int j = 0; j < predictions.elements(); j++) {
                     int prediction = (int) predictions.get(j);
-                    text.append("%4d".formatted(prediction)).append(" ");
+                    matrix.append(("%" + cellWidth + "d").formatted(prediction));
                 }
-
-                matrix.append("%4d | ".formatted(i));
-                matrix.append(text).append("\n");
+                matrix.append("\n");
             }
-
+            
             matrix.append("\n");
         }
 
