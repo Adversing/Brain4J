@@ -1,9 +1,16 @@
 <h1 align="center">
   <br>
-  <img src="logos/brain4j-logo.svg" alt="Brain4J Logo">
+  <img height="180" src="assets/brain4j-logo.svg" alt="Brain4J Logo">
 </h1>
 
 <h4 align="center">A lightweight, performant & open-source machine learning framework for Java.</h4>
+
+<p align="center">
+    <img alt="Java 21+" src="https://img.shields.io/badge/java-21+-red">
+    <img alt="GitHub Commit Activity" src="https://img.shields.io/github/commit-activity/m/brain4j-org/brain4j"/>
+    <img alt="Github Last Commit" src="https://img.shields.io/github/last-commit/brain4j-org/brain4j"/>
+    <img alt="License" src="https://img.shields.io/github/license/brain4j-org/brain4j">
+</p>
 
 <p align="center">
     <a href="https://brain4j.org">Website</a> •
@@ -45,8 +52,8 @@ All the documentation can be found on the [GitHub Wiki](https://github.com/brain
 Screenshots taken from the MNIST example.
 
 <p align="center">
-  <img height="440px" src="https://github.com/user-attachments/assets/04dc0bc3-f429-4809-ab10-a187004085c5" alt="Training" />
-  <img height="440px" src="https://github.com/user-attachments/assets/235cca1a-a1c1-4c48-a340-9bda88faa05b"  alt="Confusion Matrix"/>
+  <img height="440" src="assets/preview-1.png" alt="Training" />
+  <img height="440" src="assets/preview-2.png" alt="Confusion Matrix" />
 </p>
 
 ## Contact
