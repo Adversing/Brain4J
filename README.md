@@ -43,8 +43,8 @@ All the documentation can be found on the [GitHub Wiki](https://github.com/brain
 Screenshots taken from the MNIST example.
 
 <p align="center">
-  <img height="400px" src="https://github.com/user-attachments/assets/04dc0bc3-f429-4809-ab10-a187004085c5" alt="Training" />
-  <img height="400px" src="https://github.com/user-attachments/assets/235cca1a-a1c1-4c48-a340-9bda88faa05b"  alt="Confusion Matrix"/>
+  <img height="440px" src="https://github.com/user-attachments/assets/04dc0bc3-f429-4809-ab10-a187004085c5" alt="Training" />
+  <img height="440px" src="https://github.com/user-attachments/assets/235cca1a-a1c1-4c48-a340-9bda88faa05b"  alt="Confusion Matrix"/>
 </p>
 
 ## Contact
