@@ -15,6 +15,8 @@
 Designed with portability and speed in mind, it's optimized for high performance and it's ideal for those looking forward
 to implement machine learning solutions in pure Java.
 
+---
+
 ## Install
 
 Brain4J is available on [JitPack](https://jitpack.io) and [GitHub Packages](https://github.com/brain4j-org/brain4j/packages).
