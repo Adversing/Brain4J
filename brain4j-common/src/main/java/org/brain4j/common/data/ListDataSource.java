@@ -325,6 +325,51 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         return new ListDataSource(copied, false, batchSize);
     }
 
+    public ListDataSource to(Device device) {
+        List<Sample> newSamples = new ArrayList<>(samples.size());
+
+        for (Sample sample : samples) {
+            Tensor[] inputs = sample.inputs();
+            Tensor label = sample.label().to(device);
+
+            for (int i = 0; i < inputs.length; i++) {
+                inputs[i] = inputs[i].to(device);
+            }
+
+            newSamples.add(new Sample(inputs, label));
+        }
+
+        samples.clear();
+        samples.addAll(newSamples);
+
+        List<Tensor[]> newBatchedInputs = new ArrayList<>(batchedInputs.size());
+        List<Tensor> newBatchedLabels = new ArrayList<>(batchedLabels.size());
+
+        for (Tensor[] batchedInput : batchedInputs) {
+            Tensor[] newInputs = new Tensor[batchedInput.length];
+
+            for (int i = 0; i < batchedInput.length; i++) {
+                newInputs[i] = batchedInput[i].to(device);
+            }
+
+            newBatchedInputs.add(newInputs);
+        }
+
+        for (Tensor batchedLabel : batchedLabels) {
+            newBatchedLabels.add(batchedLabel.to(device));
+        }
+
+        batchedLabels.clear();
+        batchedInputs.clear();
+
+        batchedInputs.addAll(newBatchedInputs);
+        batchedLabels.addAll(newBatchedLabels);
+
+        computeBatches();
+
+        return this;
+    }
+
     /**
      * Returns the total number of samples in the data source.
      * @return number of samples

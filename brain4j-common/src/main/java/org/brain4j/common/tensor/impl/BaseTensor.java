@@ -1014,6 +1014,86 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         return forward(new ReshapeOperation(newShape));
     }
 
+    public static Tensor convolve(Tensor input, Tensor kernel) {
+        int[] inShape = input.shape();
+        int[] kShape  = kernel.shape();
+
+        int nDim = inShape.length;
+
+        if (kShape.length != nDim) {
+            throw new IllegalArgumentException("Input e kernel devono avere lo stesso numero di dimensioni");
+        }
+
+        int[] outShape = new int[nDim];
+
+        for (int d = 0; d < nDim; d++) {
+            outShape[d] = inShape[d] - kShape[d] + 1;
+
+            if (outShape[d] <= 0) {
+                throw new IllegalArgumentException(
+                    String.format("Kernel troppo grande nella dimensione %d: %d > %d", d, kShape[d], inShape[d])
+                );
+            }
+        }
+
+        float[] inData  = input.data();
+        float[] kData   = kernel.data();
+
+        int[] inStrides = input.strides();
+        int[] kStrides = kernel.strides();
+
+        Tensor result = Tensors.zeros(outShape);
+        float[] outData = result.data();
+
+        int outSize = outData.length;
+        int kSize = kData.length;
+
+        int[] outStrides = result.strides();
+        int[] kFlatOffsets = new int[kSize];
+
+        for (int flat = 0; flat < kSize; flat++) {
+            int rem = flat, offs = 0;
+
+            for (int d = 0; d < nDim; d++) {
+                int idx = rem / kStrides[d];
+                rem %= kStrides[d];
+                offs += idx * kStrides[d];
+            }
+
+            kFlatOffsets[flat] = offs;
+        }
+
+        int[] outIndex = new int[nDim];
+
+        for (int flatOut = 0; flatOut < outSize; flatOut++) {
+            int rem = flatOut;
+
+            for (int d = 0; d < nDim; d++) {
+                outIndex[d] = rem / outStrides[d];
+                rem %= outStrides[d];
+            }
+
+            float sum = 0.0f;
+
+            for (int flatK = 0; flatK < kSize; flatK++) {
+                int remK = flatK, inOffset = 0;
+
+                for (int d = 0; d < nDim; d++) {
+                    int kI = remK / kStrides[d];
+                    remK %= kStrides[d];
+                    int inI = outIndex[d] + kI;
+                    inOffset += inI * inStrides[d];
+                }
+
+                sum += inData[inOffset] * kData[kFlatOffsets[flatK]];
+            }
+
+            outData[flatOut] = sum;
+        }
+
+        return result;
+    }
+
     @Override
     public Tensor convolve(Tensor kernel, int stride, int padding) {
         // this.shape = [batchSize, channels, height, width]
