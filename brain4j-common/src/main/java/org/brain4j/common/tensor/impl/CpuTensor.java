@@ -38,18 +38,18 @@ public class CpuTensor extends BaseTensor {
 
     public CpuTensor(int[] shape, float... data) {
         if (data.length == 0) {
-            data = new float[computeSize(shape)];
+            data = new float[Tensors.computeSize(shape)];
         }
 
         this.data = data;
         this.shape = shape;
-        this.strides = computeStrides(shape);
+        this.strides = Tensors.computeStrides(shape);
     }
 
     public CpuTensor(int[] shape, int[] strides, float... data) {
 
         if (data.length == 0) {
-            data = new float[computeSize(shape)];
+            data = new float[Tensors.computeSize(shape)];
         }
 
         this.data = data;

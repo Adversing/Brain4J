@@ -300,6 +300,16 @@ public interface Tensor extends Iterable<Float> {
     Tensor matmul(Tensor other);
 
     /**
+     * Performs a convolution between this tensor and the specified kernel tensor.
+     * Convolution is supported for multiple dimensions.
+     *
+     * @param kernel the kernel tensor to use for convolution.
+     * @return a new tensor resulting from the convolution.
+     * @throws IllegalArgumentException if tensor dimensions are not compatible.
+     */
+    Tensor convolve(Tensor kernel);
+
+    /**
      * Performs a layer normalization along this tensor.
      * @param epsilon the epsilon to avoid division by zero
      * @return a new normalized tensor
@@ -559,6 +569,13 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor from the operation
      */
     Tensor matmulGrad(Tensor other);
+
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link ConvolveOperation}
+     * @param other the convolution kernel
+     * @return the resulting tensor from the operation
+     */
+    Tensor convolveGrad(Tensor other);
     
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link TransposeOperation}
@@ -586,19 +603,6 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor with a new shape
      */
     Tensor reshapeGrad(int... newShape);
-
-    /**
-     * Performs a convolution between this tensor and the specified kernel tensor.
-     * Implicitly uses SAME padding and FFT implementation for larger dimensions.
-     * Convolution is supported for both 1D and 2D tensors.
-     *
-     * @param kernel the kernel tensor to use for convolution.
-     * @param stride the stride to use for the convolution
-     * @param padding the padding to use for the convolution
-     * @return a new tensor resulting from the convolution.
-     * @throws IllegalArgumentException if tensor dimensions are not compatible.
-     */
-    Tensor convolve(Tensor kernel, int stride, int padding);
 
     /**
      * Flips the tensor by 180 degrees.

@@ -27,16 +27,6 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     protected float[] data;
     protected boolean transposed;
 
-    protected int computeSize(int[] shape) {
-        int size = 1;
-
-        for (int dim : shape) {
-            size *= dim;
-        }
-
-        return size;
-    }
-
     protected void appendTensor(StringBuilder result, int dim, int[] indices, String format) {
         if (dim == shape.length - 1) {
             result.append("[");
@@ -65,34 +55,6 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
             result.append("]");
         }
-    }
-
-    protected int[] computeNewShape(int[] shape, int dim, boolean keepDim) {
-        int[] newShape = keepDim ? Arrays.copyOf(shape, shape.length) : new int[shape.length - 1];
-
-        if (keepDim) {
-            newShape[dim] = 1;
-        } else {
-            for (int i = 0, j = 0; i < shape.length; i++) {
-                if (i != dim) {
-                    newShape[j++] = shape[i];
-                }
-            }
-        }
-
-        return newShape;
-    }
-
-    protected int[] computeStrides(int[] shape) {
-        int[] strides = new int[shape.length];
-        int stride = 1;
-
-        for (int i = shape.length - 1; i >= 0; i--) {
-            strides[i] = stride;
-            stride *= shape[i];
-        }
-
-        return strides;
     }
 
     protected void sliceCopy(
@@ -164,32 +126,6 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         }
     }
 
-    protected int[] unravelIndex(int linearIndex, int[] shape) {
-        int[] indices = new int[shape.length];
-        for (int i = shape.length - 1; i >= 0; i--) {
-            indices[i] = linearIndex % shape[i];
-            linearIndex /= shape[i];
-        }
-        return indices;
-    }
-
-    protected void validateShape(Tensor a, Tensor b) {
-        int[] shapeA = a.shape();
-        int[] shapeB = b.shape();
-
-        if (shapeA.length != shapeB.length) {
-            throw new IllegalArgumentException("Tensors dimensions must match: " + shapeA.length + " != " + shapeB.length);
-        }
-
-        for (int i = 0; i < shapeA.length; i++) {
-            if (shapeA[i] != shapeB[i]) {
-                throw new IllegalArgumentException(
-                    "Tensors shapes must match: " + Arrays.toString(shapeA) + " != " + Arrays.toString(shapeB)
-                );
-            }
-        }
-    }
-
     @Override
     public int[] shape() {
         return shape;
@@ -220,15 +156,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             }
         }
 
-        int linearIndex = 0;
-
-        for (int i = 0; i < indices.length; i++) {
-            linearIndex += indices[i] * strides[i];
-        }
-
-        return linearIndex;
+        return Tensors.flattenIndex(indices, strides);
     }
-
 
     @Override
     public float get(int... indices) {
@@ -366,6 +295,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor vector() {
         return reshape(elements());
+    }
+
+    @Override
+    public Tensor convolve(Tensor kernel) {
+        return Tensors.convolve(this, kernel);
     }
 
     @Override
@@ -588,7 +522,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             throw new IllegalArgumentException("Dimension " + dim + " out of bounds for tensor of shape " + Arrays.toString(shape));
         }
 
-        int[] newShape = computeNewShape(shape, dim, keepDim);
+        int[] newShape = Tensors.computeNewShape(shape, dim, keepDim);
         int reducedSize = shape[dim];
 
         Tensor result = Tensors.zeros(newShape);
@@ -650,7 +584,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor reshape(int... newShape) {
-        int newSize = computeSize(newShape);
+        int newSize = Tensors.computeSize(newShape);
 
         if (newSize != data().length) {
             throw new IllegalArgumentException(
@@ -977,7 +911,16 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return forward(new MatMulOperation(), other);
     }
-    
+
+    @Override
+    public Tensor convolveGrad(Tensor other) {
+        if (!usesGrad() && !other.usesGrad()) {
+            throw new IllegalArgumentException("At least one of the two tensors should be used with backflow!");
+        }
+
+        return forward(new ConvolveOperation(), other);
+    }
+
     @Override
     public Tensor transposeGrad() {
         if (!usesGrad()) {
@@ -1014,190 +957,6 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         return forward(new ReshapeOperation(newShape));
     }
 
-    public static Tensor convolve(Tensor input, Tensor kernel) {
-        int[] inShape = input.shape();
-        int[] kShape  = kernel.shape();
-
-        int nDim = inShape.length;
-
-        if (kShape.length != nDim) {
-            throw new IllegalArgumentException("Input e kernel devono avere lo stesso numero di dimensioni");
-        }
-
-        int[] outShape = new int[nDim];
-
-        for (int d = 0; d < nDim; d++) {
-            outShape[d] = inShape[d] - kShape[d] + 1;
-
-            if (outShape[d] <= 0) {
-                throw new IllegalArgumentException(
-                    String.format("Kernel troppo grande nella dimensione %d: %d > %d", d, kShape[d], inShape[d])
-                );
-            }
-        }
-
-        float[] inData  = input.data();
-        float[] kData   = kernel.data();
-
-        int[] inStrides = input.strides();
-        int[] kStrides = kernel.strides();
-
-        Tensor result = Tensors.zeros(outShape);
-        float[] outData = result.data();
-
-        int outSize = outData.length;
-        int kSize = kData.length;
-
-        int[] outStrides = result.strides();
-        int[] kFlatOffsets = new int[kSize];
-
-        for (int flat = 0; flat < kSize; flat++) {
-            int rem = flat, offs = 0;
-
-            for (int d = 0; d < nDim; d++) {
-                int idx = rem / kStrides[d];
-                rem %= kStrides[d];
-                offs += idx * kStrides[d];
-            }
-
-            kFlatOffsets[flat] = offs;
-        }
-
-        int[] outIndex = new int[nDim];
-
-        for (int flatOut = 0; flatOut < outSize; flatOut++) {
-            int rem = flatOut;
-
-            for (int d = 0; d < nDim; d++) {
-                outIndex[d] = rem / outStrides[d];
-                rem %= outStrides[d];
-            }
-
-            float sum = 0.0f;
-
-            for (int flatK = 0; flatK < kSize; flatK++) {
-                int remK = flatK, inOffset = 0;
-
-                for (int d = 0; d < nDim; d++) {
-                    int kI = remK / kStrides[d];
-                    remK %= kStrides[d];
-                    int inI = outIndex[d] + kI;
-                    inOffset += inI * inStrides[d];
-                }
-
-                sum += inData[inOffset] * kData[kFlatOffsets[flatK]];
-            }
-
-            outData[flatOut] = sum;
-        }
-
-        return result;
-    }
-
-    @Override
-    public Tensor convolve(Tensor kernel, int stride, int padding) {
-        // this.shape = [batchSize, channels, height, width]
-        // kernel.shape = [filters, channels, kernelHeight, kernelWidth]
-
-        int[] kShape = kernel.shape();
-
-        if (shape.length < 2 || kShape.length < 2) {
-            throw new IllegalArgumentException("Both input and kernel must be at least 2D!");
-        }
-
-        if (shape.length != kShape.length) {
-            throw new IllegalArgumentException("Input and kernel must have the same amount of dimensions!");
-        }
-
-        if (shape.length > 4) {
-            throw new IllegalArgumentException("Input and kernel must not have more than 4 dimensions!");
-        }
-
-        int[] thisShape = new int[] {1, 1, 1, 1};
-        System.arraycopy(shape, 0, thisShape, 4 - shape.length, shape.length);
-
-        int[] kernelShape = new int[] {1, 1, 1, 1};
-        System.arraycopy(kShape, 0, kernelShape, 4 - kShape.length, kShape.length);
-
-        int batchSize = thisShape[0];
-        int inputChannels = thisShape[1];
-        int inputHeight = thisShape[2];
-        int inputWidth = thisShape[3];
-
-        int filters = kernelShape[0];
-        int kernelChannels = kernelShape[1];
-        int kernelHeight = kernelShape[2];
-        int kernelWidth = kernelShape[3];
-
-        if (kernelChannels != inputChannels) {
-            throw new IllegalArgumentException("Kernel channels must match input channels");
-        }
-
-        int outRows = (inputHeight - kernelHeight + 2 * padding) / stride + 1;
-        int outCols = (inputWidth - kernelWidth + 2 * padding) / stride + 1;
-
-        int[] outShape = new int[]{batchSize, filters, outRows, outCols};
-        float[] outData = new float[batchSize * filters * outRows * outCols];
-
-        float[] kData = kernel.data();
-
-        int inBatchStride = inputChannels * inputHeight * inputWidth;
-        int inChannelStride = inputHeight * inputWidth;
-
-        int kFilterStride = kernelChannels * kernelHeight * kernelWidth;
-        int kChannelStride = kernelHeight * kernelWidth;
-
-        int outBatchStride = filters * outRows * outCols;
-        int outFilterStride = outRows * outCols;
-
-        for (int b = 0; b < batchSize; b++) {
-            int bInOffset = b * inBatchStride;
-            int bOutOffset = b * outBatchStride;
-
-            for (int f = 0; f < filters; f++) {
-                int fKOffset = f * kFilterStride;
-                int fOutOffset = bOutOffset + f * outFilterStride;
-
-                for (int orow = 0; orow < outRows; orow++) {
-                    int outRowOffset = fOutOffset + orow * outCols;
-                    int iRowStart = orow * stride - padding;
-
-                    for (int ocol = 0; ocol < outCols; ocol++) {
-                        float sum = 0.0f;
-                        int outIndex = outRowOffset + ocol;
-                        int iColStart = ocol * stride - padding;
-
-                        for (int c = 0; c < inputChannels; c++) {
-                            int cInOffset = bInOffset + c * inChannelStride;
-                            int cKOffset = fKOffset + c * kChannelStride;
-
-                            for (int kr = 0; kr < kernelHeight; kr++) {
-                                int iRow = iRowStart + kr;
-
-                                if (iRow < 0 || iRow >= inputHeight) continue;
-
-                                int rowInOffset = cInOffset + iRow * inputWidth;
-                                int rowKOffset = cKOffset + kr * kernelWidth;
-
-                                for (int kc = 0; kc < kernelWidth; kc++) {
-                                    int iCol = iColStart + kc;
-
-                                    if (iCol < 0 || iCol >= inputWidth) continue;
-
-                                    sum += data[rowInOffset + iCol] * kData[rowKOffset + kc];
-                                }
-                            }
-                        }
-
-                        outData[outIndex] = sum;
-                    }
-                }
-            }
-        }
-
-        return Tensors.create(outShape, outData);
-    }
-
     @Override
     public Tensor flip() {
         Tensor result = Tensors.zeros(shape);
@@ -1206,7 +965,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         int total = elements();
 
         for (int linear = 0; linear < total; linear++) {
-            int[] indices = unravelIndex(linear, shape);
+            int[] indices = Tensors.unravelIndex(linear, shape);
             int[] flipped = indices.clone();
 
             if (dims >= 2) {
@@ -1240,7 +999,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         }
 
         for (int i = 0; i < total; i++) {
-            int[] indices = unravelIndex(i, Arrays.copyOf(dims, rank - 1));
+            int[] indices = Tensors.unravelIndex(i, Arrays.copyOf(dims, rank - 1));
             float[] vector = new float[lastDim];
 
             for (int j = 0; j < lastDim; j++) {

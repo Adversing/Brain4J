@@ -2,10 +2,13 @@ package org.brain4j.core.layer.impl.convolutional;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class ConvLayer extends Layer {
@@ -17,8 +20,9 @@ public class ConvLayer extends Layer {
     private int stride = 1;
     private int padding = 0;
 
-    public ConvLayer(Activations activation, int filters, int kernelWidth, int kernelHeight) {
+    public ConvLayer(Activations activation, int channels, int filters, int kernelWidth, int kernelHeight) {
         this.activation = activation.function();
+        this.channels = channels;
         this.filters = filters;
         this.kernelWidth = kernelWidth;
         this.kernelHeight = kernelHeight;
@@ -26,14 +30,8 @@ public class ConvLayer extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        channels = 1;
-
-        if (previous != null) {
-            channels = previous.size();
-        }
-
-        this.bias = Tensors.zeros(filters);
-        this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth);
+        this.bias = Tensors.zeros(filters).withGrad();
+        this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth).withGrad();
 
         return this;
     }
@@ -47,13 +45,23 @@ public class ConvLayer extends Layer {
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();
-        int[] shape = input.shape();
 
-        if (shape[1] != channels) {
-            throw new IllegalArgumentException("Input channel mismatch: " + shape[1] + " != " + channels);
+        if (!validateInput(input)) {
+            throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
         }
 
-        return input.convolve(weights, stride, padding);
+        // [batch_size, channels, height, width]
+        int batchSize = input.shape()[0];
+        Tensor[] tensors = new Tensor[batchSize];
+
+        for (int i = 0; i < batchSize; i++) {
+            Tensor batch = input.slice(Range.point(i));
+            Tensor result = batch.convolveGrad(weights);
+
+            tensors[i] = result;
+        }
+
+        return Tensors.concatGrad(List.of(tensors), 0);
     }
 
     @Override
@@ -64,7 +72,7 @@ public class ConvLayer extends Layer {
     @Override
     public boolean validateInput(Tensor input) {
         // [batch_size, channels, height, width]
-        return input.shape()[2] == channels;
+        return input.rank() == 4 && input.shape()[1] == channels;
     }
 
     public int filters() {

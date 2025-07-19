@@ -2,6 +2,7 @@ package org.brain4j.common;
 
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.CpuTensor;
+import org.brain4j.common.tensor.parallel.ParallelConvolve;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +30,11 @@ public class Tensors {
     public static Tensor matrix(int rows, int cols, float... data) {
         return create(new int[]{rows, cols}, data);
     }
-    
+
     public static Tensor zeros(int... shape) {
         return new CpuTensor(shape);
     }
-    
+
     public static Tensor ones(int... shape) {
         Tensor result = new CpuTensor(shape);
         Arrays.fill(result.data(), 1);
@@ -44,59 +45,15 @@ public class Tensors {
         Tensor result = Tensors.zeros(shape);
         return result.map(x -> generator.nextFloat());
     }
-    
-    public static Tensor random(int...  shape) {
+
+    public static Tensor random(int... shape) {
         return random(Random.from(new SplittableRandom()), shape);
     }
 
-    /**
-     * Stacks two matrices into a single tensor.
-     * @apiNote The first shape can be different, meanwhile the second shape must be equal for all tensors
-     * @param tensors The input tensors
-     * @return A new tensor containing all the other ones one on top of the other
-     */
-    public static Tensor stack(Tensor... tensors) {
-        if (tensors.length == 0) {
-            throw new IllegalArgumentException("No elements specified!");
-        }
-
-        int dimension = Integer.MAX_VALUE;
-        int elements = 0;
-
-        for (Tensor tensor : tensors) {
-            if (tensor.rank() != 2) {
-                throw new IllegalArgumentException("All tensors must be 2 dimensional!");
-            }
-
-            int[] shape = tensor.shape();
-
-            if (dimension == Integer.MAX_VALUE) {
-                dimension = shape[1];
-            } else if (dimension != shape[1]) {
-                throw new IllegalArgumentException("Not all tensors have the same dimension!");
-            }
-
-            elements += shape[0];
-        }
-
-        Tensor result = Tensors.zeros(elements, dimension);
-        int rowOffset = 0;
-
-        for (Tensor tensor : tensors) {
-            int[] shape = tensor.shape(); // [tokens, dimension]
-
-            for (int row = 0; row < shape[0]; row++) {
-                for (int col = 0; col < shape[1]; col++) {
-                    result.set(tensor.get(row, col), rowOffset + row, col);
-                }
-            }
-
-            rowOffset += shape[0];
-        }
-
-        return result;
+    public static Tensor convolve(Tensor input, Tensor kernel) {
+        return ParallelConvolve.convolve(input, kernel);
     }
-
+    
     public static Tensor mergeTensors(List<Tensor> tensors) {
         if (tensors.isEmpty()) {
             throw new IllegalArgumentException("No tensors provided!");
@@ -186,5 +143,137 @@ public class Tensors {
         }
 
         return base;
+    }
+
+    public static int[] broadcastShapes(int[] a, int[] b) {
+        int len = Math.max(a.length, b.length);
+        int[] result = new int[len];
+        for (int i = 0; i < len; i++) {
+            int ai = i >= len - a.length ? a[i - (len - a.length)] : 1;
+            int bi = i >= len - b.length ? b[i - (len - b.length)] : 1;
+            if (ai != bi && ai != 1 && bi != 1)
+                throw new IllegalArgumentException("Incompatible dimensions for broadcasting");
+            result[i] = Math.max(ai, bi);
+        }
+        return result;
+    }
+
+    public static int[] broadcastIndex(int[] outIdx, int[] outShape, int[] targetShape) {
+        int offset = outShape.length - targetShape.length;
+        int[] result = new int[targetShape.length];
+
+        for (int i = 0; i < targetShape.length; i++) {
+            result[i] = targetShape[i] == 1 ? 0 : outIdx[i + offset];
+        }
+
+        return result;
+    }
+
+    public static int[][] kernelOffsets(int[] shape) {
+        int total = Arrays.stream(shape).reduce(1, (a, b) -> a * b);
+        int[][] offsets = new int[total][shape.length];
+
+        for (int i = 0; i < total; i++) {
+            int[] idx = new int[shape.length];
+            int rem = i;
+
+            for (int d = 0; d < shape.length; d++) {
+                idx[d] = rem % shape[d];
+                rem /= shape[d];
+            }
+
+            offsets[i] = idx;
+        }
+        return offsets;
+    }
+
+    public static int flattenIndex(int[] idx, int[] strides) {
+        int sum = 0;
+
+        for (int i = 0; i < idx.length; i++) {
+            sum += idx[i] * strides[i];
+        }
+
+        return sum;
+    }
+
+    public static int[] concatShapes(int[]... shapes) {
+        int pos = 0;
+        int totalLen = Arrays.stream(shapes).mapToInt(s -> s.length).sum();
+
+        int[] result = new int[totalLen];
+
+        for (int[] s : shapes) {
+            System.arraycopy(s, 0, result, pos, s.length);
+            pos += s.length;
+        }
+
+        return result;
+    }
+
+    public static int[] computeStrides(int[] shape) {
+        int[] strides = new int[shape.length];
+        int prod = 1;
+
+        for (int i = shape.length - 1; i >= 0; i--) {
+            strides[i] = prod;
+            prod *= shape[i];
+        }
+
+        return strides;
+    }
+    
+    public static int[] unravelIndex(int linearIndex, int[] shape) {
+        int[] indices = new int[shape.length];
+
+        for (int i = shape.length - 1; i >= 0; i--) {
+            indices[i] = linearIndex % shape[i];
+            linearIndex /= shape[i];
+        }
+
+        return indices;
+    }
+    
+    public static void validateShape(Tensor a, Tensor b) {
+        int[] shapeA = a.shape();
+        int[] shapeB = b.shape();
+
+        if (shapeA.length != shapeB.length) {
+            throw new IllegalArgumentException("Tensors dimensions must match: " + shapeA.length + " != " + shapeB.length);
+        }
+
+        for (int i = 0; i < shapeA.length; i++) {
+            if (shapeA[i] != shapeB[i]) {
+                throw new IllegalArgumentException(
+                    "Tensors shapes must match: " + Arrays.toString(shapeA) + " != " + Arrays.toString(shapeB)
+                );
+            }
+        }
+    }
+
+    public static int computeSize(int[] shape) {
+        int size = 1;
+
+        for (int dim : shape) {
+            size *= dim;
+        }
+
+        return size;
+    }
+
+    public static int[] computeNewShape(int[] shape, int dim, boolean keepDim) {
+        int[] newShape = keepDim ? Arrays.copyOf(shape, shape.length) : new int[shape.length - 1];
+
+        if (keepDim) {
+            newShape[dim] = 1;
+        } else {
+            for (int i = 0, j = 0; i < shape.length; i++) {
+                if (i != dim) {
+                    newShape[j++] = shape[i];
+                }
+            }
+        }
+
+        return newShape;
     }
 }

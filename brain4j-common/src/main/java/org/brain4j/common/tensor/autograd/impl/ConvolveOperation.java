@@ -7,7 +7,7 @@ public class ConvolveOperation implements Operation {
 
     @Override
     public Tensor compute(Tensor... inputs) {
-        return inputs[0].convolve(inputs[1], 1, 0);
+        return inputs[0].convolve(inputs[1]);
     }
 
     @Override
@@ -16,10 +16,10 @@ public class ConvolveOperation implements Operation {
         Tensor B = inputs[1];
 
         // dL/dA = dL/dC * flip(B)
-        Tensor gradA = gradOutput.convolve(B.flip(), 1, B.shape()[2] - 1);
+        Tensor gradA = gradOutput.convolve(B.flip());
 
         // dL/dB = flip(A) * dL/dC
-        Tensor gradB = A.flip().convolve(gradOutput, 1, 0);
+        Tensor gradB = A.flip().convolve(gradOutput);
 
         return new Tensor[] { gradA, gradB };
     }

@@ -31,9 +31,9 @@ public class GpuTensor extends BaseTensor {
 
     public GpuTensor(Device device, int[] shape, float... data) {
         this.device = device;
-        this.size = data.length == 0 ? computeSize(shape) : data.length;
+        this.size = data.length == 0 ? Tensors.computeSize(shape) : data.length;
         this.shape = shape;
-        this.strides = computeStrides(shape);
+        this.strides = Tensors.computeStrides(shape);
 
         cl_context context = device.context();
 
@@ -55,9 +55,9 @@ public class GpuTensor extends BaseTensor {
 
     public GpuTensor(Device device, int[] shape, cl_mem otherBuffer) {
         this.device = device;
-        this.size = computeSize(shape);
+        this.size = Tensors.computeSize(shape);
         this.shape = shape;
-        this.strides = computeStrides(shape);
+        this.strides = Tensors.computeStrides(shape);
 
         cl_context context = device.context();
 
@@ -328,7 +328,7 @@ public class GpuTensor extends BaseTensor {
             throw new IllegalArgumentException("Dimension " + dim + " out of bounds for tensor of shape " + Arrays.toString(shape));
         }
 
-        int[] newShape = computeNewShape(shape, dim, keepDim);
+        int[] newShape = Tensors.computeNewShape(shape, dim, keepDim);
         int reducedSize = shape[dim];
 
         int outerSize = 1;
