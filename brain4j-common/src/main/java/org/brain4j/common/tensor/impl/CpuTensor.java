@@ -2,6 +2,7 @@ package org.brain4j.common.tensor.impl;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
+import org.brain4j.common.gpu.device.DeviceUtils;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.broadcast.TensorBroadcast;
 import org.brain4j.common.tensor.matmul.MatmulProvider;
@@ -17,16 +18,10 @@ import java.util.concurrent.ForkJoinPool;
 public class CpuTensor extends BaseTensor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CpuTensor.class);
-
-    private static final ForkJoinPool pool;
     private static final MatmulProvider matmulProvider;
 
     static {
-        Optional<Module> module = ModuleLayer.boot().findModule("jdk.incubator.vector");
-
-        pool = ForkJoinPool.commonPool();
-
-        if (module.isPresent()) {
+        if (DeviceUtils.isSimdAvailable()) {
             matmulProvider = new SimdMatmulProvider();
         } else {
             LOGGER.warn("The Vector incubator API is not available. It's recommended to use for better performance.");

@@ -1,9 +1,12 @@
 package org.brain4j.common.tensor.parallel;
 
+import jdk.incubator.vector.FloatVector;
+import jdk.incubator.vector.VectorOperators;
+import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.common.Tensors;
+import org.brain4j.common.gpu.device.DeviceUtils;
 import org.brain4j.common.tensor.Tensor;
 
-import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
@@ -115,17 +118,61 @@ public class ParallelConvolve extends RecursiveAction {
         float[] filterData = filterFlat.data();
         float[] outputData = outputTensor.data();
 
+        if (DeviceUtils.isSimdAvailable()) {
+            simdDotProduct(totalPatches, patchSize, filterData, patchData, outputData);
+        } else {
+            normalDotProduct(totalPatches, patchSize, filterData, patchData, outputData);
+        }
+
+        return outputTensor;
+    }
+
+    private static void normalDotProduct(
+        int totalPatches,
+        int patchSize,
+        float[] filterData,
+        float[] patchData,
+        float[] outputData
+    ) {
+
         for (int p = 0; p < totalPatches; p++) {
             float sum = 0f;
             int rowOffset = p * patchSize;
 
-            for (int k = 0; k < patchSize; k++) {
-                sum += filterData[k] * patchData[rowOffset + k];
+            for (int i = 0; i < patchSize; i++) {
+                sum += filterData[i] * patchData[rowOffset + i];
             }
 
             outputData[p] = sum;
         }
+    }
 
-        return outputTensor;
+    private static void simdDotProduct(
+        int totalPatches,
+        int patchSize,
+        float[] filterData,
+        float[] patchData,
+        float[] outputData
+    ) {
+        VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
+
+        for (int p = 0; p < totalPatches; p++) {
+            float sum = 0f;
+            int rowOffset = p * patchSize;
+
+            int i = 0;
+
+            for (; i < SPECIES.loopBound(patchSize); i += SPECIES.length()) {
+                var v1 = FloatVector.fromArray(SPECIES, filterData, i);
+                var v2 = FloatVector.fromArray(SPECIES, patchData, rowOffset + i);
+                sum += v1.mul(v2).reduceLanes(VectorOperators.ADD);
+            }
+
+            for (; i < patchSize; i++) {
+                sum += filterData[i] * patchData[rowOffset + i];
+            }
+
+            outputData[p] = sum;
+        }
     }
 }

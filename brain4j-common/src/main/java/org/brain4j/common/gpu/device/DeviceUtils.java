@@ -9,6 +9,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.jocl.CL.*;
 
@@ -110,5 +111,9 @@ public class DeviceUtils {
         clBuildProgram(program, 0, null, null, null, null);
 
         return program;
+    }
+
+    public static boolean isSimdAvailable() {
+        return ModuleLayer.boot().findModule("jdk.incubator.vector").isPresent();
     }
 }
