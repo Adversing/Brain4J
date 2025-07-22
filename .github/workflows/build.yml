@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - 3.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle (ShadowJar)
+        run: ./gradlew buildAll
+
+      - name: Archive build core artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-core-artifact
+          path: brain4j-core/build/libs/*.jar
+      
+      - name: Archive build common artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-common-artifact
+          path: brain4j-common/build/libs/*.jar
+      
+      - name: Archive build datasets artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-datasets-artifact
+          path: brain4j-datasets/build/libs/*.jar
