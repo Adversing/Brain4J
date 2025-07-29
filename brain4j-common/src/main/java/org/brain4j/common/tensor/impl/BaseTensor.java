@@ -902,7 +902,16 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return forward(new SubOperation(), other);
     }
-
+    
+    @Override
+    public Tensor sliceGrad(Range... ranges) {
+        if (!usesGrad()) {
+            throw new IllegalArgumentException("This tensor does not use backflow!");
+        }
+        
+        return forward(new SliceOperation(ranges));
+    }
+    
     @Override
     public Tensor matmulGrad(Tensor other) {
         if (!usesGrad() && !other.usesGrad()) {

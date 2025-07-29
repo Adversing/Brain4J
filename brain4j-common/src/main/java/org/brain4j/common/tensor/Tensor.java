@@ -562,6 +562,13 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor from the operation
      */
     Tensor subGrad(Tensor other);
+    
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link SliceOperation}
+     * @param ranges the ranges to slice this tensor on
+     * @return the resulting tensor from the operation
+     */
+    Tensor sliceGrad(Range... ranges);
 
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link MatMulOperation}

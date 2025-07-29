@@ -6,9 +6,9 @@ import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.core.training.optimizer.Optimizer;
+import org.brain4j.core.training.updater.Updater;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -79,13 +79,12 @@ public class RecurrentLayer extends Layer {
         for (int t = 0; t < timesteps; t++) {
             Range[] ranges = new Range[] { Range.all(), Range.point(t), Range.all() };
 
-            Tensor timestepX = projectedInput.slice(ranges).squeeze(1);
+            Tensor timestepX = projectedInput.sliceGrad(ranges).squeeze(1);
             Tensor timestepH = hiddenState.matmulGrad(hiddenWeights);
 
             hiddenState = timestepX.addGrad(timestepH).addGrad(hiddenBias).activateGrad(activation);
             allStates[t] = hiddenState.reshapeGrad(batch, 1, hiddenDimension);
         }
-
 
         // [batch_size, timesteps, hidden_dim]
         Tensor sequence = Tensors.concatGrad(List.of(allStates), 1);
@@ -94,7 +93,25 @@ public class RecurrentLayer extends Layer {
         context.cache().setPreActivation(this, output);
         return output;
     }
-
+    
+    @Override
+    public void backward(Updater updater, Optimizer optimizer, int index) {
+        super.backward(updater, optimizer, index);
+        
+//        System.out.println(inputWeights.grad());
+        Tensor inputWeightsGrad = optimizer.step(inputWeights, inputWeights.grad());
+        Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
+        Tensor hiddenBiasGrad = hiddenBias.grad().sum(0, false);
+        
+        clipper.clip(inputWeightsGrad);
+        clipper.clip(hiddenWeightsGrad);
+        clipper.clip(hiddenBiasGrad);
+        
+        updater.change(inputWeights, inputWeightsGrad);
+        updater.change(hiddenWeights, hiddenWeightsGrad);
+        updater.change(hiddenBias, hiddenBiasGrad);
+    }
+    
     @Override
     public boolean validateInput(Tensor input) {
         return input.rank() == 3;
