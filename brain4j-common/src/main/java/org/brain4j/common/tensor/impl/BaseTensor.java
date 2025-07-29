@@ -293,7 +293,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public Tensor vector() {
+    public Tensor flatten() {
         return reshape(elements());
     }
 
