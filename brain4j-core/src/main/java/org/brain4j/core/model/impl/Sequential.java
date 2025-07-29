@@ -137,8 +137,8 @@ public class Sequential extends Layer implements Model {
             for (int i = 0; i < batchSize; i++) {
                 Range range = new Range(i, i + 1);
 
-                Tensor output = prediction.slice(range).vector();
-                Tensor target = expected.slice(range).vector();
+                Tensor output = prediction.slice(range).flatten();
+                Tensor target = expected.slice(range).flatten();
 
                 int predIndex = output.argmax();
                 int targetIndex = target.argmax();
@@ -169,8 +169,8 @@ public class Sequential extends Layer implements Model {
         for (int i = 0; i < batchSize; i++) {
             Range range = new Range(i, i + 1);
 
-            Tensor output = outputs.slice(range).vector();
-            Tensor target = targets.slice(range).vector();
+            Tensor output = outputs.slice(range).flatten();
+            Tensor target = targets.slice(range).flatten();
 
             double loss = lossFunction.calculate(target, output);
             totalError.updateAndGet(v -> v + loss);

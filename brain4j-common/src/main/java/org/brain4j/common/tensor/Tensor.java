@@ -263,10 +263,10 @@ public interface Tensor extends Iterable<Float> {
     Tensor sqrt();
 
     /**
-     * Reshapes the tensor to a 1D vector.
-     * @return a new tensor
+     * Flattens the tensor in a 1D vector.
+     * @return a new tensor with shape: [elements]
      */
-    Tensor vector();
+    Tensor flatten();
 
     /**
      * Computes the (batched) matrix product of this tensor by another.
