@@ -20,6 +20,13 @@ public class InputLayer extends Layer {
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.width = attribute(layer, "width", 0);
+        this.height = attribute(layer, "height", 0);
+        this.channels = attribute(layer, "channels", 0);
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("width", value(width));
         layerBuilder.putAttrs("height", value(height));

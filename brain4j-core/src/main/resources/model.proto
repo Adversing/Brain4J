@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package brain4j;
+
+option java_package = "org.brain4j.core.importing.proto";
+option java_outer_classname = "ProtoModel";
+
+message Model {
+  uint32 version = 1;
+  string name = 2;
+  string created = 3; // RFC-3339 timestamp
+  repeated Layer layers = 4;
+  repeated Tensor weights = 5;
+}
+
+message Layer {
+  string name = 1; // "dense_0"
+  string type = 2; // "Dense", "LayerNorm"
+  uint32 dimension = 3; // 64, 128, ...
+  map<string, AttrValue> attrs = 4;
+}
+
+message AttrValue {
+  oneof value {
+    int32 int_val = 1;
+    float float_val = 2;
+    bool bool_val = 3;
+    string string_val = 4;
+  }
+}
+
+message Tensor {
+  string name = 1;  // es. "dense_0.weight"
+  repeated int32 shape = 2;  // es. [64,128]
+  repeated float data = 3 [packed=true];
+}

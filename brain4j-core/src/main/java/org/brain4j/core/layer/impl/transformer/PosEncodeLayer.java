@@ -12,6 +12,10 @@ import java.util.List;
 public class PosEncodeLayer extends Layer {
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         return List.of();
     }

@@ -84,15 +84,15 @@ public class DenseLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.dimension = layer.getAttrsOrDefault("dimension", value(0)).getIntVal();
+        String activation = attribute(layer, "activation", "LINEAR");;
+        
+        this.dimension = attribute(layer, "dimension", 0);
+        this.activation = Activations.valueOf(activation).function();
         
         for (ProtoModel.Tensor tensor : tensors) {
-            if (tensor.getName().equals("weight")) {
-                this.weights = parseTensor(tensor);
-            }
-
-            if (tensor.getName().equals("bias")) {
-                this.bias = parseTensor(tensor);
+            switch (tensor.getName()) {
+                case "weight" -> this.weights = deserializeTensor(tensor);
+                case "bias" -> this.bias = deserializeTensor(tensor);
             }
         }
     }
@@ -101,7 +101,10 @@ public class DenseLayer extends Layer {
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("dimension", value(dimension));
         layerBuilder.putAttrs("activation", value(activation.name()));
-        return List.of(serializeTensor("weight", weights), serializeTensor("bias", bias));
+        return List.of(
+            serializeTensor("weight", weights),
+            serializeTensor("bias", bias)
+        );
     }
     
     @Override

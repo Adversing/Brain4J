@@ -29,6 +29,12 @@ public class ActivationLayer extends Layer {
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        String activation = attribute(layer, "activation", "LINEAR");
+        this.activation = Activations.valueOf(activation).function();
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("activation", value(activation.name()));
         return List.of();

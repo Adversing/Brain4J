@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class NormLayer extends Layer {
 
-    private final double epsilon;
+    private double epsilon;
 
     /**
      * Constructs a layer normalization instance with a default epsilon.
@@ -22,7 +22,7 @@ public class NormLayer extends Layer {
     public NormLayer() {
         this(1e-5);
     }
-
+    
     /**
      * Constructs a layer normalization instance with an epsilon.
      * @param epsilon the epsilon used to avoid division by zero
@@ -40,9 +40,24 @@ public class NormLayer extends Layer {
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.epsilon = layer.getAttrsOrDefault("epsilon", value(0.0)).getFloatVal();
+
+        for (ProtoModel.Tensor tensor : tensors) {
+            switch (tensor.getName()) {
+                case "weight" -> weights = deserializeTensor(tensor);
+                case "bias" -> bias = deserializeTensor(tensor);
+            }
+        }
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("epsilon", value(epsilon));
-        return List.of(serializeTensor("weight", weights), serializeTensor("bias", bias));
+        return List.of(
+            serializeTensor("weight", weights),
+            serializeTensor("bias", bias)
+        );
     }
     
     @Override

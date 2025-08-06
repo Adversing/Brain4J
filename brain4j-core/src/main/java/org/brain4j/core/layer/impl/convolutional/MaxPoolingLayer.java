@@ -32,6 +32,14 @@ public class MaxPoolingLayer extends Layer {
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.kernelWidth = attribute(layer, "kernel_width", 0);
+        this.kernelHeight = attribute(layer, "kernel_height", 0);
+        this.stride = attribute(layer, "stride", 0);
+        this.channels = attribute(layer, "channels", 0);
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("kernel_width", value(kernelWidth));
         layerBuilder.putAttrs("kernel_height", value(kernelHeight));

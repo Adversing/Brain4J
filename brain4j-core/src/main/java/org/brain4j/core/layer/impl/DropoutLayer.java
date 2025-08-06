@@ -17,7 +17,7 @@ import java.util.SplittableRandom;
 public class DropoutLayer extends Layer {
 
     private final Random random;
-    private final double dropoutRate;
+    private double dropoutRate;
 
     /**
      * Constructs a new dropout layer instance.
@@ -31,6 +31,11 @@ public class DropoutLayer extends Layer {
 
         this.random = Random.from(new SplittableRandom());
         this.dropoutRate = dropoutRate;
+    }
+    
+    @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.dropoutRate = attribute(layer, "dropout_rate", 0.0);
     }
     
     @Override

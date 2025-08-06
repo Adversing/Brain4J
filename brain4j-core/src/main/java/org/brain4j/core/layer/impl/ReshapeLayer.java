@@ -11,16 +11,26 @@ import java.util.stream.Collectors;
 
 public class ReshapeLayer extends Layer {
 
-    private final int[] shape;
+    private int[] shape;
 
     public ReshapeLayer(int... shape) {
         this.shape = shape;
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        for (ProtoModel.Tensor tensor : tensors) {
+            if (tensor.getName().equals("shape")) {
+                this.shape = tensor.getShapeList().stream().mapToInt(Integer::intValue).toArray();
+            }
+        }
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         ProtoModel.Tensor.Builder tensorBuilder =
             ProtoModel.Tensor.newBuilder()
+                .setName("shape")
                 .addAllShape(Arrays.stream(shape).boxed().collect(Collectors.toList()));
         return List.of(tensorBuilder);
     }

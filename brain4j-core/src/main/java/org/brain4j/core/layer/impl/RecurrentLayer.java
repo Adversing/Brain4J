@@ -21,8 +21,8 @@ import java.util.Random;
  */
 public class RecurrentLayer extends Layer {
 
-    private final int dimension;
-    private final int hiddenDimension;
+    private int dimension;
+    private int hiddenDimension;
     private Tensor inputWeights;
     private Tensor hiddenWeights;
     private Tensor hiddenBias;
@@ -62,6 +62,22 @@ public class RecurrentLayer extends Layer {
         this.hiddenBias.map(x -> weightInit.generate(generator, input, output));
         this.weights.map(x -> weightInit.generate(generator, input, output));
         this.bias.map(x -> weightInit.generate(generator, input, output));
+    }
+    
+    @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.dimension = attribute(layer, "dimension", 0);
+        this.hiddenDimension = attribute(layer, "hidden_dimension", 0);
+        
+        for (ProtoModel.Tensor tensor : tensors) {
+            switch (tensor.getName()) {
+                case "input_weights" -> this.inputWeights = deserializeTensor(tensor);
+                case "hidden_weights" -> this.hiddenWeights = deserializeTensor(tensor);
+                case "hidden_bias" -> this.hiddenBias = deserializeTensor(tensor);
+                case "weights" -> this.weights = deserializeTensor(tensor);
+                case "bias" -> this.bias = deserializeTensor(tensor);
+            }
+        }
     }
     
     @Override

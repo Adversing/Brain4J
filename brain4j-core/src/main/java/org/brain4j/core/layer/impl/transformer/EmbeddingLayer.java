@@ -27,8 +27,8 @@ import java.util.Random;
  */
 public class EmbeddingLayer extends Layer {
 
-    private final int vocabSize;
-    private final int embeddingDim;
+    private int vocabSize;
+    private int embeddingDim;
 
     /**
      * Constructs a new instance of an embedding layer.
@@ -50,6 +50,18 @@ public class EmbeddingLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
+    }
+    
+    @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.vocabSize = attribute(layer, "vocab_size", 0);
+        this.embeddingDim = attribute(layer, "embedding_dim", 0);
+        
+        for (ProtoModel.Tensor tensor : tensors) {
+            if (tensor.getName().equals("weight")) {
+                this.weights = deserializeTensor(tensor);
+            }
+        }
     }
     
     @Override

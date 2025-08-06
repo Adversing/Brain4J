@@ -98,6 +98,12 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.numHeads = attribute(layer, "num_heads", 0);
+        this.embeddingDim = attribute(layer, "embedding_dim", 0);
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("num_heads", value(numHeads));
         layerBuilder.putAttrs("embedding_dim", value(embeddingDim));

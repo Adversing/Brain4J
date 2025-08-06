@@ -44,13 +44,32 @@ public class ConvLayer extends Layer {
     }
     
     @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.filters = attribute(layer, "filters", 0);
+        this.kernelWidth = attribute(layer, "kernel_width", 0);
+        this.kernelHeight = attribute(layer, "kernel_height", 0);
+        this.stride = attribute(layer, "stride", 0);
+        this.padding = attribute(layer, "padding", 0);
+        
+        for (ProtoModel.Tensor tensor : tensors) {
+            switch (tensor.getName()) {
+                case "weight" -> this.weights = deserializeTensor(tensor);
+                case "bias" -> this.bias = deserializeTensor(tensor);
+            }
+        }
+    }
+    
+    @Override
     public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
         layerBuilder.putAttrs("filters", value(filters));
-        layerBuilder.putAttrs("kernelWidth", value(kernelWidth));
-        layerBuilder.putAttrs("kernelHeight", value(kernelHeight));
+        layerBuilder.putAttrs("kernel_width", value(kernelWidth));
+        layerBuilder.putAttrs("kernel_height", value(kernelHeight));
         layerBuilder.putAttrs("stride", value(stride));
         layerBuilder.putAttrs("padding", value(padding));
-        return List.of(serializeTensor("weight", weights), serializeTensor("bias", bias));
+        return List.of(
+            serializeTensor("weight", weights),
+            serializeTensor("bias", bias)
+        );
     }
     
     @Override

@@ -14,8 +14,8 @@ import java.util.Random;
 
 public class OutVocabLayer extends Layer {
 
-    private final int vocabSize;
-    private final int dimension;
+    private int vocabSize;
+    private int dimension;
 
     public OutVocabLayer(int vocabSize, int dimension, double temperature) {
         this.vocabSize = vocabSize;
@@ -32,6 +32,18 @@ public class OutVocabLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
+    }
+    
+    @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.vocabSize = attribute(layer, "vocab_size", 0);
+        this.dimension = attribute(layer, "dimension", 0);
+        
+        for (ProtoModel.Tensor tensor : tensors) {
+            if (tensor.getName().equals("weight")) {
+                this.weights = deserializeTensor(tensor);
+            }
+        }
     }
     
     @Override

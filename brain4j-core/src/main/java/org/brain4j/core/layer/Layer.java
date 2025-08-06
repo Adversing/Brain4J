@@ -9,6 +9,7 @@ import org.brain4j.core.activation.impl.LinearActivation;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.HardClipper;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializationInstance;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  * and holds its own parameters such as weights, biases, activation function and gradient clipper.
  * @author xEcho1337
  */
-public abstract class Layer {
+public abstract class Layer implements SerializationInstance {
 
     protected Activation activation = new LinearActivation();
     protected GradientClipper clipper = new HardClipper(5);
@@ -39,6 +40,7 @@ public abstract class Layer {
     }
     
     public abstract void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer);
+    
     public abstract List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder);
     
     /**
@@ -238,57 +240,4 @@ public abstract class Layer {
         return weights.elements();
     }
     
-    protected Tensor parseTensor(ProtoModel.Tensor tensor) {
-        List<Float> rawData = tensor.getDataList();
-        
-        int[] shape = tensor.getShapeList().stream().mapToInt(Integer::intValue).toArray();
-        float[] data = new float[rawData.size()];
-        
-        for (int i = 0; i < data.length; i++) {
-            data[i] = rawData.get(i);
-        }
-        
-        return Tensors.create(shape, data);
-    }
-    
-    protected ProtoModel.Tensor.Builder serializeTensor(String name, Tensor tensor) {
-        List<Integer> shape = Arrays.stream(tensor.shape()).boxed().collect(Collectors.toList());
-        List<Float> data = new ArrayList<>();
-        
-        for (float val : tensor.data()) {
-            data.add(val);
-        }
-        
-        return ProtoModel.Tensor.newBuilder()
-            .setName(name)
-            .addAllShape(shape)
-            .addAllData(data);
-    }
-    
-    protected ProtoModel.AttrValue value(float field) {
-        return ProtoModel.AttrValue
-            .newBuilder()
-            .setFloatVal(field)
-            .build();
-    }
-    protected ProtoModel.AttrValue value(double field) {
-        return ProtoModel.AttrValue
-            .newBuilder()
-            .setFloatVal((float) field)
-            .build();
-    }
-    
-    protected ProtoModel.AttrValue value(String field) {
-        return ProtoModel.AttrValue
-            .newBuilder()
-            .setStringVal(field)
-            .build();
-    }
-    
-    protected ProtoModel.AttrValue value(int field) {
-        return ProtoModel.AttrValue
-            .newBuilder()
-            .setIntVal(field)
-            .build();
-    }
 }
