@@ -3,24 +3,24 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.impl.SoftmaxActivation;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class OutVocabLayer extends Layer {
 
     private final int vocabSize;
     private final int dimension;
-    private final double temperature;
 
     public OutVocabLayer(int vocabSize, int dimension, double temperature) {
         this.vocabSize = vocabSize;
         this.dimension = dimension;
-        this.temperature = Math.max(1e-15, temperature);
-        this.activation = new SoftmaxActivation(temperature);
+        this.activation = new SoftmaxActivation(Math.max(1e-15, temperature));
     }
 
     @Override
@@ -33,7 +33,14 @@ public class OutVocabLayer extends Layer {
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("vocab_size", value(vocabSize));
+        layerBuilder.putAttrs("dimension", value(dimension));
+        return List.of(serializeTensor("weight", weights));
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

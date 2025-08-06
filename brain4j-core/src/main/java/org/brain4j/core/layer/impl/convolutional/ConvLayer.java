@@ -4,6 +4,7 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 
@@ -27,7 +28,7 @@ public class ConvLayer extends Layer {
         this.kernelWidth = kernelWidth;
         this.kernelHeight = kernelHeight;
     }
-
+    
     @Override
     public Layer connect(Layer previous) {
         this.bias = Tensors.zeros(filters).withGrad();
@@ -41,7 +42,17 @@ public class ConvLayer extends Layer {
         this.bias.map(x -> weightInit.generate(generator, input, output));
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("filters", value(filters));
+        layerBuilder.putAttrs("kernelWidth", value(kernelWidth));
+        layerBuilder.putAttrs("kernelHeight", value(kernelHeight));
+        layerBuilder.putAttrs("stride", value(stride));
+        layerBuilder.putAttrs("padding", value(padding));
+        return List.of(serializeTensor("weight", weights), serializeTensor("bias", bias));
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

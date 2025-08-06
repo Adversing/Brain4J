@@ -9,6 +9,7 @@ import org.brain4j.core.importing.ModelLoader;
 import org.brain4j.core.importing.onnx.Onnx;
 import org.brain4j.core.model.Model;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
@@ -61,6 +62,11 @@ public class OnnxLoader implements ModelLoader {
         model.outputs(outputs);
 
         return model.compile();
+    }
+    
+    @Override
+    public void serialize(Model model, File file) {
+        throw new UnsupportedOperationException();
     }
     
     private Tensor convertTensor(Onnx.TensorProto tensor) {

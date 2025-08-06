@@ -2,11 +2,13 @@ package org.brain4j.core.layer.impl.transformer;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -49,7 +51,14 @@ public class EmbeddingLayer extends Layer {
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("vocab_size", value(vocabSize));
+        layerBuilder.putAttrs("embedding_dim", value(embeddingDim));
+        return List.of(serializeTensor("weight", weights));
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

@@ -5,6 +5,8 @@ import org.brain4j.common.tensor.autograd.impl.*;
 import org.brain4j.core.activation.impl.*;
 import org.brain4j.core.model.Model;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,4 +33,6 @@ public interface ModelLoader {
     };
     
     Model deserialize(byte[] bytes) throws Exception;
+    
+    void serialize(Model model, File file) throws IOException;
 }

@@ -4,11 +4,13 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -31,7 +33,7 @@ import java.util.Random;
  */
 public class DenseLayer extends Layer {
 
-    private final int dimension;
+    private int dimension;
 
     /**
      * Constructs a new instance of a dense layer with a linear activation.
@@ -79,7 +81,29 @@ public class DenseLayer extends Layer {
         this.weights.map(x -> weightInit.generate(generator, input, output));
         this.bias.map(x -> weightInit.generate(generator, input, output));
     }
+    
+    @Override
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+        this.dimension = layer.getAttrsOrDefault("dimension", value(0)).getIntVal();
+        
+        for (ProtoModel.Tensor tensor : tensors) {
+            if (tensor.getName().equals("weight")) {
+                this.weights = parseTensor(tensor);
+            }
 
+            if (tensor.getName().equals("bias")) {
+                this.bias = parseTensor(tensor);
+            }
+        }
+    }
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("dimension", value(dimension));
+        layerBuilder.putAttrs("activation", value(activation.name()));
+        return List.of(serializeTensor("weight", weights), serializeTensor("bias", bias));
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

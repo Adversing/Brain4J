@@ -2,8 +2,11 @@ package org.brain4j.core.layer.impl.convolutional;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+
+import java.util.List;
 
 public class MaxPoolingLayer extends Layer {
 
@@ -27,7 +30,16 @@ public class MaxPoolingLayer extends Layer {
         this.channels = previous.size();
         return this;
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("kernel_width", value(kernelWidth));
+        layerBuilder.putAttrs("kernel_height", value(kernelHeight));
+        layerBuilder.putAttrs("stride", value(stride));
+        layerBuilder.putAttrs("channels", value(channels));
+        return List.of();
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input(); // [batch_size, channels, height, width]

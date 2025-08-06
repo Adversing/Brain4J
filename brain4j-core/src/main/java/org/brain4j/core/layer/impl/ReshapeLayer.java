@@ -1,8 +1,13 @@
 package org.brain4j.core.layer.impl;
 
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReshapeLayer extends Layer {
 
@@ -11,7 +16,15 @@ public class ReshapeLayer extends Layer {
     public ReshapeLayer(int... shape) {
         this.shape = shape;
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        ProtoModel.Tensor.Builder tensorBuilder =
+            ProtoModel.Tensor.newBuilder()
+                .addAllShape(Arrays.stream(shape).boxed().collect(Collectors.toList()));
+        return List.of(tensorBuilder);
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

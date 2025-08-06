@@ -4,6 +4,7 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -62,7 +63,21 @@ public class RecurrentLayer extends Layer {
         this.weights.map(x -> weightInit.generate(generator, input, output));
         this.bias.map(x -> weightInit.generate(generator, input, output));
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("dimension", value(dimension));
+        layerBuilder.putAttrs("hidden_dimension", value(hiddenDimension));
+        layerBuilder.putAttrs("activation", value(activation.name()));
+        return List.of(
+            serializeTensor("input_weight", inputWeights),
+            serializeTensor("hidden_weight", hiddenWeights),
+            serializeTensor("hidden_bias", hiddenBias),
+            serializeTensor("weights", weights),
+            serializeTensor("bias", bias)
+        );
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         // [batch_size, timesteps, dimension]

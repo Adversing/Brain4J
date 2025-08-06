@@ -1,5 +1,6 @@
 package org.brain4j.core.layer;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
@@ -7,12 +8,17 @@ import org.brain4j.common.weightsinit.WeightInitialization;
 import org.brain4j.core.activation.impl.LinearActivation;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.HardClipper;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Abstract base class for all neural network layers.
@@ -28,7 +34,13 @@ public abstract class Layer {
 
     protected Tensor weights;
     protected Tensor bias;
-
+    
+    public Layer() {
+    }
+    
+    public abstract void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer);
+    public abstract List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder);
+    
     /**
      * Performs a forward pass through this layer.
      * @param context the forward context
@@ -224,5 +236,59 @@ public abstract class Layer {
         if (weights == null) return 0;
 
         return weights.elements();
+    }
+    
+    protected Tensor parseTensor(ProtoModel.Tensor tensor) {
+        List<Float> rawData = tensor.getDataList();
+        
+        int[] shape = tensor.getShapeList().stream().mapToInt(Integer::intValue).toArray();
+        float[] data = new float[rawData.size()];
+        
+        for (int i = 0; i < data.length; i++) {
+            data[i] = rawData.get(i);
+        }
+        
+        return Tensors.create(shape, data);
+    }
+    
+    protected ProtoModel.Tensor.Builder serializeTensor(String name, Tensor tensor) {
+        List<Integer> shape = Arrays.stream(tensor.shape()).boxed().collect(Collectors.toList());
+        List<Float> data = new ArrayList<>();
+        
+        for (float val : tensor.data()) {
+            data.add(val);
+        }
+        
+        return ProtoModel.Tensor.newBuilder()
+            .setName(name)
+            .addAllShape(shape)
+            .addAllData(data);
+    }
+    
+    protected ProtoModel.AttrValue value(float field) {
+        return ProtoModel.AttrValue
+            .newBuilder()
+            .setFloatVal(field)
+            .build();
+    }
+    protected ProtoModel.AttrValue value(double field) {
+        return ProtoModel.AttrValue
+            .newBuilder()
+            .setFloatVal((float) field)
+            .build();
+    }
+    
+    protected ProtoModel.AttrValue value(String field) {
+        return ProtoModel.AttrValue
+            .newBuilder()
+            .setStringVal(field)
+            .build();
+    }
+    
+    protected ProtoModel.AttrValue value(int field) {
+        return ProtoModel.AttrValue
+            .newBuilder()
+            .setIntVal(field)
+            .build();
     }
 }

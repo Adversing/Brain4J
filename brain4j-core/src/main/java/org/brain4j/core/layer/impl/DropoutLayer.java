@@ -1,9 +1,11 @@
 package org.brain4j.core.layer.impl;
 
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 
+import java.util.List;
 import java.util.Random;
 import java.util.SplittableRandom;
 
@@ -30,7 +32,13 @@ public class DropoutLayer extends Layer {
         this.random = Random.from(new SplittableRandom());
         this.dropoutRate = dropoutRate;
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("dropout_rate", value(dropoutRate));
+        return List.of();
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

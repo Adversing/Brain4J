@@ -3,6 +3,7 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
@@ -15,6 +16,7 @@ import org.brain4j.core.transformer.attention.MultiHeadAttention;
 import org.brain4j.core.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -94,7 +96,14 @@ public class TransformerEncoder extends Layer {
         this.downProjection.toDevice(device);
         this.attention.to(device);
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("num_heads", value(numHeads));
+        layerBuilder.putAttrs("embedding_dim", value(embeddingDim));
+        return List.of();
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

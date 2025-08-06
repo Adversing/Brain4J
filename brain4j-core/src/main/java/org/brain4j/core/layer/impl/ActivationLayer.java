@@ -3,9 +3,12 @@ package org.brain4j.core.layer.impl;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
+
+import java.util.List;
 
 public class ActivationLayer extends Layer {
 
@@ -24,7 +27,13 @@ public class ActivationLayer extends Layer {
         this.dimension = previous.size();
         return this;
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("activation", value(activation.name()));
+        return List.of();
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();

@@ -2,8 +2,11 @@ package org.brain4j.core.layer.impl;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+
+import java.util.List;
 
 /**
  * Implementation of a layer normalization layer, it's used to normalize inputs and improve training.
@@ -35,7 +38,13 @@ public class NormLayer extends Layer {
 
         return this;
     }
-
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        layerBuilder.putAttrs("epsilon", value(epsilon));
+        return List.of(serializeTensor("weight", weights), serializeTensor("bias", bias));
+    }
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor input = context.input();
