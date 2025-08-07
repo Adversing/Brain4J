@@ -102,13 +102,9 @@ public class DenseLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("dimension", value(dimension));
-        layerBuilder.putAttrs("activation", value(activation.name()));
-        return List.of(
-            serializeTensor("weight", weights),
-            serializeTensor("bias", bias)
-        );
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("dimension", value(dimension));
+        builder.putAttrs("activation", value(activation.name()));
     }
     
     @Override

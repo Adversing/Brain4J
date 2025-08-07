@@ -64,16 +64,12 @@ public class ConvLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("filters", value(filters));
-        layerBuilder.putAttrs("kernel_width", value(kernelWidth));
-        layerBuilder.putAttrs("kernel_height", value(kernelHeight));
-        layerBuilder.putAttrs("stride", value(stride));
-        layerBuilder.putAttrs("padding", value(padding));
-        return List.of(
-            serializeTensor("weight", weights),
-            serializeTensor("bias", bias)
-        );
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("filters", value(filters));
+        builder.putAttrs("kernel_width", value(kernelWidth));
+        builder.putAttrs("kernel_height", value(kernelHeight));
+        builder.putAttrs("stride", value(stride));
+        builder.putAttrs("padding", value(padding));
     }
     
     @Override

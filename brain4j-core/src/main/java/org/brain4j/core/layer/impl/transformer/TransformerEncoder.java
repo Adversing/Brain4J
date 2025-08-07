@@ -107,10 +107,9 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("num_heads", value(numHeads));
-        layerBuilder.putAttrs("embedding_dim", value(embeddingDim));
-        return List.of();
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("num_heads", value(numHeads));
+        builder.putAttrs("embedding_dim", value(embeddingDim));
     }
     
     @Override
@@ -167,5 +166,44 @@ public class TransformerEncoder extends Layer {
             + this.downProjection.totalWeights()
             + this.normalizer.totalWeights()
             + this.attention.totalWeights();
+    }
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> weightsList() {
+        return List.of();
+    }
+    
+    public List<Layer> subLayers() {
+        return List.of(
+            upProjection, downProjection, normalizer, dropout
+        );
+    }
+    
+    public DenseLayer upProjection() {
+        return upProjection;
+    }
+    
+    public DenseLayer downProjection() {
+        return downProjection;
+    }
+    
+    public NormLayer normalizer() {
+        return normalizer;
+    }
+    
+    public DropoutLayer dropout() {
+        return dropout;
+    }
+    
+    public MultiHeadAttention attention() {
+        return attention;
+    }
+    
+    public int numHeads() {
+        return numHeads;
+    }
+    
+    public int embeddingDim() {
+        return embeddingDim;
     }
 }

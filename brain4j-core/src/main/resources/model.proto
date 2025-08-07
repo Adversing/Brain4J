@@ -17,8 +17,33 @@ message Model {
 message Layer {
   string name = 1; // "dense_0"
   string type = 2; // "Dense", "LayerNorm"
-  uint32 dimension = 3; // 64, 128, ...
+  map<string, AttrValue> attrs = 3;
+  oneof layer_kind {
+    BasicLayer basic = 4;
+    Transformer transformer = 5;
+  }
+}
+
+message AttentionHead {
+  Tensor q_weight = 1;
+  Tensor k_weight = 2;
+  Tensor v_weight = 3;
   map<string, AttrValue> attrs = 4;
+}
+
+message MultiHeadAttention {
+  repeated AttentionHead heads = 1;
+  map<string, AttrValue> attrs = 2;
+  Tensor out_weight = 3;
+}
+
+message BasicLayer {
+  uint32 dimension = 1; // 64, 128, ...
+}
+
+message Transformer {
+  repeated Layer sub_layers = 1;
+  MultiHeadAttention attention = 2;
 }
 
 message AttrValue {
@@ -31,7 +56,7 @@ message AttrValue {
 }
 
 message Tensor {
-  string name = 1;  // es. "dense_0.weight"
+  string name = 1;  // es. "denselayer_0.weight"
   repeated int32 shape = 2;  // es. [64,128]
   repeated float data = 3 [packed=true];
 }

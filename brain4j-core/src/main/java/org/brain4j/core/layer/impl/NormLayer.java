@@ -53,12 +53,8 @@ public class NormLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("epsilon", value(epsilon));
-        return List.of(
-            serializeTensor("weight", weights),
-            serializeTensor("bias", bias)
-        );
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("epsilon", value(epsilon));
     }
     
     @Override

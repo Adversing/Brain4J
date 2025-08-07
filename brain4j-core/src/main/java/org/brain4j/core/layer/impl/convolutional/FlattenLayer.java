@@ -24,9 +24,8 @@ public class FlattenLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("dimension", value(dimension));
-        return List.of();
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("dimension", value(dimension));
     }
     
     @Override

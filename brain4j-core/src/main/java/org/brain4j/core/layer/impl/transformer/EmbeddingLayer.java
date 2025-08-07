@@ -68,10 +68,16 @@ public class EmbeddingLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("vocab_size", value(vocabSize));
-        layerBuilder.putAttrs("embedding_dim", value(embeddingDim));
-        return List.of(serializeTensor("weight", weights));
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("vocab_size", value(vocabSize));
+        builder.putAttrs("embedding_dim", value(embeddingDim));
+    }
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> weightsList() {
+        return List.of(
+            serializeTensor("weight", weights)
+        );
     }
     
     @Override

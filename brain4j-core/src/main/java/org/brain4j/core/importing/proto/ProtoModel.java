@@ -7,4861 +7,9377 @@ package org.brain4j.core.importing.proto;
 
 @com.google.protobuf.Generated
 public final class ProtoModel {
-    private ProtoModel() {}
-    static {
-        com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-            com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-            /* major= */ 4,
-            /* minor= */ 31,
-            /* patch= */ 1,
-            /* suffix= */ "",
-            ProtoModel.class.getName());
-    }
-    public static void registerAllExtensions(
-        com.google.protobuf.ExtensionRegistryLite registry) {
-    }
-    
-    public static void registerAllExtensions(
-        com.google.protobuf.ExtensionRegistry registry) {
-        registerAllExtensions(
-            (com.google.protobuf.ExtensionRegistryLite) registry);
-    }
-    public interface ModelOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:brain4j.Model)
-        com.google.protobuf.MessageOrBuilder {
-        
-        /**
-         * <code>uint32 version = 1;</code>
-         * @return The version.
-         */
-        int getVersion();
-        
-        /**
-         * <code>string name = 2;</code>
-         * @return The name.
-         */
-        java.lang.String getName();
-        /**
-         * <code>string name = 2;</code>
-         * @return The bytes for name.
-         */
-        com.google.protobuf.ByteString
+  private ProtoModel() {}
+  static {
+    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 31,
+      /* patch= */ 1,
+      /* suffix= */ "",
+      ProtoModel.class.getName());
+  }
+  public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
+  }
+  public interface ModelOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.Model)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>uint32 version = 1;</code>
+     * @return The version.
+     */
+    int getVersion();
+
+    /**
+     * <code>string name = 2;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 2;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
         getNameBytes();
-        
-        /**
-         * <pre>
-         * RFC-3339 timestamp
-         * </pre>
-         *
-         * <code>string created = 3;</code>
-         * @return The created.
-         */
-        java.lang.String getCreated();
-        /**
-         * <pre>
-         * RFC-3339 timestamp
-         * </pre>
-         *
-         * <code>string created = 3;</code>
-         * @return The bytes for created.
-         */
-        com.google.protobuf.ByteString
+
+    /**
+     * <pre>
+     * RFC-3339 timestamp
+     * </pre>
+     *
+     * <code>string created = 3;</code>
+     * @return The created.
+     */
+    java.lang.String getCreated();
+    /**
+     * <pre>
+     * RFC-3339 timestamp
+     * </pre>
+     *
+     * <code>string created = 3;</code>
+     * @return The bytes for created.
+     */
+    com.google.protobuf.ByteString
         getCreatedBytes();
-        
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer>
+
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> 
         getLayersList();
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        org.brain4j.core.importing.proto.ProtoModel.Layer getLayers(int index);
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        int getLayersCount();
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Layer getLayers(int index);
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    int getLayersCount();
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
         getLayersOrBuilderList();
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getLayersOrBuilder(
-            int index);
-        
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor>
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getLayersOrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> 
         getWeightsList();
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        org.brain4j.core.importing.proto.ProtoModel.Tensor getWeights(int index);
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        int getWeightsCount();
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Tensor getWeights(int index);
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    int getWeightsCount();
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
         getWeightsOrBuilderList();
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
-            int index);
-        
-        /**
-         * <code>string loss_function = 6;</code>
-         * @return The lossFunction.
-         */
-        java.lang.String getLossFunction();
-        /**
-         * <code>string loss_function = 6;</code>
-         * @return The bytes for lossFunction.
-         */
-        com.google.protobuf.ByteString
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
+        int index);
+
+    /**
+     * <code>string loss_function = 6;</code>
+     * @return The lossFunction.
+     */
+    java.lang.String getLossFunction();
+    /**
+     * <code>string loss_function = 6;</code>
+     * @return The bytes for lossFunction.
+     */
+    com.google.protobuf.ByteString
         getLossFunctionBytes();
+  }
+  /**
+   * Protobuf type {@code brain4j.Model}
+   */
+  public static final class Model extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.Model)
+      ModelOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        Model.class.getName());
+    }
+    // Use Model.newBuilder() to construct.
+    private Model(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Model() {
+      name_ = "";
+      created_ = "";
+      layers_ = java.util.Collections.emptyList();
+      weights_ = java.util.Collections.emptyList();
+      lossFunction_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.Model.class, org.brain4j.core.importing.proto.ProtoModel.Model.Builder.class);
+    }
+
+    public static final int VERSION_FIELD_NUMBER = 1;
+    private int version_ = 0;
+    /**
+     * <code>uint32 version = 1;</code>
+     * @return The version.
+     */
+    @java.lang.Override
+    public int getVersion() {
+      return version_;
+    }
+
+    public static final int NAME_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
+    /**
+     * <code>string name = 2;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 2;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CREATED_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object created_ = "";
+    /**
+     * <pre>
+     * RFC-3339 timestamp
+     * </pre>
+     *
+     * <code>string created = 3;</code>
+     * @return The created.
+     */
+    @java.lang.Override
+    public java.lang.String getCreated() {
+      java.lang.Object ref = created_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        created_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * RFC-3339 timestamp
+     * </pre>
+     *
+     * <code>string created = 3;</code>
+     * @return The bytes for created.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getCreatedBytes() {
+      java.lang.Object ref = created_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        created_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LAYERS_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> layers_;
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    @java.lang.Override
+    public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> getLayersList() {
+      return layers_;
+    }
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+        getLayersOrBuilderList() {
+      return layers_;
+    }
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    @java.lang.Override
+    public int getLayersCount() {
+      return layers_.size();
+    }
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Layer getLayers(int index) {
+      return layers_.get(index);
+    }
+    /**
+     * <code>repeated .brain4j.Layer layers = 4;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getLayersOrBuilder(
+        int index) {
+      return layers_.get(index);
+    }
+
+    public static final int WEIGHTS_FIELD_NUMBER = 5;
+    @SuppressWarnings("serial")
+    private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> weights_;
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    @java.lang.Override
+    public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> getWeightsList() {
+      return weights_;
+    }
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+        getWeightsOrBuilderList() {
+      return weights_;
+    }
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    @java.lang.Override
+    public int getWeightsCount() {
+      return weights_.size();
+    }
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Tensor getWeights(int index) {
+      return weights_.get(index);
+    }
+    /**
+     * <code>repeated .brain4j.Tensor weights = 5;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
+        int index) {
+      return weights_.get(index);
+    }
+
+    public static final int LOSS_FUNCTION_FIELD_NUMBER = 6;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object lossFunction_ = "";
+    /**
+     * <code>string loss_function = 6;</code>
+     * @return The lossFunction.
+     */
+    @java.lang.Override
+    public java.lang.String getLossFunction() {
+      java.lang.Object ref = lossFunction_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lossFunction_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string loss_function = 6;</code>
+     * @return The bytes for lossFunction.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLossFunctionBytes() {
+      java.lang.Object ref = lossFunction_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        lossFunction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (version_ != 0) {
+        output.writeUInt32(1, version_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(created_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 3, created_);
+      }
+      for (int i = 0; i < layers_.size(); i++) {
+        output.writeMessage(4, layers_.get(i));
+      }
+      for (int i = 0; i < weights_.size(); i++) {
+        output.writeMessage(5, weights_.get(i));
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lossFunction_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 6, lossFunction_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (version_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1, version_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(created_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(3, created_);
+      }
+      for (int i = 0; i < layers_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, layers_.get(i));
+      }
+      for (int i = 0; i < weights_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, weights_.get(i));
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lossFunction_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(6, lossFunction_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Model)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.Model other = (org.brain4j.core.importing.proto.ProtoModel.Model) obj;
+
+      if (getVersion()
+          != other.getVersion()) return false;
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getCreated()
+          .equals(other.getCreated())) return false;
+      if (!getLayersList()
+          .equals(other.getLayersList())) return false;
+      if (!getWeightsList()
+          .equals(other.getWeightsList())) return false;
+      if (!getLossFunction()
+          .equals(other.getLossFunction())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getVersion();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + CREATED_FIELD_NUMBER;
+      hash = (53 * hash) + getCreated().hashCode();
+      if (getLayersCount() > 0) {
+        hash = (37 * hash) + LAYERS_FIELD_NUMBER;
+        hash = (53 * hash) + getLayersList().hashCode();
+      }
+      if (getWeightsCount() > 0) {
+        hash = (37 * hash) + WEIGHTS_FIELD_NUMBER;
+        hash = (53 * hash) + getWeightsList().hashCode();
+      }
+      hash = (37 * hash) + LOSS_FUNCTION_FIELD_NUMBER;
+      hash = (53 * hash) + getLossFunction().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Model prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
     }
     /**
      * Protobuf type {@code brain4j.Model}
      */
-    public static final class Model extends
-        com.google.protobuf.GeneratedMessage implements
-        // @@protoc_insertion_point(message_implements:brain4j.Model)
-        ModelOrBuilder {
-        private static final long serialVersionUID = 0L;
-        static {
-            com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-                com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-                /* major= */ 4,
-                /* minor= */ 31,
-                /* patch= */ 1,
-                /* suffix= */ "",
-                Model.class.getName());
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.Model)
+        org.brain4j.core.importing.proto.ProtoModel.ModelOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.Model.class, org.brain4j.core.importing.proto.ProtoModel.Model.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.Model.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        version_ = 0;
+        name_ = "";
+        created_ = "";
+        if (layersBuilder_ == null) {
+          layers_ = java.util.Collections.emptyList();
+        } else {
+          layers_ = null;
+          layersBuilder_.clear();
         }
-        // Use Model.newBuilder() to construct.
-        private Model(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-            super(builder);
+        bitField0_ = (bitField0_ & ~0x00000008);
+        if (weightsBuilder_ == null) {
+          weights_ = java.util.Collections.emptyList();
+        } else {
+          weights_ = null;
+          weightsBuilder_.clear();
         }
-        private Model() {
-            name_ = "";
-            created_ = "";
-            layers_ = java.util.Collections.emptyList();
-            weights_ = java.util.Collections.emptyList();
-            lossFunction_ = "";
+        bitField0_ = (bitField0_ & ~0x00000010);
+        lossFunction_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Model getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.Model.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Model build() {
+        org.brain4j.core.importing.proto.ProtoModel.Model result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
         }
-        
-        public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_descriptor;
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Model buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.Model result = new org.brain4j.core.importing.proto.ProtoModel.Model(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(org.brain4j.core.importing.proto.ProtoModel.Model result) {
+        if (layersBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0)) {
+            layers_ = java.util.Collections.unmodifiableList(layers_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.layers_ = layers_;
+        } else {
+          result.layers_ = layersBuilder_.build();
         }
-        
-        @java.lang.Override
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_fieldAccessorTable
-                .ensureFieldAccessorsInitialized(
-                    org.brain4j.core.importing.proto.ProtoModel.Model.class, org.brain4j.core.importing.proto.ProtoModel.Model.Builder.class);
+        if (weightsBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) != 0)) {
+            weights_ = java.util.Collections.unmodifiableList(weights_);
+            bitField0_ = (bitField0_ & ~0x00000010);
+          }
+          result.weights_ = weights_;
+        } else {
+          result.weights_ = weightsBuilder_.build();
         }
-        
-        public static final int VERSION_FIELD_NUMBER = 1;
-        private int version_ = 0;
-        /**
-         * <code>uint32 version = 1;</code>
-         * @return The version.
-         */
-        @java.lang.Override
-        public int getVersion() {
-            return version_;
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Model result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.version_ = version_;
         }
-        
-        public static final int NAME_FIELD_NUMBER = 2;
-        @SuppressWarnings("serial")
-        private volatile java.lang.Object name_ = "";
-        /**
-         * <code>string name = 2;</code>
-         * @return The name.
-         */
-        @java.lang.Override
-        public java.lang.String getName() {
-            java.lang.Object ref = name_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.created_ = created_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.lossFunction_ = lossFunction_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Model) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Model)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Model other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.Model.getDefaultInstance()) return this;
+        if (other.getVersion() != 0) {
+          setVersion(other.getVersion());
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getCreated().isEmpty()) {
+          created_ = other.created_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        if (layersBuilder_ == null) {
+          if (!other.layers_.isEmpty()) {
+            if (layers_.isEmpty()) {
+              layers_ = other.layers_;
+              bitField0_ = (bitField0_ & ~0x00000008);
             } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                name_ = s;
-                return s;
+              ensureLayersIsMutable();
+              layers_.addAll(other.layers_);
             }
-        }
-        /**
-         * <code>string name = 2;</code>
-         * @return The bytes for name.
-         */
-        @java.lang.Override
-        public com.google.protobuf.ByteString
-        getNameBytes() {
-            java.lang.Object ref = name_;
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                name_ = b;
-                return b;
+            onChanged();
+          }
+        } else {
+          if (!other.layers_.isEmpty()) {
+            if (layersBuilder_.isEmpty()) {
+              layersBuilder_.dispose();
+              layersBuilder_ = null;
+              layers_ = other.layers_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              layersBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetLayersFieldBuilder() : null;
             } else {
-                return (com.google.protobuf.ByteString) ref;
+              layersBuilder_.addAllMessages(other.layers_);
             }
+          }
         }
-        
-        public static final int CREATED_FIELD_NUMBER = 3;
-        @SuppressWarnings("serial")
-        private volatile java.lang.Object created_ = "";
-        /**
-         * <pre>
-         * RFC-3339 timestamp
-         * </pre>
-         *
-         * <code>string created = 3;</code>
-         * @return The created.
-         */
-        @java.lang.Override
-        public java.lang.String getCreated() {
-            java.lang.Object ref = created_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
+        if (weightsBuilder_ == null) {
+          if (!other.weights_.isEmpty()) {
+            if (weights_.isEmpty()) {
+              weights_ = other.weights_;
+              bitField0_ = (bitField0_ & ~0x00000010);
             } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                created_ = s;
-                return s;
+              ensureWeightsIsMutable();
+              weights_.addAll(other.weights_);
             }
-        }
-        /**
-         * <pre>
-         * RFC-3339 timestamp
-         * </pre>
-         *
-         * <code>string created = 3;</code>
-         * @return The bytes for created.
-         */
-        @java.lang.Override
-        public com.google.protobuf.ByteString
-        getCreatedBytes() {
-            java.lang.Object ref = created_;
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                created_ = b;
-                return b;
+            onChanged();
+          }
+        } else {
+          if (!other.weights_.isEmpty()) {
+            if (weightsBuilder_.isEmpty()) {
+              weightsBuilder_.dispose();
+              weightsBuilder_ = null;
+              weights_ = other.weights_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+              weightsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetWeightsFieldBuilder() : null;
             } else {
-                return (com.google.protobuf.ByteString) ref;
+              weightsBuilder_.addAllMessages(other.weights_);
             }
+          }
         }
-        
-        public static final int LAYERS_FIELD_NUMBER = 4;
-        @SuppressWarnings("serial")
-        private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> layers_;
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        @java.lang.Override
-        public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> getLayersList() {
-            return layers_;
+        if (!other.getLossFunction().isEmpty()) {
+          lossFunction_ = other.lossFunction_;
+          bitField0_ |= 0x00000020;
+          onChanged();
         }
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        @java.lang.Override
-        public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
-        getLayersOrBuilderList() {
-            return layers_;
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
         }
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        @java.lang.Override
-        public int getLayersCount() {
-            return layers_.size();
-        }
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.Layer getLayers(int index) {
-            return layers_.get(index);
-        }
-        /**
-         * <code>repeated .brain4j.Layer layers = 4;</code>
-         */
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getLayersOrBuilder(
-            int index) {
-            return layers_.get(index);
-        }
-        
-        public static final int WEIGHTS_FIELD_NUMBER = 5;
-        @SuppressWarnings("serial")
-        private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> weights_;
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        @java.lang.Override
-        public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> getWeightsList() {
-            return weights_;
-        }
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        @java.lang.Override
-        public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
-        getWeightsOrBuilderList() {
-            return weights_;
-        }
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        @java.lang.Override
-        public int getWeightsCount() {
-            return weights_.size();
-        }
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.Tensor getWeights(int index) {
-            return weights_.get(index);
-        }
-        /**
-         * <code>repeated .brain4j.Tensor weights = 5;</code>
-         */
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
-            int index) {
-            return weights_.get(index);
-        }
-        
-        public static final int LOSS_FUNCTION_FIELD_NUMBER = 6;
-        @SuppressWarnings("serial")
-        private volatile java.lang.Object lossFunction_ = "";
-        /**
-         * <code>string loss_function = 6;</code>
-         * @return The lossFunction.
-         */
-        @java.lang.Override
-        public java.lang.String getLossFunction() {
-            java.lang.Object ref = lossFunction_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
-            } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                lossFunction_ = s;
-                return s;
-            }
-        }
-        /**
-         * <code>string loss_function = 6;</code>
-         * @return The bytes for lossFunction.
-         */
-        @java.lang.Override
-        public com.google.protobuf.ByteString
-        getLossFunctionBytes() {
-            java.lang.Object ref = lossFunction_;
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                lossFunction_ = b;
-                return b;
-            } else {
-                return (com.google.protobuf.ByteString) ref;
-            }
-        }
-        
-        private byte memoizedIsInitialized = -1;
-        @java.lang.Override
-        public final boolean isInitialized() {
-            byte isInitialized = memoizedIsInitialized;
-            if (isInitialized == 1) return true;
-            if (isInitialized == 0) return false;
-            
-            memoizedIsInitialized = 1;
-            return true;
-        }
-        
-        @java.lang.Override
-        public void writeTo(com.google.protobuf.CodedOutputStream output)
-            throws java.io.IOException {
-            if (version_ != 0) {
-                output.writeUInt32(1, version_);
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 2, name_);
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(created_)) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 3, created_);
-            }
-            for (int i = 0; i < layers_.size(); i++) {
-                output.writeMessage(4, layers_.get(i));
-            }
-            for (int i = 0; i < weights_.size(); i++) {
-                output.writeMessage(5, weights_.get(i));
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lossFunction_)) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 6, lossFunction_);
-            }
-            getUnknownFields().writeTo(output);
-        }
-        
-        @java.lang.Override
-        public int getSerializedSize() {
-            int size = memoizedSize;
-            if (size != -1) return size;
-            
-            size = 0;
-            if (version_ != 0) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeUInt32Size(1, version_);
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(2, name_);
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(created_)) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(3, created_);
-            }
-            for (int i = 0; i < layers_.size(); i++) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeMessageSize(4, layers_.get(i));
-            }
-            for (int i = 0; i < weights_.size(); i++) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeMessageSize(5, weights_.get(i));
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lossFunction_)) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(6, lossFunction_);
-            }
-            size += getUnknownFields().getSerializedSize();
-            memoizedSize = size;
-            return size;
-        }
-        
-        @java.lang.Override
-        public boolean equals(final java.lang.Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Model)) {
-                return super.equals(obj);
-            }
-            org.brain4j.core.importing.proto.ProtoModel.Model other = (org.brain4j.core.importing.proto.ProtoModel.Model) obj;
-            
-            if (getVersion()
-                != other.getVersion()) return false;
-            if (!getName()
-                .equals(other.getName())) return false;
-            if (!getCreated()
-                .equals(other.getCreated())) return false;
-            if (!getLayersList()
-                .equals(other.getLayersList())) return false;
-            if (!getWeightsList()
-                .equals(other.getWeightsList())) return false;
-            if (!getLossFunction()
-                .equals(other.getLossFunction())) return false;
-            if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-            return true;
-        }
-        
-        @java.lang.Override
-        public int hashCode() {
-            if (memoizedHashCode != 0) {
-                return memoizedHashCode;
-            }
-            int hash = 41;
-            hash = (19 * hash) + getDescriptor().hashCode();
-            hash = (37 * hash) + VERSION_FIELD_NUMBER;
-            hash = (53 * hash) + getVersion();
-            hash = (37 * hash) + NAME_FIELD_NUMBER;
-            hash = (53 * hash) + getName().hashCode();
-            hash = (37 * hash) + CREATED_FIELD_NUMBER;
-            hash = (53 * hash) + getCreated().hashCode();
-            if (getLayersCount() > 0) {
-                hash = (37 * hash) + LAYERS_FIELD_NUMBER;
-                hash = (53 * hash) + getLayersList().hashCode();
-            }
-            if (getWeightsCount() > 0) {
-                hash = (37 * hash) + WEIGHTS_FIELD_NUMBER;
-                hash = (53 * hash) + getWeightsList().hashCode();
-            }
-            hash = (37 * hash) + LOSS_FUNCTION_FIELD_NUMBER;
-            hash = (53 * hash) + getLossFunction().hashCode();
-            hash = (29 * hash) + getUnknownFields().hashCode();
-            memoizedHashCode = hash;
-            return hash;
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            java.nio.ByteBuffer data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            java.nio.ByteBuffer data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            com.google.protobuf.ByteString data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            com.google.protobuf.ByteString data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(byte[] data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            byte[] data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseDelimitedFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseDelimitedFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            com.google.protobuf.CodedInputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Model parseFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        @java.lang.Override
-        public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder() {
-            return DEFAULT_INSTANCE.toBuilder();
-        }
-        public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Model prototype) {
-            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-        }
-        @java.lang.Override
-        public Builder toBuilder() {
-            return this == DEFAULT_INSTANCE
-                ? new Builder() : new Builder().mergeFrom(this);
-        }
-        
-        @java.lang.Override
-        protected Builder newBuilderForType(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-            Builder builder = new Builder(parent);
-            return builder;
-        }
-        /**
-         * Protobuf type {@code brain4j.Model}
-         */
-        public static final class Builder extends
-            com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-            // @@protoc_insertion_point(builder_implements:brain4j.Model)
-            org.brain4j.core.importing.proto.ProtoModel.ModelOrBuilder {
-            public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_descriptor;
-            }
-            
-            @java.lang.Override
-            protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_fieldAccessorTable
-                    .ensureFieldAccessorsInitialized(
-                        org.brain4j.core.importing.proto.ProtoModel.Model.class, org.brain4j.core.importing.proto.ProtoModel.Model.Builder.class);
-            }
-            
-            // Construct using org.brain4j.core.importing.proto.ProtoModel.Model.newBuilder()
-            private Builder() {
-            
-            }
-            
-            private Builder(
-                com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-                super(parent);
-                
-            }
-            @java.lang.Override
-            public Builder clear() {
-                super.clear();
-                bitField0_ = 0;
-                version_ = 0;
-                name_ = "";
-                created_ = "";
-                if (layersBuilder_ == null) {
-                    layers_ = java.util.Collections.emptyList();
-                } else {
-                    layers_ = null;
-                    layersBuilder_.clear();
-                }
-                bitField0_ = (bitField0_ & ~0x00000008);
-                if (weightsBuilder_ == null) {
-                    weights_ = java.util.Collections.emptyList();
-                } else {
-                    weights_ = null;
-                    weightsBuilder_.clear();
-                }
-                bitField0_ = (bitField0_ & ~0x00000010);
-                lossFunction_ = "";
-                return this;
-            }
-            
-            @java.lang.Override
-            public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Model_descriptor;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Model getDefaultInstanceForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.Model.getDefaultInstance();
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Model build() {
-                org.brain4j.core.importing.proto.ProtoModel.Model result = buildPartial();
-                if (!result.isInitialized()) {
-                    throw newUninitializedMessageException(result);
-                }
-                return result;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Model buildPartial() {
-                org.brain4j.core.importing.proto.ProtoModel.Model result = new org.brain4j.core.importing.proto.ProtoModel.Model(this);
-                buildPartialRepeatedFields(result);
-                if (bitField0_ != 0) { buildPartial0(result); }
-                onBuilt();
-                return result;
-            }
-            
-            private void buildPartialRepeatedFields(org.brain4j.core.importing.proto.ProtoModel.Model result) {
-                if (layersBuilder_ == null) {
-                    if (((bitField0_ & 0x00000008) != 0)) {
-                        layers_ = java.util.Collections.unmodifiableList(layers_);
-                        bitField0_ = (bitField0_ & ~0x00000008);
-                    }
-                    result.layers_ = layers_;
-                } else {
-                    result.layers_ = layersBuilder_.build();
-                }
-                if (weightsBuilder_ == null) {
-                    if (((bitField0_ & 0x00000010) != 0)) {
-                        weights_ = java.util.Collections.unmodifiableList(weights_);
-                        bitField0_ = (bitField0_ & ~0x00000010);
-                    }
-                    result.weights_ = weights_;
-                } else {
-                    result.weights_ = weightsBuilder_.build();
-                }
-            }
-            
-            private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Model result) {
-                int from_bitField0_ = bitField0_;
-                if (((from_bitField0_ & 0x00000001) != 0)) {
-                    result.version_ = version_;
-                }
-                if (((from_bitField0_ & 0x00000002) != 0)) {
-                    result.name_ = name_;
-                }
-                if (((from_bitField0_ & 0x00000004) != 0)) {
-                    result.created_ = created_;
-                }
-                if (((from_bitField0_ & 0x00000020) != 0)) {
-                    result.lossFunction_ = lossFunction_;
-                }
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(com.google.protobuf.Message other) {
-                if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Model) {
-                    return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Model)other);
-                } else {
-                    super.mergeFrom(other);
-                    return this;
-                }
-            }
-            
-            public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Model other) {
-                if (other == org.brain4j.core.importing.proto.ProtoModel.Model.getDefaultInstance()) return this;
-                if (other.getVersion() != 0) {
-                    setVersion(other.getVersion());
-                }
-                if (!other.getName().isEmpty()) {
-                    name_ = other.name_;
-                    bitField0_ |= 0x00000002;
-                    onChanged();
-                }
-                if (!other.getCreated().isEmpty()) {
-                    created_ = other.created_;
-                    bitField0_ |= 0x00000004;
-                    onChanged();
-                }
-                if (layersBuilder_ == null) {
-                    if (!other.layers_.isEmpty()) {
-                        if (layers_.isEmpty()) {
-                            layers_ = other.layers_;
-                            bitField0_ = (bitField0_ & ~0x00000008);
-                        } else {
-                            ensureLayersIsMutable();
-                            layers_.addAll(other.layers_);
-                        }
-                        onChanged();
-                    }
-                } else {
-                    if (!other.layers_.isEmpty()) {
-                        if (layersBuilder_.isEmpty()) {
-                            layersBuilder_.dispose();
-                            layersBuilder_ = null;
-                            layers_ = other.layers_;
-                            bitField0_ = (bitField0_ & ~0x00000008);
-                            layersBuilder_ =
-                                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                                    internalGetLayersFieldBuilder() : null;
-                        } else {
-                            layersBuilder_.addAllMessages(other.layers_);
-                        }
-                    }
-                }
-                if (weightsBuilder_ == null) {
-                    if (!other.weights_.isEmpty()) {
-                        if (weights_.isEmpty()) {
-                            weights_ = other.weights_;
-                            bitField0_ = (bitField0_ & ~0x00000010);
-                        } else {
-                            ensureWeightsIsMutable();
-                            weights_.addAll(other.weights_);
-                        }
-                        onChanged();
-                    }
-                } else {
-                    if (!other.weights_.isEmpty()) {
-                        if (weightsBuilder_.isEmpty()) {
-                            weightsBuilder_.dispose();
-                            weightsBuilder_ = null;
-                            weights_ = other.weights_;
-                            bitField0_ = (bitField0_ & ~0x00000010);
-                            weightsBuilder_ =
-                                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                                    internalGetWeightsFieldBuilder() : null;
-                        } else {
-                            weightsBuilder_.addAllMessages(other.weights_);
-                        }
-                    }
-                }
-                if (!other.getLossFunction().isEmpty()) {
-                    lossFunction_ = other.lossFunction_;
-                    bitField0_ |= 0x00000020;
-                    onChanged();
-                }
-                this.mergeUnknownFields(other.getUnknownFields());
-                onChanged();
-                return this;
-            }
-            
-            @java.lang.Override
-            public final boolean isInitialized() {
-                return true;
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws java.io.IOException {
-                if (extensionRegistry == null) {
-                    throw new java.lang.NullPointerException();
-                }
-                try {
-                    boolean done = false;
-                    while (!done) {
-                        int tag = input.readTag();
-                        switch (tag) {
-                            case 0:
-                                done = true;
-                                break;
-                            case 8: {
-                                version_ = input.readUInt32();
-                                bitField0_ |= 0x00000001;
-                                break;
-                            } // case 8
-                            case 18: {
-                                name_ = input.readStringRequireUtf8();
-                                bitField0_ |= 0x00000002;
-                                break;
-                            } // case 18
-                            case 26: {
-                                created_ = input.readStringRequireUtf8();
-                                bitField0_ |= 0x00000004;
-                                break;
-                            } // case 26
-                            case 34: {
-                                org.brain4j.core.importing.proto.ProtoModel.Layer m =
-                                    input.readMessage(
-                                        org.brain4j.core.importing.proto.ProtoModel.Layer.parser(),
-                                        extensionRegistry);
-                                if (layersBuilder_ == null) {
-                                    ensureLayersIsMutable();
-                                    layers_.add(m);
-                                } else {
-                                    layersBuilder_.addMessage(m);
-                                }
-                                break;
-                            } // case 34
-                            case 42: {
-                                org.brain4j.core.importing.proto.ProtoModel.Tensor m =
-                                    input.readMessage(
-                                        org.brain4j.core.importing.proto.ProtoModel.Tensor.parser(),
-                                        extensionRegistry);
-                                if (weightsBuilder_ == null) {
-                                    ensureWeightsIsMutable();
-                                    weights_.add(m);
-                                } else {
-                                    weightsBuilder_.addMessage(m);
-                                }
-                                break;
-                            } // case 42
-                            case 50: {
-                                lossFunction_ = input.readStringRequireUtf8();
-                                bitField0_ |= 0x00000020;
-                                break;
-                            } // case 50
-                            default: {
-                                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                                    done = true; // was an endgroup tag
-                                }
-                                break;
-                            } // default:
-                        } // switch (tag)
-                    } // while (!done)
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.unwrapIOException();
-                } finally {
-                    onChanged();
-                } // finally
-                return this;
-            }
-            private int bitField0_;
-            
-            private int version_ ;
-            /**
-             * <code>uint32 version = 1;</code>
-             * @return The version.
-             */
-            @java.lang.Override
-            public int getVersion() {
-                return version_;
-            }
-            /**
-             * <code>uint32 version = 1;</code>
-             * @param value The version to set.
-             * @return This builder for chaining.
-             */
-            public Builder setVersion(int value) {
-                
-                version_ = value;
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                version_ = input.readUInt32();
                 bitField0_ |= 0x00000001;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>uint32 version = 1;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearVersion() {
-                bitField0_ = (bitField0_ & ~0x00000001);
-                version_ = 0;
-                onChanged();
-                return this;
-            }
-            
-            private java.lang.Object name_ = "";
-            /**
-             * <code>string name = 2;</code>
-             * @return The name.
-             */
-            public java.lang.String getName() {
-                java.lang.Object ref = name_;
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    name_ = s;
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <code>string name = 2;</code>
-             * @return The bytes for name.
-             */
-            public com.google.protobuf.ByteString
-            getNameBytes() {
-                java.lang.Object ref = name_;
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    name_ = b;
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <code>string name = 2;</code>
-             * @param value The name to set.
-             * @return This builder for chaining.
-             */
-            public Builder setName(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
-                name_ = value;
+                break;
+              } // case 8
+              case 18: {
+                name_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>string name = 2;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearName() {
-                name_ = getDefaultInstance().getName();
-                bitField0_ = (bitField0_ & ~0x00000002);
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>string name = 2;</code>
-             * @param value The bytes for name to set.
-             * @return This builder for chaining.
-             */
-            public Builder setNameBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                name_ = value;
-                bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            
-            private java.lang.Object created_ = "";
-            /**
-             * <pre>
-             * RFC-3339 timestamp
-             * </pre>
-             *
-             * <code>string created = 3;</code>
-             * @return The created.
-             */
-            public java.lang.String getCreated() {
-                java.lang.Object ref = created_;
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    created_ = s;
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <pre>
-             * RFC-3339 timestamp
-             * </pre>
-             *
-             * <code>string created = 3;</code>
-             * @return The bytes for created.
-             */
-            public com.google.protobuf.ByteString
-            getCreatedBytes() {
-                java.lang.Object ref = created_;
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    created_ = b;
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <pre>
-             * RFC-3339 timestamp
-             * </pre>
-             *
-             * <code>string created = 3;</code>
-             * @param value The created to set.
-             * @return This builder for chaining.
-             */
-            public Builder setCreated(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
-                created_ = value;
+                break;
+              } // case 18
+              case 26: {
+                created_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000004;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * RFC-3339 timestamp
-             * </pre>
-             *
-             * <code>string created = 3;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearCreated() {
-                created_ = getDefaultInstance().getCreated();
-                bitField0_ = (bitField0_ & ~0x00000004);
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * RFC-3339 timestamp
-             * </pre>
-             *
-             * <code>string created = 3;</code>
-             * @param value The bytes for created to set.
-             * @return This builder for chaining.
-             */
-            public Builder setCreatedBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                created_ = value;
-                bitField0_ |= 0x00000004;
-                onChanged();
-                return this;
-            }
-            
-            private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> layers_ =
-                java.util.Collections.emptyList();
-            private void ensureLayersIsMutable() {
-                if (!((bitField0_ & 0x00000008) != 0)) {
-                    layers_ = new java.util.ArrayList<org.brain4j.core.importing.proto.ProtoModel.Layer>(layers_);
-                    bitField0_ |= 0x00000008;
-                }
-            }
-            
-            private com.google.protobuf.RepeatedFieldBuilder<
-                org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> layersBuilder_;
-            
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> getLayersList() {
+                break;
+              } // case 26
+              case 34: {
+                org.brain4j.core.importing.proto.ProtoModel.Layer m =
+                    input.readMessage(
+                        org.brain4j.core.importing.proto.ProtoModel.Layer.parser(),
+                        extensionRegistry);
                 if (layersBuilder_ == null) {
-                    return java.util.Collections.unmodifiableList(layers_);
+                  ensureLayersIsMutable();
+                  layers_.add(m);
                 } else {
-                    return layersBuilder_.getMessageList();
+                  layersBuilder_.addMessage(m);
                 }
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public int getLayersCount() {
-                if (layersBuilder_ == null) {
-                    return layers_.size();
-                } else {
-                    return layersBuilder_.getCount();
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Layer getLayers(int index) {
-                if (layersBuilder_ == null) {
-                    return layers_.get(index);
-                } else {
-                    return layersBuilder_.getMessage(index);
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder setLayers(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Layer value) {
-                if (layersBuilder_ == null) {
-                    if (value == null) {
-                        throw new NullPointerException();
-                    }
-                    ensureLayersIsMutable();
-                    layers_.set(index, value);
-                    onChanged();
-                } else {
-                    layersBuilder_.setMessage(index, value);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder setLayers(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
-                if (layersBuilder_ == null) {
-                    ensureLayersIsMutable();
-                    layers_.set(index, builderForValue.build());
-                    onChanged();
-                } else {
-                    layersBuilder_.setMessage(index, builderForValue.build());
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder addLayers(org.brain4j.core.importing.proto.ProtoModel.Layer value) {
-                if (layersBuilder_ == null) {
-                    if (value == null) {
-                        throw new NullPointerException();
-                    }
-                    ensureLayersIsMutable();
-                    layers_.add(value);
-                    onChanged();
-                } else {
-                    layersBuilder_.addMessage(value);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder addLayers(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Layer value) {
-                if (layersBuilder_ == null) {
-                    if (value == null) {
-                        throw new NullPointerException();
-                    }
-                    ensureLayersIsMutable();
-                    layers_.add(index, value);
-                    onChanged();
-                } else {
-                    layersBuilder_.addMessage(index, value);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder addLayers(
-                org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
-                if (layersBuilder_ == null) {
-                    ensureLayersIsMutable();
-                    layers_.add(builderForValue.build());
-                    onChanged();
-                } else {
-                    layersBuilder_.addMessage(builderForValue.build());
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder addLayers(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
-                if (layersBuilder_ == null) {
-                    ensureLayersIsMutable();
-                    layers_.add(index, builderForValue.build());
-                    onChanged();
-                } else {
-                    layersBuilder_.addMessage(index, builderForValue.build());
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder addAllLayers(
-                java.lang.Iterable<? extends org.brain4j.core.importing.proto.ProtoModel.Layer> values) {
-                if (layersBuilder_ == null) {
-                    ensureLayersIsMutable();
-                    com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                        values, layers_);
-                    onChanged();
-                } else {
-                    layersBuilder_.addAllMessages(values);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder clearLayers() {
-                if (layersBuilder_ == null) {
-                    layers_ = java.util.Collections.emptyList();
-                    bitField0_ = (bitField0_ & ~0x00000008);
-                    onChanged();
-                } else {
-                    layersBuilder_.clear();
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public Builder removeLayers(int index) {
-                if (layersBuilder_ == null) {
-                    ensureLayersIsMutable();
-                    layers_.remove(index);
-                    onChanged();
-                } else {
-                    layersBuilder_.remove(index);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder getLayersBuilder(
-                int index) {
-                return internalGetLayersFieldBuilder().getBuilder(index);
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getLayersOrBuilder(
-                int index) {
-                if (layersBuilder_ == null) {
-                    return layers_.get(index);  } else {
-                    return layersBuilder_.getMessageOrBuilder(index);
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
-            getLayersOrBuilderList() {
-                if (layersBuilder_ != null) {
-                    return layersBuilder_.getMessageOrBuilderList();
-                } else {
-                    return java.util.Collections.unmodifiableList(layers_);
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder addLayersBuilder() {
-                return internalGetLayersFieldBuilder().addBuilder(
-                    org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance());
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder addLayersBuilder(
-                int index) {
-                return internalGetLayersFieldBuilder().addBuilder(
-                    index, org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance());
-            }
-            /**
-             * <code>repeated .brain4j.Layer layers = 4;</code>
-             */
-            public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer.Builder>
-            getLayersBuilderList() {
-                return internalGetLayersFieldBuilder().getBuilderList();
-            }
-            private com.google.protobuf.RepeatedFieldBuilder<
-                org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
-            internalGetLayersFieldBuilder() {
-                if (layersBuilder_ == null) {
-                    layersBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                        org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>(
-                        layers_,
-                        ((bitField0_ & 0x00000008) != 0),
-                        getParentForChildren(),
-                        isClean());
-                    layers_ = null;
-                }
-                return layersBuilder_;
-            }
-            
-            private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> weights_ =
-                java.util.Collections.emptyList();
-            private void ensureWeightsIsMutable() {
-                if (!((bitField0_ & 0x00000010) != 0)) {
-                    weights_ = new java.util.ArrayList<org.brain4j.core.importing.proto.ProtoModel.Tensor>(weights_);
-                    bitField0_ |= 0x00000010;
-                }
-            }
-            
-            private com.google.protobuf.RepeatedFieldBuilder<
-                org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> weightsBuilder_;
-            
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> getWeightsList() {
+                break;
+              } // case 34
+              case 42: {
+                org.brain4j.core.importing.proto.ProtoModel.Tensor m =
+                    input.readMessage(
+                        org.brain4j.core.importing.proto.ProtoModel.Tensor.parser(),
+                        extensionRegistry);
                 if (weightsBuilder_ == null) {
-                    return java.util.Collections.unmodifiableList(weights_);
+                  ensureWeightsIsMutable();
+                  weights_.add(m);
                 } else {
-                    return weightsBuilder_.getMessageList();
+                  weightsBuilder_.addMessage(m);
                 }
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public int getWeightsCount() {
-                if (weightsBuilder_ == null) {
-                    return weights_.size();
-                } else {
-                    return weightsBuilder_.getCount();
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor getWeights(int index) {
-                if (weightsBuilder_ == null) {
-                    return weights_.get(index);
-                } else {
-                    return weightsBuilder_.getMessage(index);
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder setWeights(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
-                if (weightsBuilder_ == null) {
-                    if (value == null) {
-                        throw new NullPointerException();
-                    }
-                    ensureWeightsIsMutable();
-                    weights_.set(index, value);
-                    onChanged();
-                } else {
-                    weightsBuilder_.setMessage(index, value);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder setWeights(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
-                if (weightsBuilder_ == null) {
-                    ensureWeightsIsMutable();
-                    weights_.set(index, builderForValue.build());
-                    onChanged();
-                } else {
-                    weightsBuilder_.setMessage(index, builderForValue.build());
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder addWeights(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
-                if (weightsBuilder_ == null) {
-                    if (value == null) {
-                        throw new NullPointerException();
-                    }
-                    ensureWeightsIsMutable();
-                    weights_.add(value);
-                    onChanged();
-                } else {
-                    weightsBuilder_.addMessage(value);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder addWeights(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
-                if (weightsBuilder_ == null) {
-                    if (value == null) {
-                        throw new NullPointerException();
-                    }
-                    ensureWeightsIsMutable();
-                    weights_.add(index, value);
-                    onChanged();
-                } else {
-                    weightsBuilder_.addMessage(index, value);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder addWeights(
-                org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
-                if (weightsBuilder_ == null) {
-                    ensureWeightsIsMutable();
-                    weights_.add(builderForValue.build());
-                    onChanged();
-                } else {
-                    weightsBuilder_.addMessage(builderForValue.build());
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder addWeights(
-                int index, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
-                if (weightsBuilder_ == null) {
-                    ensureWeightsIsMutable();
-                    weights_.add(index, builderForValue.build());
-                    onChanged();
-                } else {
-                    weightsBuilder_.addMessage(index, builderForValue.build());
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder addAllWeights(
-                java.lang.Iterable<? extends org.brain4j.core.importing.proto.ProtoModel.Tensor> values) {
-                if (weightsBuilder_ == null) {
-                    ensureWeightsIsMutable();
-                    com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                        values, weights_);
-                    onChanged();
-                } else {
-                    weightsBuilder_.addAllMessages(values);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder clearWeights() {
-                if (weightsBuilder_ == null) {
-                    weights_ = java.util.Collections.emptyList();
-                    bitField0_ = (bitField0_ & ~0x00000010);
-                    onChanged();
-                } else {
-                    weightsBuilder_.clear();
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public Builder removeWeights(int index) {
-                if (weightsBuilder_ == null) {
-                    ensureWeightsIsMutable();
-                    weights_.remove(index);
-                    onChanged();
-                } else {
-                    weightsBuilder_.remove(index);
-                }
-                return this;
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder getWeightsBuilder(
-                int index) {
-                return internalGetWeightsFieldBuilder().getBuilder(index);
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
-                int index) {
-                if (weightsBuilder_ == null) {
-                    return weights_.get(index);  } else {
-                    return weightsBuilder_.getMessageOrBuilder(index);
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
-            getWeightsOrBuilderList() {
-                if (weightsBuilder_ != null) {
-                    return weightsBuilder_.getMessageOrBuilderList();
-                } else {
-                    return java.util.Collections.unmodifiableList(weights_);
-                }
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder addWeightsBuilder() {
-                return internalGetWeightsFieldBuilder().addBuilder(
-                    org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance());
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder addWeightsBuilder(
-                int index) {
-                return internalGetWeightsFieldBuilder().addBuilder(
-                    index, org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance());
-            }
-            /**
-             * <code>repeated .brain4j.Tensor weights = 5;</code>
-             */
-            public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder>
-            getWeightsBuilderList() {
-                return internalGetWeightsFieldBuilder().getBuilderList();
-            }
-            private com.google.protobuf.RepeatedFieldBuilder<
-                org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
-            internalGetWeightsFieldBuilder() {
-                if (weightsBuilder_ == null) {
-                    weightsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                        org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>(
-                        weights_,
-                        ((bitField0_ & 0x00000010) != 0),
-                        getParentForChildren(),
-                        isClean());
-                    weights_ = null;
-                }
-                return weightsBuilder_;
-            }
-            
-            private java.lang.Object lossFunction_ = "";
-            /**
-             * <code>string loss_function = 6;</code>
-             * @return The lossFunction.
-             */
-            public java.lang.String getLossFunction() {
-                java.lang.Object ref = lossFunction_;
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    lossFunction_ = s;
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <code>string loss_function = 6;</code>
-             * @return The bytes for lossFunction.
-             */
-            public com.google.protobuf.ByteString
-            getLossFunctionBytes() {
-                java.lang.Object ref = lossFunction_;
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    lossFunction_ = b;
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <code>string loss_function = 6;</code>
-             * @param value The lossFunction to set.
-             * @return This builder for chaining.
-             */
-            public Builder setLossFunction(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
-                lossFunction_ = value;
+                break;
+              } // case 42
+              case 50: {
+                lossFunction_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000020;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>string loss_function = 6;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearLossFunction() {
-                lossFunction_ = getDefaultInstance().getLossFunction();
-                bitField0_ = (bitField0_ & ~0x00000020);
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>string loss_function = 6;</code>
-             * @param value The bytes for lossFunction to set.
-             * @return This builder for chaining.
-             */
-            public Builder setLossFunctionBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                lossFunction_ = value;
-                bitField0_ |= 0x00000020;
-                onChanged();
-                return this;
-            }
-            
-            // @@protoc_insertion_point(builder_scope:brain4j.Model)
-        }
-        
-        // @@protoc_insertion_point(class_scope:brain4j.Model)
-        private static final org.brain4j.core.importing.proto.ProtoModel.Model DEFAULT_INSTANCE;
-        static {
-            DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Model();
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Model getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-        
-        private static final com.google.protobuf.Parser<Model>
-            PARSER = new com.google.protobuf.AbstractParser<Model>() {
-            @java.lang.Override
-            public Model parsePartialFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws com.google.protobuf.InvalidProtocolBufferException {
-                Builder builder = newBuilder();
-                try {
-                    builder.mergeFrom(input, extensionRegistry);
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.setUnfinishedMessage(builder.buildPartial());
-                } catch (com.google.protobuf.UninitializedMessageException e) {
-                    throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-                } catch (java.io.IOException e) {
-                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
-                        .setUnfinishedMessage(builder.buildPartial());
+                break;
+              } // case 50
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
                 }
-                return builder.buildPartial();
-            }
-        };
-        
-        public static com.google.protobuf.Parser<Model> parser() {
-            return PARSER;
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private int version_ ;
+      /**
+       * <code>uint32 version = 1;</code>
+       * @return The version.
+       */
+      @java.lang.Override
+      public int getVersion() {
+        return version_;
+      }
+      /**
+       * <code>uint32 version = 1;</code>
+       * @param value The version to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersion(int value) {
+
+        version_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersion() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        version_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 2;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
         }
-        
-        @java.lang.Override
-        public com.google.protobuf.Parser<Model> getParserForType() {
-            return PARSER;
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
         }
-        
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.Model getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        name_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        name_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object created_ = "";
+      /**
+       * <pre>
+       * RFC-3339 timestamp
+       * </pre>
+       *
+       * <code>string created = 3;</code>
+       * @return The created.
+       */
+      public java.lang.String getCreated() {
+        java.lang.Object ref = created_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          created_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
         }
-        
+      }
+      /**
+       * <pre>
+       * RFC-3339 timestamp
+       * </pre>
+       *
+       * <code>string created = 3;</code>
+       * @return The bytes for created.
+       */
+      public com.google.protobuf.ByteString
+          getCreatedBytes() {
+        java.lang.Object ref = created_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          created_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * RFC-3339 timestamp
+       * </pre>
+       *
+       * <code>string created = 3;</code>
+       * @param value The created to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCreated(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        created_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * RFC-3339 timestamp
+       * </pre>
+       *
+       * <code>string created = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCreated() {
+        created_ = getDefaultInstance().getCreated();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * RFC-3339 timestamp
+       * </pre>
+       *
+       * <code>string created = 3;</code>
+       * @param value The bytes for created to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCreatedBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        created_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> layers_ =
+        java.util.Collections.emptyList();
+      private void ensureLayersIsMutable() {
+        if (!((bitField0_ & 0x00000008) != 0)) {
+          layers_ = new java.util.ArrayList<org.brain4j.core.importing.proto.ProtoModel.Layer>(layers_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> layersBuilder_;
+
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> getLayersList() {
+        if (layersBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(layers_);
+        } else {
+          return layersBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public int getLayersCount() {
+        if (layersBuilder_ == null) {
+          return layers_.size();
+        } else {
+          return layersBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer getLayers(int index) {
+        if (layersBuilder_ == null) {
+          return layers_.get(index);
+        } else {
+          return layersBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder setLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer value) {
+        if (layersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLayersIsMutable();
+          layers_.set(index, value);
+          onChanged();
+        } else {
+          layersBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder setLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
+        if (layersBuilder_ == null) {
+          ensureLayersIsMutable();
+          layers_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          layersBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder addLayers(org.brain4j.core.importing.proto.ProtoModel.Layer value) {
+        if (layersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLayersIsMutable();
+          layers_.add(value);
+          onChanged();
+        } else {
+          layersBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder addLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer value) {
+        if (layersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLayersIsMutable();
+          layers_.add(index, value);
+          onChanged();
+        } else {
+          layersBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder addLayers(
+          org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
+        if (layersBuilder_ == null) {
+          ensureLayersIsMutable();
+          layers_.add(builderForValue.build());
+          onChanged();
+        } else {
+          layersBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder addLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
+        if (layersBuilder_ == null) {
+          ensureLayersIsMutable();
+          layers_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          layersBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder addAllLayers(
+          java.lang.Iterable<? extends org.brain4j.core.importing.proto.ProtoModel.Layer> values) {
+        if (layersBuilder_ == null) {
+          ensureLayersIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, layers_);
+          onChanged();
+        } else {
+          layersBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder clearLayers() {
+        if (layersBuilder_ == null) {
+          layers_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          layersBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public Builder removeLayers(int index) {
+        if (layersBuilder_ == null) {
+          ensureLayersIsMutable();
+          layers_.remove(index);
+          onChanged();
+        } else {
+          layersBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder getLayersBuilder(
+          int index) {
+        return internalGetLayersFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getLayersOrBuilder(
+          int index) {
+        if (layersBuilder_ == null) {
+          return layers_.get(index);  } else {
+          return layersBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+           getLayersOrBuilderList() {
+        if (layersBuilder_ != null) {
+          return layersBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(layers_);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder addLayersBuilder() {
+        return internalGetLayersFieldBuilder().addBuilder(
+            org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder addLayersBuilder(
+          int index) {
+        return internalGetLayersFieldBuilder().addBuilder(
+            index, org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.Layer layers = 4;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer.Builder> 
+           getLayersBuilderList() {
+        return internalGetLayersFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          internalGetLayersFieldBuilder() {
+        if (layersBuilder_ == null) {
+          layersBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>(
+                  layers_,
+                  ((bitField0_ & 0x00000008) != 0),
+                  getParentForChildren(),
+                  isClean());
+          layers_ = null;
+        }
+        return layersBuilder_;
+      }
+
+      private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> weights_ =
+        java.util.Collections.emptyList();
+      private void ensureWeightsIsMutable() {
+        if (!((bitField0_ & 0x00000010) != 0)) {
+          weights_ = new java.util.ArrayList<org.brain4j.core.importing.proto.ProtoModel.Tensor>(weights_);
+          bitField0_ |= 0x00000010;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> weightsBuilder_;
+
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> getWeightsList() {
+        if (weightsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(weights_);
+        } else {
+          return weightsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public int getWeightsCount() {
+        if (weightsBuilder_ == null) {
+          return weights_.size();
+        } else {
+          return weightsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor getWeights(int index) {
+        if (weightsBuilder_ == null) {
+          return weights_.get(index);
+        } else {
+          return weightsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder setWeights(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (weightsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureWeightsIsMutable();
+          weights_.set(index, value);
+          onChanged();
+        } else {
+          weightsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder setWeights(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (weightsBuilder_ == null) {
+          ensureWeightsIsMutable();
+          weights_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          weightsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder addWeights(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (weightsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureWeightsIsMutable();
+          weights_.add(value);
+          onChanged();
+        } else {
+          weightsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder addWeights(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (weightsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureWeightsIsMutable();
+          weights_.add(index, value);
+          onChanged();
+        } else {
+          weightsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder addWeights(
+          org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (weightsBuilder_ == null) {
+          ensureWeightsIsMutable();
+          weights_.add(builderForValue.build());
+          onChanged();
+        } else {
+          weightsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder addWeights(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (weightsBuilder_ == null) {
+          ensureWeightsIsMutable();
+          weights_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          weightsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder addAllWeights(
+          java.lang.Iterable<? extends org.brain4j.core.importing.proto.ProtoModel.Tensor> values) {
+        if (weightsBuilder_ == null) {
+          ensureWeightsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, weights_);
+          onChanged();
+        } else {
+          weightsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder clearWeights() {
+        if (weightsBuilder_ == null) {
+          weights_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+          onChanged();
+        } else {
+          weightsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public Builder removeWeights(int index) {
+        if (weightsBuilder_ == null) {
+          ensureWeightsIsMutable();
+          weights_.remove(index);
+          onChanged();
+        } else {
+          weightsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder getWeightsBuilder(
+          int index) {
+        return internalGetWeightsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
+          int index) {
+        if (weightsBuilder_ == null) {
+          return weights_.get(index);  } else {
+          return weightsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+           getWeightsOrBuilderList() {
+        if (weightsBuilder_ != null) {
+          return weightsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(weights_);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder addWeightsBuilder() {
+        return internalGetWeightsFieldBuilder().addBuilder(
+            org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder addWeightsBuilder(
+          int index) {
+        return internalGetWeightsFieldBuilder().addBuilder(
+            index, org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.Tensor weights = 5;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder> 
+           getWeightsBuilderList() {
+        return internalGetWeightsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          internalGetWeightsFieldBuilder() {
+        if (weightsBuilder_ == null) {
+          weightsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>(
+                  weights_,
+                  ((bitField0_ & 0x00000010) != 0),
+                  getParentForChildren(),
+                  isClean());
+          weights_ = null;
+        }
+        return weightsBuilder_;
+      }
+
+      private java.lang.Object lossFunction_ = "";
+      /**
+       * <code>string loss_function = 6;</code>
+       * @return The lossFunction.
+       */
+      public java.lang.String getLossFunction() {
+        java.lang.Object ref = lossFunction_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lossFunction_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string loss_function = 6;</code>
+       * @return The bytes for lossFunction.
+       */
+      public com.google.protobuf.ByteString
+          getLossFunctionBytes() {
+        java.lang.Object ref = lossFunction_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          lossFunction_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string loss_function = 6;</code>
+       * @param value The lossFunction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLossFunction(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        lossFunction_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loss_function = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLossFunction() {
+        lossFunction_ = getDefaultInstance().getLossFunction();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loss_function = 6;</code>
+       * @param value The bytes for lossFunction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLossFunctionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        lossFunction_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.Model)
     }
-    
-    public interface LayerOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:brain4j.Layer)
-        com.google.protobuf.MessageOrBuilder {
-        
-        /**
-         * <pre>
-         * "dense_0"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The name.
-         */
-        java.lang.String getName();
-        /**
-         * <pre>
-         * "dense_0"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The bytes for name.
-         */
-        com.google.protobuf.ByteString
+
+    // @@protoc_insertion_point(class_scope:brain4j.Model)
+    private static final org.brain4j.core.importing.proto.ProtoModel.Model DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Model();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Model getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Model>
+        PARSER = new com.google.protobuf.AbstractParser<Model>() {
+      @java.lang.Override
+      public Model parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<Model> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Model> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Model getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface LayerOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.Layer)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * "dense_0"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * "dense_0"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
         getNameBytes();
-        
-        /**
-         * <pre>
-         * "Dense", "LayerNorm"
-         * </pre>
-         *
-         * <code>string type = 2;</code>
-         * @return The type.
-         */
-        java.lang.String getType();
-        /**
-         * <pre>
-         * "Dense", "LayerNorm"
-         * </pre>
-         *
-         * <code>string type = 2;</code>
-         * @return The bytes for type.
-         */
-        com.google.protobuf.ByteString
+
+    /**
+     * <pre>
+     * "Dense", "LayerNorm"
+     * </pre>
+     *
+     * <code>string type = 2;</code>
+     * @return The type.
+     */
+    java.lang.String getType();
+    /**
+     * <pre>
+     * "Dense", "LayerNorm"
+     * </pre>
+     *
+     * <code>string type = 2;</code>
+     * @return The bytes for type.
+     */
+    com.google.protobuf.ByteString
         getTypeBytes();
-        
-        /**
-         * <pre>
-         * 64, 128, ...
-         * </pre>
-         *
-         * <code>uint32 dimension = 3;</code>
-         * @return The dimension.
-         */
-        int getDimension();
-        
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        int getAttrsCount();
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        boolean containsAttrs(
-            java.lang.String key);
-        /**
-         * Use {@link #getAttrsMap()} instead.
-         */
-        @java.lang.Deprecated
-        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
-        getAttrs();
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
-        getAttrsMap();
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
+
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    int getAttrsCount();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    boolean containsAttrs(
+        java.lang.String key);
+    /**
+     * Use {@link #getAttrsMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    getAttrs();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    getAttrsMap();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+        java.lang.String key,
         /* nullable */
-        org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
-            java.lang.String key,
-            /* nullable */
-            org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
-            java.lang.String key);
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+        java.lang.String key);
+
+    /**
+     * <code>.brain4j.BasicLayer basic = 4;</code>
+     * @return Whether the basic field is set.
+     */
+    boolean hasBasic();
+    /**
+     * <code>.brain4j.BasicLayer basic = 4;</code>
+     * @return The basic.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.BasicLayer getBasic();
+    /**
+     * <code>.brain4j.BasicLayer basic = 4;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder getBasicOrBuilder();
+
+    /**
+     * <code>.brain4j.Transformer transformer = 5;</code>
+     * @return Whether the transformer field is set.
+     */
+    boolean hasTransformer();
+    /**
+     * <code>.brain4j.Transformer transformer = 5;</code>
+     * @return The transformer.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Transformer getTransformer();
+    /**
+     * <code>.brain4j.Transformer transformer = 5;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder getTransformerOrBuilder();
+
+    org.brain4j.core.importing.proto.ProtoModel.Layer.LayerKindCase getLayerKindCase();
+  }
+  /**
+   * Protobuf type {@code brain4j.Layer}
+   */
+  public static final class Layer extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.Layer)
+      LayerOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        Layer.class.getName());
+    }
+    // Use Layer.newBuilder() to construct.
+    private Layer(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Layer() {
+      name_ = "";
+      type_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+        int number) {
+      switch (number) {
+        case 3:
+          return internalGetAttrs();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.Layer.class, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder.class);
+    }
+
+    private int layerKindCase_ = 0;
+    @SuppressWarnings("serial")
+    private java.lang.Object layerKind_;
+    public enum LayerKindCase
+        implements com.google.protobuf.Internal.EnumLite,
+            com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+      BASIC(4),
+      TRANSFORMER(5),
+      LAYERKIND_NOT_SET(0);
+      private final int value;
+      private LayerKindCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @param value The number of the enum to look for.
+       * @return The enum associated with the given number.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static LayerKindCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static LayerKindCase forNumber(int value) {
+        switch (value) {
+          case 4: return BASIC;
+          case 5: return TRANSFORMER;
+          case 0: return LAYERKIND_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public LayerKindCase
+    getLayerKindCase() {
+      return LayerKindCase.forNumber(
+          layerKindCase_);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
+    /**
+     * <pre>
+     * "dense_0"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * "dense_0"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object type_ = "";
+    /**
+     * <pre>
+     * "Dense", "LayerNorm"
+     * </pre>
+     *
+     * <code>string type = 2;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public java.lang.String getType() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        type_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * "Dense", "LayerNorm"
+     * </pre>
+     *
+     * <code>string type = 2;</code>
+     * @return The bytes for type.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTypeBytes() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        type_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ATTRS_FIELD_NUMBER = 3;
+    private static final class AttrsDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_AttrsEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                  org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance());
+    }
+    @SuppressWarnings("serial")
+    private com.google.protobuf.MapField<
+        java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> attrs_;
+    private com.google.protobuf.MapField<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    internalGetAttrs() {
+      if (attrs_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            AttrsDefaultEntryHolder.defaultEntry);
+      }
+      return attrs_;
+    }
+    public int getAttrsCount() {
+      return internalGetAttrs().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    @java.lang.Override
+    public boolean containsAttrs(
+        java.lang.String key) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      return internalGetAttrs().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getAttrsMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
+      return getAttrsMap();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    @java.lang.Override
+    public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
+      return internalGetAttrs().getMap();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    @java.lang.Override
+    public /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+        java.lang.String key,
+        /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
+          internalGetAttrs().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
+          internalGetAttrs().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int BASIC_FIELD_NUMBER = 4;
+    /**
+     * <code>.brain4j.BasicLayer basic = 4;</code>
+     * @return Whether the basic field is set.
+     */
+    @java.lang.Override
+    public boolean hasBasic() {
+      return layerKindCase_ == 4;
+    }
+    /**
+     * <code>.brain4j.BasicLayer basic = 4;</code>
+     * @return The basic.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.BasicLayer getBasic() {
+      if (layerKindCase_ == 4) {
+         return (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_;
+      }
+      return org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+    }
+    /**
+     * <code>.brain4j.BasicLayer basic = 4;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder getBasicOrBuilder() {
+      if (layerKindCase_ == 4) {
+         return (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_;
+      }
+      return org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+    }
+
+    public static final int TRANSFORMER_FIELD_NUMBER = 5;
+    /**
+     * <code>.brain4j.Transformer transformer = 5;</code>
+     * @return Whether the transformer field is set.
+     */
+    @java.lang.Override
+    public boolean hasTransformer() {
+      return layerKindCase_ == 5;
+    }
+    /**
+     * <code>.brain4j.Transformer transformer = 5;</code>
+     * @return The transformer.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Transformer getTransformer() {
+      if (layerKindCase_ == 5) {
+         return (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_;
+      }
+      return org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+    }
+    /**
+     * <code>.brain4j.Transformer transformer = 5;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder getTransformerOrBuilder() {
+      if (layerKindCase_ == 5) {
+         return (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_;
+      }
+      return org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(type_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, type_);
+      }
+      com.google.protobuf.GeneratedMessage
+        .serializeStringMapTo(
+          output,
+          internalGetAttrs(),
+          AttrsDefaultEntryHolder.defaultEntry,
+          3);
+      if (layerKindCase_ == 4) {
+        output.writeMessage(4, (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_);
+      }
+      if (layerKindCase_ == 5) {
+        output.writeMessage(5, (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, name_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(type_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, type_);
+      }
+      for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> entry
+           : internalGetAttrs().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+        attrs__ = AttrsDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(3, attrs__);
+      }
+      if (layerKindCase_ == 4) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_);
+      }
+      if (layerKindCase_ == 5) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Layer)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.Layer other = (org.brain4j.core.importing.proto.ProtoModel.Layer) obj;
+
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getType()
+          .equals(other.getType())) return false;
+      if (!internalGetAttrs().equals(
+          other.internalGetAttrs())) return false;
+      if (!getLayerKindCase().equals(other.getLayerKindCase())) return false;
+      switch (layerKindCase_) {
+        case 4:
+          if (!getBasic()
+              .equals(other.getBasic())) return false;
+          break;
+        case 5:
+          if (!getTransformer()
+              .equals(other.getTransformer())) return false;
+          break;
+        case 0:
+        default:
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getType().hashCode();
+      if (!internalGetAttrs().getMap().isEmpty()) {
+        hash = (37 * hash) + ATTRS_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetAttrs().hashCode();
+      }
+      switch (layerKindCase_) {
+        case 4:
+          hash = (37 * hash) + BASIC_FIELD_NUMBER;
+          hash = (53 * hash) + getBasic().hashCode();
+          break;
+        case 5:
+          hash = (37 * hash) + TRANSFORMER_FIELD_NUMBER;
+          hash = (53 * hash) + getTransformer().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Layer prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
     }
     /**
      * Protobuf type {@code brain4j.Layer}
      */
-    public static final class Layer extends
-        com.google.protobuf.GeneratedMessage implements
-        // @@protoc_insertion_point(message_implements:brain4j.Layer)
-        LayerOrBuilder {
-        private static final long serialVersionUID = 0L;
-        static {
-            com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-                com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-                /* major= */ 4,
-                /* minor= */ 31,
-                /* patch= */ 1,
-                /* suffix= */ "",
-                Layer.class.getName());
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.Layer)
+        org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 3:
+            return internalGetAttrs();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
         }
-        // Use Layer.newBuilder() to construct.
-        private Layer(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-            super(builder);
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 3:
+            return internalGetMutableAttrs();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
         }
-        private Layer() {
-            name_ = "";
-            type_ = "";
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.Layer.class, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.Layer.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        name_ = "";
+        type_ = "";
+        internalGetMutableAttrs().clear();
+        if (basicBuilder_ != null) {
+          basicBuilder_.clear();
         }
-        
-        public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_descriptor;
+        if (transformerBuilder_ != null) {
+          transformerBuilder_.clear();
         }
-        
-        @SuppressWarnings({"rawtypes"})
-        @java.lang.Override
-        protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
-            int number) {
-            switch (number) {
-                case 4:
-                    return internalGetAttrs();
-                default:
-                    throw new RuntimeException(
-                        "Invalid map field number: " + number);
-            }
+        layerKindCase_ = 0;
+        layerKind_ = null;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Layer getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Layer build() {
+        org.brain4j.core.importing.proto.ProtoModel.Layer result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
         }
-        @java.lang.Override
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_fieldAccessorTable
-                .ensureFieldAccessorsInitialized(
-                    org.brain4j.core.importing.proto.ProtoModel.Layer.class, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder.class);
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Layer buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.Layer result = new org.brain4j.core.importing.proto.ProtoModel.Layer(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        buildPartialOneofs(result);
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Layer result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.name_ = name_;
         }
-        
-        public static final int NAME_FIELD_NUMBER = 1;
-        @SuppressWarnings("serial")
-        private volatile java.lang.Object name_ = "";
-        /**
-         * <pre>
-         * "dense_0"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The name.
-         */
-        @java.lang.Override
-        public java.lang.String getName() {
-            java.lang.Object ref = name_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
-            } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                name_ = s;
-                return s;
-            }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.type_ = type_;
         }
-        /**
-         * <pre>
-         * "dense_0"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The bytes for name.
-         */
-        @java.lang.Override
-        public com.google.protobuf.ByteString
-        getNameBytes() {
-            java.lang.Object ref = name_;
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                name_ = b;
-                return b;
-            } else {
-                return (com.google.protobuf.ByteString) ref;
-            }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.attrs_ = internalGetAttrs().build(AttrsDefaultEntryHolder.defaultEntry);
         }
-        
-        public static final int TYPE_FIELD_NUMBER = 2;
-        @SuppressWarnings("serial")
-        private volatile java.lang.Object type_ = "";
-        /**
-         * <pre>
-         * "Dense", "LayerNorm"
-         * </pre>
-         *
-         * <code>string type = 2;</code>
-         * @return The type.
-         */
-        @java.lang.Override
-        public java.lang.String getType() {
-            java.lang.Object ref = type_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
-            } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                type_ = s;
-                return s;
-            }
+      }
+
+      private void buildPartialOneofs(org.brain4j.core.importing.proto.ProtoModel.Layer result) {
+        result.layerKindCase_ = layerKindCase_;
+        result.layerKind_ = this.layerKind_;
+        if (layerKindCase_ == 4 &&
+            basicBuilder_ != null) {
+          result.layerKind_ = basicBuilder_.build();
         }
-        /**
-         * <pre>
-         * "Dense", "LayerNorm"
-         * </pre>
-         *
-         * <code>string type = 2;</code>
-         * @return The bytes for type.
-         */
-        @java.lang.Override
-        public com.google.protobuf.ByteString
-        getTypeBytes() {
-            java.lang.Object ref = type_;
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                type_ = b;
-                return b;
-            } else {
-                return (com.google.protobuf.ByteString) ref;
-            }
+        if (layerKindCase_ == 5 &&
+            transformerBuilder_ != null) {
+          result.layerKind_ = transformerBuilder_.build();
         }
-        
-        public static final int DIMENSION_FIELD_NUMBER = 3;
-        private int dimension_ = 0;
-        /**
-         * <pre>
-         * 64, 128, ...
-         * </pre>
-         *
-         * <code>uint32 dimension = 3;</code>
-         * @return The dimension.
-         */
-        @java.lang.Override
-        public int getDimension() {
-            return dimension_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Layer) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Layer)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
         }
-        
-        public static final int ATTRS_FIELD_NUMBER = 4;
-        private static final class AttrsDefaultEntryHolder {
-            static final com.google.protobuf.MapEntry<
-                java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
-                com.google.protobuf.MapEntry
-                    .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                        org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_AttrsEntry_descriptor,
-                        com.google.protobuf.WireFormat.FieldType.STRING,
-                        "",
-                        com.google.protobuf.WireFormat.FieldType.MESSAGE,
-                        org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance());
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Layer other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          bitField0_ |= 0x00000001;
+          onChanged();
         }
-        @SuppressWarnings("serial")
-        private com.google.protobuf.MapField<
-            java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> attrs_;
-        private com.google.protobuf.MapField<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
-        internalGetAttrs() {
-            if (attrs_ == null) {
-                return com.google.protobuf.MapField.emptyMapField(
-                    AttrsDefaultEntryHolder.defaultEntry);
-            }
-            return attrs_;
+        if (!other.getType().isEmpty()) {
+          type_ = other.type_;
+          bitField0_ |= 0x00000002;
+          onChanged();
         }
-        public int getAttrsCount() {
-            return internalGetAttrs().getMap().size();
+        internalGetMutableAttrs().mergeFrom(
+            other.internalGetAttrs());
+        bitField0_ |= 0x00000004;
+        switch (other.getLayerKindCase()) {
+          case BASIC: {
+            mergeBasic(other.getBasic());
+            break;
+          }
+          case TRANSFORMER: {
+            mergeTransformer(other.getTransformer());
+            break;
+          }
+          case LAYERKIND_NOT_SET: {
+            break;
+          }
         }
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        @java.lang.Override
-        public boolean containsAttrs(
-            java.lang.String key) {
-            if (key == null) { throw new NullPointerException("map key"); }
-            return internalGetAttrs().getMap().containsKey(key);
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
         }
-        /**
-         * Use {@link #getAttrsMap()} instead.
-         */
-        @java.lang.Override
-        @java.lang.Deprecated
-        public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
-            return getAttrsMap();
-        }
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        @java.lang.Override
-        public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
-            return internalGetAttrs().getMap();
-        }
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        @java.lang.Override
-        public /* nullable */
-        org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
-            java.lang.String key,
-            /* nullable */
-            org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
-            if (key == null) { throw new NullPointerException("map key"); }
-            java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
-                internalGetAttrs().getMap();
-            return map.containsKey(key) ? map.get(key) : defaultValue;
-        }
-        /**
-         * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-         */
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
-            java.lang.String key) {
-            if (key == null) { throw new NullPointerException("map key"); }
-            java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
-                internalGetAttrs().getMap();
-            if (!map.containsKey(key)) {
-                throw new java.lang.IllegalArgumentException();
-            }
-            return map.get(key);
-        }
-        
-        private byte memoizedIsInitialized = -1;
-        @java.lang.Override
-        public final boolean isInitialized() {
-            byte isInitialized = memoizedIsInitialized;
-            if (isInitialized == 1) return true;
-            if (isInitialized == 0) return false;
-            
-            memoizedIsInitialized = 1;
-            return true;
-        }
-        
-        @java.lang.Override
-        public void writeTo(com.google.protobuf.CodedOutputStream output)
-            throws java.io.IOException {
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 1, name_);
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(type_)) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 2, type_);
-            }
-            if (dimension_ != 0) {
-                output.writeUInt32(3, dimension_);
-            }
-            com.google.protobuf.GeneratedMessage
-                .serializeStringMapTo(
-                    output,
-                    internalGetAttrs(),
-                    AttrsDefaultEntryHolder.defaultEntry,
-                    4);
-            getUnknownFields().writeTo(output);
-        }
-        
-        @java.lang.Override
-        public int getSerializedSize() {
-            int size = memoizedSize;
-            if (size != -1) return size;
-            
-            size = 0;
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(1, name_);
-            }
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(type_)) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(2, type_);
-            }
-            if (dimension_ != 0) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeUInt32Size(3, dimension_);
-            }
-            for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> entry
-                : internalGetAttrs().getMap().entrySet()) {
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                type_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
                 com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
-                    attrs__ = AttrsDefaultEntryHolder.defaultEntry.newBuilderForType()
-                    .setKey(entry.getKey())
-                    .setValue(entry.getValue())
-                    .build();
-                size += com.google.protobuf.CodedOutputStream
-                    .computeMessageSize(4, attrs__);
-            }
-            size += getUnknownFields().getSerializedSize();
-            memoizedSize = size;
-            return size;
-        }
-        
-        @java.lang.Override
-        public boolean equals(final java.lang.Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Layer)) {
-                return super.equals(obj);
-            }
-            org.brain4j.core.importing.proto.ProtoModel.Layer other = (org.brain4j.core.importing.proto.ProtoModel.Layer) obj;
-            
-            if (!getName()
-                .equals(other.getName())) return false;
-            if (!getType()
-                .equals(other.getType())) return false;
-            if (getDimension()
-                != other.getDimension()) return false;
-            if (!internalGetAttrs().equals(
-                other.internalGetAttrs())) return false;
-            if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-            return true;
-        }
-        
-        @java.lang.Override
-        public int hashCode() {
-            if (memoizedHashCode != 0) {
-                return memoizedHashCode;
-            }
-            int hash = 41;
-            hash = (19 * hash) + getDescriptor().hashCode();
-            hash = (37 * hash) + NAME_FIELD_NUMBER;
-            hash = (53 * hash) + getName().hashCode();
-            hash = (37 * hash) + TYPE_FIELD_NUMBER;
-            hash = (53 * hash) + getType().hashCode();
-            hash = (37 * hash) + DIMENSION_FIELD_NUMBER;
-            hash = (53 * hash) + getDimension();
-            if (!internalGetAttrs().getMap().isEmpty()) {
-                hash = (37 * hash) + ATTRS_FIELD_NUMBER;
-                hash = (53 * hash) + internalGetAttrs().hashCode();
-            }
-            hash = (29 * hash) + getUnknownFields().hashCode();
-            memoizedHashCode = hash;
-            return hash;
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            java.nio.ByteBuffer data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            java.nio.ByteBuffer data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            com.google.protobuf.ByteString data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            com.google.protobuf.ByteString data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(byte[] data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            byte[] data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseDelimitedFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseDelimitedFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            com.google.protobuf.CodedInputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer parseFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        @java.lang.Override
-        public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder() {
-            return DEFAULT_INSTANCE.toBuilder();
-        }
-        public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Layer prototype) {
-            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-        }
-        @java.lang.Override
-        public Builder toBuilder() {
-            return this == DEFAULT_INSTANCE
-                ? new Builder() : new Builder().mergeFrom(this);
-        }
-        
-        @java.lang.Override
-        protected Builder newBuilderForType(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-            Builder builder = new Builder(parent);
-            return builder;
-        }
-        /**
-         * Protobuf type {@code brain4j.Layer}
-         */
-        public static final class Builder extends
-            com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-            // @@protoc_insertion_point(builder_implements:brain4j.Layer)
-            org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder {
-            public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_descriptor;
-            }
-            
-            @SuppressWarnings({"rawtypes"})
-            protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
-                int number) {
-                switch (number) {
-                    case 4:
-                        return internalGetAttrs();
-                    default:
-                        throw new RuntimeException(
-                            "Invalid map field number: " + number);
-                }
-            }
-            @SuppressWarnings({"rawtypes"})
-            protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
-                int number) {
-                switch (number) {
-                    case 4:
-                        return internalGetMutableAttrs();
-                    default:
-                        throw new RuntimeException(
-                            "Invalid map field number: " + number);
-                }
-            }
-            @java.lang.Override
-            protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_fieldAccessorTable
-                    .ensureFieldAccessorsInitialized(
-                        org.brain4j.core.importing.proto.ProtoModel.Layer.class, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder.class);
-            }
-            
-            // Construct using org.brain4j.core.importing.proto.ProtoModel.Layer.newBuilder()
-            private Builder() {
-            
-            }
-            
-            private Builder(
-                com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-                super(parent);
-                
-            }
-            @java.lang.Override
-            public Builder clear() {
-                super.clear();
-                bitField0_ = 0;
-                name_ = "";
-                type_ = "";
-                dimension_ = 0;
-                internalGetMutableAttrs().clear();
-                return this;
-            }
-            
-            @java.lang.Override
-            public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_descriptor;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Layer getDefaultInstanceForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance();
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Layer build() {
-                org.brain4j.core.importing.proto.ProtoModel.Layer result = buildPartial();
-                if (!result.isInitialized()) {
-                    throw newUninitializedMessageException(result);
-                }
-                return result;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Layer buildPartial() {
-                org.brain4j.core.importing.proto.ProtoModel.Layer result = new org.brain4j.core.importing.proto.ProtoModel.Layer(this);
-                if (bitField0_ != 0) { buildPartial0(result); }
-                onBuilt();
-                return result;
-            }
-            
-            private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Layer result) {
-                int from_bitField0_ = bitField0_;
-                if (((from_bitField0_ & 0x00000001) != 0)) {
-                    result.name_ = name_;
-                }
-                if (((from_bitField0_ & 0x00000002) != 0)) {
-                    result.type_ = type_;
-                }
-                if (((from_bitField0_ & 0x00000004) != 0)) {
-                    result.dimension_ = dimension_;
-                }
-                if (((from_bitField0_ & 0x00000008) != 0)) {
-                    result.attrs_ = internalGetAttrs().build(AttrsDefaultEntryHolder.defaultEntry);
-                }
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(com.google.protobuf.Message other) {
-                if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Layer) {
-                    return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Layer)other);
-                } else {
-                    super.mergeFrom(other);
-                    return this;
-                }
-            }
-            
-            public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Layer other) {
-                if (other == org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance()) return this;
-                if (!other.getName().isEmpty()) {
-                    name_ = other.name_;
-                    bitField0_ |= 0x00000001;
-                    onChanged();
-                }
-                if (!other.getType().isEmpty()) {
-                    type_ = other.type_;
-                    bitField0_ |= 0x00000002;
-                    onChanged();
-                }
-                if (other.getDimension() != 0) {
-                    setDimension(other.getDimension());
-                }
-                internalGetMutableAttrs().mergeFrom(
-                    other.internalGetAttrs());
-                bitField0_ |= 0x00000008;
-                this.mergeUnknownFields(other.getUnknownFields());
-                onChanged();
-                return this;
-            }
-            
-            @java.lang.Override
-            public final boolean isInitialized() {
-                return true;
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws java.io.IOException {
-                if (extensionRegistry == null) {
-                    throw new java.lang.NullPointerException();
-                }
-                try {
-                    boolean done = false;
-                    while (!done) {
-                        int tag = input.readTag();
-                        switch (tag) {
-                            case 0:
-                                done = true;
-                                break;
-                            case 10: {
-                                name_ = input.readStringRequireUtf8();
-                                bitField0_ |= 0x00000001;
-                                break;
-                            } // case 10
-                            case 18: {
-                                type_ = input.readStringRequireUtf8();
-                                bitField0_ |= 0x00000002;
-                                break;
-                            } // case 18
-                            case 24: {
-                                dimension_ = input.readUInt32();
-                                bitField0_ |= 0x00000004;
-                                break;
-                            } // case 24
-                            case 34: {
-                                com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
-                                    attrs__ = input.readMessage(
-                                    AttrsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-                                internalGetMutableAttrs().ensureBuilderMap().put(
-                                    attrs__.getKey(), attrs__.getValue());
-                                bitField0_ |= 0x00000008;
-                                break;
-                            } // case 34
-                            default: {
-                                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                                    done = true; // was an endgroup tag
-                                }
-                                break;
-                            } // default:
-                        } // switch (tag)
-                    } // while (!done)
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.unwrapIOException();
-                } finally {
-                    onChanged();
-                } // finally
-                return this;
-            }
-            private int bitField0_;
-            
-            private java.lang.Object name_ = "";
-            /**
-             * <pre>
-             * "dense_0"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @return The name.
-             */
-            public java.lang.String getName() {
-                java.lang.Object ref = name_;
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    name_ = s;
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <pre>
-             * "dense_0"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @return The bytes for name.
-             */
-            public com.google.protobuf.ByteString
-            getNameBytes() {
-                java.lang.Object ref = name_;
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    name_ = b;
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <pre>
-             * "dense_0"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @param value The name to set.
-             * @return This builder for chaining.
-             */
-            public Builder setName(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
-                name_ = value;
-                bitField0_ |= 0x00000001;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * "dense_0"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearName() {
-                name_ = getDefaultInstance().getName();
-                bitField0_ = (bitField0_ & ~0x00000001);
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * "dense_0"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @param value The bytes for name to set.
-             * @return This builder for chaining.
-             */
-            public Builder setNameBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                name_ = value;
-                bitField0_ |= 0x00000001;
-                onChanged();
-                return this;
-            }
-            
-            private java.lang.Object type_ = "";
-            /**
-             * <pre>
-             * "Dense", "LayerNorm"
-             * </pre>
-             *
-             * <code>string type = 2;</code>
-             * @return The type.
-             */
-            public java.lang.String getType() {
-                java.lang.Object ref = type_;
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    type_ = s;
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <pre>
-             * "Dense", "LayerNorm"
-             * </pre>
-             *
-             * <code>string type = 2;</code>
-             * @return The bytes for type.
-             */
-            public com.google.protobuf.ByteString
-            getTypeBytes() {
-                java.lang.Object ref = type_;
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    type_ = b;
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <pre>
-             * "Dense", "LayerNorm"
-             * </pre>
-             *
-             * <code>string type = 2;</code>
-             * @param value The type to set.
-             * @return This builder for chaining.
-             */
-            public Builder setType(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
-                type_ = value;
-                bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * "Dense", "LayerNorm"
-             * </pre>
-             *
-             * <code>string type = 2;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearType() {
-                type_ = getDefaultInstance().getType();
-                bitField0_ = (bitField0_ & ~0x00000002);
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * "Dense", "LayerNorm"
-             * </pre>
-             *
-             * <code>string type = 2;</code>
-             * @param value The bytes for type to set.
-             * @return This builder for chaining.
-             */
-            public Builder setTypeBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                type_ = value;
-                bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            
-            private int dimension_ ;
-            /**
-             * <pre>
-             * 64, 128, ...
-             * </pre>
-             *
-             * <code>uint32 dimension = 3;</code>
-             * @return The dimension.
-             */
-            @java.lang.Override
-            public int getDimension() {
-                return dimension_;
-            }
-            /**
-             * <pre>
-             * 64, 128, ...
-             * </pre>
-             *
-             * <code>uint32 dimension = 3;</code>
-             * @param value The dimension to set.
-             * @return This builder for chaining.
-             */
-            public Builder setDimension(int value) {
-                
-                dimension_ = value;
+                attrs__ = input.readMessage(
+                    AttrsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableAttrs().ensureBuilderMap().put(
+                    attrs__.getKey(), attrs__.getValue());
                 bitField0_ |= 0x00000004;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * 64, 128, ...
-             * </pre>
-             *
-             * <code>uint32 dimension = 3;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearDimension() {
-                bitField0_ = (bitField0_ & ~0x00000004);
-                dimension_ = 0;
-                onChanged();
-                return this;
-            }
-            
-            private static final class AttrsConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue> {
-                @java.lang.Override
-                public org.brain4j.core.importing.proto.ProtoModel.AttrValue build(org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder val) {
-                    if (val instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) { return (org.brain4j.core.importing.proto.ProtoModel.AttrValue) val; }
-                    return ((org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) val).build();
+                break;
+              } // case 26
+              case 34: {
+                input.readMessage(
+                    internalGetBasicFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                layerKindCase_ = 4;
+                break;
+              } // case 34
+              case 42: {
+                input.readMessage(
+                    internalGetTransformerFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                layerKindCase_ = 5;
+                break;
+              } // case 42
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
                 }
-                
-                @java.lang.Override
-                public com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry() {
-                    return AttrsDefaultEntryHolder.defaultEntry;
-                }
-            };
-            private static final AttrsConverter attrsConverter = new AttrsConverter();
-            
-            private com.google.protobuf.MapFieldBuilder<
-                java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder> attrs_;
-            private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
-            internalGetAttrs() {
-                if (attrs_ == null) {
-                    return new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
-                }
-                return attrs_;
-            }
-            private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
-            internalGetMutableAttrs() {
-                if (attrs_ == null) {
-                    attrs_ = new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
-                }
-                bitField0_ |= 0x00000008;
-                onChanged();
-                return attrs_;
-            }
-            public int getAttrsCount() {
-                return internalGetAttrs().ensureBuilderMap().size();
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            @java.lang.Override
-            public boolean containsAttrs(
-                java.lang.String key) {
-                if (key == null) { throw new NullPointerException("map key"); }
-                return internalGetAttrs().ensureBuilderMap().containsKey(key);
-            }
-            /**
-             * Use {@link #getAttrsMap()} instead.
-             */
-            @java.lang.Override
-            @java.lang.Deprecated
-            public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
-                return getAttrsMap();
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            @java.lang.Override
-            public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
-                return internalGetAttrs().getImmutableMap();
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            @java.lang.Override
-            public /* nullable */
-            org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
-                java.lang.String key,
-                /* nullable */
-                org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
-                if (key == null) { throw new NullPointerException("map key"); }
-                java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
-                return map.containsKey(key) ? attrsConverter.build(map.get(key)) : defaultValue;
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
-                java.lang.String key) {
-                if (key == null) { throw new NullPointerException("map key"); }
-                java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
-                if (!map.containsKey(key)) {
-                    throw new java.lang.IllegalArgumentException();
-                }
-                return attrsConverter.build(map.get(key));
-            }
-            public Builder clearAttrs() {
-                bitField0_ = (bitField0_ & ~0x00000008);
-                internalGetMutableAttrs().clear();
-                return this;
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            public Builder removeAttrs(
-                java.lang.String key) {
-                if (key == null) { throw new NullPointerException("map key"); }
-                internalGetMutableAttrs().ensureBuilderMap()
-                    .remove(key);
-                return this;
-            }
-            /**
-             * Use alternate mutation accessors instead.
-             */
-            @java.lang.Deprecated
-            public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
-            getMutableAttrs() {
-                bitField0_ |= 0x00000008;
-                return internalGetMutableAttrs().ensureMessageMap();
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            public Builder putAttrs(
-                java.lang.String key,
-                org.brain4j.core.importing.proto.ProtoModel.AttrValue value) {
-                if (key == null) { throw new NullPointerException("map key"); }
-                if (value == null) { throw new NullPointerException("map value"); }
-                internalGetMutableAttrs().ensureBuilderMap()
-                    .put(key, value);
-                bitField0_ |= 0x00000008;
-                return this;
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            public Builder putAllAttrs(
-                java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> values) {
-                for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> e : values.entrySet()) {
-                    if (e.getKey() == null || e.getValue() == null) {
-                        throw new NullPointerException();
-                    }
-                }
-                internalGetMutableAttrs().ensureBuilderMap()
-                    .putAll(values);
-                bitField0_ |= 0x00000008;
-                return this;
-            }
-            /**
-             * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
-             */
-            public org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder putAttrsBuilderIfAbsent(
-                java.lang.String key) {
-                java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> builderMap = internalGetMutableAttrs().ensureBuilderMap();
-                org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder entry = builderMap.get(key);
-                if (entry == null) {
-                    entry = org.brain4j.core.importing.proto.ProtoModel.AttrValue.newBuilder();
-                    builderMap.put(key, entry);
-                }
-                if (entry instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) {
-                    entry = ((org.brain4j.core.importing.proto.ProtoModel.AttrValue) entry).toBuilder();
-                    builderMap.put(key, entry);
-                }
-                return (org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) entry;
-            }
-            
-            // @@protoc_insertion_point(builder_scope:brain4j.Layer)
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int layerKindCase_ = 0;
+      private java.lang.Object layerKind_;
+      public LayerKindCase
+          getLayerKindCase() {
+        return LayerKindCase.forNumber(
+            layerKindCase_);
+      }
+
+      public Builder clearLayerKind() {
+        layerKindCase_ = 0;
+        layerKind_ = null;
+        onChanged();
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.lang.Object name_ = "";
+      /**
+       * <pre>
+       * "dense_0"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
         }
-        
-        // @@protoc_insertion_point(class_scope:brain4j.Layer)
-        private static final org.brain4j.core.importing.proto.ProtoModel.Layer DEFAULT_INSTANCE;
-        static {
-            DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Layer();
+      }
+      /**
+       * <pre>
+       * "dense_0"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
         }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Layer getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+      }
+      /**
+       * <pre>
+       * "dense_0"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        name_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * "dense_0"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * "dense_0"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        name_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object type_ = "";
+      /**
+       * <pre>
+       * "Dense", "LayerNorm"
+       * </pre>
+       *
+       * <code>string type = 2;</code>
+       * @return The type.
+       */
+      public java.lang.String getType() {
+        java.lang.Object ref = type_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          type_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
         }
-        
-        private static final com.google.protobuf.Parser<Layer>
-            PARSER = new com.google.protobuf.AbstractParser<Layer>() {
-            @java.lang.Override
-            public Layer parsePartialFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws com.google.protobuf.InvalidProtocolBufferException {
-                Builder builder = newBuilder();
-                try {
-                    builder.mergeFrom(input, extensionRegistry);
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.setUnfinishedMessage(builder.buildPartial());
-                } catch (com.google.protobuf.UninitializedMessageException e) {
-                    throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-                } catch (java.io.IOException e) {
-                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
-                        .setUnfinishedMessage(builder.buildPartial());
-                }
-                return builder.buildPartial();
-            }
-        };
-        
-        public static com.google.protobuf.Parser<Layer> parser() {
-            return PARSER;
+      }
+      /**
+       * <pre>
+       * "Dense", "LayerNorm"
+       * </pre>
+       *
+       * <code>string type = 2;</code>
+       * @return The bytes for type.
+       */
+      public com.google.protobuf.ByteString
+          getTypeBytes() {
+        java.lang.Object ref = type_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          type_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
         }
-        
+      }
+      /**
+       * <pre>
+       * "Dense", "LayerNorm"
+       * </pre>
+       *
+       * <code>string type = 2;</code>
+       * @param value The type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setType(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        type_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * "Dense", "LayerNorm"
+       * </pre>
+       *
+       * <code>string type = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearType() {
+        type_ = getDefaultInstance().getType();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * "Dense", "LayerNorm"
+       * </pre>
+       *
+       * <code>string type = 2;</code>
+       * @param value The bytes for type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTypeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        type_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private static final class AttrsConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue> {
         @java.lang.Override
-        public com.google.protobuf.Parser<Layer> getParserForType() {
-            return PARSER;
+        public org.brain4j.core.importing.proto.ProtoModel.AttrValue build(org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder val) {
+          if (val instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) { return (org.brain4j.core.importing.proto.ProtoModel.AttrValue) val; }
+          return ((org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) val).build();
         }
-        
+
         @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.Layer getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+        public com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry() {
+          return AttrsDefaultEntryHolder.defaultEntry;
         }
-        
+      };
+      private static final AttrsConverter attrsConverter = new AttrsConverter();
+
+      private com.google.protobuf.MapFieldBuilder<
+          java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder> attrs_;
+      private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
+          internalGetAttrs() {
+        if (attrs_ == null) {
+          return new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
+        }
+        return attrs_;
+      }
+      private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
+          internalGetMutableAttrs() {
+        if (attrs_ == null) {
+          attrs_ = new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return attrs_;
+      }
+      public int getAttrsCount() {
+        return internalGetAttrs().ensureBuilderMap().size();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      @java.lang.Override
+      public boolean containsAttrs(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        return internalGetAttrs().ensureBuilderMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getAttrsMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
+        return getAttrsMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      @java.lang.Override
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
+        return internalGetAttrs().getImmutableMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      @java.lang.Override
+      public /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+          java.lang.String key,
+          /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
+        return map.containsKey(key) ? attrsConverter.build(map.get(key)) : defaultValue;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return attrsConverter.build(map.get(key));
+      }
+      public Builder clearAttrs() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        internalGetMutableAttrs().clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      public Builder removeAttrs(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+          getMutableAttrs() {
+        bitField0_ |= 0x00000004;
+        return internalGetMutableAttrs().ensureMessageMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      public Builder putAttrs(
+          java.lang.String key,
+          org.brain4j.core.importing.proto.ProtoModel.AttrValue value) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        if (value == null) { throw new NullPointerException("map value"); }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .put(key, value);
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      public Builder putAllAttrs(
+          java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> values) {
+        for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> e : values.entrySet()) {
+          if (e.getKey() == null || e.getValue() == null) {
+            throw new NullPointerException();
+          }
+        }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .putAll(values);
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 3;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder putAttrsBuilderIfAbsent(
+          java.lang.String key) {
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> builderMap = internalGetMutableAttrs().ensureBuilderMap();
+        org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder entry = builderMap.get(key);
+        if (entry == null) {
+          entry = org.brain4j.core.importing.proto.ProtoModel.AttrValue.newBuilder();
+          builderMap.put(key, entry);
+        }
+        if (entry instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) {
+          entry = ((org.brain4j.core.importing.proto.ProtoModel.AttrValue) entry).toBuilder();
+          builderMap.put(key, entry);
+        }
+        return (org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) entry;
+      }
+
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.BasicLayer, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder, org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder> basicBuilder_;
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       * @return Whether the basic field is set.
+       */
+      @java.lang.Override
+      public boolean hasBasic() {
+        return layerKindCase_ == 4;
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       * @return The basic.
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.BasicLayer getBasic() {
+        if (basicBuilder_ == null) {
+          if (layerKindCase_ == 4) {
+            return (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_;
+          }
+          return org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+        } else {
+          if (layerKindCase_ == 4) {
+            return basicBuilder_.getMessage();
+          }
+          return org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      public Builder setBasic(org.brain4j.core.importing.proto.ProtoModel.BasicLayer value) {
+        if (basicBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          layerKind_ = value;
+          onChanged();
+        } else {
+          basicBuilder_.setMessage(value);
+        }
+        layerKindCase_ = 4;
+        return this;
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      public Builder setBasic(
+          org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder builderForValue) {
+        if (basicBuilder_ == null) {
+          layerKind_ = builderForValue.build();
+          onChanged();
+        } else {
+          basicBuilder_.setMessage(builderForValue.build());
+        }
+        layerKindCase_ = 4;
+        return this;
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      public Builder mergeBasic(org.brain4j.core.importing.proto.ProtoModel.BasicLayer value) {
+        if (basicBuilder_ == null) {
+          if (layerKindCase_ == 4 &&
+              layerKind_ != org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance()) {
+            layerKind_ = org.brain4j.core.importing.proto.ProtoModel.BasicLayer.newBuilder((org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            layerKind_ = value;
+          }
+          onChanged();
+        } else {
+          if (layerKindCase_ == 4) {
+            basicBuilder_.mergeFrom(value);
+          } else {
+            basicBuilder_.setMessage(value);
+          }
+        }
+        layerKindCase_ = 4;
+        return this;
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      public Builder clearBasic() {
+        if (basicBuilder_ == null) {
+          if (layerKindCase_ == 4) {
+            layerKindCase_ = 0;
+            layerKind_ = null;
+            onChanged();
+          }
+        } else {
+          if (layerKindCase_ == 4) {
+            layerKindCase_ = 0;
+            layerKind_ = null;
+          }
+          basicBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder getBasicBuilder() {
+        return internalGetBasicFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder getBasicOrBuilder() {
+        if ((layerKindCase_ == 4) && (basicBuilder_ != null)) {
+          return basicBuilder_.getMessageOrBuilder();
+        } else {
+          if (layerKindCase_ == 4) {
+            return (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_;
+          }
+          return org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.brain4j.BasicLayer basic = 4;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.BasicLayer, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder, org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder> 
+          internalGetBasicFieldBuilder() {
+        if (basicBuilder_ == null) {
+          if (!(layerKindCase_ == 4)) {
+            layerKind_ = org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+          }
+          basicBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.BasicLayer, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder, org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder>(
+                  (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) layerKind_,
+                  getParentForChildren(),
+                  isClean());
+          layerKind_ = null;
+        }
+        layerKindCase_ = 4;
+        onChanged();
+        return basicBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Transformer, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder, org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder> transformerBuilder_;
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       * @return Whether the transformer field is set.
+       */
+      @java.lang.Override
+      public boolean hasTransformer() {
+        return layerKindCase_ == 5;
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       * @return The transformer.
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Transformer getTransformer() {
+        if (transformerBuilder_ == null) {
+          if (layerKindCase_ == 5) {
+            return (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_;
+          }
+          return org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+        } else {
+          if (layerKindCase_ == 5) {
+            return transformerBuilder_.getMessage();
+          }
+          return org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      public Builder setTransformer(org.brain4j.core.importing.proto.ProtoModel.Transformer value) {
+        if (transformerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          layerKind_ = value;
+          onChanged();
+        } else {
+          transformerBuilder_.setMessage(value);
+        }
+        layerKindCase_ = 5;
+        return this;
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      public Builder setTransformer(
+          org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder builderForValue) {
+        if (transformerBuilder_ == null) {
+          layerKind_ = builderForValue.build();
+          onChanged();
+        } else {
+          transformerBuilder_.setMessage(builderForValue.build());
+        }
+        layerKindCase_ = 5;
+        return this;
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      public Builder mergeTransformer(org.brain4j.core.importing.proto.ProtoModel.Transformer value) {
+        if (transformerBuilder_ == null) {
+          if (layerKindCase_ == 5 &&
+              layerKind_ != org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance()) {
+            layerKind_ = org.brain4j.core.importing.proto.ProtoModel.Transformer.newBuilder((org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            layerKind_ = value;
+          }
+          onChanged();
+        } else {
+          if (layerKindCase_ == 5) {
+            transformerBuilder_.mergeFrom(value);
+          } else {
+            transformerBuilder_.setMessage(value);
+          }
+        }
+        layerKindCase_ = 5;
+        return this;
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      public Builder clearTransformer() {
+        if (transformerBuilder_ == null) {
+          if (layerKindCase_ == 5) {
+            layerKindCase_ = 0;
+            layerKind_ = null;
+            onChanged();
+          }
+        } else {
+          if (layerKindCase_ == 5) {
+            layerKindCase_ = 0;
+            layerKind_ = null;
+          }
+          transformerBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder getTransformerBuilder() {
+        return internalGetTransformerFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder getTransformerOrBuilder() {
+        if ((layerKindCase_ == 5) && (transformerBuilder_ != null)) {
+          return transformerBuilder_.getMessageOrBuilder();
+        } else {
+          if (layerKindCase_ == 5) {
+            return (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_;
+          }
+          return org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.brain4j.Transformer transformer = 5;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Transformer, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder, org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder> 
+          internalGetTransformerFieldBuilder() {
+        if (transformerBuilder_ == null) {
+          if (!(layerKindCase_ == 5)) {
+            layerKind_ = org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+          }
+          transformerBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Transformer, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder, org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder>(
+                  (org.brain4j.core.importing.proto.ProtoModel.Transformer) layerKind_,
+                  getParentForChildren(),
+                  isClean());
+          layerKind_ = null;
+        }
+        layerKindCase_ = 5;
+        onChanged();
+        return transformerBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.Layer)
     }
-    
-    public interface AttrValueOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:brain4j.AttrValue)
-        com.google.protobuf.MessageOrBuilder {
-        
-        /**
-         * <code>int32 int_val = 1;</code>
-         * @return Whether the intVal field is set.
-         */
-        boolean hasIntVal();
-        /**
-         * <code>int32 int_val = 1;</code>
-         * @return The intVal.
-         */
-        int getIntVal();
-        
-        /**
-         * <code>float float_val = 2;</code>
-         * @return Whether the floatVal field is set.
-         */
-        boolean hasFloatVal();
-        /**
-         * <code>float float_val = 2;</code>
-         * @return The floatVal.
-         */
-        float getFloatVal();
-        
-        /**
-         * <code>bool bool_val = 3;</code>
-         * @return Whether the boolVal field is set.
-         */
-        boolean hasBoolVal();
-        /**
-         * <code>bool bool_val = 3;</code>
-         * @return The boolVal.
-         */
-        boolean getBoolVal();
-        
-        /**
-         * <code>string string_val = 4;</code>
-         * @return Whether the stringVal field is set.
-         */
-        boolean hasStringVal();
-        /**
-         * <code>string string_val = 4;</code>
-         * @return The stringVal.
-         */
-        java.lang.String getStringVal();
-        /**
-         * <code>string string_val = 4;</code>
-         * @return The bytes for stringVal.
-         */
-        com.google.protobuf.ByteString
+
+    // @@protoc_insertion_point(class_scope:brain4j.Layer)
+    private static final org.brain4j.core.importing.proto.ProtoModel.Layer DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Layer();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Layer getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Layer>
+        PARSER = new com.google.protobuf.AbstractParser<Layer>() {
+      @java.lang.Override
+      public Layer parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<Layer> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Layer> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Layer getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface AttentionHeadOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.AttentionHead)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.brain4j.Tensor q_weight = 1;</code>
+     * @return Whether the qWeight field is set.
+     */
+    boolean hasQWeight();
+    /**
+     * <code>.brain4j.Tensor q_weight = 1;</code>
+     * @return The qWeight.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Tensor getQWeight();
+    /**
+     * <code>.brain4j.Tensor q_weight = 1;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getQWeightOrBuilder();
+
+    /**
+     * <code>.brain4j.Tensor k_weight = 2;</code>
+     * @return Whether the kWeight field is set.
+     */
+    boolean hasKWeight();
+    /**
+     * <code>.brain4j.Tensor k_weight = 2;</code>
+     * @return The kWeight.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Tensor getKWeight();
+    /**
+     * <code>.brain4j.Tensor k_weight = 2;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getKWeightOrBuilder();
+
+    /**
+     * <code>.brain4j.Tensor v_weight = 3;</code>
+     * @return Whether the vWeight field is set.
+     */
+    boolean hasVWeight();
+    /**
+     * <code>.brain4j.Tensor v_weight = 3;</code>
+     * @return The vWeight.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Tensor getVWeight();
+    /**
+     * <code>.brain4j.Tensor v_weight = 3;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getVWeightOrBuilder();
+
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    int getAttrsCount();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    boolean containsAttrs(
+        java.lang.String key);
+    /**
+     * Use {@link #getAttrsMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    getAttrs();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    getAttrsMap();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+        java.lang.String key,
+        /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+        java.lang.String key);
+  }
+  /**
+   * Protobuf type {@code brain4j.AttentionHead}
+   */
+  public static final class AttentionHead extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.AttentionHead)
+      AttentionHeadOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        AttentionHead.class.getName());
+    }
+    // Use AttentionHead.newBuilder() to construct.
+    private AttentionHead(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private AttentionHead() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+        int number) {
+      switch (number) {
+        case 4:
+          return internalGetAttrs();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.AttentionHead.class, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int Q_WEIGHT_FIELD_NUMBER = 1;
+    private org.brain4j.core.importing.proto.ProtoModel.Tensor qWeight_;
+    /**
+     * <code>.brain4j.Tensor q_weight = 1;</code>
+     * @return Whether the qWeight field is set.
+     */
+    @java.lang.Override
+    public boolean hasQWeight() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>.brain4j.Tensor q_weight = 1;</code>
+     * @return The qWeight.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Tensor getQWeight() {
+      return qWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : qWeight_;
+    }
+    /**
+     * <code>.brain4j.Tensor q_weight = 1;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getQWeightOrBuilder() {
+      return qWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : qWeight_;
+    }
+
+    public static final int K_WEIGHT_FIELD_NUMBER = 2;
+    private org.brain4j.core.importing.proto.ProtoModel.Tensor kWeight_;
+    /**
+     * <code>.brain4j.Tensor k_weight = 2;</code>
+     * @return Whether the kWeight field is set.
+     */
+    @java.lang.Override
+    public boolean hasKWeight() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>.brain4j.Tensor k_weight = 2;</code>
+     * @return The kWeight.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Tensor getKWeight() {
+      return kWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : kWeight_;
+    }
+    /**
+     * <code>.brain4j.Tensor k_weight = 2;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getKWeightOrBuilder() {
+      return kWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : kWeight_;
+    }
+
+    public static final int V_WEIGHT_FIELD_NUMBER = 3;
+    private org.brain4j.core.importing.proto.ProtoModel.Tensor vWeight_;
+    /**
+     * <code>.brain4j.Tensor v_weight = 3;</code>
+     * @return Whether the vWeight field is set.
+     */
+    @java.lang.Override
+    public boolean hasVWeight() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <code>.brain4j.Tensor v_weight = 3;</code>
+     * @return The vWeight.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Tensor getVWeight() {
+      return vWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : vWeight_;
+    }
+    /**
+     * <code>.brain4j.Tensor v_weight = 3;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getVWeightOrBuilder() {
+      return vWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : vWeight_;
+    }
+
+    public static final int ATTRS_FIELD_NUMBER = 4;
+    private static final class AttrsDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_AttrsEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                  org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance());
+    }
+    @SuppressWarnings("serial")
+    private com.google.protobuf.MapField<
+        java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> attrs_;
+    private com.google.protobuf.MapField<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    internalGetAttrs() {
+      if (attrs_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            AttrsDefaultEntryHolder.defaultEntry);
+      }
+      return attrs_;
+    }
+    public int getAttrsCount() {
+      return internalGetAttrs().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    @java.lang.Override
+    public boolean containsAttrs(
+        java.lang.String key) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      return internalGetAttrs().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getAttrsMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
+      return getAttrsMap();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    @java.lang.Override
+    public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
+      return internalGetAttrs().getMap();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    @java.lang.Override
+    public /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+        java.lang.String key,
+        /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
+          internalGetAttrs().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
+          internalGetAttrs().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(1, getQWeight());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeMessage(2, getKWeight());
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        output.writeMessage(3, getVWeight());
+      }
+      com.google.protobuf.GeneratedMessage
+        .serializeStringMapTo(
+          output,
+          internalGetAttrs(),
+          AttrsDefaultEntryHolder.defaultEntry,
+          4);
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getQWeight());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getKWeight());
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getVWeight());
+      }
+      for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> entry
+           : internalGetAttrs().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+        attrs__ = AttrsDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(4, attrs__);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.AttentionHead)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.AttentionHead other = (org.brain4j.core.importing.proto.ProtoModel.AttentionHead) obj;
+
+      if (hasQWeight() != other.hasQWeight()) return false;
+      if (hasQWeight()) {
+        if (!getQWeight()
+            .equals(other.getQWeight())) return false;
+      }
+      if (hasKWeight() != other.hasKWeight()) return false;
+      if (hasKWeight()) {
+        if (!getKWeight()
+            .equals(other.getKWeight())) return false;
+      }
+      if (hasVWeight() != other.hasVWeight()) return false;
+      if (hasVWeight()) {
+        if (!getVWeight()
+            .equals(other.getVWeight())) return false;
+      }
+      if (!internalGetAttrs().equals(
+          other.internalGetAttrs())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasQWeight()) {
+        hash = (37 * hash) + Q_WEIGHT_FIELD_NUMBER;
+        hash = (53 * hash) + getQWeight().hashCode();
+      }
+      if (hasKWeight()) {
+        hash = (37 * hash) + K_WEIGHT_FIELD_NUMBER;
+        hash = (53 * hash) + getKWeight().hashCode();
+      }
+      if (hasVWeight()) {
+        hash = (37 * hash) + V_WEIGHT_FIELD_NUMBER;
+        hash = (53 * hash) + getVWeight().hashCode();
+      }
+      if (!internalGetAttrs().getMap().isEmpty()) {
+        hash = (37 * hash) + ATTRS_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetAttrs().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.AttentionHead prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code brain4j.AttentionHead}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.AttentionHead)
+        org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 4:
+            return internalGetAttrs();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 4:
+            return internalGetMutableAttrs();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.AttentionHead.class, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.AttentionHead.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          internalGetQWeightFieldBuilder();
+          internalGetKWeightFieldBuilder();
+          internalGetVWeightFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        qWeight_ = null;
+        if (qWeightBuilder_ != null) {
+          qWeightBuilder_.dispose();
+          qWeightBuilder_ = null;
+        }
+        kWeight_ = null;
+        if (kWeightBuilder_ != null) {
+          kWeightBuilder_.dispose();
+          kWeightBuilder_ = null;
+        }
+        vWeight_ = null;
+        if (vWeightBuilder_ != null) {
+          vWeightBuilder_.dispose();
+          vWeightBuilder_ = null;
+        }
+        internalGetMutableAttrs().clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.AttentionHead.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead build() {
+        org.brain4j.core.importing.proto.ProtoModel.AttentionHead result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.AttentionHead result = new org.brain4j.core.importing.proto.ProtoModel.AttentionHead(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.AttentionHead result) {
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.qWeight_ = qWeightBuilder_ == null
+              ? qWeight_
+              : qWeightBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.kWeight_ = kWeightBuilder_ == null
+              ? kWeight_
+              : kWeightBuilder_.build();
+          to_bitField0_ |= 0x00000002;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.vWeight_ = vWeightBuilder_ == null
+              ? vWeight_
+              : vWeightBuilder_.build();
+          to_bitField0_ |= 0x00000004;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.attrs_ = internalGetAttrs().build(AttrsDefaultEntryHolder.defaultEntry);
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.AttentionHead) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.AttentionHead)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.AttentionHead other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.AttentionHead.getDefaultInstance()) return this;
+        if (other.hasQWeight()) {
+          mergeQWeight(other.getQWeight());
+        }
+        if (other.hasKWeight()) {
+          mergeKWeight(other.getKWeight());
+        }
+        if (other.hasVWeight()) {
+          mergeVWeight(other.getVWeight());
+        }
+        internalGetMutableAttrs().mergeFrom(
+            other.internalGetAttrs());
+        bitField0_ |= 0x00000008;
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                input.readMessage(
+                    internalGetQWeightFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                input.readMessage(
+                    internalGetKWeightFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                input.readMessage(
+                    internalGetVWeightFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+                attrs__ = input.readMessage(
+                    AttrsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableAttrs().ensureBuilderMap().put(
+                    attrs__.getKey(), attrs__.getValue());
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private org.brain4j.core.importing.proto.ProtoModel.Tensor qWeight_;
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> qWeightBuilder_;
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       * @return Whether the qWeight field is set.
+       */
+      public boolean hasQWeight() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       * @return The qWeight.
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor getQWeight() {
+        if (qWeightBuilder_ == null) {
+          return qWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : qWeight_;
+        } else {
+          return qWeightBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      public Builder setQWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (qWeightBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          qWeight_ = value;
+        } else {
+          qWeightBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      public Builder setQWeight(
+          org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (qWeightBuilder_ == null) {
+          qWeight_ = builderForValue.build();
+        } else {
+          qWeightBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      public Builder mergeQWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (qWeightBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0) &&
+            qWeight_ != null &&
+            qWeight_ != org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance()) {
+            getQWeightBuilder().mergeFrom(value);
+          } else {
+            qWeight_ = value;
+          }
+        } else {
+          qWeightBuilder_.mergeFrom(value);
+        }
+        if (qWeight_ != null) {
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      public Builder clearQWeight() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        qWeight_ = null;
+        if (qWeightBuilder_ != null) {
+          qWeightBuilder_.dispose();
+          qWeightBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder getQWeightBuilder() {
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return internalGetQWeightFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getQWeightOrBuilder() {
+        if (qWeightBuilder_ != null) {
+          return qWeightBuilder_.getMessageOrBuilder();
+        } else {
+          return qWeight_ == null ?
+              org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : qWeight_;
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor q_weight = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          internalGetQWeightFieldBuilder() {
+        if (qWeightBuilder_ == null) {
+          qWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>(
+                  getQWeight(),
+                  getParentForChildren(),
+                  isClean());
+          qWeight_ = null;
+        }
+        return qWeightBuilder_;
+      }
+
+      private org.brain4j.core.importing.proto.ProtoModel.Tensor kWeight_;
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> kWeightBuilder_;
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       * @return Whether the kWeight field is set.
+       */
+      public boolean hasKWeight() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       * @return The kWeight.
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor getKWeight() {
+        if (kWeightBuilder_ == null) {
+          return kWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : kWeight_;
+        } else {
+          return kWeightBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      public Builder setKWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (kWeightBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          kWeight_ = value;
+        } else {
+          kWeightBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      public Builder setKWeight(
+          org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (kWeightBuilder_ == null) {
+          kWeight_ = builderForValue.build();
+        } else {
+          kWeightBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      public Builder mergeKWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (kWeightBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0) &&
+            kWeight_ != null &&
+            kWeight_ != org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance()) {
+            getKWeightBuilder().mergeFrom(value);
+          } else {
+            kWeight_ = value;
+          }
+        } else {
+          kWeightBuilder_.mergeFrom(value);
+        }
+        if (kWeight_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      public Builder clearKWeight() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        kWeight_ = null;
+        if (kWeightBuilder_ != null) {
+          kWeightBuilder_.dispose();
+          kWeightBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder getKWeightBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return internalGetKWeightFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getKWeightOrBuilder() {
+        if (kWeightBuilder_ != null) {
+          return kWeightBuilder_.getMessageOrBuilder();
+        } else {
+          return kWeight_ == null ?
+              org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : kWeight_;
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor k_weight = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          internalGetKWeightFieldBuilder() {
+        if (kWeightBuilder_ == null) {
+          kWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>(
+                  getKWeight(),
+                  getParentForChildren(),
+                  isClean());
+          kWeight_ = null;
+        }
+        return kWeightBuilder_;
+      }
+
+      private org.brain4j.core.importing.proto.ProtoModel.Tensor vWeight_;
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> vWeightBuilder_;
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       * @return Whether the vWeight field is set.
+       */
+      public boolean hasVWeight() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       * @return The vWeight.
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor getVWeight() {
+        if (vWeightBuilder_ == null) {
+          return vWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : vWeight_;
+        } else {
+          return vWeightBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      public Builder setVWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (vWeightBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          vWeight_ = value;
+        } else {
+          vWeightBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      public Builder setVWeight(
+          org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (vWeightBuilder_ == null) {
+          vWeight_ = builderForValue.build();
+        } else {
+          vWeightBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      public Builder mergeVWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (vWeightBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0) &&
+            vWeight_ != null &&
+            vWeight_ != org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance()) {
+            getVWeightBuilder().mergeFrom(value);
+          } else {
+            vWeight_ = value;
+          }
+        } else {
+          vWeightBuilder_.mergeFrom(value);
+        }
+        if (vWeight_ != null) {
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      public Builder clearVWeight() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        vWeight_ = null;
+        if (vWeightBuilder_ != null) {
+          vWeightBuilder_.dispose();
+          vWeightBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder getVWeightBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return internalGetVWeightFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getVWeightOrBuilder() {
+        if (vWeightBuilder_ != null) {
+          return vWeightBuilder_.getMessageOrBuilder();
+        } else {
+          return vWeight_ == null ?
+              org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : vWeight_;
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor v_weight = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          internalGetVWeightFieldBuilder() {
+        if (vWeightBuilder_ == null) {
+          vWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>(
+                  getVWeight(),
+                  getParentForChildren(),
+                  isClean());
+          vWeight_ = null;
+        }
+        return vWeightBuilder_;
+      }
+
+      private static final class AttrsConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue> {
+        @java.lang.Override
+        public org.brain4j.core.importing.proto.ProtoModel.AttrValue build(org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder val) {
+          if (val instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) { return (org.brain4j.core.importing.proto.ProtoModel.AttrValue) val; }
+          return ((org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) val).build();
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry() {
+          return AttrsDefaultEntryHolder.defaultEntry;
+        }
+      };
+      private static final AttrsConverter attrsConverter = new AttrsConverter();
+
+      private com.google.protobuf.MapFieldBuilder<
+          java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder> attrs_;
+      private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
+          internalGetAttrs() {
+        if (attrs_ == null) {
+          return new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
+        }
+        return attrs_;
+      }
+      private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
+          internalGetMutableAttrs() {
+        if (attrs_ == null) {
+          attrs_ = new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return attrs_;
+      }
+      public int getAttrsCount() {
+        return internalGetAttrs().ensureBuilderMap().size();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      @java.lang.Override
+      public boolean containsAttrs(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        return internalGetAttrs().ensureBuilderMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getAttrsMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
+        return getAttrsMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      @java.lang.Override
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
+        return internalGetAttrs().getImmutableMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      @java.lang.Override
+      public /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+          java.lang.String key,
+          /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
+        return map.containsKey(key) ? attrsConverter.build(map.get(key)) : defaultValue;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return attrsConverter.build(map.get(key));
+      }
+      public Builder clearAttrs() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        internalGetMutableAttrs().clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      public Builder removeAttrs(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+          getMutableAttrs() {
+        bitField0_ |= 0x00000008;
+        return internalGetMutableAttrs().ensureMessageMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      public Builder putAttrs(
+          java.lang.String key,
+          org.brain4j.core.importing.proto.ProtoModel.AttrValue value) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        if (value == null) { throw new NullPointerException("map value"); }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .put(key, value);
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      public Builder putAllAttrs(
+          java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> values) {
+        for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> e : values.entrySet()) {
+          if (e.getKey() == null || e.getValue() == null) {
+            throw new NullPointerException();
+          }
+        }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .putAll(values);
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 4;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder putAttrsBuilderIfAbsent(
+          java.lang.String key) {
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> builderMap = internalGetMutableAttrs().ensureBuilderMap();
+        org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder entry = builderMap.get(key);
+        if (entry == null) {
+          entry = org.brain4j.core.importing.proto.ProtoModel.AttrValue.newBuilder();
+          builderMap.put(key, entry);
+        }
+        if (entry instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) {
+          entry = ((org.brain4j.core.importing.proto.ProtoModel.AttrValue) entry).toBuilder();
+          builderMap.put(key, entry);
+        }
+        return (org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) entry;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.AttentionHead)
+    }
+
+    // @@protoc_insertion_point(class_scope:brain4j.AttentionHead)
+    private static final org.brain4j.core.importing.proto.ProtoModel.AttentionHead DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.AttentionHead();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttentionHead getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AttentionHead>
+        PARSER = new com.google.protobuf.AbstractParser<AttentionHead>() {
+      @java.lang.Override
+      public AttentionHead parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<AttentionHead> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AttentionHead> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttentionHead getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface MultiHeadAttentionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.MultiHeadAttention)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead> 
+        getHeadsList();
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.AttentionHead getHeads(int index);
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    int getHeadsCount();
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+        getHeadsOrBuilderList();
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder getHeadsOrBuilder(
+        int index);
+
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    int getAttrsCount();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    boolean containsAttrs(
+        java.lang.String key);
+    /**
+     * Use {@link #getAttrsMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    getAttrs();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    getAttrsMap();
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+        java.lang.String key,
+        /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+        java.lang.String key);
+
+    /**
+     * <code>.brain4j.Tensor out_weight = 3;</code>
+     * @return Whether the outWeight field is set.
+     */
+    boolean hasOutWeight();
+    /**
+     * <code>.brain4j.Tensor out_weight = 3;</code>
+     * @return The outWeight.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Tensor getOutWeight();
+    /**
+     * <code>.brain4j.Tensor out_weight = 3;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getOutWeightOrBuilder();
+  }
+  /**
+   * Protobuf type {@code brain4j.MultiHeadAttention}
+   */
+  public static final class MultiHeadAttention extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.MultiHeadAttention)
+      MultiHeadAttentionOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        MultiHeadAttention.class.getName());
+    }
+    // Use MultiHeadAttention.newBuilder() to construct.
+    private MultiHeadAttention(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private MultiHeadAttention() {
+      heads_ = java.util.Collections.emptyList();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetAttrs();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.class, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int HEADS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead> heads_;
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    @java.lang.Override
+    public java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead> getHeadsList() {
+      return heads_;
+    }
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+        getHeadsOrBuilderList() {
+      return heads_;
+    }
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    @java.lang.Override
+    public int getHeadsCount() {
+      return heads_.size();
+    }
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttentionHead getHeads(int index) {
+      return heads_.get(index);
+    }
+    /**
+     * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder getHeadsOrBuilder(
+        int index) {
+      return heads_.get(index);
+    }
+
+    public static final int ATTRS_FIELD_NUMBER = 2;
+    private static final class AttrsDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_AttrsEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                  org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance());
+    }
+    @SuppressWarnings("serial")
+    private com.google.protobuf.MapField<
+        java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> attrs_;
+    private com.google.protobuf.MapField<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+    internalGetAttrs() {
+      if (attrs_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            AttrsDefaultEntryHolder.defaultEntry);
+      }
+      return attrs_;
+    }
+    public int getAttrsCount() {
+      return internalGetAttrs().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    @java.lang.Override
+    public boolean containsAttrs(
+        java.lang.String key) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      return internalGetAttrs().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getAttrsMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
+      return getAttrsMap();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    @java.lang.Override
+    public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
+      return internalGetAttrs().getMap();
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    @java.lang.Override
+    public /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+        java.lang.String key,
+        /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
+          internalGetAttrs().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new NullPointerException("map key"); }
+      java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> map =
+          internalGetAttrs().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int OUT_WEIGHT_FIELD_NUMBER = 3;
+    private org.brain4j.core.importing.proto.ProtoModel.Tensor outWeight_;
+    /**
+     * <code>.brain4j.Tensor out_weight = 3;</code>
+     * @return Whether the outWeight field is set.
+     */
+    @java.lang.Override
+    public boolean hasOutWeight() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>.brain4j.Tensor out_weight = 3;</code>
+     * @return The outWeight.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Tensor getOutWeight() {
+      return outWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : outWeight_;
+    }
+    /**
+     * <code>.brain4j.Tensor out_weight = 3;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getOutWeightOrBuilder() {
+      return outWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : outWeight_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < heads_.size(); i++) {
+        output.writeMessage(1, heads_.get(i));
+      }
+      com.google.protobuf.GeneratedMessage
+        .serializeStringMapTo(
+          output,
+          internalGetAttrs(),
+          AttrsDefaultEntryHolder.defaultEntry,
+          2);
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(3, getOutWeight());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < heads_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, heads_.get(i));
+      }
+      for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> entry
+           : internalGetAttrs().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+        attrs__ = AttrsDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, attrs__);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getOutWeight());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention other = (org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention) obj;
+
+      if (!getHeadsList()
+          .equals(other.getHeadsList())) return false;
+      if (!internalGetAttrs().equals(
+          other.internalGetAttrs())) return false;
+      if (hasOutWeight() != other.hasOutWeight()) return false;
+      if (hasOutWeight()) {
+        if (!getOutWeight()
+            .equals(other.getOutWeight())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getHeadsCount() > 0) {
+        hash = (37 * hash) + HEADS_FIELD_NUMBER;
+        hash = (53 * hash) + getHeadsList().hashCode();
+      }
+      if (!internalGetAttrs().getMap().isEmpty()) {
+        hash = (37 * hash) + ATTRS_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetAttrs().hashCode();
+      }
+      if (hasOutWeight()) {
+        hash = (37 * hash) + OUT_WEIGHT_FIELD_NUMBER;
+        hash = (53 * hash) + getOutWeight().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code brain4j.MultiHeadAttention}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.MultiHeadAttention)
+        org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetAttrs();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetMutableAttrs();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.class, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          internalGetHeadsFieldBuilder();
+          internalGetOutWeightFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        if (headsBuilder_ == null) {
+          heads_ = java.util.Collections.emptyList();
+        } else {
+          heads_ = null;
+          headsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        internalGetMutableAttrs().clear();
+        outWeight_ = null;
+        if (outWeightBuilder_ != null) {
+          outWeightBuilder_.dispose();
+          outWeightBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention build() {
+        org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention result = new org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention result) {
+        if (headsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            heads_ = java.util.Collections.unmodifiableList(heads_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.heads_ = heads_;
+        } else {
+          result.heads_ = headsBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.attrs_ = internalGetAttrs().build(AttrsDefaultEntryHolder.defaultEntry);
+        }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.outWeight_ = outWeightBuilder_ == null
+              ? outWeight_
+              : outWeightBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance()) return this;
+        if (headsBuilder_ == null) {
+          if (!other.heads_.isEmpty()) {
+            if (heads_.isEmpty()) {
+              heads_ = other.heads_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureHeadsIsMutable();
+              heads_.addAll(other.heads_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.heads_.isEmpty()) {
+            if (headsBuilder_.isEmpty()) {
+              headsBuilder_.dispose();
+              headsBuilder_ = null;
+              heads_ = other.heads_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              headsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetHeadsFieldBuilder() : null;
+            } else {
+              headsBuilder_.addAllMessages(other.heads_);
+            }
+          }
+        }
+        internalGetMutableAttrs().mergeFrom(
+            other.internalGetAttrs());
+        bitField0_ |= 0x00000002;
+        if (other.hasOutWeight()) {
+          mergeOutWeight(other.getOutWeight());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                org.brain4j.core.importing.proto.ProtoModel.AttentionHead m =
+                    input.readMessage(
+                        org.brain4j.core.importing.proto.ProtoModel.AttentionHead.parser(),
+                        extensionRegistry);
+                if (headsBuilder_ == null) {
+                  ensureHeadsIsMutable();
+                  heads_.add(m);
+                } else {
+                  headsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              case 18: {
+                com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+                attrs__ = input.readMessage(
+                    AttrsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableAttrs().ensureBuilderMap().put(
+                    attrs__.getKey(), attrs__.getValue());
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                input.readMessage(
+                    internalGetOutWeightFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead> heads_ =
+        java.util.Collections.emptyList();
+      private void ensureHeadsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          heads_ = new java.util.ArrayList<org.brain4j.core.importing.proto.ProtoModel.AttentionHead>(heads_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.AttentionHead, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder, org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> headsBuilder_;
+
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead> getHeadsList() {
+        if (headsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(heads_);
+        } else {
+          return headsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public int getHeadsCount() {
+        if (headsBuilder_ == null) {
+          return heads_.size();
+        } else {
+          return headsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead getHeads(int index) {
+        if (headsBuilder_ == null) {
+          return heads_.get(index);
+        } else {
+          return headsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder setHeads(
+          int index, org.brain4j.core.importing.proto.ProtoModel.AttentionHead value) {
+        if (headsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureHeadsIsMutable();
+          heads_.set(index, value);
+          onChanged();
+        } else {
+          headsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder setHeads(
+          int index, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder builderForValue) {
+        if (headsBuilder_ == null) {
+          ensureHeadsIsMutable();
+          heads_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          headsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder addHeads(org.brain4j.core.importing.proto.ProtoModel.AttentionHead value) {
+        if (headsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureHeadsIsMutable();
+          heads_.add(value);
+          onChanged();
+        } else {
+          headsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder addHeads(
+          int index, org.brain4j.core.importing.proto.ProtoModel.AttentionHead value) {
+        if (headsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureHeadsIsMutable();
+          heads_.add(index, value);
+          onChanged();
+        } else {
+          headsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder addHeads(
+          org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder builderForValue) {
+        if (headsBuilder_ == null) {
+          ensureHeadsIsMutable();
+          heads_.add(builderForValue.build());
+          onChanged();
+        } else {
+          headsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder addHeads(
+          int index, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder builderForValue) {
+        if (headsBuilder_ == null) {
+          ensureHeadsIsMutable();
+          heads_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          headsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder addAllHeads(
+          java.lang.Iterable<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHead> values) {
+        if (headsBuilder_ == null) {
+          ensureHeadsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, heads_);
+          onChanged();
+        } else {
+          headsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder clearHeads() {
+        if (headsBuilder_ == null) {
+          heads_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          headsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public Builder removeHeads(int index) {
+        if (headsBuilder_ == null) {
+          ensureHeadsIsMutable();
+          heads_.remove(index);
+          onChanged();
+        } else {
+          headsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder getHeadsBuilder(
+          int index) {
+        return internalGetHeadsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder getHeadsOrBuilder(
+          int index) {
+        if (headsBuilder_ == null) {
+          return heads_.get(index);  } else {
+          return headsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+           getHeadsOrBuilderList() {
+        if (headsBuilder_ != null) {
+          return headsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(heads_);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder addHeadsBuilder() {
+        return internalGetHeadsFieldBuilder().addBuilder(
+            org.brain4j.core.importing.proto.ProtoModel.AttentionHead.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder addHeadsBuilder(
+          int index) {
+        return internalGetHeadsFieldBuilder().addBuilder(
+            index, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.AttentionHead heads = 1;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder> 
+           getHeadsBuilderList() {
+        return internalGetHeadsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.AttentionHead, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder, org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+          internalGetHeadsFieldBuilder() {
+        if (headsBuilder_ == null) {
+          headsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.AttentionHead, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder, org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder>(
+                  heads_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          heads_ = null;
+        }
+        return headsBuilder_;
+      }
+
+      private static final class AttrsConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue> {
+        @java.lang.Override
+        public org.brain4j.core.importing.proto.ProtoModel.AttrValue build(org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder val) {
+          if (val instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) { return (org.brain4j.core.importing.proto.ProtoModel.AttrValue) val; }
+          return ((org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) val).build();
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.MapEntry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry() {
+          return AttrsDefaultEntryHolder.defaultEntry;
+        }
+      };
+      private static final AttrsConverter attrsConverter = new AttrsConverter();
+
+      private com.google.protobuf.MapFieldBuilder<
+          java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder> attrs_;
+      private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
+          internalGetAttrs() {
+        if (attrs_ == null) {
+          return new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
+        }
+        return attrs_;
+      }
+      private com.google.protobuf.MapFieldBuilder<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder, org.brain4j.core.importing.proto.ProtoModel.AttrValue, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder>
+          internalGetMutableAttrs() {
+        if (attrs_ == null) {
+          attrs_ = new com.google.protobuf.MapFieldBuilder<>(attrsConverter);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return attrs_;
+      }
+      public int getAttrsCount() {
+        return internalGetAttrs().ensureBuilderMap().size();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      @java.lang.Override
+      public boolean containsAttrs(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        return internalGetAttrs().ensureBuilderMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getAttrsMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrs() {
+        return getAttrsMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      @java.lang.Override
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> getAttrsMap() {
+        return internalGetAttrs().getImmutableMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      @java.lang.Override
+      public /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrDefault(
+          java.lang.String key,
+          /* nullable */
+org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
+        return map.containsKey(key) ? attrsConverter.build(map.get(key)) : defaultValue;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue getAttrsOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> map = internalGetMutableAttrs().ensureBuilderMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return attrsConverter.build(map.get(key));
+      }
+      public Builder clearAttrs() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        internalGetMutableAttrs().clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      public Builder removeAttrs(
+          java.lang.String key) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>
+          getMutableAttrs() {
+        bitField0_ |= 0x00000002;
+        return internalGetMutableAttrs().ensureMessageMap();
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      public Builder putAttrs(
+          java.lang.String key,
+          org.brain4j.core.importing.proto.ProtoModel.AttrValue value) {
+        if (key == null) { throw new NullPointerException("map key"); }
+        if (value == null) { throw new NullPointerException("map value"); }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .put(key, value);
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      public Builder putAllAttrs(
+          java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> values) {
+        for (java.util.Map.Entry<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> e : values.entrySet()) {
+          if (e.getKey() == null || e.getValue() == null) {
+            throw new NullPointerException();
+          }
+        }
+        internalGetMutableAttrs().ensureBuilderMap()
+            .putAll(values);
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .brain4j.AttrValue&gt; attrs = 2;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder putAttrsBuilderIfAbsent(
+          java.lang.String key) {
+        java.util.Map<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder> builderMap = internalGetMutableAttrs().ensureBuilderMap();
+        org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder entry = builderMap.get(key);
+        if (entry == null) {
+          entry = org.brain4j.core.importing.proto.ProtoModel.AttrValue.newBuilder();
+          builderMap.put(key, entry);
+        }
+        if (entry instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) {
+          entry = ((org.brain4j.core.importing.proto.ProtoModel.AttrValue) entry).toBuilder();
+          builderMap.put(key, entry);
+        }
+        return (org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder) entry;
+      }
+
+      private org.brain4j.core.importing.proto.ProtoModel.Tensor outWeight_;
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> outWeightBuilder_;
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       * @return Whether the outWeight field is set.
+       */
+      public boolean hasOutWeight() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       * @return The outWeight.
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor getOutWeight() {
+        if (outWeightBuilder_ == null) {
+          return outWeight_ == null ? org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : outWeight_;
+        } else {
+          return outWeightBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      public Builder setOutWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (outWeightBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          outWeight_ = value;
+        } else {
+          outWeightBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      public Builder setOutWeight(
+          org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder builderForValue) {
+        if (outWeightBuilder_ == null) {
+          outWeight_ = builderForValue.build();
+        } else {
+          outWeightBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      public Builder mergeOutWeight(org.brain4j.core.importing.proto.ProtoModel.Tensor value) {
+        if (outWeightBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0) &&
+            outWeight_ != null &&
+            outWeight_ != org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance()) {
+            getOutWeightBuilder().mergeFrom(value);
+          } else {
+            outWeight_ = value;
+          }
+        } else {
+          outWeightBuilder_.mergeFrom(value);
+        }
+        if (outWeight_ != null) {
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      public Builder clearOutWeight() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        outWeight_ = null;
+        if (outWeightBuilder_ != null) {
+          outWeightBuilder_.dispose();
+          outWeightBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder getOutWeightBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return internalGetOutWeightFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getOutWeightOrBuilder() {
+        if (outWeightBuilder_ != null) {
+          return outWeightBuilder_.getMessageOrBuilder();
+        } else {
+          return outWeight_ == null ?
+              org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance() : outWeight_;
+        }
+      }
+      /**
+       * <code>.brain4j.Tensor out_weight = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          internalGetOutWeightFieldBuilder() {
+        if (outWeightBuilder_ == null) {
+          outWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>(
+                  getOutWeight(),
+                  getParentForChildren(),
+                  isClean());
+          outWeight_ = null;
+        }
+        return outWeightBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.MultiHeadAttention)
+    }
+
+    // @@protoc_insertion_point(class_scope:brain4j.MultiHeadAttention)
+    private static final org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<MultiHeadAttention>
+        PARSER = new com.google.protobuf.AbstractParser<MultiHeadAttention>() {
+      @java.lang.Override
+      public MultiHeadAttention parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<MultiHeadAttention> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<MultiHeadAttention> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface BasicLayerOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.BasicLayer)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 64, 128, ...
+     * </pre>
+     *
+     * <code>uint32 dimension = 1;</code>
+     * @return The dimension.
+     */
+    int getDimension();
+  }
+  /**
+   * Protobuf type {@code brain4j.BasicLayer}
+   */
+  public static final class BasicLayer extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.BasicLayer)
+      BasicLayerOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        BasicLayer.class.getName());
+    }
+    // Use BasicLayer.newBuilder() to construct.
+    private BasicLayer(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private BasicLayer() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_BasicLayer_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_BasicLayer_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.BasicLayer.class, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder.class);
+    }
+
+    public static final int DIMENSION_FIELD_NUMBER = 1;
+    private int dimension_ = 0;
+    /**
+     * <pre>
+     * 64, 128, ...
+     * </pre>
+     *
+     * <code>uint32 dimension = 1;</code>
+     * @return The dimension.
+     */
+    @java.lang.Override
+    public int getDimension() {
+      return dimension_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (dimension_ != 0) {
+        output.writeUInt32(1, dimension_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (dimension_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1, dimension_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.BasicLayer)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.BasicLayer other = (org.brain4j.core.importing.proto.ProtoModel.BasicLayer) obj;
+
+      if (getDimension()
+          != other.getDimension()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + DIMENSION_FIELD_NUMBER;
+      hash = (53 * hash) + getDimension();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.BasicLayer prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code brain4j.BasicLayer}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.BasicLayer)
+        org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_BasicLayer_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_BasicLayer_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.BasicLayer.class, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.BasicLayer.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        dimension_ = 0;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_BasicLayer_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.BasicLayer getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.BasicLayer build() {
+        org.brain4j.core.importing.proto.ProtoModel.BasicLayer result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.BasicLayer buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.BasicLayer result = new org.brain4j.core.importing.proto.ProtoModel.BasicLayer(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.BasicLayer result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.dimension_ = dimension_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.BasicLayer) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.BasicLayer)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.BasicLayer other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.BasicLayer.getDefaultInstance()) return this;
+        if (other.getDimension() != 0) {
+          setDimension(other.getDimension());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                dimension_ = input.readUInt32();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private int dimension_ ;
+      /**
+       * <pre>
+       * 64, 128, ...
+       * </pre>
+       *
+       * <code>uint32 dimension = 1;</code>
+       * @return The dimension.
+       */
+      @java.lang.Override
+      public int getDimension() {
+        return dimension_;
+      }
+      /**
+       * <pre>
+       * 64, 128, ...
+       * </pre>
+       *
+       * <code>uint32 dimension = 1;</code>
+       * @param value The dimension to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDimension(int value) {
+
+        dimension_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 64, 128, ...
+       * </pre>
+       *
+       * <code>uint32 dimension = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDimension() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        dimension_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.BasicLayer)
+    }
+
+    // @@protoc_insertion_point(class_scope:brain4j.BasicLayer)
+    private static final org.brain4j.core.importing.proto.ProtoModel.BasicLayer DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.BasicLayer();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.BasicLayer getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BasicLayer>
+        PARSER = new com.google.protobuf.AbstractParser<BasicLayer>() {
+      @java.lang.Override
+      public BasicLayer parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<BasicLayer> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BasicLayer> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.BasicLayer getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface TransformerOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.Transformer)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> 
+        getSubLayersList();
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.Layer getSubLayers(int index);
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    int getSubLayersCount();
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+        getSubLayersOrBuilderList();
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getSubLayersOrBuilder(
+        int index);
+
+    /**
+     * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+     * @return Whether the attention field is set.
+     */
+    boolean hasAttention();
+    /**
+     * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+     * @return The attention.
+     */
+    org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention getAttention();
+    /**
+     * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+     */
+    org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder getAttentionOrBuilder();
+  }
+  /**
+   * Protobuf type {@code brain4j.Transformer}
+   */
+  public static final class Transformer extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.Transformer)
+      TransformerOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        Transformer.class.getName());
+    }
+    // Use Transformer.newBuilder() to construct.
+    private Transformer(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Transformer() {
+      subLayers_ = java.util.Collections.emptyList();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Transformer_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Transformer_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.Transformer.class, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int SUB_LAYERS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> subLayers_;
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    @java.lang.Override
+    public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> getSubLayersList() {
+      return subLayers_;
+    }
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+        getSubLayersOrBuilderList() {
+      return subLayers_;
+    }
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    @java.lang.Override
+    public int getSubLayersCount() {
+      return subLayers_.size();
+    }
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Layer getSubLayers(int index) {
+      return subLayers_.get(index);
+    }
+    /**
+     * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getSubLayersOrBuilder(
+        int index) {
+      return subLayers_.get(index);
+    }
+
+    public static final int ATTENTION_FIELD_NUMBER = 2;
+    private org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention attention_;
+    /**
+     * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+     * @return Whether the attention field is set.
+     */
+    @java.lang.Override
+    public boolean hasAttention() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+     * @return The attention.
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention getAttention() {
+      return attention_ == null ? org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance() : attention_;
+    }
+    /**
+     * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+     */
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder getAttentionOrBuilder() {
+      return attention_ == null ? org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance() : attention_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < subLayers_.size(); i++) {
+        output.writeMessage(1, subLayers_.get(i));
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(2, getAttention());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < subLayers_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, subLayers_.get(i));
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getAttention());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Transformer)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.Transformer other = (org.brain4j.core.importing.proto.ProtoModel.Transformer) obj;
+
+      if (!getSubLayersList()
+          .equals(other.getSubLayersList())) return false;
+      if (hasAttention() != other.hasAttention()) return false;
+      if (hasAttention()) {
+        if (!getAttention()
+            .equals(other.getAttention())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getSubLayersCount() > 0) {
+        hash = (37 * hash) + SUB_LAYERS_FIELD_NUMBER;
+        hash = (53 * hash) + getSubLayersList().hashCode();
+      }
+      if (hasAttention()) {
+        hash = (37 * hash) + ATTENTION_FIELD_NUMBER;
+        hash = (53 * hash) + getAttention().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Transformer prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code brain4j.Transformer}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.Transformer)
+        org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Transformer_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Transformer_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.Transformer.class, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.Transformer.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          internalGetSubLayersFieldBuilder();
+          internalGetAttentionFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        if (subLayersBuilder_ == null) {
+          subLayers_ = java.util.Collections.emptyList();
+        } else {
+          subLayers_ = null;
+          subLayersBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        attention_ = null;
+        if (attentionBuilder_ != null) {
+          attentionBuilder_.dispose();
+          attentionBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Transformer_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Transformer getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Transformer build() {
+        org.brain4j.core.importing.proto.ProtoModel.Transformer result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Transformer buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.Transformer result = new org.brain4j.core.importing.proto.ProtoModel.Transformer(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(org.brain4j.core.importing.proto.ProtoModel.Transformer result) {
+        if (subLayersBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            subLayers_ = java.util.Collections.unmodifiableList(subLayers_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.subLayers_ = subLayers_;
+        } else {
+          result.subLayers_ = subLayersBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Transformer result) {
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.attention_ = attentionBuilder_ == null
+              ? attention_
+              : attentionBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Transformer) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Transformer)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Transformer other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.Transformer.getDefaultInstance()) return this;
+        if (subLayersBuilder_ == null) {
+          if (!other.subLayers_.isEmpty()) {
+            if (subLayers_.isEmpty()) {
+              subLayers_ = other.subLayers_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureSubLayersIsMutable();
+              subLayers_.addAll(other.subLayers_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.subLayers_.isEmpty()) {
+            if (subLayersBuilder_.isEmpty()) {
+              subLayersBuilder_.dispose();
+              subLayersBuilder_ = null;
+              subLayers_ = other.subLayers_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              subLayersBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetSubLayersFieldBuilder() : null;
+            } else {
+              subLayersBuilder_.addAllMessages(other.subLayers_);
+            }
+          }
+        }
+        if (other.hasAttention()) {
+          mergeAttention(other.getAttention());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                org.brain4j.core.importing.proto.ProtoModel.Layer m =
+                    input.readMessage(
+                        org.brain4j.core.importing.proto.ProtoModel.Layer.parser(),
+                        extensionRegistry);
+                if (subLayersBuilder_ == null) {
+                  ensureSubLayersIsMutable();
+                  subLayers_.add(m);
+                } else {
+                  subLayersBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              case 18: {
+                input.readMessage(
+                    internalGetAttentionFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> subLayers_ =
+        java.util.Collections.emptyList();
+      private void ensureSubLayersIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          subLayers_ = new java.util.ArrayList<org.brain4j.core.importing.proto.ProtoModel.Layer>(subLayers_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> subLayersBuilder_;
+
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> getSubLayersList() {
+        if (subLayersBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(subLayers_);
+        } else {
+          return subLayersBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public int getSubLayersCount() {
+        if (subLayersBuilder_ == null) {
+          return subLayers_.size();
+        } else {
+          return subLayersBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer getSubLayers(int index) {
+        if (subLayersBuilder_ == null) {
+          return subLayers_.get(index);
+        } else {
+          return subLayersBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder setSubLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer value) {
+        if (subLayersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSubLayersIsMutable();
+          subLayers_.set(index, value);
+          onChanged();
+        } else {
+          subLayersBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder setSubLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
+        if (subLayersBuilder_ == null) {
+          ensureSubLayersIsMutable();
+          subLayers_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          subLayersBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder addSubLayers(org.brain4j.core.importing.proto.ProtoModel.Layer value) {
+        if (subLayersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSubLayersIsMutable();
+          subLayers_.add(value);
+          onChanged();
+        } else {
+          subLayersBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder addSubLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer value) {
+        if (subLayersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSubLayersIsMutable();
+          subLayers_.add(index, value);
+          onChanged();
+        } else {
+          subLayersBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder addSubLayers(
+          org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
+        if (subLayersBuilder_ == null) {
+          ensureSubLayersIsMutable();
+          subLayers_.add(builderForValue.build());
+          onChanged();
+        } else {
+          subLayersBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder addSubLayers(
+          int index, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builderForValue) {
+        if (subLayersBuilder_ == null) {
+          ensureSubLayersIsMutable();
+          subLayers_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          subLayersBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder addAllSubLayers(
+          java.lang.Iterable<? extends org.brain4j.core.importing.proto.ProtoModel.Layer> values) {
+        if (subLayersBuilder_ == null) {
+          ensureSubLayersIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, subLayers_);
+          onChanged();
+        } else {
+          subLayersBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder clearSubLayers() {
+        if (subLayersBuilder_ == null) {
+          subLayers_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          subLayersBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public Builder removeSubLayers(int index) {
+        if (subLayersBuilder_ == null) {
+          ensureSubLayersIsMutable();
+          subLayers_.remove(index);
+          onChanged();
+        } else {
+          subLayersBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder getSubLayersBuilder(
+          int index) {
+        return internalGetSubLayersFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder getSubLayersOrBuilder(
+          int index) {
+        if (subLayersBuilder_ == null) {
+          return subLayers_.get(index);  } else {
+          return subLayersBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+           getSubLayersOrBuilderList() {
+        if (subLayersBuilder_ != null) {
+          return subLayersBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(subLayers_);
+        }
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder addSubLayersBuilder() {
+        return internalGetSubLayersFieldBuilder().addBuilder(
+            org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.Layer.Builder addSubLayersBuilder(
+          int index) {
+        return internalGetSubLayersFieldBuilder().addBuilder(
+            index, org.brain4j.core.importing.proto.ProtoModel.Layer.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .brain4j.Layer sub_layers = 1;</code>
+       */
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer.Builder> 
+           getSubLayersBuilderList() {
+        return internalGetSubLayersFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          internalGetSubLayersFieldBuilder() {
+        if (subLayersBuilder_ == null) {
+          subLayersBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>(
+                  subLayers_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          subLayers_ = null;
+        }
+        return subLayersBuilder_;
+      }
+
+      private org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention attention_;
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder> attentionBuilder_;
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       * @return Whether the attention field is set.
+       */
+      public boolean hasAttention() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       * @return The attention.
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention getAttention() {
+        if (attentionBuilder_ == null) {
+          return attention_ == null ? org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance() : attention_;
+        } else {
+          return attentionBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      public Builder setAttention(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention value) {
+        if (attentionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          attention_ = value;
+        } else {
+          attentionBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      public Builder setAttention(
+          org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder builderForValue) {
+        if (attentionBuilder_ == null) {
+          attention_ = builderForValue.build();
+        } else {
+          attentionBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      public Builder mergeAttention(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention value) {
+        if (attentionBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0) &&
+            attention_ != null &&
+            attention_ != org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance()) {
+            getAttentionBuilder().mergeFrom(value);
+          } else {
+            attention_ = value;
+          }
+        } else {
+          attentionBuilder_.mergeFrom(value);
+        }
+        if (attention_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      public Builder clearAttention() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        attention_ = null;
+        if (attentionBuilder_ != null) {
+          attentionBuilder_.dispose();
+          attentionBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder getAttentionBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return internalGetAttentionFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder getAttentionOrBuilder() {
+        if (attentionBuilder_ != null) {
+          return attentionBuilder_.getMessageOrBuilder();
+        } else {
+          return attention_ == null ?
+              org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.getDefaultInstance() : attention_;
+        }
+      }
+      /**
+       * <code>.brain4j.MultiHeadAttention attention = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder> 
+          internalGetAttentionFieldBuilder() {
+        if (attentionBuilder_ == null) {
+          attentionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder>(
+                  getAttention(),
+                  getParentForChildren(),
+                  isClean());
+          attention_ = null;
+        }
+        return attentionBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.Transformer)
+    }
+
+    // @@protoc_insertion_point(class_scope:brain4j.Transformer)
+    private static final org.brain4j.core.importing.proto.ProtoModel.Transformer DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Transformer();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Transformer getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Transformer>
+        PARSER = new com.google.protobuf.AbstractParser<Transformer>() {
+      @java.lang.Override
+      public Transformer parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<Transformer> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Transformer> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Transformer getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface AttrValueOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.AttrValue)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int32 int_val = 1;</code>
+     * @return Whether the intVal field is set.
+     */
+    boolean hasIntVal();
+    /**
+     * <code>int32 int_val = 1;</code>
+     * @return The intVal.
+     */
+    int getIntVal();
+
+    /**
+     * <code>float float_val = 2;</code>
+     * @return Whether the floatVal field is set.
+     */
+    boolean hasFloatVal();
+    /**
+     * <code>float float_val = 2;</code>
+     * @return The floatVal.
+     */
+    float getFloatVal();
+
+    /**
+     * <code>bool bool_val = 3;</code>
+     * @return Whether the boolVal field is set.
+     */
+    boolean hasBoolVal();
+    /**
+     * <code>bool bool_val = 3;</code>
+     * @return The boolVal.
+     */
+    boolean getBoolVal();
+
+    /**
+     * <code>string string_val = 4;</code>
+     * @return Whether the stringVal field is set.
+     */
+    boolean hasStringVal();
+    /**
+     * <code>string string_val = 4;</code>
+     * @return The stringVal.
+     */
+    java.lang.String getStringVal();
+    /**
+     * <code>string string_val = 4;</code>
+     * @return The bytes for stringVal.
+     */
+    com.google.protobuf.ByteString
         getStringValBytes();
-        
-        org.brain4j.core.importing.proto.ProtoModel.AttrValue.ValueCase getValueCase();
+
+    org.brain4j.core.importing.proto.ProtoModel.AttrValue.ValueCase getValueCase();
+  }
+  /**
+   * Protobuf type {@code brain4j.AttrValue}
+   */
+  public static final class AttrValue extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.AttrValue)
+      AttrValueOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        AttrValue.class.getName());
+    }
+    // Use AttrValue.newBuilder() to construct.
+    private AttrValue(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private AttrValue() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.AttrValue.class, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder.class);
+    }
+
+    private int valueCase_ = 0;
+    @SuppressWarnings("serial")
+    private java.lang.Object value_;
+    public enum ValueCase
+        implements com.google.protobuf.Internal.EnumLite,
+            com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+      INT_VAL(1),
+      FLOAT_VAL(2),
+      BOOL_VAL(3),
+      STRING_VAL(4),
+      VALUE_NOT_SET(0);
+      private final int value;
+      private ValueCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @param value The number of the enum to look for.
+       * @return The enum associated with the given number.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ValueCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ValueCase forNumber(int value) {
+        switch (value) {
+          case 1: return INT_VAL;
+          case 2: return FLOAT_VAL;
+          case 3: return BOOL_VAL;
+          case 4: return STRING_VAL;
+          case 0: return VALUE_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public ValueCase
+    getValueCase() {
+      return ValueCase.forNumber(
+          valueCase_);
+    }
+
+    public static final int INT_VAL_FIELD_NUMBER = 1;
+    /**
+     * <code>int32 int_val = 1;</code>
+     * @return Whether the intVal field is set.
+     */
+    @java.lang.Override
+    public boolean hasIntVal() {
+      return valueCase_ == 1;
+    }
+    /**
+     * <code>int32 int_val = 1;</code>
+     * @return The intVal.
+     */
+    @java.lang.Override
+    public int getIntVal() {
+      if (valueCase_ == 1) {
+        return (java.lang.Integer) value_;
+      }
+      return 0;
+    }
+
+    public static final int FLOAT_VAL_FIELD_NUMBER = 2;
+    /**
+     * <code>float float_val = 2;</code>
+     * @return Whether the floatVal field is set.
+     */
+    @java.lang.Override
+    public boolean hasFloatVal() {
+      return valueCase_ == 2;
+    }
+    /**
+     * <code>float float_val = 2;</code>
+     * @return The floatVal.
+     */
+    @java.lang.Override
+    public float getFloatVal() {
+      if (valueCase_ == 2) {
+        return (java.lang.Float) value_;
+      }
+      return 0F;
+    }
+
+    public static final int BOOL_VAL_FIELD_NUMBER = 3;
+    /**
+     * <code>bool bool_val = 3;</code>
+     * @return Whether the boolVal field is set.
+     */
+    @java.lang.Override
+    public boolean hasBoolVal() {
+      return valueCase_ == 3;
+    }
+    /**
+     * <code>bool bool_val = 3;</code>
+     * @return The boolVal.
+     */
+    @java.lang.Override
+    public boolean getBoolVal() {
+      if (valueCase_ == 3) {
+        return (java.lang.Boolean) value_;
+      }
+      return false;
+    }
+
+    public static final int STRING_VAL_FIELD_NUMBER = 4;
+    /**
+     * <code>string string_val = 4;</code>
+     * @return Whether the stringVal field is set.
+     */
+    public boolean hasStringVal() {
+      return valueCase_ == 4;
+    }
+    /**
+     * <code>string string_val = 4;</code>
+     * @return The stringVal.
+     */
+    public java.lang.String getStringVal() {
+      java.lang.Object ref = "";
+      if (valueCase_ == 4) {
+        ref = value_;
+      }
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (valueCase_ == 4) {
+          value_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>string string_val = 4;</code>
+     * @return The bytes for stringVal.
+     */
+    public com.google.protobuf.ByteString
+        getStringValBytes() {
+      java.lang.Object ref = "";
+      if (valueCase_ == 4) {
+        ref = value_;
+      }
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        if (valueCase_ == 4) {
+          value_ = b;
+        }
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (valueCase_ == 1) {
+        output.writeInt32(
+            1, (int)((java.lang.Integer) value_));
+      }
+      if (valueCase_ == 2) {
+        output.writeFloat(
+            2, (float)((java.lang.Float) value_));
+      }
+      if (valueCase_ == 3) {
+        output.writeBool(
+            3, (boolean)((java.lang.Boolean) value_));
+      }
+      if (valueCase_ == 4) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 4, value_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (valueCase_ == 1) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(
+              1, (int)((java.lang.Integer) value_));
+      }
+      if (valueCase_ == 2) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeFloatSize(
+              2, (float)((java.lang.Float) value_));
+      }
+      if (valueCase_ == 3) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(
+              3, (boolean)((java.lang.Boolean) value_));
+      }
+      if (valueCase_ == 4) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, value_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.AttrValue other = (org.brain4j.core.importing.proto.ProtoModel.AttrValue) obj;
+
+      if (!getValueCase().equals(other.getValueCase())) return false;
+      switch (valueCase_) {
+        case 1:
+          if (getIntVal()
+              != other.getIntVal()) return false;
+          break;
+        case 2:
+          if (java.lang.Float.floatToIntBits(getFloatVal())
+              != java.lang.Float.floatToIntBits(
+                  other.getFloatVal())) return false;
+          break;
+        case 3:
+          if (getBoolVal()
+              != other.getBoolVal()) return false;
+          break;
+        case 4:
+          if (!getStringVal()
+              .equals(other.getStringVal())) return false;
+          break;
+        case 0:
+        default:
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      switch (valueCase_) {
+        case 1:
+          hash = (37 * hash) + INT_VAL_FIELD_NUMBER;
+          hash = (53 * hash) + getIntVal();
+          break;
+        case 2:
+          hash = (37 * hash) + FLOAT_VAL_FIELD_NUMBER;
+          hash = (53 * hash) + java.lang.Float.floatToIntBits(
+              getFloatVal());
+          break;
+        case 3:
+          hash = (37 * hash) + BOOL_VAL_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+              getBoolVal());
+          break;
+        case 4:
+          hash = (37 * hash) + STRING_VAL_FIELD_NUMBER;
+          hash = (53 * hash) + getStringVal().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.AttrValue prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
     }
     /**
      * Protobuf type {@code brain4j.AttrValue}
      */
-    public static final class AttrValue extends
-        com.google.protobuf.GeneratedMessage implements
-        // @@protoc_insertion_point(message_implements:brain4j.AttrValue)
-        AttrValueOrBuilder {
-        private static final long serialVersionUID = 0L;
-        static {
-            com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-                com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-                /* major= */ 4,
-                /* minor= */ 31,
-                /* patch= */ 1,
-                /* suffix= */ "",
-                AttrValue.class.getName());
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.AttrValue)
+        org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.AttrValue.class, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.AttrValue.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        valueCase_ = 0;
+        value_ = null;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue build() {
+        org.brain4j.core.importing.proto.ProtoModel.AttrValue result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
         }
-        // Use AttrValue.newBuilder() to construct.
-        private AttrValue(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-            super(builder);
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.AttrValue buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.AttrValue result = new org.brain4j.core.importing.proto.ProtoModel.AttrValue(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        buildPartialOneofs(result);
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.AttrValue result) {
+        int from_bitField0_ = bitField0_;
+      }
+
+      private void buildPartialOneofs(org.brain4j.core.importing.proto.ProtoModel.AttrValue result) {
+        result.valueCase_ = valueCase_;
+        result.value_ = this.value_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.AttrValue)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
         }
-        private AttrValue() {
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.AttrValue other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance()) return this;
+        switch (other.getValueCase()) {
+          case INT_VAL: {
+            setIntVal(other.getIntVal());
+            break;
+          }
+          case FLOAT_VAL: {
+            setFloatVal(other.getFloatVal());
+            break;
+          }
+          case BOOL_VAL: {
+            setBoolVal(other.getBoolVal());
+            break;
+          }
+          case STRING_VAL: {
+            valueCase_ = 4;
+            value_ = other.value_;
+            onChanged();
+            break;
+          }
+          case VALUE_NOT_SET: {
+            break;
+          }
         }
-        
-        public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_descriptor;
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
         }
-        
-        @java.lang.Override
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_fieldAccessorTable
-                .ensureFieldAccessorsInitialized(
-                    org.brain4j.core.importing.proto.ProtoModel.AttrValue.class, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder.class);
-        }
-        
-        private int valueCase_ = 0;
-        @SuppressWarnings("serial")
-        private java.lang.Object value_;
-        public enum ValueCase
-            implements com.google.protobuf.Internal.EnumLite,
-            com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-            INT_VAL(1),
-            FLOAT_VAL(2),
-            BOOL_VAL(3),
-            STRING_VAL(4),
-            VALUE_NOT_SET(0);
-            private final int value;
-            private ValueCase(int value) {
-                this.value = value;
-            }
-            /**
-             * @param value The number of the enum to look for.
-             * @return The enum associated with the given number.
-             * @deprecated Use {@link #forNumber(int)} instead.
-             */
-            @java.lang.Deprecated
-            public static ValueCase valueOf(int value) {
-                return forNumber(value);
-            }
-            
-            public static ValueCase forNumber(int value) {
-                switch (value) {
-                    case 1: return INT_VAL;
-                    case 2: return FLOAT_VAL;
-                    case 3: return BOOL_VAL;
-                    case 4: return STRING_VAL;
-                    case 0: return VALUE_NOT_SET;
-                    default: return null;
-                }
-            }
-            public int getNumber() {
-                return this.value;
-            }
-        };
-        
-        public ValueCase
-        getValueCase() {
-            return ValueCase.forNumber(
-                valueCase_);
-        }
-        
-        public static final int INT_VAL_FIELD_NUMBER = 1;
-        /**
-         * <code>int32 int_val = 1;</code>
-         * @return Whether the intVal field is set.
-         */
-        @java.lang.Override
-        public boolean hasIntVal() {
-            return valueCase_ == 1;
-        }
-        /**
-         * <code>int32 int_val = 1;</code>
-         * @return The intVal.
-         */
-        @java.lang.Override
-        public int getIntVal() {
-            if (valueCase_ == 1) {
-                return (java.lang.Integer) value_;
-            }
-            return 0;
-        }
-        
-        public static final int FLOAT_VAL_FIELD_NUMBER = 2;
-        /**
-         * <code>float float_val = 2;</code>
-         * @return Whether the floatVal field is set.
-         */
-        @java.lang.Override
-        public boolean hasFloatVal() {
-            return valueCase_ == 2;
-        }
-        /**
-         * <code>float float_val = 2;</code>
-         * @return The floatVal.
-         */
-        @java.lang.Override
-        public float getFloatVal() {
-            if (valueCase_ == 2) {
-                return (java.lang.Float) value_;
-            }
-            return 0F;
-        }
-        
-        public static final int BOOL_VAL_FIELD_NUMBER = 3;
-        /**
-         * <code>bool bool_val = 3;</code>
-         * @return Whether the boolVal field is set.
-         */
-        @java.lang.Override
-        public boolean hasBoolVal() {
-            return valueCase_ == 3;
-        }
-        /**
-         * <code>bool bool_val = 3;</code>
-         * @return The boolVal.
-         */
-        @java.lang.Override
-        public boolean getBoolVal() {
-            if (valueCase_ == 3) {
-                return (java.lang.Boolean) value_;
-            }
-            return false;
-        }
-        
-        public static final int STRING_VAL_FIELD_NUMBER = 4;
-        /**
-         * <code>string string_val = 4;</code>
-         * @return Whether the stringVal field is set.
-         */
-        public boolean hasStringVal() {
-            return valueCase_ == 4;
-        }
-        /**
-         * <code>string string_val = 4;</code>
-         * @return The stringVal.
-         */
-        public java.lang.String getStringVal() {
-            java.lang.Object ref = "";
-            if (valueCase_ == 4) {
-                ref = value_;
-            }
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
-            } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                if (valueCase_ == 4) {
-                    value_ = s;
-                }
-                return s;
-            }
-        }
-        /**
-         * <code>string string_val = 4;</code>
-         * @return The bytes for stringVal.
-         */
-        public com.google.protobuf.ByteString
-        getStringValBytes() {
-            java.lang.Object ref = "";
-            if (valueCase_ == 4) {
-                ref = value_;
-            }
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                if (valueCase_ == 4) {
-                    value_ = b;
-                }
-                return b;
-            } else {
-                return (com.google.protobuf.ByteString) ref;
-            }
-        }
-        
-        private byte memoizedIsInitialized = -1;
-        @java.lang.Override
-        public final boolean isInitialized() {
-            byte isInitialized = memoizedIsInitialized;
-            if (isInitialized == 1) return true;
-            if (isInitialized == 0) return false;
-            
-            memoizedIsInitialized = 1;
-            return true;
-        }
-        
-        @java.lang.Override
-        public void writeTo(com.google.protobuf.CodedOutputStream output)
-            throws java.io.IOException {
-            if (valueCase_ == 1) {
-                output.writeInt32(
-                    1, (int)((java.lang.Integer) value_));
-            }
-            if (valueCase_ == 2) {
-                output.writeFloat(
-                    2, (float)((java.lang.Float) value_));
-            }
-            if (valueCase_ == 3) {
-                output.writeBool(
-                    3, (boolean)((java.lang.Boolean) value_));
-            }
-            if (valueCase_ == 4) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 4, value_);
-            }
-            getUnknownFields().writeTo(output);
-        }
-        
-        @java.lang.Override
-        public int getSerializedSize() {
-            int size = memoizedSize;
-            if (size != -1) return size;
-            
-            size = 0;
-            if (valueCase_ == 1) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeInt32Size(
-                        1, (int)((java.lang.Integer) value_));
-            }
-            if (valueCase_ == 2) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeFloatSize(
-                        2, (float)((java.lang.Float) value_));
-            }
-            if (valueCase_ == 3) {
-                size += com.google.protobuf.CodedOutputStream
-                    .computeBoolSize(
-                        3, (boolean)((java.lang.Boolean) value_));
-            }
-            if (valueCase_ == 4) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(4, value_);
-            }
-            size += getUnknownFields().getSerializedSize();
-            memoizedSize = size;
-            return size;
-        }
-        
-        @java.lang.Override
-        public boolean equals(final java.lang.Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue)) {
-                return super.equals(obj);
-            }
-            org.brain4j.core.importing.proto.ProtoModel.AttrValue other = (org.brain4j.core.importing.proto.ProtoModel.AttrValue) obj;
-            
-            if (!getValueCase().equals(other.getValueCase())) return false;
-            switch (valueCase_) {
-                case 1:
-                    if (getIntVal()
-                        != other.getIntVal()) return false;
-                    break;
-                case 2:
-                    if (java.lang.Float.floatToIntBits(getFloatVal())
-                        != java.lang.Float.floatToIntBits(
-                        other.getFloatVal())) return false;
-                    break;
-                case 3:
-                    if (getBoolVal()
-                        != other.getBoolVal()) return false;
-                    break;
-                case 4:
-                    if (!getStringVal()
-                        .equals(other.getStringVal())) return false;
-                    break;
-                case 0:
-                default:
-            }
-            if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-            return true;
-        }
-        
-        @java.lang.Override
-        public int hashCode() {
-            if (memoizedHashCode != 0) {
-                return memoizedHashCode;
-            }
-            int hash = 41;
-            hash = (19 * hash) + getDescriptor().hashCode();
-            switch (valueCase_) {
-                case 1:
-                    hash = (37 * hash) + INT_VAL_FIELD_NUMBER;
-                    hash = (53 * hash) + getIntVal();
-                    break;
-                case 2:
-                    hash = (37 * hash) + FLOAT_VAL_FIELD_NUMBER;
-                    hash = (53 * hash) + java.lang.Float.floatToIntBits(
-                        getFloatVal());
-                    break;
-                case 3:
-                    hash = (37 * hash) + BOOL_VAL_FIELD_NUMBER;
-                    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-                        getBoolVal());
-                    break;
-                case 4:
-                    hash = (37 * hash) + STRING_VAL_FIELD_NUMBER;
-                    hash = (53 * hash) + getStringVal().hashCode();
-                    break;
-                case 0:
-                default:
-            }
-            hash = (29 * hash) + getUnknownFields().hashCode();
-            memoizedHashCode = hash;
-            return hash;
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            java.nio.ByteBuffer data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            java.nio.ByteBuffer data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            com.google.protobuf.ByteString data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            com.google.protobuf.ByteString data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(byte[] data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            byte[] data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseDelimitedFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseDelimitedFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            com.google.protobuf.CodedInputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue parseFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        @java.lang.Override
-        public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder() {
-            return DEFAULT_INSTANCE.toBuilder();
-        }
-        public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.AttrValue prototype) {
-            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-        }
-        @java.lang.Override
-        public Builder toBuilder() {
-            return this == DEFAULT_INSTANCE
-                ? new Builder() : new Builder().mergeFrom(this);
-        }
-        
-        @java.lang.Override
-        protected Builder newBuilderForType(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-            Builder builder = new Builder(parent);
-            return builder;
-        }
-        /**
-         * Protobuf type {@code brain4j.AttrValue}
-         */
-        public static final class Builder extends
-            com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-            // @@protoc_insertion_point(builder_implements:brain4j.AttrValue)
-            org.brain4j.core.importing.proto.ProtoModel.AttrValueOrBuilder {
-            public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_descriptor;
-            }
-            
-            @java.lang.Override
-            protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_fieldAccessorTable
-                    .ensureFieldAccessorsInitialized(
-                        org.brain4j.core.importing.proto.ProtoModel.AttrValue.class, org.brain4j.core.importing.proto.ProtoModel.AttrValue.Builder.class);
-            }
-            
-            // Construct using org.brain4j.core.importing.proto.ProtoModel.AttrValue.newBuilder()
-            private Builder() {
-            
-            }
-            
-            private Builder(
-                com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-                super(parent);
-                
-            }
-            @java.lang.Override
-            public Builder clear() {
-                super.clear();
-                bitField0_ = 0;
-                valueCase_ = 0;
-                value_ = null;
-                return this;
-            }
-            
-            @java.lang.Override
-            public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttrValue_descriptor;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.AttrValue getDefaultInstanceForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance();
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.AttrValue build() {
-                org.brain4j.core.importing.proto.ProtoModel.AttrValue result = buildPartial();
-                if (!result.isInitialized()) {
-                    throw newUninitializedMessageException(result);
-                }
-                return result;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.AttrValue buildPartial() {
-                org.brain4j.core.importing.proto.ProtoModel.AttrValue result = new org.brain4j.core.importing.proto.ProtoModel.AttrValue(this);
-                if (bitField0_ != 0) { buildPartial0(result); }
-                buildPartialOneofs(result);
-                onBuilt();
-                return result;
-            }
-            
-            private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.AttrValue result) {
-                int from_bitField0_ = bitField0_;
-            }
-            
-            private void buildPartialOneofs(org.brain4j.core.importing.proto.ProtoModel.AttrValue result) {
-                result.valueCase_ = valueCase_;
-                result.value_ = this.value_;
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(com.google.protobuf.Message other) {
-                if (other instanceof org.brain4j.core.importing.proto.ProtoModel.AttrValue) {
-                    return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.AttrValue)other);
-                } else {
-                    super.mergeFrom(other);
-                    return this;
-                }
-            }
-            
-            public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.AttrValue other) {
-                if (other == org.brain4j.core.importing.proto.ProtoModel.AttrValue.getDefaultInstance()) return this;
-                switch (other.getValueCase()) {
-                    case INT_VAL: {
-                        setIntVal(other.getIntVal());
-                        break;
-                    }
-                    case FLOAT_VAL: {
-                        setFloatVal(other.getFloatVal());
-                        break;
-                    }
-                    case BOOL_VAL: {
-                        setBoolVal(other.getBoolVal());
-                        break;
-                    }
-                    case STRING_VAL: {
-                        valueCase_ = 4;
-                        value_ = other.value_;
-                        onChanged();
-                        break;
-                    }
-                    case VALUE_NOT_SET: {
-                        break;
-                    }
-                }
-                this.mergeUnknownFields(other.getUnknownFields());
-                onChanged();
-                return this;
-            }
-            
-            @java.lang.Override
-            public final boolean isInitialized() {
-                return true;
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws java.io.IOException {
-                if (extensionRegistry == null) {
-                    throw new java.lang.NullPointerException();
-                }
-                try {
-                    boolean done = false;
-                    while (!done) {
-                        int tag = input.readTag();
-                        switch (tag) {
-                            case 0:
-                                done = true;
-                                break;
-                            case 8: {
-                                value_ = input.readInt32();
-                                valueCase_ = 1;
-                                break;
-                            } // case 8
-                            case 21: {
-                                value_ = input.readFloat();
-                                valueCase_ = 2;
-                                break;
-                            } // case 21
-                            case 24: {
-                                value_ = input.readBool();
-                                valueCase_ = 3;
-                                break;
-                            } // case 24
-                            case 34: {
-                                java.lang.String s = input.readStringRequireUtf8();
-                                valueCase_ = 4;
-                                value_ = s;
-                                break;
-                            } // case 34
-                            default: {
-                                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                                    done = true; // was an endgroup tag
-                                }
-                                break;
-                            } // default:
-                        } // switch (tag)
-                    } // while (!done)
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.unwrapIOException();
-                } finally {
-                    onChanged();
-                } // finally
-                return this;
-            }
-            private int valueCase_ = 0;
-            private java.lang.Object value_;
-            public ValueCase
-            getValueCase() {
-                return ValueCase.forNumber(
-                    valueCase_);
-            }
-            
-            public Builder clearValue() {
-                valueCase_ = 0;
-                value_ = null;
-                onChanged();
-                return this;
-            }
-            
-            private int bitField0_;
-            
-            /**
-             * <code>int32 int_val = 1;</code>
-             * @return Whether the intVal field is set.
-             */
-            public boolean hasIntVal() {
-                return valueCase_ == 1;
-            }
-            /**
-             * <code>int32 int_val = 1;</code>
-             * @return The intVal.
-             */
-            public int getIntVal() {
-                if (valueCase_ == 1) {
-                    return (java.lang.Integer) value_;
-                }
-                return 0;
-            }
-            /**
-             * <code>int32 int_val = 1;</code>
-             * @param value The intVal to set.
-             * @return This builder for chaining.
-             */
-            public Builder setIntVal(int value) {
-                
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                value_ = input.readInt32();
                 valueCase_ = 1;
-                value_ = value;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>int32 int_val = 1;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearIntVal() {
-                if (valueCase_ == 1) {
-                    valueCase_ = 0;
-                    value_ = null;
-                    onChanged();
-                }
-                return this;
-            }
-            
-            /**
-             * <code>float float_val = 2;</code>
-             * @return Whether the floatVal field is set.
-             */
-            public boolean hasFloatVal() {
-                return valueCase_ == 2;
-            }
-            /**
-             * <code>float float_val = 2;</code>
-             * @return The floatVal.
-             */
-            public float getFloatVal() {
-                if (valueCase_ == 2) {
-                    return (java.lang.Float) value_;
-                }
-                return 0F;
-            }
-            /**
-             * <code>float float_val = 2;</code>
-             * @param value The floatVal to set.
-             * @return This builder for chaining.
-             */
-            public Builder setFloatVal(float value) {
-                
+                break;
+              } // case 8
+              case 21: {
+                value_ = input.readFloat();
                 valueCase_ = 2;
-                value_ = value;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>float float_val = 2;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearFloatVal() {
-                if (valueCase_ == 2) {
-                    valueCase_ = 0;
-                    value_ = null;
-                    onChanged();
-                }
-                return this;
-            }
-            
-            /**
-             * <code>bool bool_val = 3;</code>
-             * @return Whether the boolVal field is set.
-             */
-            public boolean hasBoolVal() {
-                return valueCase_ == 3;
-            }
-            /**
-             * <code>bool bool_val = 3;</code>
-             * @return The boolVal.
-             */
-            public boolean getBoolVal() {
-                if (valueCase_ == 3) {
-                    return (java.lang.Boolean) value_;
-                }
-                return false;
-            }
-            /**
-             * <code>bool bool_val = 3;</code>
-             * @param value The boolVal to set.
-             * @return This builder for chaining.
-             */
-            public Builder setBoolVal(boolean value) {
-                
+                break;
+              } // case 21
+              case 24: {
+                value_ = input.readBool();
                 valueCase_ = 3;
-                value_ = value;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>bool bool_val = 3;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearBoolVal() {
-                if (valueCase_ == 3) {
-                    valueCase_ = 0;
-                    value_ = null;
-                    onChanged();
-                }
-                return this;
-            }
-            
-            /**
-             * <code>string string_val = 4;</code>
-             * @return Whether the stringVal field is set.
-             */
-            @java.lang.Override
-            public boolean hasStringVal() {
-                return valueCase_ == 4;
-            }
-            /**
-             * <code>string string_val = 4;</code>
-             * @return The stringVal.
-             */
-            @java.lang.Override
-            public java.lang.String getStringVal() {
-                java.lang.Object ref = "";
-                if (valueCase_ == 4) {
-                    ref = value_;
-                }
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    if (valueCase_ == 4) {
-                        value_ = s;
-                    }
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <code>string string_val = 4;</code>
-             * @return The bytes for stringVal.
-             */
-            @java.lang.Override
-            public com.google.protobuf.ByteString
-            getStringValBytes() {
-                java.lang.Object ref = "";
-                if (valueCase_ == 4) {
-                    ref = value_;
-                }
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    if (valueCase_ == 4) {
-                        value_ = b;
-                    }
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <code>string string_val = 4;</code>
-             * @param value The stringVal to set.
-             * @return This builder for chaining.
-             */
-            public Builder setStringVal(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
+                break;
+              } // case 24
+              case 34: {
+                java.lang.String s = input.readStringRequireUtf8();
                 valueCase_ = 4;
-                value_ = value;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>string string_val = 4;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearStringVal() {
-                if (valueCase_ == 4) {
-                    valueCase_ = 0;
-                    value_ = null;
-                    onChanged();
+                value_ = s;
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
                 }
-                return this;
-            }
-            /**
-             * <code>string string_val = 4;</code>
-             * @param value The bytes for stringVal to set.
-             * @return This builder for chaining.
-             */
-            public Builder setStringValBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                valueCase_ = 4;
-                value_ = value;
-                onChanged();
-                return this;
-            }
-            
-            // @@protoc_insertion_point(builder_scope:brain4j.AttrValue)
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int valueCase_ = 0;
+      private java.lang.Object value_;
+      public ValueCase
+          getValueCase() {
+        return ValueCase.forNumber(
+            valueCase_);
+      }
+
+      public Builder clearValue() {
+        valueCase_ = 0;
+        value_ = null;
+        onChanged();
+        return this;
+      }
+
+      private int bitField0_;
+
+      /**
+       * <code>int32 int_val = 1;</code>
+       * @return Whether the intVal field is set.
+       */
+      public boolean hasIntVal() {
+        return valueCase_ == 1;
+      }
+      /**
+       * <code>int32 int_val = 1;</code>
+       * @return The intVal.
+       */
+      public int getIntVal() {
+        if (valueCase_ == 1) {
+          return (java.lang.Integer) value_;
         }
-        
-        // @@protoc_insertion_point(class_scope:brain4j.AttrValue)
-        private static final org.brain4j.core.importing.proto.ProtoModel.AttrValue DEFAULT_INSTANCE;
-        static {
-            DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.AttrValue();
+        return 0;
+      }
+      /**
+       * <code>int32 int_val = 1;</code>
+       * @param value The intVal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIntVal(int value) {
+
+        valueCase_ = 1;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 int_val = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIntVal() {
+        if (valueCase_ == 1) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
         }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.AttrValue getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+        return this;
+      }
+
+      /**
+       * <code>float float_val = 2;</code>
+       * @return Whether the floatVal field is set.
+       */
+      public boolean hasFloatVal() {
+        return valueCase_ == 2;
+      }
+      /**
+       * <code>float float_val = 2;</code>
+       * @return The floatVal.
+       */
+      public float getFloatVal() {
+        if (valueCase_ == 2) {
+          return (java.lang.Float) value_;
         }
-        
-        private static final com.google.protobuf.Parser<AttrValue>
-            PARSER = new com.google.protobuf.AbstractParser<AttrValue>() {
-            @java.lang.Override
-            public AttrValue parsePartialFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws com.google.protobuf.InvalidProtocolBufferException {
-                Builder builder = newBuilder();
-                try {
-                    builder.mergeFrom(input, extensionRegistry);
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.setUnfinishedMessage(builder.buildPartial());
-                } catch (com.google.protobuf.UninitializedMessageException e) {
-                    throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-                } catch (java.io.IOException e) {
-                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
-                        .setUnfinishedMessage(builder.buildPartial());
-                }
-                return builder.buildPartial();
-            }
-        };
-        
-        public static com.google.protobuf.Parser<AttrValue> parser() {
-            return PARSER;
+        return 0F;
+      }
+      /**
+       * <code>float float_val = 2;</code>
+       * @param value The floatVal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFloatVal(float value) {
+
+        valueCase_ = 2;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>float float_val = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFloatVal() {
+        if (valueCase_ == 2) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
         }
-        
-        @java.lang.Override
-        public com.google.protobuf.Parser<AttrValue> getParserForType() {
-            return PARSER;
+        return this;
+      }
+
+      /**
+       * <code>bool bool_val = 3;</code>
+       * @return Whether the boolVal field is set.
+       */
+      public boolean hasBoolVal() {
+        return valueCase_ == 3;
+      }
+      /**
+       * <code>bool bool_val = 3;</code>
+       * @return The boolVal.
+       */
+      public boolean getBoolVal() {
+        if (valueCase_ == 3) {
+          return (java.lang.Boolean) value_;
         }
-        
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.AttrValue getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+        return false;
+      }
+      /**
+       * <code>bool bool_val = 3;</code>
+       * @param value The boolVal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBoolVal(boolean value) {
+
+        valueCase_ = 3;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool bool_val = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBoolVal() {
+        if (valueCase_ == 3) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
         }
-        
+        return this;
+      }
+
+      /**
+       * <code>string string_val = 4;</code>
+       * @return Whether the stringVal field is set.
+       */
+      @java.lang.Override
+      public boolean hasStringVal() {
+        return valueCase_ == 4;
+      }
+      /**
+       * <code>string string_val = 4;</code>
+       * @return The stringVal.
+       */
+      @java.lang.Override
+      public java.lang.String getStringVal() {
+        java.lang.Object ref = "";
+        if (valueCase_ == 4) {
+          ref = value_;
+        }
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (valueCase_ == 4) {
+            value_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string string_val = 4;</code>
+       * @return The bytes for stringVal.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getStringValBytes() {
+        java.lang.Object ref = "";
+        if (valueCase_ == 4) {
+          ref = value_;
+        }
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          if (valueCase_ == 4) {
+            value_ = b;
+          }
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string string_val = 4;</code>
+       * @param value The stringVal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStringVal(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        valueCase_ = 4;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string string_val = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStringVal() {
+        if (valueCase_ == 4) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <code>string string_val = 4;</code>
+       * @param value The bytes for stringVal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStringValBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        valueCase_ = 4;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.AttrValue)
     }
-    
-    public interface TensorOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:brain4j.Tensor)
-        com.google.protobuf.MessageOrBuilder {
-        
-        /**
-         * <pre>
-         * es. "dense_0.weight"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The name.
-         */
-        java.lang.String getName();
-        /**
-         * <pre>
-         * es. "dense_0.weight"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The bytes for name.
-         */
-        com.google.protobuf.ByteString
+
+    // @@protoc_insertion_point(class_scope:brain4j.AttrValue)
+    private static final org.brain4j.core.importing.proto.ProtoModel.AttrValue DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.AttrValue();
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.AttrValue getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AttrValue>
+        PARSER = new com.google.protobuf.AbstractParser<AttrValue>() {
+      @java.lang.Override
+      public AttrValue parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<AttrValue> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AttrValue> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.AttrValue getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface TensorOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:brain4j.Tensor)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * es. "denselayer_0.weight"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * es. "denselayer_0.weight"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
         getNameBytes();
-        
-        /**
-         * <pre>
-         * es. [64,128]
-         * </pre>
-         *
-         * <code>repeated int32 shape = 2;</code>
-         * @return A list containing the shape.
-         */
-        java.util.List<java.lang.Integer> getShapeList();
-        /**
-         * <pre>
-         * es. [64,128]
-         * </pre>
-         *
-         * <code>repeated int32 shape = 2;</code>
-         * @return The count of shape.
-         */
-        int getShapeCount();
-        /**
-         * <pre>
-         * es. [64,128]
-         * </pre>
-         *
-         * <code>repeated int32 shape = 2;</code>
-         * @param index The index of the element to return.
-         * @return The shape at the given index.
-         */
-        int getShape(int index);
-        
-        /**
-         * <code>repeated float data = 3 [packed = true];</code>
-         * @return A list containing the data.
-         */
-        java.util.List<java.lang.Float> getDataList();
-        /**
-         * <code>repeated float data = 3 [packed = true];</code>
-         * @return The count of data.
-         */
-        int getDataCount();
-        /**
-         * <code>repeated float data = 3 [packed = true];</code>
-         * @param index The index of the element to return.
-         * @return The data at the given index.
-         */
-        float getData(int index);
+
+    /**
+     * <pre>
+     * es. [64,128]
+     * </pre>
+     *
+     * <code>repeated int32 shape = 2;</code>
+     * @return A list containing the shape.
+     */
+    java.util.List<java.lang.Integer> getShapeList();
+    /**
+     * <pre>
+     * es. [64,128]
+     * </pre>
+     *
+     * <code>repeated int32 shape = 2;</code>
+     * @return The count of shape.
+     */
+    int getShapeCount();
+    /**
+     * <pre>
+     * es. [64,128]
+     * </pre>
+     *
+     * <code>repeated int32 shape = 2;</code>
+     * @param index The index of the element to return.
+     * @return The shape at the given index.
+     */
+    int getShape(int index);
+
+    /**
+     * <code>repeated float data = 3 [packed = true];</code>
+     * @return A list containing the data.
+     */
+    java.util.List<java.lang.Float> getDataList();
+    /**
+     * <code>repeated float data = 3 [packed = true];</code>
+     * @return The count of data.
+     */
+    int getDataCount();
+    /**
+     * <code>repeated float data = 3 [packed = true];</code>
+     * @param index The index of the element to return.
+     * @return The data at the given index.
+     */
+    float getData(int index);
+  }
+  /**
+   * Protobuf type {@code brain4j.Tensor}
+   */
+  public static final class Tensor extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:brain4j.Tensor)
+      TensorOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 31,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        Tensor.class.getName());
+    }
+    // Use Tensor.newBuilder() to construct.
+    private Tensor(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Tensor() {
+      name_ = "";
+      shape_ = emptyIntList();
+      data_ = emptyFloatList();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.brain4j.core.importing.proto.ProtoModel.Tensor.class, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder.class);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
+    /**
+     * <pre>
+     * es. "denselayer_0.weight"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * es. "denselayer_0.weight"
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SHAPE_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.Internal.IntList shape_ =
+        emptyIntList();
+    /**
+     * <pre>
+     * es. [64,128]
+     * </pre>
+     *
+     * <code>repeated int32 shape = 2;</code>
+     * @return A list containing the shape.
+     */
+    @java.lang.Override
+    public java.util.List<java.lang.Integer>
+        getShapeList() {
+      return shape_;
+    }
+    /**
+     * <pre>
+     * es. [64,128]
+     * </pre>
+     *
+     * <code>repeated int32 shape = 2;</code>
+     * @return The count of shape.
+     */
+    public int getShapeCount() {
+      return shape_.size();
+    }
+    /**
+     * <pre>
+     * es. [64,128]
+     * </pre>
+     *
+     * <code>repeated int32 shape = 2;</code>
+     * @param index The index of the element to return.
+     * @return The shape at the given index.
+     */
+    public int getShape(int index) {
+      return shape_.getInt(index);
+    }
+    private int shapeMemoizedSerializedSize = -1;
+
+    public static final int DATA_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.Internal.FloatList data_ =
+        emptyFloatList();
+    /**
+     * <code>repeated float data = 3 [packed = true];</code>
+     * @return A list containing the data.
+     */
+    @java.lang.Override
+    public java.util.List<java.lang.Float>
+        getDataList() {
+      return data_;
+    }
+    /**
+     * <code>repeated float data = 3 [packed = true];</code>
+     * @return The count of data.
+     */
+    public int getDataCount() {
+      return data_.size();
+    }
+    /**
+     * <code>repeated float data = 3 [packed = true];</code>
+     * @param index The index of the element to return.
+     * @return The data at the given index.
+     */
+    public float getData(int index) {
+      return data_.getFloat(index);
+    }
+    private int dataMemoizedSerializedSize = -1;
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, name_);
+      }
+      if (getShapeList().size() > 0) {
+        output.writeUInt32NoTag(18);
+        output.writeUInt32NoTag(shapeMemoizedSerializedSize);
+      }
+      for (int i = 0; i < shape_.size(); i++) {
+        output.writeInt32NoTag(shape_.getInt(i));
+      }
+      if (getDataList().size() > 0) {
+        output.writeUInt32NoTag(26);
+        output.writeUInt32NoTag(dataMemoizedSerializedSize);
+      }
+      for (int i = 0; i < data_.size(); i++) {
+        output.writeFloatNoTag(data_.getFloat(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, name_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < shape_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(shape_.getInt(i));
+        }
+        size += dataSize;
+        if (!getShapeList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        shapeMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        dataSize = 4 * getDataList().size();
+        size += dataSize;
+        if (!getDataList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        dataMemoizedSerializedSize = dataSize;
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Tensor)) {
+        return super.equals(obj);
+      }
+      org.brain4j.core.importing.proto.ProtoModel.Tensor other = (org.brain4j.core.importing.proto.ProtoModel.Tensor) obj;
+
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getShapeList()
+          .equals(other.getShapeList())) return false;
+      if (!getDataList()
+          .equals(other.getDataList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      if (getShapeCount() > 0) {
+        hash = (37 * hash) + SHAPE_FIELD_NUMBER;
+        hash = (53 * hash) + getShapeList().hashCode();
+      }
+      if (getDataCount() > 0) {
+        hash = (37 * hash) + DATA_FIELD_NUMBER;
+        hash = (53 * hash) + getDataList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Tensor prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
     }
     /**
      * Protobuf type {@code brain4j.Tensor}
      */
-    public static final class Tensor extends
-        com.google.protobuf.GeneratedMessage implements
-        // @@protoc_insertion_point(message_implements:brain4j.Tensor)
-        TensorOrBuilder {
-        private static final long serialVersionUID = 0L;
-        static {
-            com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-                com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-                /* major= */ 4,
-                /* minor= */ 31,
-                /* patch= */ 1,
-                /* suffix= */ "",
-                Tensor.class.getName());
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:brain4j.Tensor)
+        org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.brain4j.core.importing.proto.ProtoModel.Tensor.class, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder.class);
+      }
+
+      // Construct using org.brain4j.core.importing.proto.ProtoModel.Tensor.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        name_ = "";
+        shape_ = emptyIntList();
+        data_ = emptyFloatList();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_descriptor;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor getDefaultInstanceForType() {
+        return org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor build() {
+        org.brain4j.core.importing.proto.ProtoModel.Tensor result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
         }
-        // Use Tensor.newBuilder() to construct.
-        private Tensor(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-            super(builder);
+        return result;
+      }
+
+      @java.lang.Override
+      public org.brain4j.core.importing.proto.ProtoModel.Tensor buildPartial() {
+        org.brain4j.core.importing.proto.ProtoModel.Tensor result = new org.brain4j.core.importing.proto.ProtoModel.Tensor(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Tensor result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.name_ = name_;
         }
-        private Tensor() {
-            name_ = "";
-            shape_ = emptyIntList();
-            data_ = emptyFloatList();
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          shape_.makeImmutable();
+          result.shape_ = shape_;
         }
-        
-        public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_descriptor;
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          data_.makeImmutable();
+          result.data_ = data_;
         }
-        
-        @java.lang.Override
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-            return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_fieldAccessorTable
-                .ensureFieldAccessorsInitialized(
-                    org.brain4j.core.importing.proto.ProtoModel.Tensor.class, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder.class);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Tensor) {
+          return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Tensor)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
         }
-        
-        public static final int NAME_FIELD_NUMBER = 1;
-        @SuppressWarnings("serial")
-        private volatile java.lang.Object name_ = "";
-        /**
-         * <pre>
-         * es. "dense_0.weight"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The name.
-         */
-        @java.lang.Override
-        public java.lang.String getName() {
-            java.lang.Object ref = name_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
-            } else {
-                com.google.protobuf.ByteString bs =
-                    (com.google.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
-                name_ = s;
-                return s;
-            }
+      }
+
+      public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Tensor other) {
+        if (other == org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          bitField0_ |= 0x00000001;
+          onChanged();
         }
-        /**
-         * <pre>
-         * es. "dense_0.weight"
-         * </pre>
-         *
-         * <code>string name = 1;</code>
-         * @return The bytes for name.
-         */
-        @java.lang.Override
-        public com.google.protobuf.ByteString
-        getNameBytes() {
-            java.lang.Object ref = name_;
-            if (ref instanceof java.lang.String) {
-                com.google.protobuf.ByteString b =
-                    com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
-                name_ = b;
-                return b;
-            } else {
-                return (com.google.protobuf.ByteString) ref;
-            }
+        if (!other.shape_.isEmpty()) {
+          if (shape_.isEmpty()) {
+            shape_ = other.shape_;
+            shape_.makeImmutable();
+            bitField0_ |= 0x00000002;
+          } else {
+            ensureShapeIsMutable();
+            shape_.addAll(other.shape_);
+          }
+          onChanged();
         }
-        
-        public static final int SHAPE_FIELD_NUMBER = 2;
-        @SuppressWarnings("serial")
-        private com.google.protobuf.Internal.IntList shape_ =
-            emptyIntList();
-        /**
-         * <pre>
-         * es. [64,128]
-         * </pre>
-         *
-         * <code>repeated int32 shape = 2;</code>
-         * @return A list containing the shape.
-         */
-        @java.lang.Override
-        public java.util.List<java.lang.Integer>
-        getShapeList() {
-            return shape_;
+        if (!other.data_.isEmpty()) {
+          if (data_.isEmpty()) {
+            data_ = other.data_;
+            data_.makeImmutable();
+            bitField0_ |= 0x00000004;
+          } else {
+            ensureDataIsMutable();
+            data_.addAll(other.data_);
+          }
+          onChanged();
         }
-        /**
-         * <pre>
-         * es. [64,128]
-         * </pre>
-         *
-         * <code>repeated int32 shape = 2;</code>
-         * @return The count of shape.
-         */
-        public int getShapeCount() {
-            return shape_.size();
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
         }
-        /**
-         * <pre>
-         * es. [64,128]
-         * </pre>
-         *
-         * <code>repeated int32 shape = 2;</code>
-         * @param index The index of the element to return.
-         * @return The shape at the given index.
-         */
-        public int getShape(int index) {
-            return shape_.getInt(index);
-        }
-        private int shapeMemoizedSerializedSize = -1;
-        
-        public static final int DATA_FIELD_NUMBER = 3;
-        @SuppressWarnings("serial")
-        private com.google.protobuf.Internal.FloatList data_ =
-            emptyFloatList();
-        /**
-         * <code>repeated float data = 3 [packed = true];</code>
-         * @return A list containing the data.
-         */
-        @java.lang.Override
-        public java.util.List<java.lang.Float>
-        getDataList() {
-            return data_;
-        }
-        /**
-         * <code>repeated float data = 3 [packed = true];</code>
-         * @return The count of data.
-         */
-        public int getDataCount() {
-            return data_.size();
-        }
-        /**
-         * <code>repeated float data = 3 [packed = true];</code>
-         * @param index The index of the element to return.
-         * @return The data at the given index.
-         */
-        public float getData(int index) {
-            return data_.getFloat(index);
-        }
-        private int dataMemoizedSerializedSize = -1;
-        
-        private byte memoizedIsInitialized = -1;
-        @java.lang.Override
-        public final boolean isInitialized() {
-            byte isInitialized = memoizedIsInitialized;
-            if (isInitialized == 1) return true;
-            if (isInitialized == 0) return false;
-            
-            memoizedIsInitialized = 1;
-            return true;
-        }
-        
-        @java.lang.Override
-        public void writeTo(com.google.protobuf.CodedOutputStream output)
-            throws java.io.IOException {
-            getSerializedSize();
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
-                com.google.protobuf.GeneratedMessage.writeString(output, 1, name_);
-            }
-            if (getShapeList().size() > 0) {
-                output.writeUInt32NoTag(18);
-                output.writeUInt32NoTag(shapeMemoizedSerializedSize);
-            }
-            for (int i = 0; i < shape_.size(); i++) {
-                output.writeInt32NoTag(shape_.getInt(i));
-            }
-            if (getDataList().size() > 0) {
-                output.writeUInt32NoTag(26);
-                output.writeUInt32NoTag(dataMemoizedSerializedSize);
-            }
-            for (int i = 0; i < data_.size(); i++) {
-                output.writeFloatNoTag(data_.getFloat(i));
-            }
-            getUnknownFields().writeTo(output);
-        }
-        
-        @java.lang.Override
-        public int getSerializedSize() {
-            int size = memoizedSize;
-            if (size != -1) return size;
-            
-            size = 0;
-            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
-                size += com.google.protobuf.GeneratedMessage.computeStringSize(1, name_);
-            }
-            {
-                int dataSize = 0;
-                for (int i = 0; i < shape_.size(); i++) {
-                    dataSize += com.google.protobuf.CodedOutputStream
-                        .computeInt32SizeNoTag(shape_.getInt(i));
-                }
-                size += dataSize;
-                if (!getShapeList().isEmpty()) {
-                    size += 1;
-                    size += com.google.protobuf.CodedOutputStream
-                        .computeInt32SizeNoTag(dataSize);
-                }
-                shapeMemoizedSerializedSize = dataSize;
-            }
-            {
-                int dataSize = 0;
-                dataSize = 4 * getDataList().size();
-                size += dataSize;
-                if (!getDataList().isEmpty()) {
-                    size += 1;
-                    size += com.google.protobuf.CodedOutputStream
-                        .computeInt32SizeNoTag(dataSize);
-                }
-                dataMemoizedSerializedSize = dataSize;
-            }
-            size += getUnknownFields().getSerializedSize();
-            memoizedSize = size;
-            return size;
-        }
-        
-        @java.lang.Override
-        public boolean equals(final java.lang.Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (!(obj instanceof org.brain4j.core.importing.proto.ProtoModel.Tensor)) {
-                return super.equals(obj);
-            }
-            org.brain4j.core.importing.proto.ProtoModel.Tensor other = (org.brain4j.core.importing.proto.ProtoModel.Tensor) obj;
-            
-            if (!getName()
-                .equals(other.getName())) return false;
-            if (!getShapeList()
-                .equals(other.getShapeList())) return false;
-            if (!getDataList()
-                .equals(other.getDataList())) return false;
-            if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-            return true;
-        }
-        
-        @java.lang.Override
-        public int hashCode() {
-            if (memoizedHashCode != 0) {
-                return memoizedHashCode;
-            }
-            int hash = 41;
-            hash = (19 * hash) + getDescriptor().hashCode();
-            hash = (37 * hash) + NAME_FIELD_NUMBER;
-            hash = (53 * hash) + getName().hashCode();
-            if (getShapeCount() > 0) {
-                hash = (37 * hash) + SHAPE_FIELD_NUMBER;
-                hash = (53 * hash) + getShapeList().hashCode();
-            }
-            if (getDataCount() > 0) {
-                hash = (37 * hash) + DATA_FIELD_NUMBER;
-                hash = (53 * hash) + getDataList().hashCode();
-            }
-            hash = (29 * hash) + getUnknownFields().hashCode();
-            memoizedHashCode = hash;
-            return hash;
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            java.nio.ByteBuffer data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            java.nio.ByteBuffer data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            com.google.protobuf.ByteString data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            com.google.protobuf.ByteString data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(byte[] data)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            byte[] data,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-            return PARSER.parseFrom(data, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseDelimitedFrom(java.io.InputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input);
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseDelimitedFrom(
-            java.io.InputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            com.google.protobuf.CodedInputStream input)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input);
-        }
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor parseFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-            return com.google.protobuf.GeneratedMessage
-                .parseWithIOException(PARSER, input, extensionRegistry);
-        }
-        
-        @java.lang.Override
-        public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder() {
-            return DEFAULT_INSTANCE.toBuilder();
-        }
-        public static Builder newBuilder(org.brain4j.core.importing.proto.ProtoModel.Tensor prototype) {
-            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-        }
-        @java.lang.Override
-        public Builder toBuilder() {
-            return this == DEFAULT_INSTANCE
-                ? new Builder() : new Builder().mergeFrom(this);
-        }
-        
-        @java.lang.Override
-        protected Builder newBuilderForType(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-            Builder builder = new Builder(parent);
-            return builder;
-        }
-        /**
-         * Protobuf type {@code brain4j.Tensor}
-         */
-        public static final class Builder extends
-            com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-            // @@protoc_insertion_point(builder_implements:brain4j.Tensor)
-            org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder {
-            public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_descriptor;
-            }
-            
-            @java.lang.Override
-            protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_fieldAccessorTable
-                    .ensureFieldAccessorsInitialized(
-                        org.brain4j.core.importing.proto.ProtoModel.Tensor.class, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder.class);
-            }
-            
-            // Construct using org.brain4j.core.importing.proto.ProtoModel.Tensor.newBuilder()
-            private Builder() {
-            
-            }
-            
-            private Builder(
-                com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-                super(parent);
-                
-            }
-            @java.lang.Override
-            public Builder clear() {
-                super.clear();
-                bitField0_ = 0;
-                name_ = "";
-                shape_ = emptyIntList();
-                data_ = emptyFloatList();
-                return this;
-            }
-            
-            @java.lang.Override
-            public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Tensor_descriptor;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor getDefaultInstanceForType() {
-                return org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance();
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor build() {
-                org.brain4j.core.importing.proto.ProtoModel.Tensor result = buildPartial();
-                if (!result.isInitialized()) {
-                    throw newUninitializedMessageException(result);
-                }
-                return result;
-            }
-            
-            @java.lang.Override
-            public org.brain4j.core.importing.proto.ProtoModel.Tensor buildPartial() {
-                org.brain4j.core.importing.proto.ProtoModel.Tensor result = new org.brain4j.core.importing.proto.ProtoModel.Tensor(this);
-                if (bitField0_ != 0) { buildPartial0(result); }
-                onBuilt();
-                return result;
-            }
-            
-            private void buildPartial0(org.brain4j.core.importing.proto.ProtoModel.Tensor result) {
-                int from_bitField0_ = bitField0_;
-                if (((from_bitField0_ & 0x00000001) != 0)) {
-                    result.name_ = name_;
-                }
-                if (((from_bitField0_ & 0x00000002) != 0)) {
-                    shape_.makeImmutable();
-                    result.shape_ = shape_;
-                }
-                if (((from_bitField0_ & 0x00000004) != 0)) {
-                    data_.makeImmutable();
-                    result.data_ = data_;
-                }
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(com.google.protobuf.Message other) {
-                if (other instanceof org.brain4j.core.importing.proto.ProtoModel.Tensor) {
-                    return mergeFrom((org.brain4j.core.importing.proto.ProtoModel.Tensor)other);
-                } else {
-                    super.mergeFrom(other);
-                    return this;
-                }
-            }
-            
-            public Builder mergeFrom(org.brain4j.core.importing.proto.ProtoModel.Tensor other) {
-                if (other == org.brain4j.core.importing.proto.ProtoModel.Tensor.getDefaultInstance()) return this;
-                if (!other.getName().isEmpty()) {
-                    name_ = other.name_;
-                    bitField0_ |= 0x00000001;
-                    onChanged();
-                }
-                if (!other.shape_.isEmpty()) {
-                    if (shape_.isEmpty()) {
-                        shape_ = other.shape_;
-                        shape_.makeImmutable();
-                        bitField0_ |= 0x00000002;
-                    } else {
-                        ensureShapeIsMutable();
-                        shape_.addAll(other.shape_);
-                    }
-                    onChanged();
-                }
-                if (!other.data_.isEmpty()) {
-                    if (data_.isEmpty()) {
-                        data_ = other.data_;
-                        data_.makeImmutable();
-                        bitField0_ |= 0x00000004;
-                    } else {
-                        ensureDataIsMutable();
-                        data_.addAll(other.data_);
-                    }
-                    onChanged();
-                }
-                this.mergeUnknownFields(other.getUnknownFields());
-                onChanged();
-                return this;
-            }
-            
-            @java.lang.Override
-            public final boolean isInitialized() {
-                return true;
-            }
-            
-            @java.lang.Override
-            public Builder mergeFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws java.io.IOException {
-                if (extensionRegistry == null) {
-                    throw new java.lang.NullPointerException();
-                }
-                try {
-                    boolean done = false;
-                    while (!done) {
-                        int tag = input.readTag();
-                        switch (tag) {
-                            case 0:
-                                done = true;
-                                break;
-                            case 10: {
-                                name_ = input.readStringRequireUtf8();
-                                bitField0_ |= 0x00000001;
-                                break;
-                            } // case 10
-                            case 16: {
-                                int v = input.readInt32();
-                                ensureShapeIsMutable();
-                                shape_.addInt(v);
-                                break;
-                            } // case 16
-                            case 18: {
-                                int length = input.readRawVarint32();
-                                int limit = input.pushLimit(length);
-                                ensureShapeIsMutable();
-                                while (input.getBytesUntilLimit() > 0) {
-                                    shape_.addInt(input.readInt32());
-                                }
-                                input.popLimit(limit);
-                                break;
-                            } // case 18
-                            case 29: {
-                                float v = input.readFloat();
-                                ensureDataIsMutable();
-                                data_.addFloat(v);
-                                break;
-                            } // case 29
-                            case 26: {
-                                int length = input.readRawVarint32();
-                                int limit = input.pushLimit(length);
-                                int alloc = length > 4096 ? 4096 : length;
-                                ensureDataIsMutable(alloc / 4);
-                                while (input.getBytesUntilLimit() > 0) {
-                                    data_.addFloat(input.readFloat());
-                                }
-                                input.popLimit(limit);
-                                break;
-                            } // case 26
-                            default: {
-                                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                                    done = true; // was an endgroup tag
-                                }
-                                break;
-                            } // default:
-                        } // switch (tag)
-                    } // while (!done)
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.unwrapIOException();
-                } finally {
-                    onChanged();
-                } // finally
-                return this;
-            }
-            private int bitField0_;
-            
-            private java.lang.Object name_ = "";
-            /**
-             * <pre>
-             * es. "dense_0.weight"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @return The name.
-             */
-            public java.lang.String getName() {
-                java.lang.Object ref = name_;
-                if (!(ref instanceof java.lang.String)) {
-                    com.google.protobuf.ByteString bs =
-                        (com.google.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
-                    name_ = s;
-                    return s;
-                } else {
-                    return (java.lang.String) ref;
-                }
-            }
-            /**
-             * <pre>
-             * es. "dense_0.weight"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @return The bytes for name.
-             */
-            public com.google.protobuf.ByteString
-            getNameBytes() {
-                java.lang.Object ref = name_;
-                if (ref instanceof String) {
-                    com.google.protobuf.ByteString b =
-                        com.google.protobuf.ByteString.copyFromUtf8(
-                            (java.lang.String) ref);
-                    name_ = b;
-                    return b;
-                } else {
-                    return (com.google.protobuf.ByteString) ref;
-                }
-            }
-            /**
-             * <pre>
-             * es. "dense_0.weight"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @param value The name to set.
-             * @return This builder for chaining.
-             */
-            public Builder setName(
-                java.lang.String value) {
-                if (value == null) { throw new NullPointerException(); }
-                name_ = value;
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                name_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000001;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * es. "dense_0.weight"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearName() {
-                name_ = getDefaultInstance().getName();
-                bitField0_ = (bitField0_ & ~0x00000001);
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * es. "dense_0.weight"
-             * </pre>
-             *
-             * <code>string name = 1;</code>
-             * @param value The bytes for name to set.
-             * @return This builder for chaining.
-             */
-            public Builder setNameBytes(
-                com.google.protobuf.ByteString value) {
-                if (value == null) { throw new NullPointerException(); }
-                checkByteStringIsUtf8(value);
-                name_ = value;
-                bitField0_ |= 0x00000001;
-                onChanged();
-                return this;
-            }
-            
-            private com.google.protobuf.Internal.IntList shape_ = emptyIntList();
-            private void ensureShapeIsMutable() {
-                if (!shape_.isModifiable()) {
-                    shape_ = makeMutableCopy(shape_);
-                }
-                bitField0_ |= 0x00000002;
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @return A list containing the shape.
-             */
-            public java.util.List<java.lang.Integer>
-            getShapeList() {
-                shape_.makeImmutable();
-                return shape_;
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @return The count of shape.
-             */
-            public int getShapeCount() {
-                return shape_.size();
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @param index The index of the element to return.
-             * @return The shape at the given index.
-             */
-            public int getShape(int index) {
-                return shape_.getInt(index);
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @param index The index to set the value at.
-             * @param value The shape to set.
-             * @return This builder for chaining.
-             */
-            public Builder setShape(
-                int index, int value) {
-                
+                break;
+              } // case 10
+              case 16: {
+                int v = input.readInt32();
                 ensureShapeIsMutable();
-                shape_.setInt(index, value);
-                bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @param value The shape to add.
-             * @return This builder for chaining.
-             */
-            public Builder addShape(int value) {
-                
+                shape_.addInt(v);
+                break;
+              } // case 16
+              case 18: {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
                 ensureShapeIsMutable();
-                shape_.addInt(value);
-                bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @param values The shape to add.
-             * @return This builder for chaining.
-             */
-            public Builder addAllShape(
-                java.lang.Iterable<? extends java.lang.Integer> values) {
-                ensureShapeIsMutable();
-                com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                    values, shape_);
-                bitField0_ |= 0x00000002;
-                onChanged();
-                return this;
-            }
-            /**
-             * <pre>
-             * es. [64,128]
-             * </pre>
-             *
-             * <code>repeated int32 shape = 2;</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearShape() {
-                shape_ = emptyIntList();
-                bitField0_ = (bitField0_ & ~0x00000002);
-                onChanged();
-                return this;
-            }
-            
-            private com.google.protobuf.Internal.FloatList data_ = emptyFloatList();
-            private void ensureDataIsMutable() {
-                if (!data_.isModifiable()) {
-                    data_ = makeMutableCopy(data_);
+                while (input.getBytesUntilLimit() > 0) {
+                  shape_.addInt(input.readInt32());
                 }
-                bitField0_ |= 0x00000004;
-            }
-            private void ensureDataIsMutable(int capacity) {
-                if (!data_.isModifiable()) {
-                    data_ = makeMutableCopy(data_, capacity);
+                input.popLimit(limit);
+                break;
+              } // case 18
+              case 29: {
+                float v = input.readFloat();
+                ensureDataIsMutable();
+                data_.addFloat(v);
+                break;
+              } // case 29
+              case 26: {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                int alloc = length > 4096 ? 4096 : length;
+                ensureDataIsMutable(alloc / 4);
+                while (input.getBytesUntilLimit() > 0) {
+                  data_.addFloat(input.readFloat());
                 }
-                bitField0_ |= 0x00000004;
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @return A list containing the data.
-             */
-            public java.util.List<java.lang.Float>
-            getDataList() {
-                data_.makeImmutable();
-                return data_;
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @return The count of data.
-             */
-            public int getDataCount() {
-                return data_.size();
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @param index The index of the element to return.
-             * @return The data at the given index.
-             */
-            public float getData(int index) {
-                return data_.getFloat(index);
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @param index The index to set the value at.
-             * @param value The data to set.
-             * @return This builder for chaining.
-             */
-            public Builder setData(
-                int index, float value) {
-                
-                ensureDataIsMutable();
-                data_.setFloat(index, value);
-                bitField0_ |= 0x00000004;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @param value The data to add.
-             * @return This builder for chaining.
-             */
-            public Builder addData(float value) {
-                
-                ensureDataIsMutable();
-                data_.addFloat(value);
-                bitField0_ |= 0x00000004;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @param values The data to add.
-             * @return This builder for chaining.
-             */
-            public Builder addAllData(
-                java.lang.Iterable<? extends java.lang.Float> values) {
-                ensureDataIsMutable();
-                com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                    values, data_);
-                bitField0_ |= 0x00000004;
-                onChanged();
-                return this;
-            }
-            /**
-             * <code>repeated float data = 3 [packed = true];</code>
-             * @return This builder for chaining.
-             */
-            public Builder clearData() {
-                data_ = emptyFloatList();
-                bitField0_ = (bitField0_ & ~0x00000004);
-                onChanged();
-                return this;
-            }
-            
-            // @@protoc_insertion_point(builder_scope:brain4j.Tensor)
-        }
-        
-        // @@protoc_insertion_point(class_scope:brain4j.Tensor)
-        private static final org.brain4j.core.importing.proto.ProtoModel.Tensor DEFAULT_INSTANCE;
-        static {
-            DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Tensor();
-        }
-        
-        public static org.brain4j.core.importing.proto.ProtoModel.Tensor getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-        
-        private static final com.google.protobuf.Parser<Tensor>
-            PARSER = new com.google.protobuf.AbstractParser<Tensor>() {
-            @java.lang.Override
-            public Tensor parsePartialFrom(
-                com.google.protobuf.CodedInputStream input,
-                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws com.google.protobuf.InvalidProtocolBufferException {
-                Builder builder = newBuilder();
-                try {
-                    builder.mergeFrom(input, extensionRegistry);
-                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                    throw e.setUnfinishedMessage(builder.buildPartial());
-                } catch (com.google.protobuf.UninitializedMessageException e) {
-                    throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-                } catch (java.io.IOException e) {
-                    throw new com.google.protobuf.InvalidProtocolBufferException(e)
-                        .setUnfinishedMessage(builder.buildPartial());
+                input.popLimit(limit);
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
                 }
-                return builder.buildPartial();
-            }
-        };
-        
-        public static com.google.protobuf.Parser<Tensor> parser() {
-            return PARSER;
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object name_ = "";
+      /**
+       * <pre>
+       * es. "denselayer_0.weight"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
         }
-        
-        @java.lang.Override
-        public com.google.protobuf.Parser<Tensor> getParserForType() {
-            return PARSER;
+      }
+      /**
+       * <pre>
+       * es. "denselayer_0.weight"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
         }
-        
-        @java.lang.Override
-        public org.brain4j.core.importing.proto.ProtoModel.Tensor getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+      }
+      /**
+       * <pre>
+       * es. "denselayer_0.weight"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        name_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * es. "denselayer_0.weight"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * es. "denselayer_0.weight"
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        name_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Internal.IntList shape_ = emptyIntList();
+      private void ensureShapeIsMutable() {
+        if (!shape_.isModifiable()) {
+          shape_ = makeMutableCopy(shape_);
         }
-        
+        bitField0_ |= 0x00000002;
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @return A list containing the shape.
+       */
+      public java.util.List<java.lang.Integer>
+          getShapeList() {
+        shape_.makeImmutable();
+        return shape_;
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @return The count of shape.
+       */
+      public int getShapeCount() {
+        return shape_.size();
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @param index The index of the element to return.
+       * @return The shape at the given index.
+       */
+      public int getShape(int index) {
+        return shape_.getInt(index);
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @param index The index to set the value at.
+       * @param value The shape to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShape(
+          int index, int value) {
+
+        ensureShapeIsMutable();
+        shape_.setInt(index, value);
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @param value The shape to add.
+       * @return This builder for chaining.
+       */
+      public Builder addShape(int value) {
+
+        ensureShapeIsMutable();
+        shape_.addInt(value);
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @param values The shape to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllShape(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureShapeIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, shape_);
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * es. [64,128]
+       * </pre>
+       *
+       * <code>repeated int32 shape = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearShape() {
+        shape_ = emptyIntList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Internal.FloatList data_ = emptyFloatList();
+      private void ensureDataIsMutable() {
+        if (!data_.isModifiable()) {
+          data_ = makeMutableCopy(data_);
+        }
+        bitField0_ |= 0x00000004;
+      }
+      private void ensureDataIsMutable(int capacity) {
+        if (!data_.isModifiable()) {
+          data_ = makeMutableCopy(data_, capacity);
+        }
+        bitField0_ |= 0x00000004;
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @return A list containing the data.
+       */
+      public java.util.List<java.lang.Float>
+          getDataList() {
+        data_.makeImmutable();
+        return data_;
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @return The count of data.
+       */
+      public int getDataCount() {
+        return data_.size();
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @param index The index of the element to return.
+       * @return The data at the given index.
+       */
+      public float getData(int index) {
+        return data_.getFloat(index);
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @param index The index to set the value at.
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(
+          int index, float value) {
+
+        ensureDataIsMutable();
+        data_.setFloat(index, value);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @param value The data to add.
+       * @return This builder for chaining.
+       */
+      public Builder addData(float value) {
+
+        ensureDataIsMutable();
+        data_.addFloat(value);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @param values The data to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllData(
+          java.lang.Iterable<? extends java.lang.Float> values) {
+        ensureDataIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, data_);
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated float data = 3 [packed = true];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        data_ = emptyFloatList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:brain4j.Tensor)
     }
-    
-    private static final com.google.protobuf.Descriptors.Descriptor
-        internal_static_brain4j_Model_descriptor;
-    private static final
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internal_static_brain4j_Model_fieldAccessorTable;
-    private static final com.google.protobuf.Descriptors.Descriptor
-        internal_static_brain4j_Layer_descriptor;
-    private static final
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internal_static_brain4j_Layer_fieldAccessorTable;
-    private static final com.google.protobuf.Descriptors.Descriptor
-        internal_static_brain4j_Layer_AttrsEntry_descriptor;
-    private static final
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internal_static_brain4j_Layer_AttrsEntry_fieldAccessorTable;
-    private static final com.google.protobuf.Descriptors.Descriptor
-        internal_static_brain4j_AttrValue_descriptor;
-    private static final
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internal_static_brain4j_AttrValue_fieldAccessorTable;
-    private static final com.google.protobuf.Descriptors.Descriptor
-        internal_static_brain4j_Tensor_descriptor;
-    private static final
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internal_static_brain4j_Tensor_fieldAccessorTable;
-    
-    public static com.google.protobuf.Descriptors.FileDescriptor
-    getDescriptor() {
-        return descriptor;
-    }
-    private static  com.google.protobuf.Descriptors.FileDescriptor
-        descriptor;
+
+    // @@protoc_insertion_point(class_scope:brain4j.Tensor)
+    private static final org.brain4j.core.importing.proto.ProtoModel.Tensor DEFAULT_INSTANCE;
     static {
-        java.lang.String[] descriptorData = {
-            "\n\013model.proto\022\007brain4j\"\220\001\n\005Model\022\017\n\007vers" +
-                "ion\030\001 \001(\r\022\014\n\004name\030\002 \001(\t\022\017\n\007created\030\003 \001(\t" +
-                "\022\036\n\006layers\030\004 \003(\0132\016.brain4j.Layer\022 \n\007weig" +
-                "hts\030\005 \003(\0132\017.brain4j.Tensor\022\025\n\rloss_funct" +
-                "ion\030\006 \001(\t\"\242\001\n\005Layer\022\014\n\004name\030\001 \001(\t\022\014\n\004typ" +
-                "e\030\002 \001(\t\022\021\n\tdimension\030\003 \001(\r\022(\n\005attrs\030\004 \003(" +
-                "\0132\031.brain4j.Layer.AttrsEntry\032@\n\nAttrsEnt" +
-                "ry\022\013\n\003key\030\001 \001(\t\022!\n\005value\030\002 \001(\0132\022.brain4j" +
-                ".AttrValue:\0028\001\"f\n\tAttrValue\022\021\n\007int_val\030\001" +
-                " \001(\005H\000\022\023\n\tfloat_val\030\002 \001(\002H\000\022\022\n\010bool_val\030" +
-                "\003 \001(\010H\000\022\024\n\nstring_val\030\004 \001(\tH\000B\007\n\005value\"7" +
-                "\n\006Tensor\022\014\n\004name\030\001 \001(\t\022\r\n\005shape\030\002 \003(\005\022\020\n" +
-                "\004data\030\003 \003(\002B\002\020\001B.\n org.brain4j.core.impo" +
-                "rting.protoB\nProtoModelb\006proto3"
-        };
-        descriptor = com.google.protobuf.Descriptors.FileDescriptor
-            .internalBuildGeneratedFileFrom(descriptorData,
-                new com.google.protobuf.Descriptors.FileDescriptor[] {
-                });
-        internal_static_brain4j_Model_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-        internal_static_brain4j_Model_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-            internal_static_brain4j_Model_descriptor,
-            new java.lang.String[] { "Version", "Name", "Created", "Layers", "Weights", "LossFunction", });
-        internal_static_brain4j_Layer_descriptor =
-            getDescriptor().getMessageTypes().get(1);
-        internal_static_brain4j_Layer_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-            internal_static_brain4j_Layer_descriptor,
-            new java.lang.String[] { "Name", "Type", "Dimension", "Attrs", });
-        internal_static_brain4j_Layer_AttrsEntry_descriptor =
-            internal_static_brain4j_Layer_descriptor.getNestedTypes().get(0);
-        internal_static_brain4j_Layer_AttrsEntry_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-            internal_static_brain4j_Layer_AttrsEntry_descriptor,
-            new java.lang.String[] { "Key", "Value", });
-        internal_static_brain4j_AttrValue_descriptor =
-            getDescriptor().getMessageTypes().get(2);
-        internal_static_brain4j_AttrValue_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-            internal_static_brain4j_AttrValue_descriptor,
-            new java.lang.String[] { "IntVal", "FloatVal", "BoolVal", "StringVal", "Value", });
-        internal_static_brain4j_Tensor_descriptor =
-            getDescriptor().getMessageTypes().get(3);
-        internal_static_brain4j_Tensor_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-            internal_static_brain4j_Tensor_descriptor,
-            new java.lang.String[] { "Name", "Shape", "Data", });
-        descriptor.resolveAllFeaturesImmutable();
+      DEFAULT_INSTANCE = new org.brain4j.core.importing.proto.ProtoModel.Tensor();
     }
-    
-    // @@protoc_insertion_point(outer_class_scope)
+
+    public static org.brain4j.core.importing.proto.ProtoModel.Tensor getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Tensor>
+        PARSER = new com.google.protobuf.AbstractParser<Tensor>() {
+      @java.lang.Override
+      public Tensor parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<Tensor> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Tensor> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.brain4j.core.importing.proto.ProtoModel.Tensor getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_Model_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_Model_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_Layer_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_Layer_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_Layer_AttrsEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_Layer_AttrsEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_AttentionHead_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_AttentionHead_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_AttentionHead_AttrsEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_AttentionHead_AttrsEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_MultiHeadAttention_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_MultiHeadAttention_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_MultiHeadAttention_AttrsEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_MultiHeadAttention_AttrsEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_BasicLayer_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_BasicLayer_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_Transformer_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_Transformer_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_AttrValue_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_AttrValue_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_brain4j_Tensor_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_brain4j_Tensor_fieldAccessorTable;
+
+  public static com.google.protobuf.Descriptors.FileDescriptor
+      getDescriptor() {
+    return descriptor;
+  }
+  private static  com.google.protobuf.Descriptors.FileDescriptor
+      descriptor;
+  static {
+    java.lang.String[] descriptorData = {
+      "\n\013model.proto\022\007brain4j\"\220\001\n\005Model\022\017\n\007vers" +
+      "ion\030\001 \001(\r\022\014\n\004name\030\002 \001(\t\022\017\n\007created\030\003 \001(\t" +
+      "\022\036\n\006layers\030\004 \003(\0132\016.brain4j.Layer\022 \n\007weig" +
+      "hts\030\005 \003(\0132\017.brain4j.Tensor\022\025\n\rloss_funct" +
+      "ion\030\006 \001(\t\"\360\001\n\005Layer\022\014\n\004name\030\001 \001(\t\022\014\n\004typ" +
+      "e\030\002 \001(\t\022(\n\005attrs\030\003 \003(\0132\031.brain4j.Layer.A" +
+      "ttrsEntry\022$\n\005basic\030\004 \001(\0132\023.brain4j.Basic" +
+      "LayerH\000\022+\n\013transformer\030\005 \001(\0132\024.brain4j.T" +
+      "ransformerH\000\032@\n\nAttrsEntry\022\013\n\003key\030\001 \001(\t\022" +
+      "!\n\005value\030\002 \001(\0132\022.brain4j.AttrValue:\0028\001B\014" +
+      "\n\nlayer_kind\"\354\001\n\rAttentionHead\022!\n\010q_weig" +
+      "ht\030\001 \001(\0132\017.brain4j.Tensor\022!\n\010k_weight\030\002 " +
+      "\001(\0132\017.brain4j.Tensor\022!\n\010v_weight\030\003 \001(\0132\017" +
+      ".brain4j.Tensor\0220\n\005attrs\030\004 \003(\0132!.brain4j" +
+      ".AttentionHead.AttrsEntry\032@\n\nAttrsEntry\022" +
+      "\013\n\003key\030\001 \001(\t\022!\n\005value\030\002 \001(\0132\022.brain4j.At" +
+      "trValue:\0028\001\"\331\001\n\022MultiHeadAttention\022%\n\005he" +
+      "ads\030\001 \003(\0132\026.brain4j.AttentionHead\0225\n\005att" +
+      "rs\030\002 \003(\0132&.brain4j.MultiHeadAttention.At" +
+      "trsEntry\022#\n\nout_weight\030\003 \001(\0132\017.brain4j.T" +
+      "ensor\032@\n\nAttrsEntry\022\013\n\003key\030\001 \001(\t\022!\n\005valu" +
+      "e\030\002 \001(\0132\022.brain4j.AttrValue:\0028\001\"\037\n\nBasic" +
+      "Layer\022\021\n\tdimension\030\001 \001(\r\"a\n\013Transformer\022" +
+      "\"\n\nsub_layers\030\001 \003(\0132\016.brain4j.Layer\022.\n\ta" +
+      "ttention\030\002 \001(\0132\033.brain4j.MultiHeadAttent" +
+      "ion\"f\n\tAttrValue\022\021\n\007int_val\030\001 \001(\005H\000\022\023\n\tf" +
+      "loat_val\030\002 \001(\002H\000\022\022\n\010bool_val\030\003 \001(\010H\000\022\024\n\n" +
+      "string_val\030\004 \001(\tH\000B\007\n\005value\"7\n\006Tensor\022\014\n" +
+      "\004name\030\001 \001(\t\022\r\n\005shape\030\002 \003(\005\022\020\n\004data\030\003 \003(\002" +
+      "B\002\020\001B.\n org.brain4j.core.importing.proto" +
+      "B\nProtoModelb\006proto3"
+    };
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new com.google.protobuf.Descriptors.FileDescriptor[] {
+        });
+    internal_static_brain4j_Model_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_brain4j_Model_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_Model_descriptor,
+        new java.lang.String[] { "Version", "Name", "Created", "Layers", "Weights", "LossFunction", });
+    internal_static_brain4j_Layer_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_brain4j_Layer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_Layer_descriptor,
+        new java.lang.String[] { "Name", "Type", "Attrs", "Basic", "Transformer", "LayerKind", });
+    internal_static_brain4j_Layer_AttrsEntry_descriptor =
+      internal_static_brain4j_Layer_descriptor.getNestedTypes().get(0);
+    internal_static_brain4j_Layer_AttrsEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_Layer_AttrsEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_brain4j_AttentionHead_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_brain4j_AttentionHead_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_AttentionHead_descriptor,
+        new java.lang.String[] { "QWeight", "KWeight", "VWeight", "Attrs", });
+    internal_static_brain4j_AttentionHead_AttrsEntry_descriptor =
+      internal_static_brain4j_AttentionHead_descriptor.getNestedTypes().get(0);
+    internal_static_brain4j_AttentionHead_AttrsEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_AttentionHead_AttrsEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_brain4j_MultiHeadAttention_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_brain4j_MultiHeadAttention_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_MultiHeadAttention_descriptor,
+        new java.lang.String[] { "Heads", "Attrs", "OutWeight", });
+    internal_static_brain4j_MultiHeadAttention_AttrsEntry_descriptor =
+      internal_static_brain4j_MultiHeadAttention_descriptor.getNestedTypes().get(0);
+    internal_static_brain4j_MultiHeadAttention_AttrsEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_MultiHeadAttention_AttrsEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_brain4j_BasicLayer_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_brain4j_BasicLayer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_BasicLayer_descriptor,
+        new java.lang.String[] { "Dimension", });
+    internal_static_brain4j_Transformer_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_brain4j_Transformer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_Transformer_descriptor,
+        new java.lang.String[] { "SubLayers", "Attention", });
+    internal_static_brain4j_AttrValue_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_brain4j_AttrValue_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_AttrValue_descriptor,
+        new java.lang.String[] { "IntVal", "FloatVal", "BoolVal", "StringVal", "Value", });
+    internal_static_brain4j_Tensor_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_brain4j_Tensor_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_brain4j_Tensor_descriptor,
+        new java.lang.String[] { "Name", "Shape", "Data", });
+    descriptor.resolveAllFeaturesImmutable();
+  }
+
+  // @@protoc_insertion_point(outer_class_scope)
 }

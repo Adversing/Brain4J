@@ -43,9 +43,8 @@ public class DropoutLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("dropout_rate", value(dropoutRate));
-        return List.of();
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("dropout_rate", value(dropoutRate));
     }
     
     @Override

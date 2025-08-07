@@ -101,7 +101,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
-                cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
+                cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_backward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());

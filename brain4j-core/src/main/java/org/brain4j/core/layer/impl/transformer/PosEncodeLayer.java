@@ -69,4 +69,9 @@ public class PosEncodeLayer extends Layer {
 
         return token.reshape(1, embeddingDim);
     }
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> weightsList() {
+        return List.of();
+    }
 }

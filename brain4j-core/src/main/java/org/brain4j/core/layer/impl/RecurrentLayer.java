@@ -85,17 +85,10 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("dimension", value(dimension));
-        layerBuilder.putAttrs("hidden_dimension", value(hiddenDimension));
-        layerBuilder.putAttrs("activation", value(activation.name()));
-        return List.of(
-            serializeTensor("input_weight", inputWeights),
-            serializeTensor("hidden_weight", hiddenWeights),
-            serializeTensor("hidden_bias", hiddenBias),
-            serializeTensor("weights", weights),
-            serializeTensor("bias", bias)
-        );
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("dimension", value(dimension));
+        builder.putAttrs("hidden_dimension", value(hiddenDimension));
+        builder.putAttrs("activation", value(activation.name()));
     }
     
     @Override
@@ -155,5 +148,16 @@ public class RecurrentLayer extends Layer {
     @Override
     public int size() {
         return dimension;
+    }
+    
+    @Override
+    public List<ProtoModel.Tensor.Builder> weightsList() {
+        return List.of(
+            serializeTensor("input_weight", inputWeights),
+            serializeTensor("hidden_weight", hiddenWeights),
+            serializeTensor("hidden_bias", hiddenBias),
+            serializeTensor("weights", weights),
+            serializeTensor("bias", bias)
+        );
     }
 }

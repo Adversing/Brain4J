@@ -1,6 +1,5 @@
 package org.brain4j.core.layer;
 
-import org.brain4j.common.Tensors;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
@@ -15,11 +14,8 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * Abstract base class for all neural network layers.
@@ -39,11 +35,19 @@ public abstract class Layer implements SerializationInstance {
     public Layer() {
     }
     
+    /**
+     * Deserializes the weights and the layer attributes.
+     * @param tensors the layer weights
+     * @param layer the layer instance, containing attributes
+     */
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
     }
     
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        return List.of();
+    /**
+     * Serializes this layer in the provided builder.
+     * @param builder the builder that will store the data
+     */
+    public void serialize(ProtoModel.Layer.Builder builder) {
     }
     
     /**
@@ -241,5 +245,12 @@ public abstract class Layer implements SerializationInstance {
         if (weights == null) return 0;
 
         return weights.elements();
+    }
+    
+    public List<ProtoModel.Tensor.Builder> weightsList() {
+        return List.of(
+            serializeTensor("weight", weights),
+            serializeTensor("bias", bias)
+        );
     }
 }

@@ -30,7 +30,7 @@ public class ReshapeLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+    public List<ProtoModel.Tensor.Builder> weightsList() {
         ProtoModel.Tensor.Builder tensorBuilder =
             ProtoModel.Tensor.newBuilder()
                 .setName("shape")

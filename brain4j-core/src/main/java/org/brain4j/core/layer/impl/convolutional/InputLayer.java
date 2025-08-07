@@ -30,11 +30,10 @@ public class InputLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("width", value(width));
-        layerBuilder.putAttrs("height", value(height));
-        layerBuilder.putAttrs("channels", value(channels));
-        return List.of();
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("width", value(width));
+        builder.putAttrs("height", value(height));
+        builder.putAttrs("channels", value(channels));
     }
     
     @Override

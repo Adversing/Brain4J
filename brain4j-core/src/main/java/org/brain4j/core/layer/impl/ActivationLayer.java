@@ -38,9 +38,8 @@ public class ActivationLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
-        layerBuilder.putAttrs("activation", value(activation.name()));
-        return List.of();
+    public void serialize(ProtoModel.Layer.Builder builder) {
+        builder.putAttrs("activation", value(activation.name()));
     }
     
     @Override

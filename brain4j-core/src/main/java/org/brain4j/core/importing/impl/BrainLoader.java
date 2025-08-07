@@ -4,12 +4,12 @@ import org.brain4j.common.Commons;
 import org.brain4j.core.importing.ModelLoader;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.loss.LossFunction;
+import org.brain4j.core.layer.impl.transformer.TransformerEncoder;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.impl.Sequential;
+import org.brain4j.core.transformer.attention.MultiHeadAttention;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.time.Instant;
 import java.util.*;
 
@@ -31,38 +31,22 @@ public class BrainLoader implements ModelLoader {
             }
             
             int position = Integer.parseInt(parts[1]);
+            Layer wrapped = Commons.newInstance(layerType);
             
-            Class<?> clazz = Class.forName(layerType);
+            List<ProtoModel.Tensor> tensors = protoModel.getWeightsList().stream()
+                .filter(t -> t.getName().startsWith(layerId))
+                .toList();
             
-            Constructor<?> constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            
-            Layer wrapped = (Layer) constructor.newInstance();
-            List<ProtoModel.Tensor> tensors = new ArrayList<>();
-            
-            for (ProtoModel.Tensor tensor : protoModel.getWeightsList()) {
-                if (!tensor.getName().startsWith(layerId)) continue;
-                
-                tensors.add(tensor);
-            }
-            
-            positionMap.put(position, wrapped);
             wrapped.deserialize(tensors, layer);
+            positionMap.put(position, wrapped);
         }
-        
-        List<Integer> positions = new ArrayList<>(positionMap.keySet());
-        Collections.sort(positions);
         
         Sequential model = Sequential.of();
+        model.setLossFunction(Commons.newInstance(protoModel.getLossFunction()));
         
-        for (int pos : positions) {
-            model.add(positionMap.get(pos));
-        }
-        
-        String lossFunctionClass = protoModel.getLossFunction();
-        
-        LossFunction function = Commons.newInstance(lossFunctionClass);
-        model.setLossFunction(function);
+        positionMap.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .forEach(e -> model.add(e.getValue()));
         
         return model;
     }
@@ -80,16 +64,14 @@ public class BrainLoader implements ModelLoader {
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);
+            
             String name = layer.getClass().getSimpleName().toLowerCase();
             String id = name + "." + i;
             
-            ProtoModel.Layer.Builder layerBuilder =
-                ProtoModel.Layer.newBuilder()
-                    .setName(id)
-                    .setType(layer.getClass().getName())
-                    .setDimension(layer.size());
+            ProtoModel.Layer.Builder layerBuilder = toProtoBuilder(layer).setName(id);
+            layer.serialize(layerBuilder);
             
-            List<ProtoModel.Tensor.Builder> tensorsBuilders = layer.serialize(layerBuilder);
+            List<ProtoModel.Tensor.Builder> tensorsBuilders = layer.weightsList();
             List<ProtoModel.Tensor> tensors = new ArrayList<>();
             
             for (ProtoModel.Tensor.Builder tensorBuilder : tensorsBuilders) {
@@ -102,5 +84,31 @@ public class BrainLoader implements ModelLoader {
         }
         
         builder.build().writeTo(new FileOutputStream(file));
+    }
+    
+    public ProtoModel.Layer.Builder toProtoBuilder(Layer layer) {
+        ProtoModel.Layer.Builder builder = ProtoModel.Layer.newBuilder()
+            .setType(layer.getClass().getName());
+        
+        if (layer instanceof TransformerEncoder transformer) {
+            // TODO: Finish implementation
+            ProtoModel.Transformer.Builder transformerBuilder =
+                ProtoModel.Transformer.newBuilder();
+            
+            List<Layer> subLayers = transformer.subLayers();
+            
+            for (Layer sub : subLayers) {
+                transformerBuilder.addSubLayers(toProtoBuilder(sub));
+            }
+            
+            builder.setTransformer(transformerBuilder);
+        } else {
+            builder.setBasic(
+                ProtoModel.BasicLayer.newBuilder()
+                    .setDimension(layer.size())
+            );
+        }
+        
+        return builder;
     }
 }
