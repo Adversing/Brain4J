@@ -14,7 +14,10 @@ public class MaxPoolingLayer extends Layer {
     private int kernelHeight;
     private int stride;
     private int channels;
-
+    
+    public MaxPoolingLayer() {
+    }
+    
     public MaxPoolingLayer(int kernelWidth, int kernelHeight) {
         this(kernelWidth, kernelHeight, 1);
     }

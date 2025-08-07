@@ -29,7 +29,10 @@ public class EmbeddingLayer extends Layer {
 
     private int vocabSize;
     private int embeddingDim;
-
+    
+    public EmbeddingLayer() {
+    }
+    
     /**
      * Constructs a new instance of an embedding layer.
      * @param vocabSize the vocabulary size
@@ -58,7 +61,7 @@ public class EmbeddingLayer extends Layer {
         this.embeddingDim = attribute(layer, "embedding_dim", 0);
         
         for (ProtoModel.Tensor tensor : tensors) {
-            if (tensor.getName().equals("weight")) {
+            if (tensor.getName().contains("weight")) {
                 this.weights = deserializeTensor(tensor);
             }
         }

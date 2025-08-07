@@ -11,6 +11,7 @@ message Model {
   string created = 3; // RFC-3339 timestamp
   repeated Layer layers = 4;
   repeated Tensor weights = 5;
+  string loss_function = 6;
 }
 
 message Layer {

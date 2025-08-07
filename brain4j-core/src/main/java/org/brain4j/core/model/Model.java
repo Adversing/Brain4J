@@ -222,6 +222,9 @@ public interface Model extends Iterable<Layer> {
         return null;
     }
 
+    default void setOptimizer(Optimizer optimizer) {
+    }
+    
     /**
      * Returns the updater currently used by the model.
      * @return the updater instance
@@ -229,13 +232,19 @@ public interface Model extends Iterable<Layer> {
     default Updater updater() {
         return null;
     }
-
+    
+    default void setUpdater(Updater updater) {
+    }
+    
     /**
      * Returns the loss function currently set in the model.
      * @return the loss function instance
      */
     default LossFunction lossFunction() {
         return null;
+    }
+    
+    default void setLossFunction(LossFunction lossFunction) {
     }
 
     /**

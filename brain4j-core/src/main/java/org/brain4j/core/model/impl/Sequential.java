@@ -11,6 +11,7 @@ import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
@@ -44,7 +45,6 @@ import static org.brain4j.common.constants.Constants.*;
  * @author xEcho1337
  * @since 3.0
  * @see Transformer
- * @see AutoEncoder
  * @see MultiModel
  */
 public class Sequential extends Layer implements Model {
@@ -191,15 +191,6 @@ public class Sequential extends Layer implements Model {
         if (input.rank() < 2) {
             // Shape: [batch_size, input_size]
             input = input.reshape(1, input.elements());
-        }
-
-        int[] shape = input.shape();
-        Layer inputLayer = layers.getFirst();
-
-        if (!inputLayer.validateInput(input)) {
-            throw new IllegalArgumentException(
-                "Input shape mismatch! Expected " + inputLayer.size() + " but got " + shape[shape.length - 1]
-            );
         }
 
         return input;
@@ -503,17 +494,32 @@ public class Sequential extends Layer implements Model {
     public Optimizer optimizer() {
         return optimizer;
     }
-
+    
+    @Override
+    public void setOptimizer(Optimizer optimizer) {
+        this.optimizer = optimizer;
+    }
+    
     @Override
     public Updater updater() {
         return updater;
     }
-
+    
+    @Override
+    public void setUpdater(Updater updater) {
+        this.updater = updater;
+    }
+    
     @Override
     public LossFunction lossFunction() {
         return lossFunction;
     }
-
+    
+    @Override
+    public void setLossFunction(LossFunction lossFunction) {
+        this.lossFunction = lossFunction;
+    }
+    
     /**
      * Returns the seed value used to initialize the random number generator.
      * @return the seed value
@@ -549,7 +555,6 @@ public class Sequential extends Layer implements Model {
         };
     }
 
-
     @Override
     public Layer connect(Layer previous) {
         int size = layers.size();
@@ -577,7 +582,7 @@ public class Sequential extends Layer implements Model {
 
         return previous;
     }
-
+    
     @Override
     public Tensor forward(ForwardContext context) {
         Tensor pass = context.input();

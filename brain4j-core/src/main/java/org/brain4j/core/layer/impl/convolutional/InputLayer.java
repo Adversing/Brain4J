@@ -12,7 +12,10 @@ public class InputLayer extends Layer {
     private int width;
     private int height;
     private int channels;
-
+    
+    public InputLayer() {
+    }
+    
     public InputLayer(int width, int height, int channels) {
         this.width = width;
         this.height = height;

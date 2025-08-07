@@ -13,7 +13,10 @@ import java.util.List;
 public class ActivationLayer extends Layer {
 
     private int dimension;
-
+    
+    public ActivationLayer() {
+    }
+    
     public ActivationLayer(Activations activation) {
         this.activation = activation.function();
     }

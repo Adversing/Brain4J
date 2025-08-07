@@ -24,6 +24,8 @@ public interface SerializationInstance {
     }
     
     default ProtoModel.Tensor.Builder serializeTensor(String name, Tensor tensor) {
+        if (tensor == null) tensor = Tensors.zeros(0);
+        
         List<Integer> shape = Arrays.stream(tensor.shape()).boxed().collect(Collectors.toList());
         List<Float> data = new ArrayList<>();
         

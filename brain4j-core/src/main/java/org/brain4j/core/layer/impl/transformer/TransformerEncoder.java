@@ -49,6 +49,9 @@ public class TransformerEncoder extends Layer {
     protected int numHeads;
     protected int embeddingDim;
     
+    public TransformerEncoder() {
+    }
+    
     /**
      * Constructs a new encoder block with the specified parameters.
      * @param numHeads the amount of heads in the attention block

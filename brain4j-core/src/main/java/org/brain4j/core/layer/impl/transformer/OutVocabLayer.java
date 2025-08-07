@@ -16,7 +16,10 @@ public class OutVocabLayer extends Layer {
 
     private int vocabSize;
     private int dimension;
-
+    
+    public OutVocabLayer() {
+    }
+    
     public OutVocabLayer(int vocabSize, int dimension, double temperature) {
         this.vocabSize = vocabSize;
         this.dimension = dimension;
@@ -40,7 +43,7 @@ public class OutVocabLayer extends Layer {
         this.dimension = attribute(layer, "dimension", 0);
         
         for (ProtoModel.Tensor tensor : tensors) {
-            if (tensor.getName().equals("weight")) {
+            if (tensor.getName().contains("weight")) {
                 this.weights = deserializeTensor(tensor);
             }
         }

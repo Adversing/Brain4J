@@ -39,9 +39,12 @@ public abstract class Layer implements SerializationInstance {
     public Layer() {
     }
     
-    public abstract void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer);
+    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+    }
     
-    public abstract List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder);
+    public List<ProtoModel.Tensor.Builder> serialize(ProtoModel.Layer.Builder layerBuilder) {
+        return List.of();
+    }
     
     /**
      * Performs a forward pass through this layer.
@@ -239,5 +242,4 @@ public abstract class Layer implements SerializationInstance {
 
         return weights.elements();
     }
-    
 }

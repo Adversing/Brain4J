@@ -44,7 +44,8 @@ public class NormLayer extends Layer {
         this.epsilon = layer.getAttrsOrDefault("epsilon", value(0.0)).getFloatVal();
 
         for (ProtoModel.Tensor tensor : tensors) {
-            switch (tensor.getName()) {
+            String name = tensor.getName().split("\\.")[2];
+            switch (name) {
                 case "weight" -> weights = deserializeTensor(tensor);
                 case "bias" -> bias = deserializeTensor(tensor);
             }

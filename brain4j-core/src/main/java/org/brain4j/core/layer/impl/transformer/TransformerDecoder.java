@@ -27,6 +27,9 @@ import org.brain4j.core.transformer.attention.MultiHeadAttention;
  * @since 3.0
  */
 public class TransformerDecoder extends TransformerEncoder {
+   
+    public TransformerDecoder() {
+    }
     
     /**
      * Constructs a new decoder block with the specified parameters.

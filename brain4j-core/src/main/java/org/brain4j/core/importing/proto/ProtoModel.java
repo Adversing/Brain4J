@@ -115,6 +115,18 @@ public final class ProtoModel {
          */
         org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder getWeightsOrBuilder(
             int index);
+        
+        /**
+         * <code>string loss_function = 6;</code>
+         * @return The lossFunction.
+         */
+        java.lang.String getLossFunction();
+        /**
+         * <code>string loss_function = 6;</code>
+         * @return The bytes for lossFunction.
+         */
+        com.google.protobuf.ByteString
+        getLossFunctionBytes();
     }
     /**
      * Protobuf type {@code brain4j.Model}
@@ -142,6 +154,7 @@ public final class ProtoModel {
             created_ = "";
             layers_ = java.util.Collections.emptyList();
             weights_ = java.util.Collections.emptyList();
+            lossFunction_ = "";
         }
         
         public static final com.google.protobuf.Descriptors.Descriptor
@@ -336,6 +349,45 @@ public final class ProtoModel {
             return weights_.get(index);
         }
         
+        public static final int LOSS_FUNCTION_FIELD_NUMBER = 6;
+        @SuppressWarnings("serial")
+        private volatile java.lang.Object lossFunction_ = "";
+        /**
+         * <code>string loss_function = 6;</code>
+         * @return The lossFunction.
+         */
+        @java.lang.Override
+        public java.lang.String getLossFunction() {
+            java.lang.Object ref = lossFunction_;
+            if (ref instanceof java.lang.String) {
+                return (java.lang.String) ref;
+            } else {
+                com.google.protobuf.ByteString bs =
+                    (com.google.protobuf.ByteString) ref;
+                java.lang.String s = bs.toStringUtf8();
+                lossFunction_ = s;
+                return s;
+            }
+        }
+        /**
+         * <code>string loss_function = 6;</code>
+         * @return The bytes for lossFunction.
+         */
+        @java.lang.Override
+        public com.google.protobuf.ByteString
+        getLossFunctionBytes() {
+            java.lang.Object ref = lossFunction_;
+            if (ref instanceof java.lang.String) {
+                com.google.protobuf.ByteString b =
+                    com.google.protobuf.ByteString.copyFromUtf8(
+                        (java.lang.String) ref);
+                lossFunction_ = b;
+                return b;
+            } else {
+                return (com.google.protobuf.ByteString) ref;
+            }
+        }
+        
         private byte memoizedIsInitialized = -1;
         @java.lang.Override
         public final boolean isInitialized() {
@@ -365,6 +417,9 @@ public final class ProtoModel {
             for (int i = 0; i < weights_.size(); i++) {
                 output.writeMessage(5, weights_.get(i));
             }
+            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lossFunction_)) {
+                com.google.protobuf.GeneratedMessage.writeString(output, 6, lossFunction_);
+            }
             getUnknownFields().writeTo(output);
         }
         
@@ -392,6 +447,9 @@ public final class ProtoModel {
                 size += com.google.protobuf.CodedOutputStream
                     .computeMessageSize(5, weights_.get(i));
             }
+            if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lossFunction_)) {
+                size += com.google.protobuf.GeneratedMessage.computeStringSize(6, lossFunction_);
+            }
             size += getUnknownFields().getSerializedSize();
             memoizedSize = size;
             return size;
@@ -417,6 +475,8 @@ public final class ProtoModel {
                 .equals(other.getLayersList())) return false;
             if (!getWeightsList()
                 .equals(other.getWeightsList())) return false;
+            if (!getLossFunction()
+                .equals(other.getLossFunction())) return false;
             if (!getUnknownFields().equals(other.getUnknownFields())) return false;
             return true;
         }
@@ -442,6 +502,8 @@ public final class ProtoModel {
                 hash = (37 * hash) + WEIGHTS_FIELD_NUMBER;
                 hash = (53 * hash) + getWeightsList().hashCode();
             }
+            hash = (37 * hash) + LOSS_FUNCTION_FIELD_NUMBER;
+            hash = (53 * hash) + getLossFunction().hashCode();
             hash = (29 * hash) + getUnknownFields().hashCode();
             memoizedHashCode = hash;
             return hash;
@@ -590,6 +652,7 @@ public final class ProtoModel {
                     weightsBuilder_.clear();
                 }
                 bitField0_ = (bitField0_ & ~0x00000010);
+                lossFunction_ = "";
                 return this;
             }
             
@@ -653,6 +716,9 @@ public final class ProtoModel {
                 }
                 if (((from_bitField0_ & 0x00000004) != 0)) {
                     result.created_ = created_;
+                }
+                if (((from_bitField0_ & 0x00000020) != 0)) {
+                    result.lossFunction_ = lossFunction_;
                 }
             }
             
@@ -733,6 +799,11 @@ public final class ProtoModel {
                         }
                     }
                 }
+                if (!other.getLossFunction().isEmpty()) {
+                    lossFunction_ = other.lossFunction_;
+                    bitField0_ |= 0x00000020;
+                    onChanged();
+                }
                 this.mergeUnknownFields(other.getUnknownFields());
                 onChanged();
                 return this;
@@ -800,6 +871,11 @@ public final class ProtoModel {
                                 }
                                 break;
                             } // case 42
+                            case 50: {
+                                lossFunction_ = input.readStringRequireUtf8();
+                                bitField0_ |= 0x00000020;
+                                break;
+                            } // case 50
                             default: {
                                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                                     done = true; // was an endgroup tag
@@ -1491,6 +1567,78 @@ public final class ProtoModel {
                     weights_ = null;
                 }
                 return weightsBuilder_;
+            }
+            
+            private java.lang.Object lossFunction_ = "";
+            /**
+             * <code>string loss_function = 6;</code>
+             * @return The lossFunction.
+             */
+            public java.lang.String getLossFunction() {
+                java.lang.Object ref = lossFunction_;
+                if (!(ref instanceof java.lang.String)) {
+                    com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
+                    java.lang.String s = bs.toStringUtf8();
+                    lossFunction_ = s;
+                    return s;
+                } else {
+                    return (java.lang.String) ref;
+                }
+            }
+            /**
+             * <code>string loss_function = 6;</code>
+             * @return The bytes for lossFunction.
+             */
+            public com.google.protobuf.ByteString
+            getLossFunctionBytes() {
+                java.lang.Object ref = lossFunction_;
+                if (ref instanceof String) {
+                    com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
+                            (java.lang.String) ref);
+                    lossFunction_ = b;
+                    return b;
+                } else {
+                    return (com.google.protobuf.ByteString) ref;
+                }
+            }
+            /**
+             * <code>string loss_function = 6;</code>
+             * @param value The lossFunction to set.
+             * @return This builder for chaining.
+             */
+            public Builder setLossFunction(
+                java.lang.String value) {
+                if (value == null) { throw new NullPointerException(); }
+                lossFunction_ = value;
+                bitField0_ |= 0x00000020;
+                onChanged();
+                return this;
+            }
+            /**
+             * <code>string loss_function = 6;</code>
+             * @return This builder for chaining.
+             */
+            public Builder clearLossFunction() {
+                lossFunction_ = getDefaultInstance().getLossFunction();
+                bitField0_ = (bitField0_ & ~0x00000020);
+                onChanged();
+                return this;
+            }
+            /**
+             * <code>string loss_function = 6;</code>
+             * @param value The bytes for lossFunction to set.
+             * @return This builder for chaining.
+             */
+            public Builder setLossFunctionBytes(
+                com.google.protobuf.ByteString value) {
+                if (value == null) { throw new NullPointerException(); }
+                checkByteStringIsUtf8(value);
+                lossFunction_ = value;
+                bitField0_ |= 0x00000020;
+                onChanged();
+                return this;
             }
             
             // @@protoc_insertion_point(builder_scope:brain4j.Model)
@@ -4663,20 +4811,20 @@ public final class ProtoModel {
         descriptor;
     static {
         java.lang.String[] descriptorData = {
-            "\n\013model.proto\022\007brain4j\"y\n\005Model\022\017\n\007versi" +
-                "on\030\001 \001(\r\022\014\n\004name\030\002 \001(\t\022\017\n\007created\030\003 \001(\t\022" +
-                "\036\n\006layers\030\004 \003(\0132\016.brain4j.Layer\022 \n\007weigh" +
-                "ts\030\005 \003(\0132\017.brain4j.Tensor\"\242\001\n\005Layer\022\014\n\004n" +
-                "ame\030\001 \001(\t\022\014\n\004type\030\002 \001(\t\022\021\n\tdimension\030\003 \001" +
-                "(\r\022(\n\005attrs\030\004 \003(\0132\031.brain4j.Layer.AttrsE" +
-                "ntry\032@\n\nAttrsEntry\022\013\n\003key\030\001 \001(\t\022!\n\005value" +
-                "\030\002 \001(\0132\022.brain4j.AttrValue:\0028\001\"f\n\tAttrVa" +
-                "lue\022\021\n\007int_val\030\001 \001(\005H\000\022\023\n\tfloat_val\030\002 \001(" +
-                "\002H\000\022\022\n\010bool_val\030\003 \001(\010H\000\022\024\n\nstring_val\030\004 " +
-                "\001(\tH\000B\007\n\005value\"7\n\006Tensor\022\014\n\004name\030\001 \001(\t\022\r" +
-                "\n\005shape\030\002 \003(\005\022\020\n\004data\030\003 \003(\002B\002\020\001B.\n org.b" +
-                "rain4j.core.importing.protoB\nProtoModelb" +
-                "\006proto3"
+            "\n\013model.proto\022\007brain4j\"\220\001\n\005Model\022\017\n\007vers" +
+                "ion\030\001 \001(\r\022\014\n\004name\030\002 \001(\t\022\017\n\007created\030\003 \001(\t" +
+                "\022\036\n\006layers\030\004 \003(\0132\016.brain4j.Layer\022 \n\007weig" +
+                "hts\030\005 \003(\0132\017.brain4j.Tensor\022\025\n\rloss_funct" +
+                "ion\030\006 \001(\t\"\242\001\n\005Layer\022\014\n\004name\030\001 \001(\t\022\014\n\004typ" +
+                "e\030\002 \001(\t\022\021\n\tdimension\030\003 \001(\r\022(\n\005attrs\030\004 \003(" +
+                "\0132\031.brain4j.Layer.AttrsEntry\032@\n\nAttrsEnt" +
+                "ry\022\013\n\003key\030\001 \001(\t\022!\n\005value\030\002 \001(\0132\022.brain4j" +
+                ".AttrValue:\0028\001\"f\n\tAttrValue\022\021\n\007int_val\030\001" +
+                " \001(\005H\000\022\023\n\tfloat_val\030\002 \001(\002H\000\022\022\n\010bool_val\030" +
+                "\003 \001(\010H\000\022\024\n\nstring_val\030\004 \001(\tH\000B\007\n\005value\"7" +
+                "\n\006Tensor\022\014\n\004name\030\001 \001(\t\022\r\n\005shape\030\002 \003(\005\022\020\n" +
+                "\004data\030\003 \003(\002B\002\020\001B.\n org.brain4j.core.impo" +
+                "rting.protoB\nProtoModelb\006proto3"
         };
         descriptor = com.google.protobuf.Descriptors.FileDescriptor
             .internalBuildGeneratedFileFrom(descriptorData,
@@ -4687,7 +4835,7 @@ public final class ProtoModel {
         internal_static_brain4j_Model_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_brain4j_Model_descriptor,
-            new java.lang.String[] { "Version", "Name", "Created", "Layers", "Weights", });
+            new java.lang.String[] { "Version", "Name", "Created", "Layers", "Weights", "LossFunction", });
         internal_static_brain4j_Layer_descriptor =
             getDescriptor().getMessageTypes().get(1);
         internal_static_brain4j_Layer_fieldAccessorTable = new

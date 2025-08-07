@@ -20,7 +20,10 @@ public class ConvLayer extends Layer {
     private int channels;
     private int stride = 1;
     private int padding = 0;
-
+    
+    public ConvLayer() {
+    }
+    
     public ConvLayer(Activations activation, int channels, int filters, int kernelWidth, int kernelHeight) {
         this.activation = activation.function();
         this.channels = channels;
@@ -52,7 +55,8 @@ public class ConvLayer extends Layer {
         this.padding = attribute(layer, "padding", 0);
         
         for (ProtoModel.Tensor tensor : tensors) {
-            switch (tensor.getName()) {
+            String name = tensor.getName().split("\\.")[2];
+            switch (name) {
                 case "weight" -> this.weights = deserializeTensor(tensor);
                 case "bias" -> this.bias = deserializeTensor(tensor);
             }

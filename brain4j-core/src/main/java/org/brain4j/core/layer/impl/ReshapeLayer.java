@@ -12,7 +12,10 @@ import java.util.stream.Collectors;
 public class ReshapeLayer extends Layer {
 
     private int[] shape;
-
+    
+    public ReshapeLayer() {
+    }
+    
     public ReshapeLayer(int... shape) {
         this.shape = shape;
     }

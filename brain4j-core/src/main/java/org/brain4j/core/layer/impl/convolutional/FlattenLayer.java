@@ -10,7 +10,10 @@ import java.util.List;
 public class FlattenLayer extends Layer {
 
     private int dimension;
-
+    
+    public FlattenLayer() {
+    }
+    
     public FlattenLayer(int dimension) {
         this.dimension = dimension;
     }

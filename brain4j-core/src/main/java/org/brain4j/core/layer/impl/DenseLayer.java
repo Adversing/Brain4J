@@ -34,7 +34,10 @@ import java.util.Random;
 public class DenseLayer extends Layer {
 
     private int dimension;
-
+    
+    public DenseLayer() {
+    }
+    
     /**
      * Constructs a new instance of a dense layer with a linear activation.
      * @param dimension the dimension of the output
@@ -84,13 +87,14 @@ public class DenseLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        String activation = attribute(layer, "activation", "LINEAR");;
+        String activation = attribute(layer, "activation", "LINEAR");
         
         this.dimension = attribute(layer, "dimension", 0);
-        this.activation = Activations.valueOf(activation).function();
+        this.activation = Activations.valueOf(activation.toUpperCase()).function();
         
         for (ProtoModel.Tensor tensor : tensors) {
-            switch (tensor.getName()) {
+            String name = tensor.getName().split("\\.")[2];
+            switch (name) {
                 case "weight" -> this.weights = deserializeTensor(tensor);
                 case "bias" -> this.bias = deserializeTensor(tensor);
             }
@@ -112,7 +116,7 @@ public class DenseLayer extends Layer {
         Tensor input = context.input();
         StatesCache cache = context.cache();
 
-        if (weights == null) return input;
+        if (weights == null || weights.shape()[0] == 0) return input;
 
         if (!validateInput(input)) {
             throw new IllegalArgumentException(
@@ -136,7 +140,7 @@ public class DenseLayer extends Layer {
     @Override
     public boolean validateInput(Tensor input) {
         if (weights == null) return true;
-
+        
         int[] shape = input.shape();
         int[] weightsShape = weights.shape();
 

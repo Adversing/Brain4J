@@ -18,7 +18,11 @@ public class DropoutLayer extends Layer {
 
     private final Random random;
     private double dropoutRate;
-
+    
+    public DropoutLayer() {
+        this.random = Random.from(new SplittableRandom());
+    }
+    
     /**
      * Constructs a new dropout layer instance.
      * @param dropoutRate the dropout rate (0 < dropout < 1), specifying the probability of deactivating each neuron

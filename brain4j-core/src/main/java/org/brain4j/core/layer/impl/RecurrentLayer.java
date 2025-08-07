@@ -26,7 +26,10 @@ public class RecurrentLayer extends Layer {
     private Tensor inputWeights;
     private Tensor hiddenWeights;
     private Tensor hiddenBias;
-
+    
+    public RecurrentLayer() {
+    }
+    
     /**
      * Constructs a new recurrent layer instance.
      *
@@ -70,7 +73,8 @@ public class RecurrentLayer extends Layer {
         this.hiddenDimension = attribute(layer, "hidden_dimension", 0);
         
         for (ProtoModel.Tensor tensor : tensors) {
-            switch (tensor.getName()) {
+            String name = tensor.getName().split("\\.")[2];
+            switch (name) {
                 case "input_weights" -> this.inputWeights = deserializeTensor(tensor);
                 case "hidden_weights" -> this.hiddenWeights = deserializeTensor(tensor);
                 case "hidden_bias" -> this.hiddenBias = deserializeTensor(tensor);
