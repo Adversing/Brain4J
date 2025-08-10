@@ -95,6 +95,15 @@ public class RecurrentLayer extends Layer {
     public Tensor forward(ForwardContext context) {
         // [batch_size, timesteps, dimension]
         Tensor input = context.input();
+        
+        if (input.rank() > 3) {
+            throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");
+        }
+        
+        while (input.rank() < 3) {
+            input = input.unsqueeze();
+        }
+        
         int batch = input.shape()[0];
         int timesteps = input.shape()[1];
 
@@ -113,11 +122,11 @@ public class RecurrentLayer extends Layer {
             hiddenState = timestepX.addGrad(timestepH).addGrad(hiddenBias).activateGrad(activation);
             allStates[t] = hiddenState.reshapeGrad(batch, 1, hiddenDimension);
         }
-
+        
         // [batch_size, timesteps, hidden_dim]
         Tensor sequence = Tensors.concatGrad(List.of(allStates), 1);
         Tensor output = sequence.matmulGrad(weights).addGrad(bias);
-
+        
         context.cache().setPreActivation(this, output);
         return output;
     }
@@ -126,7 +135,7 @@ public class RecurrentLayer extends Layer {
     public void backward(Updater updater, Optimizer optimizer, int index) {
         super.backward(updater, optimizer, index);
         
-//        System.out.println(inputWeights.grad());
+        System.out.println("hash: " + hiddenWeights.hashCode());
         Tensor inputWeightsGrad = optimizer.step(inputWeights, inputWeights.grad());
         Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
         Tensor hiddenBiasGrad = hiddenBias.grad().sum(0, false);

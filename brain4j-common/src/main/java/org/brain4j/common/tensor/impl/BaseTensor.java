@@ -412,7 +412,10 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             }
         }
 
-        return reshape(newShape);
+        Tensor result = reshape(newShape);
+        result.setAutogradContext(autogradContext);
+        
+        return result;
     }
 
     @Override

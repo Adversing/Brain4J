@@ -40,4 +40,9 @@ public class Range {
         int e = end(dimSize);
         return (e - s + step - 1) / step;
     }
-} 
+    
+    @Override
+    public String toString() {
+        return start + ":" + end + ":" + step;
+    }
+}

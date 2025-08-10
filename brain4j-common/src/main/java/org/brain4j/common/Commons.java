@@ -23,15 +23,12 @@ public class Commons {
         for (int i = 0; i < 64; i++) {
             int e = i - 15;
             if (i == 0) {
-                // subnormal / zero
                 EXP_TABLE[i] = 0;
                 OFF_TABLE[i] = 0;
             } else if (i == 31) {
-                // inf/nan
                 EXP_TABLE[i] = 0xFF << 23;
                 OFF_TABLE[i] = 0;
             } else {
-                // normale
                 EXP_TABLE[i] = (e + 127) << 23;
                 OFF_TABLE[i] = 1024;
             }

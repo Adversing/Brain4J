@@ -43,23 +43,20 @@ public class ConcatOperation implements Operation {
         int sizeA = shapeA[dimension];
         int sizeB = shapeB[dimension];
 
-        // Costruisci il range "base"
         Range[] base = new Range[rank];
         for (int i = 0; i < rank; i++) {
             base[i] = Range.all();
         }
 
-        // Slice per A: dimensione da 0 a sizeA
         Range[] rangeA = base.clone();
         rangeA[dimension] = new Range(0, sizeA);
 
-        // Slice per B: dimensione da sizeA a sizeA + sizeB
         Range[] rangeB = base.clone();
         rangeB[dimension] = new Range(sizeA, sizeA + sizeB);
 
         Tensor gradA = gradOutput.slice(rangeA);
         Tensor gradB = gradOutput.slice(rangeB);
-
+        
         return new Tensor[]{ gradA, gradB };
     }
 }
