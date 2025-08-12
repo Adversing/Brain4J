@@ -15,14 +15,8 @@ public class MatMulOperation implements Operation {
         Tensor a = inputs[0];
         Tensor b = inputs[1];
         
-        System.out.println("A: " + a);
-        System.out.println("B: " + b);
-        
         Tensor gradA = gradOutput.matmul(b.transpose());
         Tensor gradB = a.transpose().matmul(gradOutput);
-        
-        System.out.println("B hashcode: " + b.hashCode());
-        System.out.println("Gradient for B: " + gradB);
         
         return new Tensor[] { gradA, gradB };
     }

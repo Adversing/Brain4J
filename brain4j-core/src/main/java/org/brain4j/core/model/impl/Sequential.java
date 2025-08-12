@@ -204,7 +204,7 @@ public class Sequential extends Layer implements Model {
 
         String lossMsg = "Loss: " + MAGENTA + "%.4f" + RESET;
         String firstMetric = regression
-            ? " | Determ Coefficient: " + LIGHT_BLUE + "%.2f" + RESET
+            ? " | R^2 Score: " + LIGHT_BLUE + "%.2f" + RESET
             : " | Accuracy: " + LIGHT_BLUE + "%.2f%%" + RESET;
 
         String secondMetric = regression ? "" : " | F1-Score: " + LIGHT_GREEN + "%.2f%%" + RESET;

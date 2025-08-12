@@ -61,9 +61,9 @@ public class RecurrentLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.inputWeights.map(x -> weightInit.generate(generator, input, output));
-        this.hiddenWeights.map(x -> weightInit.generate(generator, input, output));
-        this.hiddenBias.map(x -> weightInit.generate(generator, input, output));
-        this.weights.map(x -> weightInit.generate(generator, input, output));
+        this.hiddenWeights.map(x -> weightInit.generate(generator, hiddenDimension, hiddenDimension));
+        this.hiddenBias.map(x -> weightInit.generate(generator, hiddenDimension, hiddenDimension));
+        this.weights.map(x -> weightInit.generate(generator, hiddenDimension, output));
         this.bias.map(x -> weightInit.generate(generator, input, output));
     }
     
@@ -75,8 +75,8 @@ public class RecurrentLayer extends Layer {
         for (ProtoModel.Tensor tensor : tensors) {
             String name = tensor.getName().split("\\.")[2];
             switch (name) {
-                case "input_weights" -> this.inputWeights = deserializeTensor(tensor);
-                case "hidden_weights" -> this.hiddenWeights = deserializeTensor(tensor);
+                case "input_weight" -> this.inputWeights = deserializeTensor(tensor);
+                case "hidden_weight" -> this.hiddenWeights = deserializeTensor(tensor);
                 case "hidden_bias" -> this.hiddenBias = deserializeTensor(tensor);
                 case "weights" -> this.weights = deserializeTensor(tensor);
                 case "bias" -> this.bias = deserializeTensor(tensor);
@@ -135,7 +135,6 @@ public class RecurrentLayer extends Layer {
     public void backward(Updater updater, Optimizer optimizer, int index) {
         super.backward(updater, optimizer, index);
         
-        System.out.println("hash: " + hiddenWeights.hashCode());
         Tensor inputWeightsGrad = optimizer.step(inputWeights, inputWeights.grad());
         Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
         Tensor hiddenBiasGrad = hiddenBias.grad().sum(0, false);
