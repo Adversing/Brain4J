@@ -35,13 +35,18 @@ public class ConcatOperation implements Operation {
         int[] shapeA = a.shape();
         int[] shapeB = b.shape();
         int rank = shapeA.length;
-
-        if (dimension < 0 || dimension >= rank) {
-            throw new IllegalArgumentException("Invalid concat dimension: " + dimension);
+        int actualDim = dimension;
+        
+        if (actualDim == -1) {
+            actualDim = shapeA.length - 1;
         }
 
-        int sizeA = shapeA[dimension];
-        int sizeB = shapeB[dimension];
+        if (actualDim < 0 || actualDim >= rank) {
+            throw new IllegalArgumentException("Invalid concat dimension: " + actualDim);
+        }
+
+        int sizeA = shapeA[actualDim];
+        int sizeB = shapeB[actualDim];
 
         Range[] base = new Range[rank];
         for (int i = 0; i < rank; i++) {
@@ -49,10 +54,10 @@ public class ConcatOperation implements Operation {
         }
 
         Range[] rangeA = base.clone();
-        rangeA[dimension] = new Range(0, sizeA);
+        rangeA[actualDim] = new Range(0, sizeA);
 
         Range[] rangeB = base.clone();
-        rangeB[dimension] = new Range(sizeA, sizeA + sizeB);
+        rangeB[actualDim] = new Range(sizeA, sizeA + sizeB);
 
         Tensor gradA = gradOutput.slice(rangeA);
         Tensor gradB = gradOutput.slice(rangeB);

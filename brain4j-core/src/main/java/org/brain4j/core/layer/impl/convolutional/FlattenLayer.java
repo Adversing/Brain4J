@@ -2,6 +2,7 @@ package org.brain4j.core.layer.impl.convolutional;
 
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 
@@ -20,12 +21,12 @@ public class FlattenLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.dimension = attribute(layer, "dimension", 0);
+        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("dimension", value(dimension));
+        builder.putAttrs("dimension", SerializeUtils.value(dimension));
     }
     
     @Override

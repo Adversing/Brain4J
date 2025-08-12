@@ -154,17 +154,21 @@ public class Commons {
     }
 
     @SuppressWarnings("all")
-    public static <T> T newInstance(String classPath) throws Exception {
+    public static <T> T newInstance(String classPath) {
         // Support for versions prior to 2.9
         classPath = classPath.replace("net.echo.brain4j", "org.brain4j.core");
         classPath = classPath.replace("net.echo.math", "org.brain4j.math");
-
-        Class<?> clazz = Class.forName(classPath);
-
-        Constructor<?> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
-
-        return (T) constructor.newInstance();
+        
+        try {
+            Class<?> clazz = Class.forName(classPath);
+            
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            
+            return (T) constructor.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static double clamp(float value, double minimum, double maximum) {

@@ -3,9 +3,11 @@ package org.brain4j.core.layer.impl;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,20 +43,20 @@ public class NormLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.epsilon = layer.getAttrsOrDefault("epsilon", value(0.0)).getFloatVal();
-
+        this.epsilon = SerializeUtils.attribute(layer, "epsilon", 0.0);
+        
         for (ProtoModel.Tensor tensor : tensors) {
-            String name = tensor.getName().split("\\.")[2];
+            String name = tensor.getName().substring(tensor.getName().lastIndexOf('.') + 1);
             switch (name) {
-                case "weight" -> weights = deserializeTensor(tensor);
-                case "bias" -> bias = deserializeTensor(tensor);
+                case "weight" -> weights = SerializeUtils.deserializeTensor(tensor);
+                case "bias" -> bias = SerializeUtils.deserializeTensor(tensor);
             }
         }
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("epsilon", value(epsilon));
+        builder.putAttrs("epsilon", SerializeUtils.value(epsilon));
     }
     
     @Override

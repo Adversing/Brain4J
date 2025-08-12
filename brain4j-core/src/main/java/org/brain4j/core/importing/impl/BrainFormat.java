@@ -1,22 +1,21 @@
 package org.brain4j.core.importing.impl;
 
 import org.brain4j.common.Commons;
-import org.brain4j.core.importing.ModelLoader;
+import org.brain4j.core.importing.ModelFormat;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.transformer.TransformerEncoder;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.Sequential;
-import org.brain4j.core.transformer.attention.MultiHeadAttention;
 
 import java.io.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Supplier;
 
-public class BrainLoader implements ModelLoader {
+public class BrainFormat implements ModelFormat {
     
     @Override
-    public Model deserialize(byte[] bytes) throws Exception {
+    public <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception {
         ProtoModel.Model protoModel = ProtoModel.Model.parseFrom(bytes);
         Map<Integer, Layer> positionMap = new HashMap<>();
         
@@ -41,7 +40,7 @@ public class BrainLoader implements ModelLoader {
             positionMap.put(position, wrapped);
         }
         
-        Sequential model = Sequential.of();
+        T model = constructor.get();
         model.setLossFunction(Commons.newInstance(protoModel.getLossFunction()));
         
         positionMap.entrySet().stream()
@@ -90,19 +89,7 @@ public class BrainLoader implements ModelLoader {
         ProtoModel.Layer.Builder builder = ProtoModel.Layer.newBuilder()
             .setType(layer.getClass().getName());
         
-        if (layer instanceof TransformerEncoder transformer) {
-            // TODO: Finish implementation
-            ProtoModel.Transformer.Builder transformerBuilder =
-                ProtoModel.Transformer.newBuilder();
-            
-            List<Layer> subLayers = transformer.subLayers();
-            
-            for (Layer sub : subLayers) {
-                transformerBuilder.addSubLayers(toProtoBuilder(sub));
-            }
-            
-            builder.setTransformer(transformerBuilder);
-        } else {
+        if (!(layer instanceof TransformerEncoder)) {
             builder.setBasic(
                 ProtoModel.BasicLayer.newBuilder()
                     .setDimension(layer.size())

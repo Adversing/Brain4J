@@ -15,13 +15,28 @@ message Model {
 }
 
 message Layer {
-  string name = 1; // "dense_0"
-  string type = 2; // "Dense", "LayerNorm"
-  map<string, AttrValue> attrs = 3;
+  map<string, AttrValue> attrs = 1;
+  string name = 2;
+  string type = 3;
+  Clipper clipper = 4;
+  Activation activation = 5;
+  WeightInit weightInit = 6;
   oneof layer_kind {
-    BasicLayer basic = 4;
-    Transformer transformer = 5;
+    BasicLayer basic = 7;
+    Transformer transformer = 8;
   }
+}
+
+message WeightInit {
+  map<string, AttrValue> attrs = 1;
+}
+
+message Activation {
+  map<string, AttrValue> attrs = 1;
+}
+
+message Clipper {
+  map<string, AttrValue> attrs = 1;
 }
 
 message AttentionHead {
@@ -42,8 +57,11 @@ message BasicLayer {
 }
 
 message Transformer {
-  repeated Layer sub_layers = 1;
-  MultiHeadAttention attention = 2;
+  Layer up_projection = 1;
+  Layer down_projection = 2;
+  Layer normalizer = 3;
+  Layer dropout = 4;
+  MultiHeadAttention attention = 5;
 }
 
 message AttrValue {

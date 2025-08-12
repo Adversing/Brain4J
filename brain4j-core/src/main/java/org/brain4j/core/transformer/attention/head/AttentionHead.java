@@ -6,12 +6,12 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.weightsinit.WeightInitialization;
 import org.brain4j.core.activation.impl.SoftmaxActivation;
 import org.brain4j.core.clipper.GradientClipper;
-import org.brain4j.core.clipper.impl.HardClipper;
+import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class AttentionHead {
@@ -52,7 +52,7 @@ public class AttentionHead {
         Tensor Q = input.matmulGrad(queryWeights); // [batch_size, seq_length, head_dimension]
         Tensor K = input.matmulGrad(keyWeights); // [batch_size, seq_length, head_dimension]
         Tensor V = input.matmulGrad(valueWeights); // [batch_size, seq_length, head_dimension]
-
+        
         double normalizer = Math.sqrt(headDimension);
         
         // [batch_size, head_dimension, seq_length]
@@ -109,5 +109,19 @@ public class AttentionHead {
         updater.change(queryWeights, optimizedQuery);
         updater.change(keyWeights, optimizedKey);
         updater.change(valueWeights, optimizedValue);
+    }
+    
+    public ProtoModel.AttentionHead serialize() {
+        return ProtoModel.AttentionHead.newBuilder()
+            .setKWeight(SerializeUtils.serializeTensor("key_weight", keyWeights))
+            .setQWeight(SerializeUtils.serializeTensor("query_weight", queryWeights))
+            .setVWeight(SerializeUtils.serializeTensor("value_weight", valueWeights))
+            .build();
+    }
+    
+    public void deserialize(ProtoModel.AttentionHead protoHead) {
+        this.keyWeights = SerializeUtils.deserializeTensor(protoHead.getKWeight());
+        this.queryWeights = SerializeUtils.deserializeTensor(protoHead.getQWeight());
+        this.valueWeights = SerializeUtils.deserializeTensor(protoHead.getVWeight());
     }
 }

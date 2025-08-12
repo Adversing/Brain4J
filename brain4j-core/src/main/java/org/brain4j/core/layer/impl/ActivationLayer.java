@@ -4,6 +4,7 @@ import org.brain4j.common.activation.Activation;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
@@ -33,13 +34,13 @@ public class ActivationLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        String activation = attribute(layer, "activation", "LINEAR");
+        String activation = SerializeUtils.attribute(layer, "activation", "LINEAR");
         this.activation = Activations.valueOf(activation).function();
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("activation", value(activation.name()));
+        builder.putAttrs("activation", SerializeUtils.value(activation.name()));
     }
     
     @Override

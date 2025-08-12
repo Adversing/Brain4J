@@ -2,7 +2,7 @@
 set SCRIPT_DIR=%~dp0
 
 set PROTO_PATH=%SCRIPT_DIR%brain4j-core\src\main\resources
-set PROTO_FILE=%PROTO_PATH%\onnx.proto
+set PROTO_FILE=%PROTO_PATH%\model.proto
 set OUT_DIR=%SCRIPT_DIR%brain4j-core\src\main\java
 
 if not exist "%PROTO_FILE%" (

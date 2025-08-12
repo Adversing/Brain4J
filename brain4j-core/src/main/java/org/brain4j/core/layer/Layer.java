@@ -8,7 +8,7 @@ import org.brain4j.core.activation.impl.LinearActivation;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.HardClipper;
 import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializationInstance;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -23,7 +23,7 @@ import java.util.Random;
  * and holds its own parameters such as weights, biases, activation function and gradient clipper.
  * @author xEcho1337
  */
-public abstract class Layer implements SerializationInstance {
+public abstract class Layer {
 
     protected Activation activation = new LinearActivation();
     protected GradientClipper clipper = new HardClipper(5);
@@ -48,6 +48,11 @@ public abstract class Layer implements SerializationInstance {
      * @param builder the builder that will store the data
      */
     public void serialize(ProtoModel.Layer.Builder builder) {
+        ProtoModel.Clipper.Builder clipperBuilder = ProtoModel.Clipper.newBuilder();
+        
+        clipper.serialize(clipperBuilder);
+        
+        builder.setClipper(clipperBuilder);
     }
     
     /**
@@ -249,8 +254,8 @@ public abstract class Layer implements SerializationInstance {
     
     public List<ProtoModel.Tensor.Builder> weightsList() {
         return List.of(
-            serializeTensor("weight", weights),
-            serializeTensor("bias", bias)
+            SerializeUtils.serializeTensor("weight", weights),
+            SerializeUtils.serializeTensor("bias", bias)
         );
     }
 }

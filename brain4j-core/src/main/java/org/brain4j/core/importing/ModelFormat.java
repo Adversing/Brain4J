@@ -9,8 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-public interface ModelLoader {
+public interface ModelFormat {
 
     Map<String, Operation> OPERATION_MAP = new HashMap<>() {
         {
@@ -32,7 +33,7 @@ public interface ModelLoader {
         }
     };
     
-    Model deserialize(byte[] bytes) throws Exception;
+    <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception;
     
     void serialize(Model model, File file) throws IOException;
 }

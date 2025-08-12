@@ -5,6 +5,7 @@ import org.brain4j.common.activation.Activation;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
@@ -87,24 +88,24 @@ public class DenseLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        String activation = attribute(layer, "activation", "LINEAR");
+        String activation = SerializeUtils.attribute(layer, "activation", "LINEAR");
         
-        this.dimension = attribute(layer, "dimension", 0);
+        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
         this.activation = Activations.valueOf(activation.toUpperCase()).function();
         
         for (ProtoModel.Tensor tensor : tensors) {
-            String name = tensor.getName().split("\\.")[2];
+            String name = tensor.getName().substring(tensor.getName().lastIndexOf('.') + 1);
             switch (name) {
-                case "weight" -> this.weights = deserializeTensor(tensor);
-                case "bias" -> this.bias = deserializeTensor(tensor);
+                case "weight" -> this.weights = SerializeUtils.deserializeTensor(tensor);
+                case "bias" -> this.bias = SerializeUtils.deserializeTensor(tensor);
             }
         }
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("dimension", value(dimension));
-        builder.putAttrs("activation", value(activation.name()));
+        builder.putAttrs("dimension", SerializeUtils.value(dimension));
+        builder.putAttrs("activation", SerializeUtils.value(activation.name()));
     }
     
     @Override

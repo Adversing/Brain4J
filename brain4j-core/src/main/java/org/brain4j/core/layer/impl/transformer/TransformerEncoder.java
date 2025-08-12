@@ -4,6 +4,7 @@ import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
@@ -77,39 +78,72 @@ public class TransformerEncoder extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        this.normalizer.connect(this);
-        this.upProjection.connect(this);
-        this.downProjection.connect(upProjection);
+        normalizer.connect(this);
+        upProjection.connect(this);
+        downProjection.connect(upProjection);
 
         return this;
     }
 
     @Override
     public void initWeights(Random generator, int input, int output) {
-        this.normalizer.initWeights(generator, embeddingDim, embeddingDim);
-        this.upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
-        this.downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
-        this.attention.compile(generator, weightInit);
+        normalizer.initWeights(generator, embeddingDim, embeddingDim);
+        upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
+        downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
+        attention.compile(generator, weightInit);
     }
 
     @Override
     public void toDevice(Device device) {
-        this.normalizer.toDevice(device);
-        this.upProjection.toDevice(device);
-        this.downProjection.toDevice(device);
-        this.attention.to(device);
+        normalizer.toDevice(device);
+        upProjection.toDevice(device);
+        downProjection.toDevice(device);
+        attention.to(device);
     }
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.numHeads = attribute(layer, "num_heads", 0);
-        this.embeddingDim = attribute(layer, "embedding_dim", 0);
+        this.numHeads = SerializeUtils.attribute(layer, "num_heads", 0);
+        this.embeddingDim = SerializeUtils.attribute(layer, "embedding_dim", 0);
+        
+        if (!layer.hasTransformer()) {
+            throw new IllegalArgumentException("Transformer layer is missing a transformer instance!");
+        }
+        
+        ProtoModel.Transformer transformer = layer.getTransformer();
+        
+        this.attention = new MultiHeadAttention();
+        this.upProjection = new DenseLayer();
+        this.downProjection = new DenseLayer();
+        this.normalizer = new NormLayer();
+        this.dropout = new DropoutLayer();
+        
+        attention.deserialize(transformer.getAttention());
+        upProjection.deserialize(SerializeUtils.filterByName(tensors, "up_projection"), transformer.getUpProjection());
+        downProjection.deserialize(SerializeUtils.filterByName(tensors, "down_projection"), transformer.getDownProjection());
+        normalizer.deserialize(SerializeUtils.filterByName(tensors, "normalizer"), transformer.getNormalizer());
+        dropout.deserialize(List.of(), transformer.getDropout());
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("num_heads", value(numHeads));
-        builder.putAttrs("embedding_dim", value(embeddingDim));
+        ProtoModel.Transformer.Builder transformerBuilder =
+            ProtoModel.Transformer.newBuilder()
+                .setAttention(attention.serialize());
+        
+        ProtoModel.Layer.Builder upProjBuilder = buildLayer(upProjection);
+        ProtoModel.Layer.Builder downProjBuilder = buildLayer(downProjection);
+        ProtoModel.Layer.Builder dropoutBuilder = buildLayer(dropout);
+        ProtoModel.Layer.Builder normalizerBuilder = buildLayer(normalizer);
+        
+        transformerBuilder.setUpProjection(upProjBuilder.build());
+        transformerBuilder.setDownProjection(downProjBuilder.build());
+        transformerBuilder.setDropout(dropoutBuilder.build());
+        transformerBuilder.setNormalizer(normalizerBuilder.build());
+        
+        builder.putAttrs("num_heads", SerializeUtils.value(numHeads))
+            .putAttrs("embedding_dim", SerializeUtils.value(embeddingDim))
+            .setTransformer(transformerBuilder.build());
     }
     
     @Override
@@ -150,9 +184,9 @@ public class TransformerEncoder extends Layer {
 
     @Override
     public void backward(Updater updater, Optimizer optimizer, int index) {
-        this.attention.backward(updater, optimizer);
-        this.upProjection.backward(updater, optimizer, index);
-        this.downProjection.backward(updater, optimizer, index);
+        attention.backward(updater, optimizer);
+        upProjection.backward(updater, optimizer, index);
+        downProjection.backward(updater, optimizer, index);
     }
 
     @Override
@@ -162,21 +196,33 @@ public class TransformerEncoder extends Layer {
 
     @Override
     public int totalWeights() {
-        return this.upProjection.totalWeights()
-            + this.downProjection.totalWeights()
-            + this.normalizer.totalWeights()
-            + this.attention.totalWeights();
+        return upProjection.totalWeights()
+            + downProjection.totalWeights()
+            + normalizer.totalWeights()
+            + attention.totalWeights();
     }
     
     @Override
     public List<ProtoModel.Tensor.Builder> weightsList() {
-        return List.of();
+        return List.of(
+            SerializeUtils.serializeTensor("normalizer.weight", normalizer.weights()),
+            SerializeUtils.serializeTensor("normalizer.bias", normalizer.bias()),
+            SerializeUtils.serializeTensor("up_projection.weight", upProjection.weights()),
+            SerializeUtils.serializeTensor("up_projection.bias", upProjection.bias()),
+            SerializeUtils.serializeTensor("down_projection.weight", downProjection.weights()),
+            SerializeUtils.serializeTensor("down_projection.bias", downProjection.bias())
+        );
     }
     
-    public List<Layer> subLayers() {
-        return List.of(
-            upProjection, downProjection, normalizer, dropout
-        );
+    private ProtoModel.Layer.Builder buildLayer(Layer layer) {
+        ProtoModel.Layer.Builder builder =
+            ProtoModel.Layer.newBuilder()
+                .setType(layer.getClass().getName())
+                .setBasic(ProtoModel.BasicLayer.newBuilder()
+                    .setDimension(layer.size()));
+    
+        layer.serialize(builder);
+        return builder;
     }
     
     public DenseLayer upProjection() {

@@ -3,6 +3,7 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.weightsinit.UniformXavierInit;
@@ -57,26 +58,26 @@ public class EmbeddingLayer extends Layer {
     
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.vocabSize = attribute(layer, "vocab_size", 0);
-        this.embeddingDim = attribute(layer, "embedding_dim", 0);
+        this.vocabSize = SerializeUtils.attribute(layer, "vocab_size", 0);
+        this.embeddingDim = SerializeUtils.attribute(layer, "embedding_dim", 0);
         
         for (ProtoModel.Tensor tensor : tensors) {
             if (tensor.getName().contains("weight")) {
-                this.weights = deserializeTensor(tensor);
+                this.weights = SerializeUtils.deserializeTensor(tensor);
             }
         }
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("vocab_size", value(vocabSize));
-        builder.putAttrs("embedding_dim", value(embeddingDim));
+        builder.putAttrs("vocab_size", SerializeUtils.value(vocabSize));
+        builder.putAttrs("embedding_dim", SerializeUtils.value(embeddingDim));
     }
     
     @Override
     public List<ProtoModel.Tensor.Builder> weightsList() {
         return List.of(
-            serializeTensor("weight", weights)
+            SerializeUtils.serializeTensor("weight", weights)
         );
     }
     
