@@ -354,6 +354,8 @@ public interface Tensor extends Iterable<Float> {
      * @return the unsqueezed tensor
      */
     Tensor unsqueeze();
+    
+    Tensor broadcastLike(Tensor input);
 
     /**
      * Unsqueezes the tensor by adding a dimension with one at the specified dimension
@@ -389,7 +391,7 @@ public interface Tensor extends Iterable<Float> {
     Tensor sum(int dim, boolean keepDim);
     Tensor mean(int dim, boolean keepDim);
     Tensor sign();
-
+    
     /**
      * Reshapes the current tensor to a new shape.
      * @param newShape the new shape of the tensor
@@ -610,7 +612,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor with a new shape
      */
     Tensor reshapeGrad(int... newShape);
-
+    
     /**
      * Flips the tensor by 180 degrees.
      * @return a new flipped tensor

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static org.brain4j.common.Tensors.ones;
+import static org.brain4j.common.Tensors.unravelIndex;
 
 public abstract class BaseTensor implements Tensor, Cloneable {
 
@@ -425,7 +426,34 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     public Tensor unsqueeze() {
         return unsqueeze(0);
     }
-
+    
+    @Override
+    public Tensor broadcastLike(Tensor input) {
+        int[] targetShape = input.shape();
+        
+        if (Arrays.equals(this.shape(), targetShape)) {
+            return this;
+        }
+        
+        Tensor out = Tensors.zeros(targetShape);
+        
+        int[] idx = new int[targetShape.length];
+        int total = out.elements();
+        
+        for (int i = 0; i < total; i++) {
+            int[] coords = unravelIndex(i, targetShape);
+            int[] srcCoords = new int[coords.length];
+            
+            for (int d = 0; d < coords.length; d++) {
+                srcCoords[d] = (this.shape()[d] == 1) ? 0 : coords[d];
+            }
+            
+            out.set(get(srcCoords), coords);
+        }
+        
+        return out;
+    }
+    
     public Tensor unsqueeze(int dim) {
         if (dim < 0 || dim > shape.length) {
             throw new IllegalArgumentException("Invalid dimension for unsqueeze: " + dim);
@@ -563,6 +591,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             }
         }
 
+        result.setAutogradContext(autogradContext);
         return result;
     }
 
@@ -577,7 +606,10 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             resultData[i] /= divisor;
         }
 
-        return Tensors.create(summed.shape(), resultData);
+        Tensor result = Tensors.create(summed.shape(), resultData);
+        result.setAutogradContext(autogradContext);
+        
+        return result;
     }
 
     @Override
@@ -974,7 +1006,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return forward(new ReshapeOperation(newShape));
     }
-
+    
     @Override
     public Tensor flip() {
         Tensor result = Tensors.zeros(shape);

@@ -43,7 +43,8 @@ public class TransformerEncoder extends Layer {
 
     protected DenseLayer upProjection;
     protected DenseLayer downProjection;
-    protected NormLayer normalizer;
+    protected NormLayer normalizer1;
+    protected NormLayer normalizer2;
     protected DropoutLayer dropout;
     protected MultiHeadAttention attention;
 
@@ -64,8 +65,9 @@ public class TransformerEncoder extends Layer {
         this.embeddingDim = embeddingDim;
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
-
-        this.normalizer = new NormLayer(embeddingDim);
+        
+        this.normalizer1 = new NormLayer(embeddingDim);
+        this.normalizer2 = new NormLayer(embeddingDim);
         this.upProjection = new DenseLayer(embeddingDim * 4, Activations.RELU);
         this.downProjection = new DenseLayer(embeddingDim, Activations.LINEAR);
 
@@ -78,7 +80,8 @@ public class TransformerEncoder extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        normalizer.connect(this);
+        normalizer1.connect(this);
+        normalizer2.connect(this);
         upProjection.connect(this);
         downProjection.connect(upProjection);
 
@@ -87,7 +90,8 @@ public class TransformerEncoder extends Layer {
 
     @Override
     public void initWeights(Random generator, int input, int output) {
-        normalizer.initWeights(generator, embeddingDim, embeddingDim);
+        normalizer1.initWeights(generator, embeddingDim, embeddingDim);
+        normalizer2.initWeights(generator, embeddingDim, embeddingDim);
         upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
         downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
         attention.compile(generator, weightInit);
@@ -95,7 +99,8 @@ public class TransformerEncoder extends Layer {
 
     @Override
     public void toDevice(Device device) {
-        normalizer.toDevice(device);
+        normalizer1.toDevice(device);
+        normalizer2.toDevice(device);
         upProjection.toDevice(device);
         downProjection.toDevice(device);
         attention.to(device);
@@ -115,13 +120,15 @@ public class TransformerEncoder extends Layer {
         this.attention = new MultiHeadAttention();
         this.upProjection = new DenseLayer();
         this.downProjection = new DenseLayer();
-        this.normalizer = new NormLayer();
+        this.normalizer1 = new NormLayer();
+        this.normalizer2 = new NormLayer();
         this.dropout = new DropoutLayer();
         
         attention.deserialize(transformer.getAttention());
         upProjection.deserialize(SerializeUtils.filterByName(tensors, "up_projection"), transformer.getUpProjection());
         downProjection.deserialize(SerializeUtils.filterByName(tensors, "down_projection"), transformer.getDownProjection());
-        normalizer.deserialize(SerializeUtils.filterByName(tensors, "normalizer"), transformer.getNormalizer());
+        normalizer1.deserialize(SerializeUtils.filterByName(tensors, "normalizer_1"), transformer.getNormalizer1());
+        normalizer2.deserialize(SerializeUtils.filterByName(tensors, "normalizer_2"), transformer.getNormalizer2());
         dropout.deserialize(List.of(), transformer.getDropout());
     }
     
@@ -134,12 +141,14 @@ public class TransformerEncoder extends Layer {
         ProtoModel.Layer.Builder upProjBuilder = buildLayer(upProjection);
         ProtoModel.Layer.Builder downProjBuilder = buildLayer(downProjection);
         ProtoModel.Layer.Builder dropoutBuilder = buildLayer(dropout);
-        ProtoModel.Layer.Builder normalizerBuilder = buildLayer(normalizer);
+        ProtoModel.Layer.Builder normalizer1Builder = buildLayer(normalizer1);
+        ProtoModel.Layer.Builder normalizer2Builder = buildLayer(normalizer2);
         
         transformerBuilder.setUpProjection(upProjBuilder.build());
         transformerBuilder.setDownProjection(downProjBuilder.build());
         transformerBuilder.setDropout(dropoutBuilder.build());
-        transformerBuilder.setNormalizer(normalizerBuilder.build());
+        transformerBuilder.setNormalizer1(normalizer1Builder.build());
+        transformerBuilder.setNormalizer2(normalizer2Builder.build());
         
         builder.putAttrs("num_heads", SerializeUtils.value(numHeads))
             .putAttrs("embedding_dim", SerializeUtils.value(embeddingDim))
@@ -161,13 +170,13 @@ public class TransformerEncoder extends Layer {
 
         StatesCache cache = context.cache();
         Tensor attended = attention.attend(cache, input);
-
+        
         if (training) {
             attended = dropout.forward(new ForwardContext(cache, attended, index, true));
         }
 
         Tensor added = input.addGrad(attended);
-        Tensor normalized = normalizer.forward(new ForwardContext(cache, added, index, true));
+        Tensor normalized = normalizer1.forward(new ForwardContext(cache, added, index, true));
         
         Tensor upProjected = upProjection.forward(new ForwardContext(cache, normalized, index, training));
         Tensor downProjected = downProjection.forward(new ForwardContext(cache, upProjected, index, training));
@@ -177,7 +186,7 @@ public class TransformerEncoder extends Layer {
         }
 
         added = normalized.addGrad(downProjected);
-        normalized = normalizer.forward(new ForwardContext(cache, added, index, training));
+        normalized = normalizer2.forward(new ForwardContext(cache, added, index, training));
 
         return normalized;
     }
@@ -198,15 +207,17 @@ public class TransformerEncoder extends Layer {
     public int totalWeights() {
         return upProjection.totalWeights()
             + downProjection.totalWeights()
-            + normalizer.totalWeights()
+            + normalizer1.totalWeights()
             + attention.totalWeights();
     }
     
     @Override
     public List<ProtoModel.Tensor.Builder> weightsList() {
         return List.of(
-            SerializeUtils.serializeTensor("normalizer.weight", normalizer.weights()),
-            SerializeUtils.serializeTensor("normalizer.bias", normalizer.bias()),
+            SerializeUtils.serializeTensor("normalizer_1.weight", normalizer1.weights()),
+            SerializeUtils.serializeTensor("normalizer_1.bias", normalizer1.bias()),
+            SerializeUtils.serializeTensor("normalizer_2.weight", normalizer2.weights()),
+            SerializeUtils.serializeTensor("normalizer_2.bias", normalizer2.bias()),
             SerializeUtils.serializeTensor("up_projection.weight", upProjection.weights()),
             SerializeUtils.serializeTensor("up_projection.bias", upProjection.bias()),
             SerializeUtils.serializeTensor("down_projection.weight", downProjection.weights()),
@@ -233,8 +244,12 @@ public class TransformerEncoder extends Layer {
         return downProjection;
     }
     
-    public NormLayer normalizer() {
-        return normalizer;
+    public NormLayer normalizer1() {
+        return normalizer1;
+    }
+    
+    public NormLayer normalizer2() {
+        return normalizer2;
     }
     
     public DropoutLayer dropout() {

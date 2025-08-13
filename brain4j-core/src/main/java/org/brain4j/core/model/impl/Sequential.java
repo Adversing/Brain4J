@@ -314,7 +314,7 @@ public class Sequential extends Layer implements Model {
     @Override
     public void backpropagate(StatesCache cache, Tensor outputs, Tensor targets) {
         int count = flattened.size() - 1;
-
+        
         Layer last = flattened.getLast();
         last.computeLoss(cache, targets, outputs, lossFunction);
 

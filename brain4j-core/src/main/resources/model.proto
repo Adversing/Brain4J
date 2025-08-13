@@ -59,9 +59,10 @@ message BasicLayer {
 message Transformer {
   Layer up_projection = 1;
   Layer down_projection = 2;
-  Layer normalizer = 3;
-  Layer dropout = 4;
-  MultiHeadAttention attention = 5;
+  Layer normalizer_1 = 3;
+  Layer normalizer_2 = 4;
+  Layer dropout = 5;
+  MultiHeadAttention attention = 6;
 }
 
 message AttrValue {
