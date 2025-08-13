@@ -59,7 +59,7 @@ public class BrainFormat implements ModelFormat {
                 .setCreated(Instant.now().toString())
                 .setLossFunction(model.lossFunction().getClass().getName());
         
-        List<Layer> layers = model.layers();
+        List<Layer> layers = model.flattened();
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);

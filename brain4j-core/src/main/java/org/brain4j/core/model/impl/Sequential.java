@@ -44,7 +44,6 @@ import static org.brain4j.common.constants.Constants.*;
  *
  * @author xEcho1337
  * @since 3.0
- * @see Transformer
  * @see MultiModel
  */
 public class Sequential extends Layer implements Model {
@@ -72,10 +71,6 @@ public class Sequential extends Layer implements Model {
      */
     public static Sequential of(Layer... layers) {
         return new Sequential(layers);
-    }
-
-    public static Sequential.Builder newModel() {
-        return new Sequential.Builder();
     }
 
     protected Sequential(Layer... layers) {
@@ -614,69 +609,5 @@ public class Sequential extends Layer implements Model {
     @Override
     public int size() {
         return layers.getLast().size();
-    }
-
-    public static class Builder {
-        
-        protected final List<Layer> layers;
-        
-        protected Updater updater;
-        protected Optimizer optimizer;
-        protected LossFunction lossFunction;
-        
-        protected Builder() {
-            this.layers = new ArrayList<>();
-            this.updater = new StochasticUpdater();
-        }
-        
-        public Builder addDense(int dimension, Activations activation) {
-            return add(new DenseLayer(dimension, activation));
-        }
-        
-        public Builder add(Layer layer)  {
-            if (layer == null) {
-                throw new NullPointerException("Layer cannot be null!");
-            }
-            
-            this.layers.add(layer);
-            return this;
-        }
-        
-        public Builder optimizer(Optimizer optimizer) {
-            if (updater == null) {
-                throw new NullPointerException("Optimizer cannot be null!");
-            }
-            
-            this.optimizer = optimizer;
-            return this;
-        }
-        
-        public Builder updater(Updater updater) {
-            if (updater == null) {
-                throw new NullPointerException("Updater cannot be null!");
-            }
-            
-            this.updater = updater;
-            return this;
-        }
-        
-        public Builder lossFunction(LossFunction lossFunction) {
-            if (updater == null) {
-                throw new NullPointerException("Loss function cannot be null!");
-            }
-            
-            this.lossFunction = lossFunction;
-            return this;
-        }
-        
-        public Sequential compile() {
-            Sequential model = new Sequential(layers.toArray(new Layer[0]));
-            
-            if (optimizer == null || lossFunction == null) {
-                throw new IllegalStateException("Optimizer and loss function are both null! Initialize them first.");
-            }
-            
-            return (Sequential) model.compile(lossFunction, optimizer, updater);
-        }
     }
 }
