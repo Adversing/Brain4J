@@ -188,6 +188,8 @@ public class TransformerEncoder extends Layer {
         added = normalized.addGrad(downProjected);
         normalized = normalizer2.forward(new ForwardContext(cache, added, index, training));
 
+        cache.setPreActivation(this, normalized);
+        
         return normalized;
     }
 
