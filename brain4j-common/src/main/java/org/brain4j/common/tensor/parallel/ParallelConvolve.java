@@ -17,6 +17,8 @@ public class ParallelConvolve extends RecursiveAction {
     private record Im2ColParams(
         float[] inputData,
         float[] resultData,
+        int inputBaseOffset,
+        int resultBaseOffset,
         int channelCount,
         int inputHeight,
         int inputWidth,
@@ -50,20 +52,21 @@ public class ParallelConvolve extends RecursiveAction {
         } else {
             float[] inputData = params.inputData;
             float[] resultData = params.resultData;
+            int inputBase = params.inputBaseOffset;
+            int resultBase = params.resultBaseOffset;
 
             for (int patchIndex = startPatch; patchIndex < endPatch; patchIndex++) {
                 int outRow = patchIndex / params.outputWidth;
                 int outCol = patchIndex % params.outputWidth;
-                int baseResultOffset = patchIndex * patchSize;
+                int baseResultOffset = resultBase + patchIndex * patchSize;
 
                 for (int c = 0; c < params.channelCount; c++) {
-                    int channelOffsetInput = c * params.inputHeight * params.inputWidth;
+                    int channelOffsetInput = inputBase + c * params.inputHeight * params.inputWidth;
                     int channelOffsetResult = c * params.filterHeight * params.filterWidth;
 
                     for (int fh = 0; fh < params.filterHeight; fh++) {
                         int srcPos = channelOffsetInput + (outRow + fh) * params.inputWidth + outCol;
                         int destPos = baseResultOffset + channelOffsetResult + fh * params.filterWidth;
-
                         System.arraycopy(inputData, srcPos, resultData, destPos, params.filterWidth);
                     }
                 }
@@ -75,84 +78,127 @@ public class ParallelConvolve extends RecursiveAction {
         while (a.rank() < 3) a.unsqueeze();
         while (b.rank() < 3) b.unsqueeze();
 
-        int[] inShape = a.shape();
-        int[] fShape = b.shape();
+        int[] aShape = a.shape();
+        int[] bShape = b.shape();
 
-        int channelCount = inShape[inShape.length - 3];
-        int inputHeight = inShape[inShape.length - 2];
-        int inputWidth = inShape[inShape.length - 1];
-        int filterHeight = fShape[fShape.length - 2];
-        int filterWidth = fShape[fShape.length - 1];
+        boolean aHasBatch = aShape.length == 4;
+        int aBatch = aHasBatch ? aShape[0] : 1;
+        int aChannels = aShape[aShape.length - 3];
+        int aHeight = aShape[aShape.length - 2];
+        int aWidth = aShape[aShape.length - 1];
 
-        int outputHeight = inputHeight - filterHeight + 1;
-        int outputWidth = inputWidth - filterWidth + 1;
+        int numFilters;
+        int bChannels;
+        int filterHeight, filterWidth;
 
-        int patchSize = channelCount * filterHeight * filterWidth;
-        int totalPatches = outputHeight * outputWidth;
-
-        Tensor patchMatrix = Tensors.zeros(totalPatches, patchSize);
-        float[] inputData = a.data();
-        float[] patchData = patchMatrix.data();
-
-        Im2ColParams params = new Im2ColParams(
-            inputData,
-            patchData,
-            channelCount,
-            inputHeight,
-            inputWidth,
-            filterHeight,
-            filterWidth,
-            outputHeight,
-            outputWidth
-        );
-
-        try (ForkJoinPool pool = ForkJoinPool.commonPool()) {
-            pool.invoke(
-                new ParallelConvolve(params, 0, totalPatches)
-            );
-        }
-
-        Tensor filterFlat = b.reshape(1, b.elements());
-        Tensor outputTensor = Tensors.zeros(outputHeight, outputWidth);
-
-        float[] filterData = filterFlat.data();
-        float[] outputData = outputTensor.data();
-
-        if (DeviceUtils.isSimdAvailable()) {
-            simdDotProduct(totalPatches, patchSize, filterData, patchData, outputData);
+        if (bShape.length == 4) {
+            numFilters = bShape[0];
+            bChannels = bShape[1];
+            filterHeight = bShape[2];
+            filterWidth = bShape[3];
         } else {
-            normalDotProduct(totalPatches, patchSize, filterData, patchData, outputData);
+            numFilters = 1;
+            bChannels = bShape[0];
+            filterHeight = bShape[1];
+            filterWidth = bShape[2];
         }
 
-        return outputTensor;
+        if (bChannels != aChannels) {
+            throw new IllegalArgumentException("Channel mismatch: input channels=" + aChannels + " filter channels=" + bChannels);
+        }
+
+        int outHeight = aHeight - filterHeight + 1;
+        int outWidth = aWidth - filterWidth + 1;
+
+        if (outHeight <= 0 || outWidth <= 0) {
+            throw new IllegalArgumentException("Filter larger than input.");
+        }
+
+        int patchSize = aChannels * filterHeight * filterWidth;
+        int totalPatches = outHeight * outWidth;
+
+        Tensor out;
+        Tensor filterFlat = b.reshape(numFilters, patchSize);
+
+        float[] aData = a.data();
+        float[] filterData = filterFlat.data();
+
+        if (aBatch > 1) {
+            out = Tensors.zeros(aBatch, numFilters, outHeight, outWidth);
+        } else {
+            out = Tensors.zeros(numFilters, outHeight, outWidth);
+        }
+
+        float[] outData = out.data();
+
+        for (int batchIdx = 0; batchIdx < aBatch; batchIdx++) {
+            int inputBaseOffset = batchIdx * aChannels * aHeight * aWidth;
+            float[] patchData = new float[totalPatches * patchSize];
+
+            Im2ColParams params = new Im2ColParams(
+                aData,
+                patchData,
+                inputBaseOffset,
+                0,
+                aChannels,
+                aHeight,
+                aWidth,
+                filterHeight,
+                filterWidth,
+                outHeight,
+                outWidth
+            );
+
+            try (ForkJoinPool pool = ForkJoinPool.commonPool()) {
+                pool.invoke(new ParallelConvolve(params, 0, totalPatches));
+            }
+
+            for (int filter = 0; filter < numFilters; filter++) {
+                int filterOffset = filter * patchSize;
+                int outBase = aBatch > 1
+                    ? (batchIdx * numFilters + filter) * totalPatches
+                    : filter * totalPatches;
+
+                if (DeviceUtils.isSimdAvailable()) {
+                    simdDotPerFilter(totalPatches, patchSize, filterData, filterOffset, patchData, outData, outBase);
+                } else {
+                    normalDotPerFilter(totalPatches, patchSize, filterData, filterOffset, patchData, outData, outBase);
+                }
+            }
+        }
+
+        return out;
     }
 
-    private static void normalDotProduct(
+    private static void normalDotPerFilter(
         int totalPatches,
         int patchSize,
         float[] filterData,
+        int filterOffset,
         float[] patchData,
-        float[] outputData
+        float[] outData,
+        int outBase
     ) {
-
         for (int p = 0; p < totalPatches; p++) {
             float sum = 0f;
             int rowOffset = p * patchSize;
 
             for (int i = 0; i < patchSize; i++) {
-                sum += filterData[i] * patchData[rowOffset + i];
+                sum += filterData[filterOffset + i] * patchData[rowOffset + i];
             }
 
-            outputData[p] = sum;
+            outData[outBase + p] = sum;
         }
     }
 
-    private static void simdDotProduct(
+    private static void simdDotPerFilter(
         int totalPatches,
         int patchSize,
         float[] filterData,
+        int filterOffset,
         float[] patchData,
-        float[] outputData
+        float[] outData,
+        int outBase
     ) {
         VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
 
@@ -161,18 +207,19 @@ public class ParallelConvolve extends RecursiveAction {
             int rowOffset = p * patchSize;
 
             int i = 0;
+            int loopBound = SPECIES.loopBound(patchSize);
 
-            for (; i < SPECIES.loopBound(patchSize); i += SPECIES.length()) {
-                var v1 = FloatVector.fromArray(SPECIES, filterData, i);
+            for (; i < loopBound; i += SPECIES.length()) {
+                var v1 = FloatVector.fromArray(SPECIES, filterData, filterOffset + i);
                 var v2 = FloatVector.fromArray(SPECIES, patchData, rowOffset + i);
                 sum += v1.mul(v2).reduceLanes(VectorOperators.ADD);
             }
 
             for (; i < patchSize; i++) {
-                sum += filterData[i] * patchData[rowOffset + i];
+                sum += filterData[filterOffset + i] * patchData[rowOffset + i];
             }
 
-            outputData[p] = sum;
+            outData[outBase + p] = sum;
         }
     }
 }
