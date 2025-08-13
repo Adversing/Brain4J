@@ -59,7 +59,7 @@ subprojects {
 }
 
 tasks.register('buildAll') {
-    dependsOn ':brain4j-common:shadowJar', ':brain4j-core:shadowJar', ':brain4j-datasets:shadowJar'
+    dependsOn ':brain4j-math:shadowJar', ':brain4j-core:shadowJar', ':brain4j-datasets:shadowJar'
 
     doLast {
         println 'Completed build for both math and core.'
