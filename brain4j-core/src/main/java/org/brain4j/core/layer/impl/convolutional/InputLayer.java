@@ -17,10 +17,10 @@ public class InputLayer extends Layer {
     public InputLayer() {
     }
     
-    public InputLayer(int width, int height, int channels) {
-        this.width = width;
-        this.height = height;
+    public InputLayer(int channels, int height, int width) {
         this.channels = channels;
+        this.height = height;
+        this.width = width;
     }
     
     @Override
@@ -39,11 +39,23 @@ public class InputLayer extends Layer {
     
     @Override
     public Tensor forward(ForwardContext context) {
-        return context.input().reshapeGrad(1, channels, height, width);
+        Tensor input = context.input();
+        int[] inputShape = input.shape();
+        
+        if (!validateInput(input)) {
+            throw new IllegalArgumentException("Expecting 4-dimensional tensor with shape [batch, channels, height, width]!");
+        }
+        
+        return context.input().reshapeGrad(inputShape[0], channels, height, width);
     }
 
     @Override
     public int size() {
         return channels;
+    }
+    
+    @Override
+    public boolean validateInput(Tensor input) {
+        return input.rank() == 4;
     }
 }

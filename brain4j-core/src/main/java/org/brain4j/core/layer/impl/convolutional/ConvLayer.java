@@ -15,19 +15,18 @@ import java.util.Random;
 
 public class ConvLayer extends Layer {
 
+    private int channels;
     private int filters;
     private int kernelWidth;
     private int kernelHeight;
-    private int channels;
     private int stride = 1;
     private int padding = 0;
     
     public ConvLayer() {
     }
     
-    public ConvLayer(Activations activation, int channels, int filters, int kernelWidth, int kernelHeight) {
+    public ConvLayer(Activations activation, int filters, int kernelWidth, int kernelHeight) {
         this.activation = activation.function();
-        this.channels = channels;
         this.filters = filters;
         this.kernelWidth = kernelWidth;
         this.kernelHeight = kernelHeight;
@@ -35,6 +34,7 @@ public class ConvLayer extends Layer {
     
     @Override
     public Layer connect(Layer previous) {
+        this.channels = previous.size();
         this.bias = Tensors.zeros(filters).withGrad();
         this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth).withGrad();
 
@@ -80,19 +80,11 @@ public class ConvLayer extends Layer {
         if (!validateInput(input)) {
             throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
         }
-
-        // [batch_size, channels, height, width]
-        int batchSize = input.shape()[0];
-        Tensor[] tensors = new Tensor[batchSize];
-
-        for (int i = 0; i < batchSize; i++) {
-            Tensor batch = input.slice(Range.point(i));
-            Tensor result = batch.convolveGrad(weights);
-
-            tensors[i] = result;
-        }
-
-        return Tensors.concatGrad(List.of(tensors), 0);
+        
+        Tensor convolved = input.convolveGrad(weights);
+        Tensor added = convolved.addGrad(bias.reshape(1, filters, 1, 1));
+        
+        return added.activateGrad(activation);
     }
 
     @Override

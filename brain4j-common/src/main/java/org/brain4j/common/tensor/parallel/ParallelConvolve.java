@@ -7,6 +7,7 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.DeviceUtils;
 import org.brain4j.common.tensor.Tensor;
 
+import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
@@ -75,9 +76,9 @@ public class ParallelConvolve extends RecursiveAction {
     }
 
     public static Tensor convolve(Tensor a, Tensor b) {
-        while (a.rank() < 3) a.unsqueeze();
-        while (b.rank() < 3) b.unsqueeze();
-
+        while (a.rank() < 3) a = a.unsqueeze();
+        while (b.rank() < 3) b = b.unsqueeze();
+        
         int[] aShape = a.shape();
         int[] bShape = b.shape();
 
@@ -117,18 +118,11 @@ public class ParallelConvolve extends RecursiveAction {
         int patchSize = aChannels * filterHeight * filterWidth;
         int totalPatches = outHeight * outWidth;
 
-        Tensor out;
+        Tensor out = Tensors.zeros(aBatch, numFilters, outHeight, outWidth);
         Tensor filterFlat = b.reshape(numFilters, patchSize);
 
         float[] aData = a.data();
         float[] filterData = filterFlat.data();
-
-        if (aBatch > 1) {
-            out = Tensors.zeros(aBatch, numFilters, outHeight, outWidth);
-        } else {
-            out = Tensors.zeros(numFilters, outHeight, outWidth);
-        }
-
         float[] outData = out.data();
 
         for (int batchIdx = 0; batchIdx < aBatch; batchIdx++) {

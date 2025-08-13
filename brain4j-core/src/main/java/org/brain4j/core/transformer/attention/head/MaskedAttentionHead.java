@@ -17,19 +17,20 @@ public class MaskedAttentionHead extends AttentionHead {
         Tensor Q = input.matmulGrad(queryWeights); // [batch_size, seq_length, head_dimension]
         Tensor K = input.matmulGrad(keyWeights); // [batch_size, seq_length, head_dimension]
         Tensor V = input.matmulGrad(valueWeights); // [batch_size, seq_length, head_dimension]
-
+        
         double normalizer = Math.sqrt(headDimension);
-
-        // [seq_length, seq_length]
-        Tensor scores = Q.matmulGrad(K.transpose()).div(normalizer);
+        
+        // [batch_size, head_dimension, seq_length]
+        Tensor K_T = K.transposeGrad();
+        // [batch_size, seq_length, seq_length]
+        Tensor scores = Q.matmulGrad(K_T).div(normalizer);
+        
         int[] shape = scores.shape();
-
         Tensor mask = Tensors.triangularMask(shape[shape.length - 1]);
-
-        Tensor maskedScores = scores.addGrad(mask);
-        Tensor attentionWeights = maskedScores.activateGrad(new SoftmaxActivation());
-
-        // [seq_length, head_dimension]
+        
+        Tensor attentionWeights = scores.addGrad(mask).activateGrad(new SoftmaxActivation());
+        
+        // [batch_size, seq_length, head_dimension]
         return attentionWeights.matmulGrad(V);
     }
 }

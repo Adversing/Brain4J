@@ -390,7 +390,10 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             }
         }
         
-        return reshape(newShape);
+        Tensor reshaped = reshape(newShape);
+        reshaped.setAutogradContext(autogradContext);
+        
+        return reshaped;
     }
 
     @Override
@@ -437,8 +440,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
                 newShape[i] = shape[j++];
             }
         }
-
-        return Tensors.create(newShape, data());
+        
+        Tensor result = Tensors.create(newShape, data());
+        result.setAutogradContext(autogradContext);
+        
+        return result;
     }
 
     @Override

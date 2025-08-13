@@ -1,5 +1,6 @@
 package org.brain4j.common.tensor.autograd.impl;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.autograd.Operation;
 
@@ -7,7 +8,7 @@ public class ConvolveOperation implements Operation {
 
     @Override
     public Tensor compute(Tensor... inputs) {
-        return inputs[0].convolve(inputs[1]);
+        return Tensors.convolve(inputs[0], inputs[1]);
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface LossFunction {
      * @param derivative the derivative of the activation function
      * @return the delta tensor
      */
-    Tensor getDelta(Tensor error, Tensor derivative);
+    Tensor delta(Tensor error, Tensor derivative);
 
     /**
      * Gets whether this loss function is typically used for regression.

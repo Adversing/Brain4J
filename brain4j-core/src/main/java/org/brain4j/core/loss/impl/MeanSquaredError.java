@@ -9,15 +9,18 @@ public class MeanSquaredError implements LossFunction {
     public double calculate(Tensor actual, Tensor predicted) {
         double loss = 0.0;
 
+        float[] actualData = actual.data();
+        float[] predictedData = predicted.data();
+        
         for (int i = 0; i < actual.elements(); i++) {
-            loss += Math.pow(actual.get(i) - predicted.get(i), 2);
+            loss += Math.pow(actualData[i] - predictedData[i], 2);
         }
 
         return loss / actual.elements();
     }
 
     @Override
-    public Tensor getDelta(Tensor error, Tensor derivative) {
+    public Tensor delta(Tensor error, Tensor derivative) {
         return error.mul(derivative);
     }
 
