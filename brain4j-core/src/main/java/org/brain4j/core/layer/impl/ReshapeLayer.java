@@ -54,6 +54,6 @@ public class ReshapeLayer extends Layer {
 
     @Override
     public int size() {
-        return 0;
+        return shape[shape.length - 1];
     }
 }

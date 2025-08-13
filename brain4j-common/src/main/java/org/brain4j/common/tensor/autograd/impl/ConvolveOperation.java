@@ -4,6 +4,8 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.autograd.Operation;
 
+import java.util.Arrays;
+
 public class ConvolveOperation implements Operation {
 
     @Override
@@ -13,6 +15,7 @@ public class ConvolveOperation implements Operation {
 
     @Override
     public Tensor[] backward(Tensor gradOutput, Tensor... inputs) {
+        // TODO: Fix gradient calculation
         Tensor A = inputs[0];
         Tensor B = inputs[1];
 
