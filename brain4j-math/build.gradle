@@ -15,5 +15,5 @@ compileJava {
 
 shadowJar {
     minimize()
-    archiveFileName = "brain4j-common-${parent.version}.jar"
+    archiveFileName = "brain4j-math-${parent.version}.jar"
 }
