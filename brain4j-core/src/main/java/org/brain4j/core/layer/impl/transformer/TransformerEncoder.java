@@ -116,6 +116,51 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
+    public Tensor forward(ForwardContext context) {
+        Tensor input = context.input();
+
+        if (input.rank() != 3) {
+            throw new IllegalArgumentException(
+                "Expected input with shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
+            );
+        }
+
+        int index = context.index();
+        boolean training = context.training();
+
+        StatesCache cache = context.cache();
+        Tensor attended = attention.attend(cache, input);
+        
+        if (training) {
+            attended = dropout.forward(new ForwardContext(cache, attended, index, true));
+        }
+
+//        Tensor added = input.add(attended); TODO: Fix this giving issues with the comp graph
+        Tensor normalized = normalizer1.forward(new ForwardContext(cache, attended, index, training));
+        
+        Tensor upProjected = upProjection.forward(new ForwardContext(cache, normalized, index, training));
+        Tensor downProjected = downProjection.forward(new ForwardContext(cache, upProjected, index, training));
+
+        if (training) {
+            downProjected = dropout.forward(new ForwardContext(cache, downProjected, index, true));
+        }
+
+//        added = downProjected; TODO: Fix this giving issues with the comp graph
+        normalized = normalizer2.forward(new ForwardContext(cache, downProjected, index, training));
+
+        cache.setPreActivation(this, normalized);
+        
+        return normalized;
+    }
+
+    @Override
+    public void backward(Updater updater, Optimizer optimizer, int index) {
+        attention.backward(updater, optimizer);
+        upProjection.backward(updater, optimizer, index);
+        downProjection.backward(updater, optimizer, index);
+    }
+    
+    @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
         this.numHeads = SerializeUtils.attribute(layer, "num_heads", 0);
         this.embeddingDim = SerializeUtils.attribute(layer, "embedding_dim", 0);
@@ -164,51 +209,6 @@ public class TransformerEncoder extends Layer {
             .setTransformer(transformerBuilder.build());
     }
     
-    @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-
-        if (input.rank() != 3) {
-            throw new IllegalArgumentException(
-                "Input must have shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
-            );
-        }
-
-        int index = context.index();
-        boolean training = context.training();
-
-        StatesCache cache = context.cache();
-        Tensor attended = attention.attend(cache, input);
-        
-        if (training) {
-            attended = dropout.forward(new ForwardContext(cache, attended, index, true));
-        }
-
-//        Tensor added = input.add(attended); TODO: Fix this giving issues with the comp graph
-        Tensor normalized = normalizer1.forward(new ForwardContext(cache, attended, index, true));
-        
-        Tensor upProjected = upProjection.forward(new ForwardContext(cache, normalized, index, training));
-        Tensor downProjected = downProjection.forward(new ForwardContext(cache, upProjected, index, training));
-
-        if (training) {
-            downProjected = dropout.forward(new ForwardContext(cache, downProjected, index, true));
-        }
-
-//        added = downProjected; TODO: Fix this giving issues with the comp graph
-        normalized = normalizer2.forward(new ForwardContext(cache, downProjected, index, training));
-
-        cache.setPreActivation(this, normalized);
-        
-        return normalized;
-    }
-
-    @Override
-    public void backward(Updater updater, Optimizer optimizer, int index) {
-        attention.backward(updater, optimizer);
-        upProjection.backward(updater, optimizer, index);
-        downProjection.backward(updater, optimizer, index);
-    }
-
     @Override
     public int size() {
         return embeddingDim;
