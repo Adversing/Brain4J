@@ -124,4 +124,10 @@ public class AttentionHead {
         this.queryWeights = SerializeUtils.deserializeTensor(protoHead.getQWeight());
         this.valueWeights = SerializeUtils.deserializeTensor(protoHead.getVWeight());
     }
+    
+    public void resetGrad() {
+        keyWeights.zerograd();
+        queryWeights.zerograd();
+        valueWeights.zerograd();
+    }
 }

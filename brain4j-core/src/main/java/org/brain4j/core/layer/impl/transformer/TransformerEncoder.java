@@ -77,7 +77,16 @@ public class TransformerEncoder extends Layer {
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
         return new MultiHeadAttention(clipper, heads, embeddingDim);
     }
-
+    
+    @Override
+    public void resetGrad() {
+        normalizer1.resetGrad();
+        normalizer2.resetGrad();
+        upProjection.resetGrad();
+        downProjection.resetGrad();
+        attention.resetGrad();
+    }
+    
     @Override
     public Layer connect(Layer previous) {
         normalizer1.connect(this);

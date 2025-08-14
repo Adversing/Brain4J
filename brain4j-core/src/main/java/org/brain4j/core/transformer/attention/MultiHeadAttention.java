@@ -172,4 +172,12 @@ public class MultiHeadAttention {
     public void setHeadDimension(int headDimension) {
         this.headDimension = headDimension;
     }
+    
+    public void resetGrad() {
+        for (AttentionHead head : heads()) {
+            head.resetGrad();
+        }
+        
+        outProjWeights.zerograd();
+    }
 }

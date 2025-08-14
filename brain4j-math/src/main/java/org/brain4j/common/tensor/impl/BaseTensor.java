@@ -87,26 +87,89 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             sliceCopy(result, ranges, srcIndices, dstIndices, dim + 1);
         }
     }
-
-    protected void softmax1D(double temperature, float[] data) {
-        double max = Double.NEGATIVE_INFINITY;
-
-        for (float value : data) {
-            max = Math.max(max, value);
+    
+    protected void softmax1D(float[] data, int offset, int length, double temperature) {
+        float max = Float.NEGATIVE_INFINITY;
+        
+        for (int i = 0; i < length; i++) {
+            float value = data[offset + i];
+            
+            if (value > max) {
+                max = value;
+            }
         }
-
-        double sum = 0.0;
-
-        for (float value : data) {
-            sum += Math.exp((value - max) / temperature);
+        
+        float sum = 0f;
+        
+        for (int i = 0; i < length; i++) {
+            float e = (float) Math.exp((data[offset + i] - max) / temperature);
+            sum += e;
+            data[offset + i] = e;
         }
-
-        for (int i = 0; i < data.length; i++) {
-            double value = Math.exp((data[i] - max) / temperature) / sum;
-            data[i] = (float) value;
+        
+        for (int i = 0; i < length; i++) {
+            data[offset + i] /= sum;
         }
     }
-
+    
+    protected Tensor softmax1D(double temperature) {
+        Tensor result = clone();
+        softmax1D(result.data(), 0, result.elements(), temperature);
+        return result;
+    }
+    
+    protected Tensor softmax2D(double temperature) {
+        Tensor result = clone();
+        
+        int rows = shape[0];
+        int cols = shape[1];
+        
+        for (int r = 0; r < rows; r++) {
+            softmax1D(data, r * cols, cols, temperature);
+        }
+        
+        return result;
+    }
+    
+    protected Tensor softmax3D(double temperature) {
+        Tensor result = clone();
+        
+        int batches = shape[0];
+        int rows = shape[1];
+        int cols = shape[2];
+        
+        float[] data = result.data();
+        int strideBR = rows * cols;
+        
+        for (int b = 0; b < batches; b++) {
+            for (int r = 0; r < rows; r++) {
+                softmax1D(data, b * strideBR + r * cols, cols, temperature);
+            }
+        }
+        
+        return result;
+    }
+    
+    protected Tensor softmaxND(double temperature) {
+        Tensor result = clone();
+        
+        int rank = shape.length;
+        int lastDim = shape[rank - 1];
+        int outerSize = 1;
+        
+        for (int i = 0; i < rank - 1; i++) {
+            outerSize *= shape[i];
+        }
+        
+        float[] data = result.data();
+        
+        for (int outer = 0; outer < outerSize; outer++) {
+            softmax1D(data, outer * lastDim, lastDim, temperature);
+        }
+        
+        return result;
+    }
+    
     protected void setSliceRecursive(int[] index, int dim, int offset, int sliceSize, Tensor input) {
         if (dim == index.length - 1) {
             for (int i = 0; i < sliceSize; i++) {
@@ -428,27 +491,57 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
     
     @Override
-    public Tensor broadcastLike(Tensor input) {
-        int[] targetShape = input.shape();
+    public Tensor broadcastLike(Tensor target) {
+        int[] targetShape = target.shape();
         
-        if (Arrays.equals(this.shape(), targetShape)) {
+        if (Arrays.equals(shape, targetShape)) {
             return this;
+        }
+        
+        int targetRank = targetShape.length;
+        int srcRank = shape.length;
+        
+        int[] alignedSrcShape = new int[targetRank];
+        int pad = targetRank - srcRank;
+        
+        for (int i = 0; i < pad; i++) alignedSrcShape[i] = 1;
+        System.arraycopy(shape, 0, alignedSrcShape, pad, srcRank);
+        
+        for (int d = 0; d < targetRank; d++) {
+            if (alignedSrcShape[d] > targetShape[d]) {
+                throw new IllegalArgumentException("Cannot broadcast: source dimension " +
+                    alignedSrcShape[d] + " > target dimension " + targetShape[d] + " at axis " + d);
+            }
         }
         
         Tensor out = Tensors.zeros(targetShape);
         
-        int[] idx = new int[targetShape.length];
         int total = out.elements();
+        int[] srcCoords = new int[targetRank];
         
         for (int i = 0; i < total; i++) {
-            int[] coords = unravelIndex(i, targetShape);
-            int[] srcCoords = new int[coords.length];
+            int[] coords = Tensors.unravelIndex(i, targetShape);
+            boolean useZero = false;
             
-            for (int d = 0; d < coords.length; d++) {
-                srcCoords[d] = (this.shape()[d] == 1) ? 0 : coords[d];
+            for (int d = 0; d < targetRank; d++) {
+                int s = alignedSrcShape[d];
+                if (s == targetShape[d]) {
+                    srcCoords[d] = coords[d];
+                } else if (s == 1) {
+                    srcCoords[d] = 0;
+                } else {
+                    if (coords[d] < s) {
+                        srcCoords[d] = coords[d];
+                    } else {
+                        useZero = true;
+                        break;
+                    }
+                }
             }
             
-            out.set(get(srcCoords), coords);
+            if (!useZero) {
+                out.set(get(srcCoords), coords);
+            }
         }
         
         return out;
@@ -1034,42 +1127,17 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     public Tensor softmax() {
         return softmax(1.0);
     }
-
+    
     @Override
     public Tensor softmax(double temperature) {
-        Tensor result = clone();
-        int[] dims = shape;
-
-        int rank = dims.length;
-        int lastDim = dims[rank - 1];
-        int total = 1;
-
-        for (int i = 0; i < rank - 1; i++) {
-            total *= dims[i];
-        }
-
-        for (int i = 0; i < total; i++) {
-            int[] indices = Tensors.unravelIndex(i, Arrays.copyOf(dims, rank - 1));
-            float[] vector = new float[lastDim];
-
-            for (int j = 0; j < lastDim; j++) {
-                int[] fullIndex = Arrays.copyOf(indices, rank);
-                fullIndex[rank - 1] = j;
-                vector[j] = get(fullIndex);
-            }
-
-            softmax1D(temperature, vector);
-
-            for (int j = 0; j < lastDim; j++) {
-                int[] fullIndex = Arrays.copyOf(indices, rank);
-                fullIndex[rank - 1] = j;
-                result.set(vector[j], fullIndex);
-            }
-        }
-
-        return result;
+        return switch (rank()) {
+            case 1 -> softmax1D(temperature);
+            case 2 -> softmax2D(temperature);
+            case 3 -> softmax3D(temperature);
+            default -> softmaxND(temperature);
+        };
     }
-
+    
     @Override
     public String toString(String format) {
         if (shape.length == 0) {

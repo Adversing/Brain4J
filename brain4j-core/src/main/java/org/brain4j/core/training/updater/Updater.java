@@ -69,7 +69,7 @@ public abstract class Updater {
      * @param model the model whose gradients should be reset
      */
     public void resetGradients(Model model) {
-        this.weightsGradients.clear();
+        weightsGradients.clear();
         model.zeroGrad();
     }
 
