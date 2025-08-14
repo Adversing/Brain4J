@@ -15,8 +15,8 @@ public class MulOperation implements Operation {
         Tensor a = inputs[0];
         Tensor b = inputs[1];
 
-        Tensor gradA = gradOutput.times(b);  // ∂z/∂a = ∂z/∂out * b
-        Tensor gradB = gradOutput.times(a);  // ∂z/∂b = ∂z/∂out * a
+        Tensor gradA = gradOutput.times(b); // ∂z/∂a = ∂z/∂out * b
+        Tensor gradB = gradOutput.times(a); // ∂z/∂b = ∂z/∂out * a
 
         return new Tensor[] { gradA, gradB };
     }
