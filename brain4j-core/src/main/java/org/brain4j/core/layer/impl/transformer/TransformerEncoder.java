@@ -175,8 +175,8 @@ public class TransformerEncoder extends Layer {
             attended = dropout.forward(new ForwardContext(cache, attended, index, true));
         }
 
-        Tensor added = input.addGrad(attended);
-        Tensor normalized = normalizer1.forward(new ForwardContext(cache, added, index, true));
+//        Tensor added = input.add(attended); TODO: Fix this giving issues with the comp graph
+        Tensor normalized = normalizer1.forward(new ForwardContext(cache, attended, index, true));
         
         Tensor upProjected = upProjection.forward(new ForwardContext(cache, normalized, index, training));
         Tensor downProjected = downProjection.forward(new ForwardContext(cache, upProjected, index, training));
@@ -185,8 +185,8 @@ public class TransformerEncoder extends Layer {
             downProjected = dropout.forward(new ForwardContext(cache, downProjected, index, true));
         }
 
-        added = normalized.addGrad(downProjected);
-        normalized = normalizer2.forward(new ForwardContext(cache, added, index, training));
+//        added = downProjected; TODO: Fix this giving issues with the comp graph
+        normalized = normalizer2.forward(new ForwardContext(cache, downProjected, index, training));
 
         cache.setPreActivation(this, normalized);
         

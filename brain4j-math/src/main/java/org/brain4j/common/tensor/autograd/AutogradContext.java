@@ -40,7 +40,6 @@ public class AutogradContext {
 
         if (operation == null) return;
         
-        System.out.println("Operation to backward: " + operation.getClass().getSimpleName());
         Tensor[] inputGrads = operation.backward(gradOutput, inputs);
 
         for (int i = 0; i < inputs.length; i++) {
