@@ -15,7 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import static org.brain4j.common.Tensors.ones;
 import static org.brain4j.common.Tensors.unravelIndex;
@@ -93,12 +96,12 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         
         for (int i = 0; i < length; i++) {
             float value = data[offset + i];
-            
+
             if (value > max) {
                 max = value;
             }
         }
-        
+
         float sum = 0f;
         
         for (int i = 0; i < length; i++) {
@@ -141,11 +144,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         float[] data = result.data();
         int strideBR = rows * cols;
         
-        for (int b = 0; b < batches; b++) {
-            for (int r = 0; r < rows; r++) {
-                softmax1D(data, b * strideBR + r * cols, cols, temperature);
-            }
-        }
+        IntStream.range(0, batches * rows).parallel().forEach(i -> {
+            int b = i / rows;
+            int r = i % rows;
+            softmax1D(data, b * strideBR + r * cols, cols, temperature);
+        });
         
         return result;
     }

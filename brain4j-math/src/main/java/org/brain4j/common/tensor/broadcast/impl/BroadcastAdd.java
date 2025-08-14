@@ -4,6 +4,7 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.broadcast.BroadcastOperation;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class BroadcastAdd implements BroadcastOperation {
 
@@ -11,33 +12,45 @@ public class BroadcastAdd implements BroadcastOperation {
     public Tensor defaultOp(Tensor A, Tensor B) {
         int[] shape = A.shape();
         int[] otherShape = B.shape();
-
+        
         float[] aData = A.data();
         float[] bData = B.data();
-
+        
         if (Arrays.equals(shape, otherShape)) {
-            for (int i = 0; i < aData.length; i++) {
+            for (int i = 0, n = aData.length; i < n; i++) {
                 aData[i] += bData[i];
             }
-
             return A;
         }
-
+        
         if (shape.length == 2 && otherShape.length == 1 && shape[1] == otherShape[0]) {
             int batch = shape[0];
             int dimension = shape[1];
-
-            for (int i = 0; i < batch; i++) {
-                int base = i * dimension;
-
-                for (int j = 0; j < dimension; j++) {
-                    aData[base + j] += bData[j];
-                }
+            
+            int total = batch * dimension;
+            for (int idx = 0; idx < total; idx++) {
+                int j = idx % dimension;
+                aData[idx] += bData[j];
             }
-
+            
             return A;
         }
-
+        
+        if (shape.length == 3 && otherShape.length == 1 && shape[2] == otherShape[0]) {
+            int d0 = shape[0];
+            int d1 = shape[1];
+            int d2 = shape[2];
+            
+            int total = d0 * d1 * d2;
+            
+            for (int idx = 0; idx < total; idx++) {
+                int k = idx % d2;
+                aData[idx] += bData[k];
+            }
+            
+            return A;
+        }
+        
         return fallbackOp(A, B);
     }
 
@@ -67,6 +80,7 @@ public class BroadcastAdd implements BroadcastOperation {
 
             for (int d = 0; d < shapeA.length; d++) {
                 int dimB = (shapeB.length - shapeA.length + d);
+                
                 if (dimB >= 0 && shapeB[dimB] != 1) {
                     bIndex += index[d] * stridesB[dimB];
                 }

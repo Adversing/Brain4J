@@ -137,16 +137,7 @@ public class CpuTensor extends BaseTensor {
 
         return TensorBroadcast.sub(this, other);
     }
-
-    @Override
-    public Tensor sub(double value) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] -= value;
-        }
-
-        return this;
-    }
-
+    
     @Override
     public Tensor mul(Tensor other) {
         if (!(other instanceof CpuTensor)) {

@@ -10,6 +10,8 @@ import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.weightsinit.WeightInitialization;
 import org.jocl.cl_kernel;
 
+import java.util.stream.IntStream;
+
 public interface Activation {
 
     /**
@@ -79,12 +81,18 @@ public interface Activation {
 
             return result;
         }
-
-        float[] resultData = new float[input.elements()];
+        
         float[] inputData = input.data();
-
-        for (int i = 0; i < resultData.length; i++) {
-            resultData[i] = (float) activate(inputData[i]);
+        float[] resultData = new float[inputData.length];
+        
+        if (resultData.length > 65536) {
+            IntStream.range(0, inputData.length)
+                .parallel()
+                .forEach(i -> resultData[i] = (float) activate(inputData[i]));
+        } else {
+            for (int i = 0; i < resultData.length; i++) {
+                resultData[i] = (float) activate(inputData[i]);
+            }
         }
 
         return Tensors.create(shape, resultData);

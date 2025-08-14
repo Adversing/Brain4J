@@ -335,9 +335,13 @@ public class Sequential extends Layer implements Model {
         }
 
         AtomicReference<Double> totalLoss = new AtomicReference<>(0.0);
-
-        Pair<Tensor[], Tensor> all = dataSource.allData();
-        makeEvaluation(all, classifications, totalLoss);
+        
+        dataSource.reset();
+        
+        while (dataSource.hasNext()) {
+            Pair<Tensor[], Tensor> batch = dataSource.nextBatch();
+            makeEvaluation(batch, classifications, totalLoss);
+        }
 
         return new EvaluationResult(totalLoss.get() / dataSource.size(), classes, classifications);
     }

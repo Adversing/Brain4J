@@ -37,7 +37,22 @@ public class BroadcastMul implements BroadcastOperation {
 
             return A;
         }
-
+        
+        if (shape.length == 3 && otherShape.length == 1 && shape[2] == otherShape[0]) {
+            int d0 = shape[0];
+            int d1 = shape[1];
+            int d2 = shape[2];
+            
+            int total = d0 * d1 * d2;
+            
+            for (int idx = 0; idx < total; idx++) {
+                int k = idx % d2;
+                aData[idx] *= bData[k];
+            }
+            
+            return A;
+        }
+        
         return fallbackOp(A, B);
     }
 
