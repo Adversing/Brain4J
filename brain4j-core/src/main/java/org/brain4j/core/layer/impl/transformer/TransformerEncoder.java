@@ -116,37 +116,31 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         if (input.rank() != 3) {
             throw new IllegalArgumentException(
                 "Expected input with shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
             );
         }
 
-        int index = context.index();
-        boolean training = context.training();
-
-        StatesCache cache = context.cache();
         Tensor attended = attention.attend(cache, input);
         
         if (training) {
-            attended = dropout.forward(new ForwardContext(cache, attended, index, true));
+            attended = dropout.forward(cache, attended, true);
         }
 
         Tensor added = attended.add(input);
-        Tensor normalized = normalizer1.forward(new ForwardContext(cache, added, index, training));
+        Tensor normalized = normalizer1.forward(cache, added, training);
         
-        Tensor upProjected = upProjection.forward(new ForwardContext(cache, normalized, index, training));
-        Tensor downProjected = downProjection.forward(new ForwardContext(cache, upProjected, index, training));
+        Tensor upProjected = upProjection.forward(cache, normalized, training);
+        Tensor downProjected = downProjection.forward(cache, upProjected, training);
 
         if (training) {
-            downProjected = dropout.forward(new ForwardContext(cache, downProjected, index, true));
+            downProjected = dropout.forward(cache, downProjected, true);
         }
 
         Tensor added2 = downProjected.add(normalized);
-        normalized = normalizer2.forward(new ForwardContext(cache, added2, index, training));
+        normalized = normalizer2.forward(cache, added2, training);
 
         cache.rememberOutput(this, normalized);
         
@@ -154,10 +148,10 @@ public class TransformerEncoder extends Layer {
     }
 
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         attention.backward(updater, optimizer);
-        upProjection.backward(cache, updater, optimizer, index);
-        downProjection.backward(cache, updater, optimizer, index);
+        upProjection.backward(cache, updater, optimizer);
+        downProjection.backward(cache, updater, optimizer);
     }
     
     @Override

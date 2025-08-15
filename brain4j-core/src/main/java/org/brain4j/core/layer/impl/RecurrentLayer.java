@@ -6,13 +6,11 @@ import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
-import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -95,10 +93,8 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         // [batch_size, timesteps, dimension]
-        Tensor input = context.input();
-        
         if (input.rank() > 3) {
             throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");
         }
@@ -130,13 +126,13 @@ public class RecurrentLayer extends Layer {
         Tensor sequence = Tensors.concatGrad(List.of(allStates), 1);
         Tensor output = sequence.matmulGrad(weights).addGrad(bias);
         
-        context.cache().rememberOutput(this, output);
+        cache.rememberOutput(this, output);
         return output;
     }
     
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
-        super.backward(cache, updater, optimizer, index);
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        super.backward(cache, updater, optimizer);
         
         Tensor inputWeightsGrad = optimizer.step(inputWeights, inputWeights.grad());
         Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());

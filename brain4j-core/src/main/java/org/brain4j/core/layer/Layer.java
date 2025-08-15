@@ -57,10 +57,12 @@ public abstract class Layer {
     
     /**
      * Performs a forward pass through this layer.
-     * @param context the forward context
+     * @param cache the states cache for this forward pass
+     * @param input the input tensor
+     * @param training whether is training or not
      * @return the output tensor
      */
-    public abstract Tensor forward(ForwardContext context);
+    public abstract Tensor forward(StatesCache cache, Tensor input, boolean training);
 
     /**
      * Returns the output size of this layer, i.e. the number of neurons.
@@ -131,9 +133,8 @@ public abstract class Layer {
      * @param cache
      * @param updater   the updater of this model
      * @param optimizer the optimizer of this model
-     * @param index     the index of this layer
      */
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         if (weights != null && weights.grad() != null) {
             Tensor weightsGrad = optimizer.step(weights, weights.grad());
             

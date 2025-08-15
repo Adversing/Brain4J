@@ -10,7 +10,6 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.Brain4J;
-import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
@@ -290,15 +289,9 @@ public class Sequential extends Layer implements Model {
         if (device != null) {
             GpuContext.updateQueue(device, cache.commandQueue());
         }
-
-        for (int i = 0; i < flattened.size(); i++) {
-            Layer layer = flattenedAt(i);
-
-            if (layer == null) {
-                throw new IllegalStateException("Layer at index " + i + " is null!");
-            }
-
-            result = layer.forward(new ForwardContext(cache, result, i, training));
+        
+        for (Layer layer : flattened) {
+            result = layer.forward(cache, result, training);
         }
 
         if (!training && device != null) {
@@ -318,7 +311,7 @@ public class Sequential extends Layer implements Model {
         for (int l = count; l >= 0; l--) {
             Layer layer = flattened.get(l);
 
-            layer.backward(cache, updater, optimizer, l);
+            layer.backward(cache, updater, optimizer);
         }
     }
 
@@ -381,9 +374,10 @@ public class Sequential extends Layer implements Model {
         this.lossFunction = lossFunction;
         this.backPropagation = new BackPropagation(this, optimizer, updater);
         
-        this.updater.resetGradients(this);
-        this.optimizer.initialize(this);
+        updater.resetGradients();
+        optimizer.initialize();
         
+        zeroGrad();
         connectLayers();
         return this;
     }
@@ -580,11 +574,9 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor pass = context.input();
-        StatesCache cache = context.cache();
-        boolean training = context.training();
-
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+        Tensor pass = input;
+        
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layerAt(i);
 
@@ -592,18 +584,18 @@ public class Sequential extends Layer implements Model {
                 throw new IllegalStateException("Layer at index " + i + " is null!");
             }
 
-            pass = layer.forward(new ForwardContext(cache, pass, i, training));
+            pass = layer.forward(cache, pass, training);
         }
 
         return pass;
     }
 
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         for (int l = layers.size() - 2; l >= 0; l--) {
             Layer layer = layerAt(l);
 
-            layer.backward(cache, updater, optimizer, index - l);
+            layer.backward(cache, updater, optimizer);
         }
     }
 

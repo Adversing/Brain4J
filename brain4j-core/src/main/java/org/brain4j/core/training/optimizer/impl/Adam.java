@@ -4,7 +4,6 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
-import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.Optimizer;
 
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class Adam extends Optimizer {
     }
 
     @Override
-    public void initialize(Model model) {
+    public void initialize() {
         this.beta1Timestep = Math.pow(beta1, timestep);
         this.beta2Timestep = Math.pow(beta2, timestep);
         this.firstMomentum = new HashMap<>();

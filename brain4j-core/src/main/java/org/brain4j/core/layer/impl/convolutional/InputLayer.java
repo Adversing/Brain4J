@@ -5,6 +5,7 @@ import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
 
 import java.util.List;
 
@@ -38,15 +39,14 @@ public class InputLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         int[] inputShape = input.shape();
         
         if (!validateInput(input)) {
             throw new IllegalArgumentException("Expecting 4-dimensional tensor with shape [batch, channels, height, width]!");
         }
         
-        return context.input().reshapeGrad(inputShape[0], channels, height, width);
+        return input.reshapeGrad(inputShape[0], channels, height, width);
     }
 
     @Override

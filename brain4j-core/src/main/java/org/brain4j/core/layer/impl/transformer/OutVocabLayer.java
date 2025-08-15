@@ -64,8 +64,7 @@ public class OutVocabLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         int[] shape = input.shape();
 
         if (shape.length != 3) {
@@ -73,9 +72,7 @@ public class OutVocabLayer extends Layer {
                     "Expected input with shape [batch_size, seq_length, dimension], got: " + Arrays.toString(shape)
             );
         }
-
-        StatesCache cache = context.cache();
-
+        
         Tensor output = input.matmulGrad(weights);
         Tensor activated = output.activateGrad(activation);
 

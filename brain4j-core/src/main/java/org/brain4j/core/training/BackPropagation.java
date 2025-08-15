@@ -21,7 +21,7 @@ public class BackPropagation {
         this.model = model;
         this.optimizer = optimizer;
         this.updater = updater;
-        updater.resetGradients(model);
+        updater.resetGradients();
     }
 
     public void propagatePartition(
@@ -45,9 +45,10 @@ public class BackPropagation {
         for (Tensor input : inputs) {
             elements *= input.shape()[0];
         }
-
+        
         optimizer.postBatch();
-        updater.postBatch(model, optimizer.learningRate(), elements);
+        updater.postBatch(optimizer.learningRate(), elements);
+        model.zeroGrad();
 
         if (device != null) {
             GpuContext.closeQueue(device);
@@ -65,7 +66,8 @@ public class BackPropagation {
             propagatePartition(batch, postBatchCallback, dataSource.cursor());
         }
 
-        updater.postFit(model, optimizer.learningRate(), dataSource.size());
+        updater.postFit(optimizer.learningRate(), dataSource.size());
+        model.zeroGrad();
     }
 
     private Pair<Tensor[], Tensor> hostTo(Pair<Tensor[], Tensor> partition) {

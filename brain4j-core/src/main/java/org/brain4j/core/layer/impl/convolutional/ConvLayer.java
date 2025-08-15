@@ -8,6 +8,7 @@ import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,9 +75,7 @@ public class ConvLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         if (!validateInput(input)) {
             throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
         }

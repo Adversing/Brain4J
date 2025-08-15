@@ -2,7 +2,6 @@ package org.brain4j.core.training.optimizer.impl;
 
 import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.Optimizer;
 
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class Lion extends Optimizer {
     }
 
     @Override
-    public void initialize(Model model) {
+    public void initialize() {
         this.momentumHistory = new HashMap<>();
     }
 

@@ -5,6 +5,7 @@ import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
 
 import java.util.List;
 import java.util.Random;
@@ -49,10 +50,7 @@ public class DropoutLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-        boolean training = context.training();
-
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         if (training) {
             return scale(input);
         }

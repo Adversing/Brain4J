@@ -1,7 +1,6 @@
 package org.brain4j.core.training.optimizer;
 
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.impl.Adam;
 import org.brain4j.core.training.optimizer.impl.AdamW;
 import org.brain4j.core.training.optimizer.impl.GradientDescent;
@@ -24,7 +23,7 @@ public abstract class Optimizer {
 
     public abstract Tensor step(Tensor weights, Tensor gradient);
 
-    public void initialize(Model model) {
+    public void initialize() {
         // No-op
     }
 

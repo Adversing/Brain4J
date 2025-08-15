@@ -1,11 +1,9 @@
 package org.brain4j.core.training.updater;
 
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.core.model.Model;
 import org.brain4j.core.training.updater.impl.NormalUpdater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +39,7 @@ public abstract class Updater {
             Tensor gradient = entry.getValue();
             
             if (gradient != null && weights != null) {
-                if (gradient.rank() > weights.rank()) {
+                while (gradient.rank() > weights.rank()) {
                     gradient = gradient.sum(0, false);
                 }
                 
@@ -68,30 +66,27 @@ public abstract class Updater {
      * Resets all accumulated gradients and clears the internal state.
      * @param model the model whose gradients should be reset
      */
-    public void resetGradients(Model model) {
+    public void resetGradients() {
         weightsGradients.clear();
-        model.zeroGrad();
     }
 
     /**
      * Optional hook called after training on an entire dataset (epoch).
      *
-     * @param model the trained model
      * @param learningRate the learning rate used during training
-     * @param samples the number of training samples
+     * @param samples      the number of training samples
      */
-    public void postFit(Model model, double learningRate, int samples) {
+    public void postFit(double learningRate, int samples) {
         // Overridden by subclasses
     }
 
     /**
      * Optional hook called after processing a single mini-batch.
      *
-     * @param model the model being trained
      * @param learningRate the learning rate for the current batch
-     * @param samples the number of samples in the current batch
+     * @param samples      the number of samples in the current batch
      */
-    public void postBatch(Model model, double learningRate, int samples) {
+    public void postBatch(double learningRate, int samples) {
         // Overridden by subclasses
     }
 }

@@ -109,10 +109,7 @@ public class DenseLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-        StatesCache cache = context.cache();
-
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         if (weights == null || weights.shape()[0] == 0) return input;
 
         if (!validateInput(input)) {

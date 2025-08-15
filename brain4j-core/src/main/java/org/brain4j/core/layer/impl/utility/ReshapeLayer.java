@@ -4,6 +4,7 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,9 +40,7 @@ public class ReshapeLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         int[] inputShape = input.shape();
         int[] newShape = new int[shape.length + 1];
 

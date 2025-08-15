@@ -6,6 +6,5 @@ import org.brain4j.core.training.StatesCache;
 public record ForwardContext(
     StatesCache cache,
     Tensor input,
-    int index,
     boolean training
 ) { }

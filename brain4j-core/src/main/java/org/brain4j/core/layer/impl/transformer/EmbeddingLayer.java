@@ -4,7 +4,6 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
-import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -50,9 +49,7 @@ public class EmbeddingLayer extends Layer {
     }
 
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-        StatesCache cache = context.cache();
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         int[] shape = input.shape();
 
         if (shape.length != 2) {
@@ -89,7 +86,7 @@ public class EmbeddingLayer extends Layer {
     }
 
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         Tensor input = cache.input(this);
         Tensor output = cache.output(this);
         Tensor gradOutput = output.grad();

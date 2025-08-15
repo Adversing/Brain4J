@@ -6,6 +6,7 @@ import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,8 +31,7 @@ public class PosEncodeLayer extends Layer {
     }
 
     @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
+    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
         // [batch_size, seq_length, dimension]
         int[] shape = input.shape();
 
@@ -41,7 +41,6 @@ public class PosEncodeLayer extends Layer {
             );
         }
 
-        int batchSize = shape[0];
         int seqLength = shape[1];
         int dimension = shape[2];
 
