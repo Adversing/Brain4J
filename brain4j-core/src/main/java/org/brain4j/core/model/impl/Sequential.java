@@ -13,6 +13,7 @@ import org.brain4j.core.Brain4J;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
+import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.BackPropagation;
 import org.brain4j.core.training.StatesCache;
@@ -126,7 +127,7 @@ public class Sequential extends Layer implements Model {
             int batchSize = input.shape()[0];
 
             for (int i = 0; i < batchSize; i++) {
-                Range range = new Range(i, i + 1);
+                Range range = Range.point(i);
 
                 Tensor output = prediction.slice(range).flatten();
                 Tensor target = expected.slice(range).flatten();
@@ -134,14 +135,14 @@ public class Sequential extends Layer implements Model {
                 int predIndex = output.argmax();
                 int targetIndex = target.argmax();
 
-                if (output.elements() == 1) {
+                if (output.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
                     predIndex = output.get(0) > 0.5 ? 1 : 0;
                     targetIndex = (int) target.get(0);
                 }
 
                 double loss = lossFunction.calculate(target, output);
                 totalLoss.updateAndGet(v -> v + loss);
-
+                
                 Tensor predictions = classifications.get(targetIndex);
                 int pred = (int) predictions.get(predIndex);
 

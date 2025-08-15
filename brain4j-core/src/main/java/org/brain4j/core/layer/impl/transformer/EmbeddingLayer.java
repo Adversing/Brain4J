@@ -93,7 +93,7 @@ public class EmbeddingLayer extends Layer {
         Tensor input = cache.input(this);
         Tensor output = cache.output(this);
         Tensor gradOutput = output.grad();
-
+        
         int[] shape = output.shape();
 
         int batchSize = shape[0];
@@ -116,7 +116,7 @@ public class EmbeddingLayer extends Layer {
             }
         }
 
-        Tensor optimized = optimizer.step(weights, gradOutput);
+        Tensor optimized = optimizer.step(weights, weightsGrad);
 
         clipper.clip(optimized);
         updater.change(weights, optimized);

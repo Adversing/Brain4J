@@ -1,4 +1,4 @@
-package org.brain4j.core.layer.impl;
+package org.brain4j.core.layer.impl.utility;
 
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.importing.proto.ProtoModel;

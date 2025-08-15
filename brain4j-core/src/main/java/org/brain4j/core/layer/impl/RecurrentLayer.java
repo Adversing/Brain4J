@@ -12,6 +12,7 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
