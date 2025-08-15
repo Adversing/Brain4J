@@ -92,9 +92,9 @@ public class SimdMatmulProvider implements MatmulProvider {
         boolean transposedA, boolean transposedB
     ) {
         if (batchA == 1 && batchB == 1) {
-            matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp, transposedA, transposedB);
+            matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp);
         } else {
-            matmulGeneric(a, b, c, start, end, m, n, p, mn, np, mp, batchA, batchB, transposedA, transposedB);
+            matmulGeneric(a, b, c, start, end, m, n, p, mn, np, mp, batchA, batchB);
         }
     }
     
@@ -102,8 +102,7 @@ public class SimdMatmulProvider implements MatmulProvider {
         float[] a, float[] b, float[] c,
         int start, int end,
         int m, int n, int p,
-        int mn, int np, int mp,
-        boolean transposedA, boolean transposedB
+        int mn, int np, int mp
     ) {
         for (int r = start; r < end; r++) {
             int batch = r / m;
@@ -138,8 +137,7 @@ public class SimdMatmulProvider implements MatmulProvider {
         int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB,
-        boolean transposedA, boolean transposedB
+        int batchA, int batchB
     ) {
         for (int r = start; r < end; r++) {
             int bi = (batchA == 1 ? 0 : r / m) * mn;
