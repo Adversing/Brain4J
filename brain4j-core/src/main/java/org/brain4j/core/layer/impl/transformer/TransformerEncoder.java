@@ -148,16 +148,16 @@ public class TransformerEncoder extends Layer {
 //        added = downProjected; TODO: Fix this giving issues with the comp graph
         normalized = normalizer2.forward(new ForwardContext(cache, downProjected, index, training));
 
-        cache.setPreActivation(this, normalized);
+        cache.rememberOutput(this, normalized);
         
         return normalized;
     }
 
     @Override
-    public void backward(Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
         attention.backward(updater, optimizer);
-        upProjection.backward(updater, optimizer, index);
-        downProjection.backward(updater, optimizer, index);
+        upProjection.backward(cache, updater, optimizer, index);
+        downProjection.backward(cache, updater, optimizer, index);
     }
     
     @Override

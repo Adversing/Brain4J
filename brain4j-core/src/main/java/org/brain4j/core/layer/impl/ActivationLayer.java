@@ -48,7 +48,7 @@ public class ActivationLayer extends Layer {
         Tensor input = context.input();
         StatesCache cache = context.cache();
 
-        cache.setPreActivation(this, input);
+        cache.rememberOutput(this, input);
         return input.activateGrad(activation);
     }
 

@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class StatesCache {
 
-    private final Map<Layer, Tensor> preActivations;
+    private final Map<Layer, Tensor> inputStates;
+    private final Map<Layer, Tensor> outputStates;
     private cl_command_queue commandQueue;
 
     public StatesCache() {
@@ -18,19 +19,28 @@ public class StatesCache {
     }
 
     public StatesCache(Device device) {
-        this.preActivations = new HashMap<>();
+        this.inputStates = new HashMap<>();
+        this.outputStates = new HashMap<>();
 
         if (device != null) {
             this.commandQueue = device.newCommandQueue();
         }
     }
 
-    public Tensor preActivation(Layer layer) {
-        return preActivations.get(layer);
+    public Tensor input(Layer layer) {
+        return inputStates.get(layer);
     }
 
-    public void setPreActivation(Layer layer, Tensor preActivation) {
-        preActivations.put(layer, preActivation);
+    public void rememberInput(Layer layer, Tensor tensor) {
+        inputStates.put(layer, tensor);
+    }
+
+    public Tensor output(Layer layer) {
+        return outputStates.get(layer);
+    }
+
+    public void rememberOutput(Layer layer, Tensor state) {
+        outputStates.put(layer, state);
     }
     
     public cl_command_queue commandQueue() {

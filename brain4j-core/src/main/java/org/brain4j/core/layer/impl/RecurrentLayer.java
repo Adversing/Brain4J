@@ -8,6 +8,7 @@ import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
@@ -128,13 +129,13 @@ public class RecurrentLayer extends Layer {
         Tensor sequence = Tensors.concatGrad(List.of(allStates), 1);
         Tensor output = sequence.matmulGrad(weights).addGrad(bias);
         
-        context.cache().setPreActivation(this, output);
+        context.cache().rememberOutput(this, output);
         return output;
     }
     
     @Override
-    public void backward(Updater updater, Optimizer optimizer, int index) {
-        super.backward(updater, optimizer, index);
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
+        super.backward(cache, updater, optimizer, index);
         
         Tensor inputWeightsGrad = optimizer.step(inputWeights, inputWeights.grad());
         Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());

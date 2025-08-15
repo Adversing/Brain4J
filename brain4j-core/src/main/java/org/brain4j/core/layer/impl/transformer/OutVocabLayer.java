@@ -79,7 +79,7 @@ public class OutVocabLayer extends Layer {
         Tensor output = input.matmulGrad(weights);
         Tensor activated = output.activateGrad(activation);
 
-        cache.setPreActivation(this, output);
+        cache.rememberOutput(this, output);
 
         return activated;
     }

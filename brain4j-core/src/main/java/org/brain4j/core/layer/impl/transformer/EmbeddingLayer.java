@@ -6,11 +6,15 @@ import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.StatesCache;
+import org.brain4j.core.training.optimizer.Optimizer;
+import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 /**
  * Embedding layer implementation for transformer architectures.
@@ -43,6 +47,79 @@ public class EmbeddingLayer extends Layer {
         this.vocabSize = vocabSize;
         this.embeddingDim = embeddingDim;
         this.weightInit = new UniformXavierInit();
+    }
+
+    @Override
+    public Tensor forward(ForwardContext context) {
+        Tensor input = context.input();
+        StatesCache cache = context.cache();
+        int[] shape = input.shape();
+
+        if (shape.length != 2) {
+            throw new IllegalStateException(
+                "Expecting shape [batch_size, seq_length] with dimension 2, got " + Arrays.toString(shape)
+            );
+        }
+
+        int batchSize = shape[0];
+        int seqLength = shape[1];
+
+        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim).withGrad();
+
+        float[] outData = output.data();
+        float[] weightData = weights.data();
+
+        IntStream.range(0, batchSize)
+            .parallel()
+            .forEach(b -> {
+                for (int s = 0; s < seqLength; s++) {
+                    int tokenId = (int) input.get(b, s);
+                    int outOffset = (b * seqLength + s) * embeddingDim;
+                    int weightOffset = tokenId * embeddingDim;
+
+                    System.arraycopy(weightData, weightOffset, outData, outOffset, embeddingDim);
+                }
+            });
+
+        cache.rememberInput(this, input);
+        cache.rememberOutput(this, output);
+
+        // [batch_size, seq_length, embedding_dim]
+        return output;
+    }
+
+    @Override
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
+        Tensor input = cache.input(this);
+        Tensor output = cache.output(this);
+        Tensor gradOutput = output.grad();
+
+        int[] shape = output.shape();
+
+        int batchSize = shape[0];
+        int seqLength = shape[1];
+
+        Tensor weightsGrad = weights.grad();
+
+        if (weightsGrad == null) {
+            weightsGrad = Tensors.zeros(weights.shape());
+        }
+
+        for (int b = 0; b < batchSize; b++) {
+            for (int s = 0; s < seqLength; s++) {
+                int tokenId = (int) input.get(b, s);
+
+                for (int d = 0; d < embeddingDim; d++) {
+                    float gradient = gradOutput.get(b, s, d);
+                    weightsGrad.set(gradient, tokenId, d);
+                }
+            }
+        }
+
+        Tensor optimized = optimizer.step(weights, gradOutput);
+
+        clipper.clip(optimized);
+        updater.change(weights, optimized);
     }
 
     @Override
@@ -79,33 +156,6 @@ public class EmbeddingLayer extends Layer {
         return List.of(
             SerializeUtils.serializeTensor("weight", weights)
         );
-    }
-    
-    @Override
-    public Tensor forward(ForwardContext context) {
-        Tensor input = context.input();
-        int[] shape = input.shape();
-
-        if (shape.length != 2) {
-            throw new IllegalStateException(
-                    "Expecting shape [batch_size, seq_length] with dimension 2, got " + Arrays.toString(shape)
-            );
-        }
-
-        int batchSize = shape[0];
-        int seqLength = shape[1];
-        
-        Tensor oneHot = Tensors.zeros(batchSize, seqLength, vocabSize).withGrad();
-        
-        for (int b = 0; b < batchSize; b++) {
-            for (int s = 0; s < seqLength; s++) {
-                int tokenId = (int) input.get(b, s);
-                oneHot.set(1.0f, b, s, tokenId);
-            }
-        }
-        
-        // [batch_size, seq_length, embedding_dim]
-        return oneHot.matmulGrad(weights);
     }
 
     @Override

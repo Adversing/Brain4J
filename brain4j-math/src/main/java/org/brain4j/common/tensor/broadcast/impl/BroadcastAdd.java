@@ -42,7 +42,7 @@ public class BroadcastAdd implements BroadcastOperation {
             int d2 = shape[2];
             
             int total = d0 * d1 * d2;
-            
+
             for (int idx = 0; idx < total; idx++) {
                 int k = idx % d2;
                 aData[idx] += bData[k];

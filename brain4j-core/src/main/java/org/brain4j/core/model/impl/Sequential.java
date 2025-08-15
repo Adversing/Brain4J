@@ -10,18 +10,14 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.Brain4J;
-import org.brain4j.core.activation.Activations;
-import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.ForwardContext;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.BackPropagation;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,7 +317,7 @@ public class Sequential extends Layer implements Model {
         for (int l = count; l >= 0; l--) {
             Layer layer = flattened.get(l);
 
-            layer.backward(updater, optimizer, l);
+            layer.backward(cache, updater, optimizer, l);
         }
     }
 
@@ -602,11 +598,11 @@ public class Sequential extends Layer implements Model {
     }
 
     @Override
-    public void backward(Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
         for (int l = layers.size() - 2; l >= 0; l--) {
             Layer layer = layerAt(l);
 
-            layer.backward(updater, optimizer, index - l);
+            layer.backward(cache, updater, optimizer, index - l);
         }
     }
 

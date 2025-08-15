@@ -125,7 +125,7 @@ public class DenseLayer extends Layer {
             .matmulGrad(weights)
             .addGrad(bias);
 
-        cache.setPreActivation(this, output);
+        cache.rememberOutput(this, output);
         return output.activateGrad(activation);
     }
 

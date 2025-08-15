@@ -116,7 +116,7 @@ public abstract class Layer {
         Tensor outputs,
         LossFunction lossFunction
     ) {
-        Tensor preOutput = cache.preActivation(this);
+        Tensor preOutput = cache.output(this);
 
         Tensor error = outputs.minus(targets);
         Tensor derivatives = activation.derivative(preOutput);
@@ -127,11 +127,13 @@ public abstract class Layer {
 
     /**
      * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
-     * @param updater the updater of this model
+     *
+     * @param cache
+     * @param updater   the updater of this model
      * @param optimizer the optimizer of this model
-     * @param index the index of this layer
+     * @param index     the index of this layer
      */
-    public void backward(Updater updater, Optimizer optimizer, int index) {
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer, int index) {
         if (weights != null && weights.grad() != null) {
             Tensor weightsGrad = optimizer.step(weights, weights.grad());
             
