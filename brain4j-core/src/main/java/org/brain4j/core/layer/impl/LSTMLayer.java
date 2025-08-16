@@ -92,7 +92,7 @@ public class LSTMLayer extends Layer {
         }
         
         // [batch_size, timesteps, hidden_dim]
-        return Tensors.concatGradLast(List.of(hiddenStates), 1);
+        return Tensors.concatGrad(List.of(hiddenStates), 1);
     }
     
     @Override
