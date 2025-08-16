@@ -98,7 +98,7 @@ public class LSTMLayer extends Layer {
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         super.backward(cache, updater, optimizer);
-        
+
         Tensor weightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
         
         clipper.clip(weightsGrad);

@@ -268,11 +268,19 @@ public class Sequential extends Layer implements Model {
         for (int epoch = 1; epoch <= epoches; epoch++) {
             int finalEpoch = epoch;
 
+            List<Double> times = new ArrayList<>();
             AtomicReference<Double> totalForBatch = new AtomicReference<>(0.0);
             
             BiConsumer<Integer, Double> consumer = (batch, took) -> {
+                times.add(took);
                 totalForBatch.set(totalForBatch.get() + took);
-                double average = totalForBatch.get() / batch;
+
+                while (times.size() > 20) {
+                    totalForBatch.set(totalForBatch.get() - times.getFirst());
+                    times.removeFirst();
+                }
+
+                double average = totalForBatch.get() / Math.min(batch, 20);
 
                 if (Brain4J.logging()) {
                     printProgress(train, finalEpoch, epoches, batch, average);

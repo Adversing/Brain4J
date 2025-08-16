@@ -3,6 +3,7 @@ package org.brain4j.core.transformer.attention.head;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
+import org.brain4j.common.tensor.index.Range;
 import org.brain4j.common.weightsinit.WeightInitialization;
 import org.brain4j.core.activation.impl.SoftmaxActivation;
 import org.brain4j.core.clipper.GradientClipper;
@@ -17,7 +18,7 @@ import java.util.Random;
 public class AttentionHead {
 
     protected final GradientClipper clipper;
-    
+
     protected Tensor queryWeights;
     protected Tensor keyWeights;
     protected Tensor valueWeights;
@@ -101,11 +102,11 @@ public class AttentionHead {
         Tensor optimizedQuery = optimizer.step(queryWeights, queryGrad);
         Tensor optimizedKey = optimizer.step(keyWeights, keyGrad);
         Tensor optimizedValue = optimizer.step(valueWeights, valueGrad);
-        
+
         clipper.clip(optimizedQuery);
         clipper.clip(optimizedKey);
         clipper.clip(optimizedValue);
-        
+
         updater.change(queryWeights, optimizedQuery);
         updater.change(keyWeights, optimizedKey);
         updater.change(valueWeights, optimizedValue);

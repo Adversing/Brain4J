@@ -68,7 +68,6 @@ public abstract class Updater {
 
     /**
      * Resets all accumulated gradients and clears the internal state.
-     * @param model the model whose gradients should be reset
      */
     public void resetGradients() {
         weightsGradients.clear();
@@ -76,9 +75,7 @@ public abstract class Updater {
 
     /**
      * Optional hook called after training on an entire dataset (epoch).
-     *
-     * @param learningRate the learning rate used during training
-     * @param samples      the number of training samples
+     * @param samples the number of training samples
      */
     public void postFit(int samples) {
         // Overridden by subclasses
@@ -86,8 +83,6 @@ public abstract class Updater {
 
     /**
      * Optional hook called after processing a single mini-batch.
-     *
-     * @param learningRate the learning rate for the current batch
      * @param samples      the number of samples in the current batch
      */
     public void postBatch(int samples) {

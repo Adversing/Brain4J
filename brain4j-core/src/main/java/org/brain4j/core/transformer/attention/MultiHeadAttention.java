@@ -7,6 +7,7 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.weightsinit.WeightInitialization;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.NoClipper;
+import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -78,12 +79,7 @@ public class MultiHeadAttention {
             outputs[i] = heads.get(i).attend(cache, input);
         }
 
-        Tensor result = outputs[0];
-
-        for (int i = 1; i < outputs.length; i++) {
-            result = result.concatGrad(outputs[i], -1);
-        }
-
+        Tensor result = Tensors.concatGrad(List.of(outputs));
         return result.matmulGrad(outProjWeights);
     }
 
@@ -101,9 +97,9 @@ public class MultiHeadAttention {
         }
     }
 
-    public org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention serialize() {
-        org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder builder =
-            org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.newBuilder()
+    public ProtoModel.MultiHeadAttention serialize() {
+        ProtoModel.MultiHeadAttention.Builder builder =
+            ProtoModel.MultiHeadAttention.newBuilder()
                 .setOutWeight(SerializeUtils.serializeTensor("out_weight", outProjWeights))
                 .putAttrs("gradient_clipper", SerializeUtils.value(clipper.getClass().getName()))
                 .putAttrs("head_count", SerializeUtils.value(headCount))
@@ -117,7 +113,7 @@ public class MultiHeadAttention {
         return builder.build();
     }
     
-    public void deserialize(org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention attention) {
+    public void deserialize(ProtoModel.MultiHeadAttention attention) {
         this.outProjWeights = SerializeUtils.deserializeTensor(attention.getOutWeight());
         this.clipper = Commons.newInstance(SerializeUtils.attribute(attention.getAttrsMap(), "gradient_clipper", NoClipper.class.getName()));
         this.headCount = SerializeUtils.attribute(attention.getAttrsMap(), "head_count", 0);
@@ -125,13 +121,21 @@ public class MultiHeadAttention {
         this.headDimension = SerializeUtils.attribute(attention.getAttrsMap(), "head_dimension", 0);
         this.heads = new ArrayList<>();
         
-        for (org.brain4j.core.importing.proto.ProtoModel.AttentionHead protoHead : attention.getHeadsList()) {
+        for (ProtoModel.AttentionHead protoHead : attention.getHeadsList()) {
             AttentionHead head = createAttentionHead();
             head.deserialize(protoHead);
             heads.add(head);
         }
     }
-    
+
+    public void resetGrad() {
+        for (AttentionHead head : heads()) {
+            head.resetGrad();
+        }
+
+        outProjWeights.zerograd();
+    }
+
     public GradientClipper clipper() {
         return clipper;
     }
@@ -170,13 +174,5 @@ public class MultiHeadAttention {
     
     public void setHeadDimension(int headDimension) {
         this.headDimension = headDimension;
-    }
-    
-    public void resetGrad() {
-        for (AttentionHead head : heads()) {
-            head.resetGrad();
-        }
-        
-        outProjWeights.zerograd();
     }
 }
