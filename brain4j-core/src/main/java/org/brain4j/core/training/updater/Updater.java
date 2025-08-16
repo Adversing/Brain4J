@@ -21,7 +21,12 @@ import java.util.Map;
 public abstract class Updater {
 
     protected Map<Tensor, Tensor> weightsGradients = new HashMap<>();
-
+    protected double learningRate;
+    
+    public Updater(double learningRate) {
+        this.learningRate = learningRate;
+    }
+    
     /**
      * Applies the accumulated gradients to the model's weights.
      * <p>
@@ -30,10 +35,9 @@ public abstract class Updater {
      * {@code weights -= (gradient / samples) * learningRate}
      * </pre>
      *
-     * @param learningRate the learning rate to scale the gradient
      * @param samples the number of samples used to normalize the gradient
      */
-    public void updateWeights(double learningRate, int samples) {
+    public void updateWeights(int samples) {
         for (Map.Entry<Tensor, Tensor> entry : weightsGradients.entrySet()) {
             Tensor weights = entry.getKey();
             Tensor gradient = entry.getValue();
@@ -76,7 +80,7 @@ public abstract class Updater {
      * @param learningRate the learning rate used during training
      * @param samples      the number of training samples
      */
-    public void postFit(double learningRate, int samples) {
+    public void postFit(int samples) {
         // Overridden by subclasses
     }
 
@@ -86,7 +90,7 @@ public abstract class Updater {
      * @param learningRate the learning rate for the current batch
      * @param samples      the number of samples in the current batch
      */
-    public void postBatch(double learningRate, int samples) {
+    public void postBatch(int samples) {
         // Overridden by subclasses
     }
 }

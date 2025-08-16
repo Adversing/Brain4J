@@ -13,29 +13,15 @@ import org.brain4j.core.training.optimizer.impl.Lion;
  * @see AdamW
  * @see Lion
  */
-public abstract class Optimizer {
+public interface Optimizer {
 
-    protected double learningRate;
+    Tensor step(Tensor weights, Tensor gradient);
 
-    public Optimizer(double learningRate) {
-        this.learningRate = learningRate;
+    default void initialize() {
+        // Optional hook
     }
-
-    public abstract Tensor step(Tensor weights, Tensor gradient);
-
-    public void initialize() {
-        // No-op
-    }
-
-    public void postBatch() {
-        // No-op
-    }
-
-    public double learningRate() {
-        return learningRate;
-    }
-
-    public void setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
+    
+    default void postBatch() {
+        // Optional hook
     }
 }

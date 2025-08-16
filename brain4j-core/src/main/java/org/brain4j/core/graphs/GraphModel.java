@@ -162,7 +162,37 @@ public class GraphModel implements Model {
     public Layer flattenedAt(int index) {
         throw new UnsupportedOperationException();
     }
-
+    
+    @Override
+    public Optimizer optimizer() {
+        return null;
+    }
+    
+    @Override
+    public void setOptimizer(Optimizer optimizer) {
+    
+    }
+    
+    @Override
+    public Updater updater() {
+        return null;
+    }
+    
+    @Override
+    public void setUpdater(Updater updater) {
+    
+    }
+    
+    @Override
+    public LossFunction lossFunction() {
+        return null;
+    }
+    
+    @Override
+    public void setLossFunction(LossFunction lossFunction) {
+    
+    }
+    
     @Override
     public void summary() {
         throw new UnsupportedOperationException();

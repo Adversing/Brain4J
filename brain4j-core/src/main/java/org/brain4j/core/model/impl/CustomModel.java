@@ -73,7 +73,7 @@ public abstract class CustomModel {
     
     public void updateWeights(Tensor output) {
         int elements = output.shape()[0];
-        updater.updateWeights(optimizer.learningRate(), elements);
+        updater.updateWeights(elements);
     }
     
     protected void makeEvaluation(

@@ -7,13 +7,12 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Lion extends Optimizer {
+public class Lion implements Optimizer {
 
     private Map<Tensor, Tensor> momentumHistory;
     private double beta;
 
-    public Lion(double learningRate, double beta) {
-        super(learningRate);
+    public Lion(double beta) {
         this.beta = beta;
     }
 

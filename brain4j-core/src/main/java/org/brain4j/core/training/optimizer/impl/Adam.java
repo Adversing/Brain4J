@@ -9,7 +9,7 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Adam extends Optimizer {
+public class Adam implements Optimizer {
 
     // Momentum vectors
     protected Map<Tensor, Tensor> firstMomentum;
@@ -24,12 +24,11 @@ public class Adam extends Optimizer {
 
     protected int timestep = 1;
 
-    public Adam(double learningRate) {
-        this(learningRate, 0.9, 0.999, 1e-8);
+    public Adam() {
+        this(0.9, 0.999, 1e-8);
     }
 
-    public Adam(double learningRate, double beta1, double beta2, double epsilon) {
-        super(learningRate);
+    public Adam(double beta1, double beta2, double epsilon) {
         this.beta1 = (float) beta1;
         this.beta2 = (float) beta2;
         this.epsilon = (float) epsilon;

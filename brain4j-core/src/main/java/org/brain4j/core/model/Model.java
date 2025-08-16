@@ -155,17 +155,6 @@ public interface Model extends Iterable<Layer> {
     double loss(ListDataSource dataSource);
 
     /**
-     * Compiles the model by setting the loss function, optimizer, and default updater.
-     *
-     * @param lossFunction the loss function to use
-     * @param optimizer the optimization algorithm
-     * @return the compiled model instance for method chaining
-     */
-    default Model compile(LossFunction lossFunction, Optimizer optimizer) {
-        return compile(lossFunction, optimizer, new StochasticUpdater());
-    }
-
-    /**
      * Compiles the model by setting the loss function, optimizer, and custom updater.
      *
      * @param lossFunction the loss function to use
@@ -218,34 +207,37 @@ public interface Model extends Iterable<Layer> {
      * Returns the optimizer currently used by the model.
      * @return the optimizer instance
      */
-    default Optimizer optimizer() {
-        return null;
-    }
-
-    default void setOptimizer(Optimizer optimizer) {
-    }
+    Optimizer optimizer();
+    
+    /**
+     * Sets the optimizer used for this model.
+     * @param optimizer the new optimizer to use
+     */
+    void setOptimizer(Optimizer optimizer);
     
     /**
      * Returns the updater currently used by the model.
      * @return the updater instance
      */
-    default Updater updater() {
-        return null;
-    }
+    Updater updater();
     
-    default void setUpdater(Updater updater) {
-    }
+    /**
+     * Sets the updater used for this model.
+     * @param updater the new updater to use
+     */
+    void setUpdater(Updater updater);
     
     /**
      * Returns the loss function currently set in the model.
      * @return the loss function instance
      */
-    default LossFunction lossFunction() {
-        return null;
-    }
+    LossFunction lossFunction();
     
-    default void setLossFunction(LossFunction lossFunction) {
-    }
+    /**
+     * Sets the loss function used for this model.
+     * @param lossFunction the new loss function
+     */
+    void setLossFunction(LossFunction lossFunction);
 
     /**
      * Prints a formatted summary of the model architecture to the console,
