@@ -42,7 +42,6 @@ public class ConvLayer extends Layer {
 
     @Override
     public void initWeights(Random generator, int input, int output) {
-        this.bias.map(x -> weightInit.generate(generator, input, output));
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
     

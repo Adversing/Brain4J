@@ -5,8 +5,8 @@ import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
@@ -22,13 +22,13 @@ import java.util.Random;
  */
 public class RecurrentLayer extends Layer {
 
-    private int dimension;
-    private int hiddenDimension;
     private Tensor inputWeights;
     private Tensor hiddenWeights;
     private Tensor hiddenBias;
+    private int dimension;
+    private int hiddenDimension;
     
-    public RecurrentLayer() {
+    private RecurrentLayer() {
     }
     
     /**
@@ -48,14 +48,11 @@ public class RecurrentLayer extends Layer {
     @Override
     public Layer connect(Layer previous) {
         int size = previous == null ? dimension : previous.size();
-
         this.inputWeights = Tensors.zeros(size, hiddenDimension).withGrad();
         this.hiddenWeights = Tensors.zeros(hiddenDimension, hiddenDimension).withGrad();
         this.hiddenBias = Tensors.zeros(hiddenDimension).withGrad();
-
         this.weights = Tensors.zeros(hiddenDimension, dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();
-
         return this;
     }
 
@@ -63,9 +60,7 @@ public class RecurrentLayer extends Layer {
     public void initWeights(Random generator, int input, int output) {
         this.inputWeights.map(x -> weightInit.generate(generator, input, output));
         this.hiddenWeights.map(x -> weightInit.generate(generator, hiddenDimension, hiddenDimension));
-        this.hiddenBias.map(x -> weightInit.generate(generator, hiddenDimension, hiddenDimension));
         this.weights.map(x -> weightInit.generate(generator, hiddenDimension, output));
-        this.bias.map(x -> weightInit.generate(generator, input, output));
     }
     
     @Override
@@ -158,7 +153,17 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public List<ProtoModel.Tensor.Builder> weightsList() {
+    public int totalBiases() {
+        return hiddenBias.elements() + bias.elements();
+    }
+    
+    @Override
+    public int totalWeights() {
+        return weights.elements() + inputWeights.elements() + hiddenWeights.elements();
+    }
+    
+    @Override
+    public List<org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder> weightsList() {
         return List.of(
             SerializeUtils.serializeTensor("input_weight", inputWeights),
             SerializeUtils.serializeTensor("hidden_weight", hiddenWeights),

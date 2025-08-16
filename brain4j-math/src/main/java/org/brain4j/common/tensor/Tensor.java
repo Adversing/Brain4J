@@ -11,6 +11,8 @@ import org.brain4j.common.tensor.impl.CpuTensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.tensor.index.Range;
 
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface Tensor extends Iterable<Float> {
@@ -598,7 +600,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor from the operation
      */
     Tensor activateGrad(Activation activation);
-
+    
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link ConcatOperation}
      * @param other the other tensor

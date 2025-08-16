@@ -6,7 +6,7 @@ import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
 import org.brain4j.core.importing.ModelFormat;
-import org.brain4j.core.importing.onnx.Onnx;
+import org.brain4j.core.importing.onnx.ProtoOnnx;
 import org.brain4j.core.model.Model;
 
 import java.io.File;
@@ -19,17 +19,17 @@ public class OnnxFormat implements ModelFormat {
     
     @Override
     public <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception {
-        Onnx.ModelProto proto = Onnx.ModelProto.parseFrom(bytes);
-        Onnx.GraphProto graph = proto.getGraph();
+        ProtoOnnx.ModelProto proto = ProtoOnnx.ModelProto.parseFrom(bytes);
+        ProtoOnnx.GraphProto graph = proto.getGraph();
         
         GraphModel.Builder model = GraphModel.newGraph();
         
-        for (Onnx.TensorProto tensor : graph.getInitializerList()) {
+        for (ProtoOnnx.TensorProto tensor : graph.getInitializerList()) {
             Tensor weight = convertTensor(tensor);
             model.addInitializer(tensor.getName(), weight);
         }
         
-        for (Onnx.NodeProto node : graph.getNodeList()) {
+        for (ProtoOnnx.NodeProto node : graph.getNodeList()) {
             Operation operation = OPERATION_MAP.get(node.getOpType());
             
             if (operation == null) {
@@ -52,11 +52,11 @@ public class OnnxFormat implements ModelFormat {
         }
         
         List<String> inputs = graph.getInputList().stream()
-            .map(Onnx.ValueInfoProto::getName)
+            .map(ProtoOnnx.ValueInfoProto::getName)
             .toList();
         
         List<String> outputs = graph.getOutputList().stream()
-            .map(Onnx.ValueInfoProto::getName)
+            .map(ProtoOnnx.ValueInfoProto::getName)
             .toList();
         
         model.inputs(inputs);
@@ -70,7 +70,7 @@ public class OnnxFormat implements ModelFormat {
         throw new UnsupportedOperationException();
     }
     
-    private Tensor convertTensor(Onnx.TensorProto tensor) {
+    private Tensor convertTensor(ProtoOnnx.TensorProto tensor) {
         byte[] rawData = tensor.getRawData().toByteArray();
 
         ByteBuffer dataBuffer = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);

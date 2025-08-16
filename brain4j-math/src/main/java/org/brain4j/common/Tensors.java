@@ -135,13 +135,23 @@ public class Tensors {
         return concatGrad(tensors, -1);
     }
 
+    public static Tensor concatGradLast(List<Tensor> tensors, int dim) {
+        Tensor base = tensors.getFirst();
+        
+        for (int i = 1; i < tensors.size() - 1; i++) {
+            base = base.concat(tensors.get(i), dim);
+        }
+        
+        return base.concatGrad(tensors.getLast(), dim);
+    }
+    
     public static Tensor concatGrad(List<Tensor> tensors, int dim) {
         Tensor base = tensors.getFirst();
-
+        
         for (int i = 1; i < tensors.size(); i++) {
             base = base.concatGrad(tensors.get(i), dim);
         }
-
+        
         return base;
     }
 
@@ -168,25 +178,7 @@ public class Tensors {
 
         return result;
     }
-
-    public static int[][] kernelOffsets(int[] shape) {
-        int total = Arrays.stream(shape).reduce(1, (a, b) -> a * b);
-        int[][] offsets = new int[total][shape.length];
-
-        for (int i = 0; i < total; i++) {
-            int[] idx = new int[shape.length];
-            int rem = i;
-
-            for (int d = 0; d < shape.length; d++) {
-                idx[d] = rem % shape[d];
-                rem /= shape[d];
-            }
-
-            offsets[i] = idx;
-        }
-        return offsets;
-    }
-
+    
     public static int flattenIndex(int[] idx, int[] strides) {
         int sum = 0;
 
@@ -196,21 +188,7 @@ public class Tensors {
 
         return sum;
     }
-
-    public static int[] concatShapes(int[]... shapes) {
-        int pos = 0;
-        int totalLen = Arrays.stream(shapes).mapToInt(s -> s.length).sum();
-
-        int[] result = new int[totalLen];
-
-        for (int[] s : shapes) {
-            System.arraycopy(s, 0, result, pos, s.length);
-            pos += s.length;
-        }
-
-        return result;
-    }
-
+    
     public static int[] computeStrides(int[] shape) {
         int[] strides = new int[shape.length];
         int prod = 1;

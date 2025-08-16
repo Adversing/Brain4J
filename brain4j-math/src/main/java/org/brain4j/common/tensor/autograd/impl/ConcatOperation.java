@@ -62,6 +62,6 @@ public class ConcatOperation implements Operation {
         Tensor gradA = gradOutput.slice(rangeA);
         Tensor gradB = gradOutput.slice(rangeB);
         
-        return new Tensor[]{ gradA, gradB };
+        return new Tensor[] { gradA, gradB };
     }
 }

@@ -1,9 +1,8 @@
 package org.brain4j.core.layer.impl.convolutional;
 
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.training.StatesCache;
 
 import java.util.List;
@@ -24,14 +23,14 @@ public class InputLayer extends Layer {
     }
     
     @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+    public void deserialize(List<org.brain4j.core.importing.proto.ProtoModel.Tensor> tensors, org.brain4j.core.importing.proto.ProtoModel.Layer layer) {
         this.width = SerializeUtils.attribute(layer, "width", 0);
         this.height = SerializeUtils.attribute(layer, "height", 0);
         this.channels = SerializeUtils.attribute(layer, "channels", 0);
     }
     
     @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
+    public void serialize(org.brain4j.core.importing.proto.ProtoModel.Layer.Builder builder) {
         builder.putAttrs("width", SerializeUtils.value(width));
         builder.putAttrs("height", SerializeUtils.value(height));
         builder.putAttrs("channels", SerializeUtils.value(channels));

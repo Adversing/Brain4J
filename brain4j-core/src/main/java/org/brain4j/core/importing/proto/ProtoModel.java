@@ -71,7 +71,7 @@ public final class ProtoModel {
     /**
      * <code>repeated .brain4j.Layer layers = 4;</code>
      */
-    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer> 
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer>
         getLayersList();
     /**
      * <code>repeated .brain4j.Layer layers = 4;</code>
@@ -84,7 +84,7 @@ public final class ProtoModel {
     /**
      * <code>repeated .brain4j.Layer layers = 4;</code>
      */
-    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
         getLayersOrBuilderList();
     /**
      * <code>repeated .brain4j.Layer layers = 4;</code>
@@ -95,7 +95,7 @@ public final class ProtoModel {
     /**
      * <code>repeated .brain4j.Tensor weights = 5;</code>
      */
-    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor> 
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor>
         getWeightsList();
     /**
      * <code>repeated .brain4j.Tensor weights = 5;</code>
@@ -108,7 +108,7 @@ public final class ProtoModel {
     /**
      * <code>repeated .brain4j.Tensor weights = 5;</code>
      */
-    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
         getWeightsOrBuilderList();
     /**
      * <code>repeated .brain4j.Tensor weights = 5;</code>
@@ -281,7 +281,7 @@ public final class ProtoModel {
      * <code>repeated .brain4j.Layer layers = 4;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
         getLayersOrBuilderList() {
       return layers_;
     }
@@ -322,7 +322,7 @@ public final class ProtoModel {
      * <code>repeated .brain4j.Tensor weights = 5;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
         getWeightsOrBuilderList() {
       return weights_;
     }
@@ -1284,7 +1284,7 @@ public final class ProtoModel {
       /**
        * <code>repeated .brain4j.Layer layers = 4;</code>
        */
-      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
            getLayersOrBuilderList() {
         if (layersBuilder_ != null) {
           return layersBuilder_.getMessageOrBuilderList();
@@ -1310,12 +1310,12 @@ public final class ProtoModel {
       /**
        * <code>repeated .brain4j.Layer layers = 4;</code>
        */
-      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer.Builder> 
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Layer.Builder>
            getLayersBuilderList() {
         return internalGetLayersFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
           internalGetLayersFieldBuilder() {
         if (layersBuilder_ == null) {
           layersBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
@@ -1524,7 +1524,7 @@ public final class ProtoModel {
       /**
        * <code>repeated .brain4j.Tensor weights = 5;</code>
        */
-      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
            getWeightsOrBuilderList() {
         if (weightsBuilder_ != null) {
           return weightsBuilder_.getMessageOrBuilderList();
@@ -1550,12 +1550,12 @@ public final class ProtoModel {
       /**
        * <code>repeated .brain4j.Tensor weights = 5;</code>
        */
-      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder> 
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder>
            getWeightsBuilderList() {
         return internalGetWeightsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
           internalGetWeightsFieldBuilder() {
         if (weightsBuilder_ == null) {
           weightsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
@@ -1931,7 +1931,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
           java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_AttrsEntry_descriptor, 
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Layer_AttrsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -3231,7 +3231,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Clipper clipper = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Clipper, org.brain4j.core.importing.proto.ProtoModel.Clipper.Builder, org.brain4j.core.importing.proto.ProtoModel.ClipperOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Clipper, org.brain4j.core.importing.proto.ProtoModel.Clipper.Builder, org.brain4j.core.importing.proto.ProtoModel.ClipperOrBuilder>
           internalGetClipperFieldBuilder() {
         if (clipperBuilder_ == null) {
           clipperBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -3352,7 +3352,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Activation activation = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Activation, org.brain4j.core.importing.proto.ProtoModel.Activation.Builder, org.brain4j.core.importing.proto.ProtoModel.ActivationOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Activation, org.brain4j.core.importing.proto.ProtoModel.Activation.Builder, org.brain4j.core.importing.proto.ProtoModel.ActivationOrBuilder>
           internalGetActivationFieldBuilder() {
         if (activationBuilder_ == null) {
           activationBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -3473,7 +3473,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.WeightInit weightInit = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.WeightInit, org.brain4j.core.importing.proto.ProtoModel.WeightInit.Builder, org.brain4j.core.importing.proto.ProtoModel.WeightInitOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.WeightInit, org.brain4j.core.importing.proto.ProtoModel.WeightInit.Builder, org.brain4j.core.importing.proto.ProtoModel.WeightInitOrBuilder>
           internalGetWeightInitFieldBuilder() {
         if (weightInitBuilder_ == null) {
           weightInitBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -3610,7 +3610,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.BasicLayer basic = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.BasicLayer, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder, org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.BasicLayer, org.brain4j.core.importing.proto.ProtoModel.BasicLayer.Builder, org.brain4j.core.importing.proto.ProtoModel.BasicLayerOrBuilder>
           internalGetBasicFieldBuilder() {
         if (basicBuilder_ == null) {
           if (!(layerKindCase_ == 7)) {
@@ -3752,7 +3752,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Transformer transformer = 8;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Transformer, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder, org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Transformer, org.brain4j.core.importing.proto.ProtoModel.Transformer.Builder, org.brain4j.core.importing.proto.ProtoModel.TransformerOrBuilder>
           internalGetTransformerFieldBuilder() {
         if (transformerBuilder_ == null) {
           if (!(layerKindCase_ == 8)) {
@@ -3914,7 +3914,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
           java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_WeightInit_AttrsEntry_descriptor, 
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_WeightInit_AttrsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -4616,7 +4616,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
           java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Activation_AttrsEntry_descriptor, 
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Activation_AttrsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -5318,7 +5318,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
           java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Clipper_AttrsEntry_descriptor, 
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_Clipper_AttrsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -6144,7 +6144,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
           java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_AttrsEntry_descriptor, 
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_AttentionHead_AttrsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -6776,7 +6776,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Tensor q_weight = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
           internalGetQWeightFieldBuilder() {
         if (qWeightBuilder_ == null) {
           qWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -6897,7 +6897,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Tensor k_weight = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
           internalGetKWeightFieldBuilder() {
         if (kWeightBuilder_ == null) {
           kWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -7018,7 +7018,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Tensor v_weight = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
           internalGetVWeightFieldBuilder() {
         if (vWeightBuilder_ == null) {
           vWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -7244,7 +7244,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
     /**
      * <code>repeated .brain4j.AttentionHead heads = 1;</code>
      */
-    java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead> 
+    java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead>
         getHeadsList();
     /**
      * <code>repeated .brain4j.AttentionHead heads = 1;</code>
@@ -7257,7 +7257,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
     /**
      * <code>repeated .brain4j.AttentionHead heads = 1;</code>
      */
-    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+    java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder>
         getHeadsOrBuilderList();
     /**
      * <code>repeated .brain4j.AttentionHead heads = 1;</code>
@@ -7379,7 +7379,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
      * <code>repeated .brain4j.AttentionHead heads = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+    public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder>
         getHeadsOrBuilderList() {
       return heads_;
     }
@@ -7412,7 +7412,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue);
           java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, org.brain4j.core.importing.proto.ProtoModel.AttrValue>newDefaultInstance(
-                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_AttrsEntry_descriptor, 
+                  org.brain4j.core.importing.proto.ProtoModel.internal_static_brain4j_MultiHeadAttention_AttrsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -8154,7 +8154,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
       /**
        * <code>repeated .brain4j.AttentionHead heads = 1;</code>
        */
-      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+      public java.util.List<? extends org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder>
            getHeadsOrBuilderList() {
         if (headsBuilder_ != null) {
           return headsBuilder_.getMessageOrBuilderList();
@@ -8180,12 +8180,12 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
       /**
        * <code>repeated .brain4j.AttentionHead heads = 1;</code>
        */
-      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder> 
+      public java.util.List<org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder>
            getHeadsBuilderList() {
         return internalGetHeadsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.AttentionHead, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder, org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.AttentionHead, org.brain4j.core.importing.proto.ProtoModel.AttentionHead.Builder, org.brain4j.core.importing.proto.ProtoModel.AttentionHeadOrBuilder>
           internalGetHeadsFieldBuilder() {
         if (headsBuilder_ == null) {
           headsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
@@ -8462,7 +8462,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Tensor out_weight = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Tensor, org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder, org.brain4j.core.importing.proto.ProtoModel.TensorOrBuilder>
           internalGetOutWeightFieldBuilder() {
         if (outWeightBuilder_ == null) {
           outWeightBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -9881,7 +9881,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Layer up_projection = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
           internalGetUpProjectionFieldBuilder() {
         if (upProjectionBuilder_ == null) {
           upProjectionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -10002,7 +10002,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Layer down_projection = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
           internalGetDownProjectionFieldBuilder() {
         if (downProjectionBuilder_ == null) {
           downProjectionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -10123,7 +10123,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Layer normalizer_1 = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
           internalGetNormalizer1FieldBuilder() {
         if (normalizer1Builder_ == null) {
           normalizer1Builder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -10244,7 +10244,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Layer normalizer_2 = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
           internalGetNormalizer2FieldBuilder() {
         if (normalizer2Builder_ == null) {
           normalizer2Builder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -10365,7 +10365,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.Layer dropout = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.Layer, org.brain4j.core.importing.proto.ProtoModel.Layer.Builder, org.brain4j.core.importing.proto.ProtoModel.LayerOrBuilder>
           internalGetDropoutFieldBuilder() {
         if (dropoutBuilder_ == null) {
           dropoutBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -10486,7 +10486,7 @@ org.brain4j.core.importing.proto.ProtoModel.AttrValue defaultValue) {
        * <code>.brain4j.MultiHeadAttention attention = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder> 
+          org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttention.Builder, org.brain4j.core.importing.proto.ProtoModel.MultiHeadAttentionOrBuilder>
           internalGetAttentionFieldBuilder() {
         if (attentionBuilder_ == null) {
           attentionBuilder_ = new com.google.protobuf.SingleFieldBuilder<

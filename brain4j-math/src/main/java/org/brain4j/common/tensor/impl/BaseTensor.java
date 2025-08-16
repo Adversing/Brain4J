@@ -1084,7 +1084,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return forward(new ActivationOperation(activation));
     }
-
+    
     @Override
     public Tensor concatGrad(Tensor other, int dim) {
         if (!usesGrad() && !other.usesGrad()) {

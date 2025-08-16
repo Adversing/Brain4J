@@ -80,9 +80,8 @@ public class DenseLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         if (input == 0) return;
-
+        
         this.weights.map(x -> weightInit.generate(generator, input, output));
-        this.bias.map(x -> weightInit.generate(generator, input, output));
     }
     
     @Override

@@ -5,6 +5,10 @@ public class Range {
     private final int end;
     private final int step;
 
+    public static Range interval(int start, int end) {
+        return new Range(start, end);
+    }
+    
     public static Range all() {
         return new Range(0, Integer.MAX_VALUE, 1);
     }
