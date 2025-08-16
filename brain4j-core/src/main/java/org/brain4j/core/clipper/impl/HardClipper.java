@@ -3,7 +3,7 @@ package org.brain4j.core.clipper.impl;
 import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.kernel.KernelFactory;
-import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.memory.GpuQueue;
 import org.brain4j.common.tensor.impl.CpuTensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.core.clipper.GradientClipper;
@@ -40,7 +40,7 @@ public class HardClipper implements GradientClipper {
         Device device = grad.device();
         cl_kernel kernel = GpuContext.kernel(device, kernelName());
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(kernel)
                 .addMemParam(grad.dataBuffer())

@@ -1,7 +1,7 @@
 package org.brain4j.common.gpu;
 
 import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.memory.GpuQueue;
 import org.jocl.cl_command_queue;
 import org.jocl.cl_kernel;
 import org.jocl.cl_program;
@@ -13,7 +13,7 @@ import static org.jocl.CL.*;
 
 public class GpuContext {
 
-    private static final Map<Device, ThreadLocal<CloseableQueue>> queues = new HashMap<>();
+    private static final Map<Device, ThreadLocal<GpuQueue>> queues = new HashMap<>();
     private static final Map<Device, Map<String, cl_kernel>> kernelCache = new HashMap<>();
 
     public static void register(Device device, String kernelName, cl_program program) {
@@ -47,21 +47,21 @@ public class GpuContext {
     public static void updateQueue(Device device, cl_command_queue newQueue) {
         queues
             .computeIfAbsent(device, d -> new ThreadLocal<>())
-            .set(new CloseableQueue(newQueue, false));
+            .set(new GpuQueue(newQueue, false));
     }
 
-    public static CloseableQueue getOrCreate(Device device) {
-        CloseableQueue current = queue(device);
+    public static GpuQueue getOrCreate(Device device) {
+        GpuQueue current = queue(device);
 
         if (current == null) {
-            current = new CloseableQueue(device.newCommandQueue(), true);
+            current = new GpuQueue(device.newCommandQueue(), true);
         }
 
         return current;
     }
 
-    public static CloseableQueue queue(Device device) {
-        ThreadLocal<CloseableQueue> localQueue = queues.get(device);
+    public static GpuQueue queue(Device device) {
+        ThreadLocal<GpuQueue> localQueue = queues.get(device);
 
         if (localQueue == null || localQueue.get() == null) {
             throw new IllegalStateException("Command queue not set for device: " + device);
@@ -76,7 +76,7 @@ public class GpuContext {
     }
 
     public static void closeQueue(Device device) {
-        CloseableQueue commandQueue = queue(device);
+        GpuQueue commandQueue = queue(device);
         closeQueue(commandQueue.clQueue());
     }
 }

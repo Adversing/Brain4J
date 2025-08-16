@@ -6,7 +6,7 @@ import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.device.DeviceUtils;
 import org.brain4j.common.gpu.kernel.KernelFactory;
-import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.memory.GpuQueue;
 import org.brain4j.common.gpu.memory.CollectableState;
 import org.brain4j.common.tensor.Tensor;
 import org.jocl.*;
@@ -73,7 +73,7 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE, dataSize, null, null);
         this.cleanable = CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             clEnqueueCopyBuffer(queue.clQueue(), otherBuffer, this.dataBuffer, 0, 0, dataSize,
                 0, null, null);
         }
@@ -125,7 +125,7 @@ public class GpuTensor extends BaseTensor {
     }
 
     private Tensor launchScalarKernel(String kernelName, float value) {
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, kernelName)
                 .addMemParam(dataBuffer)
@@ -147,7 +147,7 @@ public class GpuTensor extends BaseTensor {
         int broadcastDim = (Arrays.equals(shape, B.shape)) ? -1 : shape[1];
         int batch = (broadcastDim == -1) ? 0 : shape[0];
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, kernelName)
                 .addMemParam(dataBuffer)
@@ -201,7 +201,7 @@ public class GpuTensor extends BaseTensor {
         int outRowStride = result.strides[0];
         int outColStride = result.strides[1];
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, "transpose")
                 .addMemParam(dataBuffer)
@@ -265,7 +265,7 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor sqrt() {
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, "sqrt")
                 .addMemParam(dataBuffer)
@@ -307,7 +307,7 @@ public class GpuTensor extends BaseTensor {
         long[] globalWorkSize = new long[] { roundUp(TILE_SIZE, M), roundUp(TILE_SIZE, P) };
         long[] localWorkSize = new long[] { TILE_SIZE, TILE_SIZE };
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, "matmul")
                 .addMemParam(dataBuffer)
@@ -339,7 +339,7 @@ public class GpuTensor extends BaseTensor {
 
         GpuTensor result = new GpuTensor(device, newShape);
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, "sum_along_dim")
                 .addMemParam(dataBuffer)
@@ -363,7 +363,7 @@ public class GpuTensor extends BaseTensor {
             featuresSize = shape[1];
         }
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, "layer_norm")
                 .addMemParam(dataBuffer)
@@ -421,7 +421,7 @@ public class GpuTensor extends BaseTensor {
         int lastDim = shape[shape.length - 1];
         int rows = size / lastDim;
 
-        try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory
                 .create(device, "softmax_last_dim")
                 .addMemParam(dataBuffer)

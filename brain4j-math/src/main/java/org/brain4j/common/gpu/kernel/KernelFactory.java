@@ -2,7 +2,7 @@ package org.brain4j.common.gpu.kernel;
 
 import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.memory.GpuQueue;
 import org.jocl.*;
 
 import java.util.ArrayList;
@@ -46,11 +46,11 @@ public class KernelFactory {
         return this;
     }
 
-    public void launch(CloseableQueue queue, int workDim, long... globalWorkSize) {
+    public void launch(GpuQueue queue, int workDim, long... globalWorkSize) {
         launch(queue.clQueue(), workDim, globalWorkSize);
     }
 
-    public void launch(CloseableQueue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
+    public void launch(GpuQueue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
         launch(queue.clQueue(), workDim, globalWorkSize, localWorkSize);
     }
 

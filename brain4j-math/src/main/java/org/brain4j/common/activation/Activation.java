@@ -4,7 +4,7 @@ import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.GpuContext;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.gpu.kernel.KernelFactory;
-import org.brain4j.common.gpu.memory.CloseableQueue;
+import org.brain4j.common.gpu.memory.GpuQueue;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.common.tensor.impl.GpuTensor;
 import org.brain4j.common.weightsinit.WeightInitialization;
@@ -72,7 +72,7 @@ public interface Activation {
             Device device = gpuInput.device();
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
-            try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+            try (GpuQueue queue = GpuContext.getOrCreate(device)) {
                 cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
@@ -108,7 +108,7 @@ public interface Activation {
             Device device = gpuInput.device();
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
-            try (CloseableQueue queue = GpuContext.getOrCreate(device)) {
+            try (GpuQueue queue = GpuContext.getOrCreate(device)) {
                 cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_backward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
@@ -117,12 +117,18 @@ public interface Activation {
 
             return result;
         }
-
-        float[] resultData = new float[input.elements()];
+        
         float[] inputData = input.data();
-
-        for (int i = 0; i < resultData.length; i++) {
-            resultData[i] = (float) derivative(inputData[i]);
+        float[] resultData = new float[inputData.length];
+        
+        if (resultData.length > 65536) {
+            IntStream.range(0, inputData.length)
+                .parallel()
+                .forEach(i -> resultData[i] = (float) derivative(inputData[i]));
+        } else {
+            for (int i = 0; i < resultData.length; i++) {
+                resultData[i] = (float) derivative(inputData[i]);
+            }
         }
 
         return Tensors.create(shape, resultData);
