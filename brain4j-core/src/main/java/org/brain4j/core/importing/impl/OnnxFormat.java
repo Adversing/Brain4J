@@ -7,14 +7,18 @@ import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
 import org.brain4j.core.importing.ModelFormat;
 import org.brain4j.core.importing.onnx.ProtoOnnx;
+import org.brain4j.core.layer.Layer;
 import org.brain4j.core.model.Model;
 
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unchecked")
 public class OnnxFormat implements ModelFormat {
     
     @Override
@@ -25,8 +29,8 @@ public class OnnxFormat implements ModelFormat {
         GraphModel.Builder model = GraphModel.newGraph();
         
         for (ProtoOnnx.TensorProto tensor : graph.getInitializerList()) {
-            Tensor weight = convertTensor(tensor);
-            model.addInitializer(tensor.getName(), weight);
+            Tensor weight = deserializeTensor(tensor);
+            model.initializer(tensor.getName(), weight);
         }
         
         for (ProtoOnnx.NodeProto node : graph.getNodeList()) {
@@ -58,19 +62,39 @@ public class OnnxFormat implements ModelFormat {
         List<String> outputs = graph.getOutputList().stream()
             .map(ProtoOnnx.ValueInfoProto::getName)
             .toList();
-        
-        model.inputs(inputs);
-        model.outputs(outputs);
-        
-        return (T) model.compile();
+
+        return (T) model.inputs(inputs)
+                .outputs(outputs)
+                .compile();
     }
     
     @Override
     public void serialize(Model model, File file) {
         throw new UnsupportedOperationException();
     }
-    
-    private Tensor convertTensor(ProtoOnnx.TensorProto tensor) {
+
+    private ProtoOnnx.TensorProto serializeTensor(Tensor tensor) {
+        ProtoOnnx.TensorProto.Builder builder = ProtoOnnx.TensorProto.newBuilder();
+
+        List<Long> dimensions = Arrays
+            .stream(tensor.shape())
+            .asLongStream()
+            .boxed()
+            .toList();
+
+        List<Float> data = new ArrayList<>();
+
+        for (float value : tensor.data()) {
+            data.add(value);
+        }
+
+        return builder
+            .addAllDims(dimensions)
+            .addAllFloatData(data)
+            .build();
+    }
+
+    private Tensor deserializeTensor(ProtoOnnx.TensorProto tensor) {
         byte[] rawData = tensor.getRawData().toByteArray();
 
         ByteBuffer dataBuffer = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);

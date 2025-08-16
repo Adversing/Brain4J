@@ -10,10 +10,10 @@ import java.util.List;
 
 public class SliceLayer extends Layer {
     
-    private Range[] ranges;
+    private final Range[] ranges;
     private int size;
     
-    public SliceLayer(Range[] ranges) {
+    public SliceLayer(Range... ranges) {
         this.ranges = ranges;
     }
     

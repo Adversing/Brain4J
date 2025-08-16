@@ -28,8 +28,8 @@ public abstract class CustomModel {
         this.updater = updater;
         this.lossFunction = lossFunction;
     }
-    
-    public abstract Tensor forward(StatesCache cache, Tensor... inputs);
+
+    public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
     
     public abstract void fit(StatesCache cache, Tensor output, Tensor label);
     
@@ -64,7 +64,7 @@ public abstract class CustomModel {
         dataSource.reset();
         
         while (dataSource.hasNext()) {
-            Pair<Tensor[], Tensor> batch = dataSource.nextBatch();
+            Pair<Tensor[], Tensor[]> batch = dataSource.nextBatch();
             makeEvaluation(batch, classifications, totalLoss);
         }
         
@@ -77,39 +77,44 @@ public abstract class CustomModel {
     }
     
     protected void makeEvaluation(
-        Pair<Tensor[], Tensor> batch,
+        Pair<Tensor[], Tensor[]> batch,
         Map<Integer, Tensor> classifications,
         AtomicReference<Double> totalLoss
     ) {
-        Tensor[] inputs = batch.first(); // [batch_size, input_size]
-        Tensor expected = batch.second(); // [batch_size, output_size]
-        
-        Tensor prediction = forward(new StatesCache(), inputs).cpu(); // [batch_size, output_size]
-        
+        Tensor[] inputs = batch.first();
+        Tensor[] labels = batch.second();
+
+        Tensor[] outputs = forward(new StatesCache(), inputs);
+
         for (Tensor input : inputs) {
             int batchSize = input.shape()[0];
-            
-            for (int i = 0; i < batchSize; i++) {
-                Range range = Range.point(i);
-                
-                Tensor output = prediction.slice(range).flatten();
-                Tensor target = expected.slice(range).flatten();
-                
-                int predIndex = output.argmax();
-                int targetIndex = target.argmax();
-                
-                if (output.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
-                    predIndex = output.get(0) > 0.5 ? 1 : 0;
-                    targetIndex = (int) target.get(0);
+
+            for (int i = 0; i < outputs.length; i++) {
+                Tensor output = outputs[i];
+                Tensor label = labels[i];
+
+                for (int b = 0; b < batchSize; b++) {
+                    Range range = Range.point(b);
+
+                    Tensor sampleOutput = output.slice(range).flatten();
+                    Tensor sampleLabel = label.slice(range).flatten();
+
+                    int predIndex = sampleOutput.argmax();
+                    int targetIndex = sampleLabel.argmax();
+
+                    if (sampleOutput.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
+                        predIndex = sampleOutput.get(0) > 0.5 ? 1 : 0;
+                        targetIndex = (int) sampleLabel.get(0);
+                    }
+
+                    double loss = lossFunction.calculate(sampleLabel, sampleOutput);
+                    totalLoss.updateAndGet(v -> v + loss);
+
+                    Tensor predictions = classifications.get(targetIndex);
+                    int pred = (int) predictions.get(predIndex);
+
+                    predictions.set(pred + 1, predIndex);
                 }
-                
-                double loss = lossFunction.calculate(target, output);
-                totalLoss.updateAndGet(v -> v + loss);
-                
-                Tensor predictions = classifications.get(targetIndex);
-                int pred = (int) predictions.get(predIndex);
-                
-                predictions.set(pred + 1, predIndex);
             }
         }
     }

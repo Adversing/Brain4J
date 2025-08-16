@@ -42,7 +42,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
 
     protected final List<Sample> samples;
     protected final List<Tensor[]> batchedInputs;
-    protected final List<Tensor> batchedLabels;
+    protected final List<Tensor[]> batchedLabels;
     protected final int batchSize;
     protected final int batches;
 
@@ -102,7 +102,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
     public static ListDataSource fromDataset(
         Dataset dataset,
         Function<String, Tensor[]> inputFeatures,
-        Function<String, Tensor> outputLabels,
+        Function<String, Tensor[]> outputLabels,
         boolean shuffle,
         int batchSize,
         String fileFormat
@@ -114,7 +114,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Tensor[] inputs = inputFeatures.apply(line);
-                    Tensor labels = outputLabels.apply(line);
+                    Tensor[] labels = outputLabels.apply(line);
                     samples.add(new Sample(inputs, labels));
                 }
             }
@@ -149,7 +149,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
                 int lineNum = 0;
 
                 while ((line = reader.readLine()) != null) {
-                    Pair<Tensor[], Tensor> pair = splitter.apply(line, lineNum++);
+                    Pair<Tensor[], Tensor[]> pair = splitter.apply(line, lineNum++);
                     samples.add(new Sample(pair.first(), pair.second()));
                 }
             }
@@ -241,27 +241,15 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * @return a Pair containing input tensor and label tensor for the next batch,
      *         or null if no more batches are available
      */
-    public Pair<Tensor[], Tensor> nextBatch() {
+    public Pair<Tensor[], Tensor[]> nextBatch() {
         if (!hasNext()) return null;
 
         Tensor[] input = batchedInputs.get(cursor);
-        Tensor label = batchedLabels.get(cursor);
+        Tensor[] label = batchedLabels.get(cursor);
 
         cursor++;
 
         return new Pair<>(input, label);
-    }
-
-    /**
-     * Compacts all input and label tensors into a single one for efficient processing.
-     * @return a pair containing all the inputs and the labels
-     */
-    public Pair<Tensor[], Tensor> allData() {
-        if (cachedDataset == null) {
-            cachedDataset = createBatch(0, size());
-        }
-
-        return cachedDataset;
     }
 
     /**
@@ -275,7 +263,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
 
         while (index < size) {
             int end = Math.min(index + batchSize, size);
-            Pair<Tensor[], Tensor> batch = createBatch(index, end);
+            Pair<Tensor[], Tensor[]> batch = createBatch(index, end);
 
             batchedInputs.add(batch.first());
             batchedLabels.add(batch.second());
@@ -284,26 +272,37 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         }
     }
 
-    private Pair<Tensor[], Tensor> createBatch(int start, int end) {
+    private Pair<Tensor[], Tensor[]> createBatch(int start, int end) {
         List<Sample> subSet = samples.subList(start, end);
 
-        int inputCount = subSet.getFirst().inputs().length;
+        Sample first = subSet.getFirst();
+
+        int inputCount = first.inputs().length;
+        int labelCount = first.labels().length;
+
         List<List<Tensor>> mergedInputs = new ArrayList<>(inputCount);
+        List<List<Tensor>> mergedLabels = new ArrayList<>();
 
         for (int i = 0; i < inputCount; i++) {
             mergedInputs.add(new ArrayList<>());
         }
 
-        List<Tensor> mergedLabels = new ArrayList<>();
+        for (int i = 0; i < labelCount; i++) {
+            mergedLabels.add(new ArrayList<>());
+        }
 
         for (Sample sample : subSet) {
             Tensor[] inputs = sample.inputs();
+            Tensor[] labels = sample.labels();
+
 
             for (int i = 0; i < inputs.length; i++) {
                 mergedInputs.get(i).add(inputs[i]);
             }
 
-            mergedLabels.add(sample.label());
+            for (int i = 0; i < labels.length; i++) {
+                mergedLabels.get(i).add(labels[i]);
+            }
         }
 
         Tensor[] batchedInputTensors = new Tensor[inputCount];
@@ -312,9 +311,13 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
             batchedInputTensors[i] = Tensors.mergeTensors(mergedInputs.get(i)).to(device);
         }
 
-        Tensor batchedLabelTensor = Tensors.mergeTensors(mergedLabels).to(device);
+        Tensor[] batchedLabelTensors = new Tensor[inputCount];
 
-        return new Pair<>(batchedInputTensors, batchedLabelTensor);
+        for (int i = 0; i < labelCount; i++) {
+            batchedLabelTensors[i] = Tensors.mergeTensors(mergedLabels.get(i)).to(device);
+        }
+
+        return new Pair<>(batchedInputTensors, batchedLabelTensors);
     }
 
     @Override
@@ -330,34 +333,27 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
 
         for (Sample sample : samples) {
             Tensor[] inputs = sample.inputs();
-            Tensor label = sample.label().to(device);
+            Tensor[] labels = sample.labels();
 
             for (int i = 0; i < inputs.length; i++) {
                 inputs[i] = inputs[i].to(device);
             }
 
-            newSamples.add(new Sample(inputs, label));
+            for (int i = 0; i < labels.length; i++) {
+                labels[i] = labels[i].to(device);
+            }
+
+            newSamples.add(new Sample(inputs, labels));
         }
 
         samples.clear();
         samples.addAll(newSamples);
 
         List<Tensor[]> newBatchedInputs = new ArrayList<>(batchedInputs.size());
-        List<Tensor> newBatchedLabels = new ArrayList<>(batchedLabels.size());
+        List<Tensor[]> newBatchedLabels = new ArrayList<>(batchedLabels.size());
 
-        for (Tensor[] batchedInput : batchedInputs) {
-            Tensor[] newInputs = new Tensor[batchedInput.length];
-
-            for (int i = 0; i < batchedInput.length; i++) {
-                newInputs[i] = batchedInput[i].to(device);
-            }
-
-            newBatchedInputs.add(newInputs);
-        }
-
-        for (Tensor batchedLabel : batchedLabels) {
-            newBatchedLabels.add(batchedLabel.to(device));
-        }
+        extract(batchedInputs, newBatchedInputs);
+        extract(batchedLabels, newBatchedLabels);
 
         batchedLabels.clear();
         batchedInputs.clear();
@@ -368,6 +364,18 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         computeBatches();
 
         return this;
+    }
+
+    private void extract(List<Tensor[]> in, List<Tensor[]> out) {
+        for (Tensor[] batchedInput : in) {
+            Tensor[] newInputs = new Tensor[batchedInput.length];
+
+            for (int i = 0; i < batchedInput.length; i++) {
+                newInputs[i] = batchedInput[i].to(device);
+            }
+
+            out.add(newInputs);
+        }
     }
 
     /**
@@ -398,7 +406,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the list of batched label tensors.
      * @return list of label batches
      */
-    public List<Tensor> batchedLabels() {
+    public List<Tensor[]> batchedLabels() {
         return batchedLabels;
     }
 

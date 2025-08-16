@@ -1155,7 +1155,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public String toString() {
-        return toString("%.16f");
+        return toString("%.3f");
     }
 
     @Override

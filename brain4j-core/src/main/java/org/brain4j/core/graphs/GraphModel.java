@@ -40,7 +40,7 @@ public class GraphModel implements Model {
     }
 
     @Override
-    public Tensor predict(StatesCache cache, boolean training, Tensor... inputs) {
+    public Tensor[] predict(StatesCache cache, boolean training, Tensor... inputs) {
         if (inputs.length != inputNames.size()) {
             throw new IllegalArgumentException("Expected " + inputNames.size() + " inputs, but got " + inputs.length);
         }
@@ -79,12 +79,19 @@ public class GraphModel implements Model {
         if (!training && device != null) {
             GpuContext.closeQueue(device);
         }
-        
-        if (outputNames.size() != 1) {
-            throw new UnsupportedOperationException("Only single-output graphs are supported in predict()");
+
+        Tensor[] outputs = new Tensor[outputNames.size()];
+
+        for (int i = 0; i < outputs.length; i++) {
+            outputs[i] = computed.get(outputNames.get(i));
         }
 
-        return computed.get(outputNames.getFirst());
+        return outputs;
+    }
+
+    @Override
+    public void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -94,11 +101,6 @@ public class GraphModel implements Model {
 
     @Override
     public Model add(int index, Layer layer) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void backpropagate(StatesCache cache, Tensor outputs, Tensor targets) {
         throw new UnsupportedOperationException();
     }
 
@@ -145,12 +147,12 @@ public class GraphModel implements Model {
 
     @Override
     public List<Layer> layers() {
-        return List.of();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<Layer> flattened() {
-        return List.of();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -165,32 +167,32 @@ public class GraphModel implements Model {
     
     @Override
     public Optimizer optimizer() {
-        return null;
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public void setOptimizer(Optimizer optimizer) {
-    
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public Updater updater() {
-        return null;
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public void setUpdater(Updater updater) {
-    
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public LossFunction lossFunction() {
-        return null;
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public void setLossFunction(LossFunction lossFunction) {
-    
+        throw new UnsupportedOperationException();
     }
     
     @Override
@@ -205,7 +207,7 @@ public class GraphModel implements Model {
 
     @Override
     public Iterator<Layer> iterator() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public static class Builder {
@@ -220,7 +222,7 @@ public class GraphModel implements Model {
             return this;
         }
 
-        public Builder addInitializer(String name, Tensor tensor) {
+        public Builder initializer(String name, Tensor tensor) {
             this.initializers.put(name, tensor);
             return this;
         }

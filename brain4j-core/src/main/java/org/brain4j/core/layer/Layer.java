@@ -1,5 +1,6 @@
 package org.brain4j.core.layer;
 
+import org.brain4j.common.Tensors;
 import org.brain4j.common.activation.Activation;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
@@ -114,24 +115,42 @@ public abstract class Layer {
      */
     public void computeLoss(
         StatesCache cache,
-        Tensor targets,
-        Tensor outputs,
+        Tensor[] targets,
+        Tensor[] outputs,
         LossFunction lossFunction
     ) {
         Tensor preOutput = cache.output(this);
 
-        Tensor error = outputs.minus(targets);
-        Tensor derivatives = activation.derivative(preOutput);
+        if (targets.length != outputs.length) {
+            throw new IllegalArgumentException("Targets amount does not equal to output amount.");
+        }
 
-        Tensor delta = lossFunction.delta(error, derivatives);
-        preOutput.backward(delta);
+        Tensor totalDelta = null;
+
+        for (int i = 0; i < outputs.length; i++) {
+            Tensor output = outputs[i];
+            Tensor target = targets[i];
+
+            Tensor error = output.minus(target);
+            Tensor derivatives = activation.derivative(preOutput);
+
+            Tensor delta = lossFunction.delta(error, derivatives);
+
+            if (totalDelta == null) {
+                totalDelta = Tensors.zeros(delta.shape());
+            }
+
+            totalDelta.add(delta);
+        }
+
+        preOutput.backward(totalDelta);
     }
 
     /**
      * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
      *
-     * @param cache
-     * @param updater   the updater of this model
+     * @param cache the states cache of the forward pass
+     * @param updater the updater of this model
      * @param optimizer the optimizer of this model
      */
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {

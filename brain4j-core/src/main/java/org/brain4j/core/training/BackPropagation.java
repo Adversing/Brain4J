@@ -21,7 +21,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
     }
     
     public void propagatePartition(
-        Pair<Tensor[], Tensor> batch,
+        Pair<Tensor[], Tensor[]> batch,
         BiConsumer<Integer, Double> postBatchCallback,
         int index
     ) {
@@ -31,9 +31,9 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         long start = System.nanoTime();
         
         Tensor[] inputs = batch.first();
-        Tensor labels = batch.second();
+        Tensor[] labels = batch.second();
         
-        Tensor output = model.predict(cache, true, inputs);
+        Tensor[] output = model.predict(cache, true, inputs);
         model.backpropagate(cache, output, labels);
         
         int elements = 1;
@@ -58,7 +58,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         dataSource.reset();
         
         while (dataSource.hasNext()) {
-            Pair<Tensor[], Tensor> batch = hostTo(dataSource.nextBatch());
+            Pair<Tensor[], Tensor[]> batch = hostTo(dataSource.nextBatch());
             propagatePartition(batch, postBatchCallback, dataSource.cursor());
         }
         
@@ -66,15 +66,20 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         model.zeroGrad();
     }
     
-    private Pair<Tensor[], Tensor> hostTo(Pair<Tensor[], Tensor> partition) {
+    private Pair<Tensor[], Tensor[]> hostTo(Pair<Tensor[], Tensor[]> partition) {
         Device device = model.device();
         
         Tensor[] inputs = partition.first();
-        Tensor labels = partition.second().to(device);
+        Tensor[] labels = partition.second();
         
         for (int i = 0; i < inputs.length; i++) {
             Tensor input = inputs[i];
             inputs[i] = input.to(device);
+        }
+
+        for (int i = 0; i < labels.length; i++) {
+            Tensor label = labels[i];
+            labels[i] = label.to(device);
         }
         
         return new Pair<>(inputs, labels);

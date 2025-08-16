@@ -6,15 +6,15 @@ import java.util.Arrays;
 
 public class Sample {
     private final Tensor[] inputs;
-    private final Tensor label;
+    private final Tensor[] labels;
 
     public Sample(Tensor input, Tensor label) {
-        this(new Tensor[]{input}, label);
+        this(new Tensor[]{input}, new Tensor[]{label});
     }
 
-    public Sample(Tensor[] inputs, Tensor label) {
+    public Sample(Tensor[] inputs, Tensor[] labels) {
         this.inputs = inputs;
-        this.label = label;
+        this.labels = labels;
     }
 
     public Tensor[] inputs() {
@@ -25,16 +25,16 @@ public class Sample {
         return inputs[0];
     }
 
+    public Tensor[] labels() {
+        return labels;
+    }
+
     public Tensor label() {
-        return label;
+        return labels[0];
     }
 
     @Override
     public String toString() {
-        if (inputs.length == 1) {
-            return inputs[0].toString("%.3f") + " -> " + label.toString("%.3f");
-        }
-
-        return Arrays.toString(inputs) + " -> " + label.toString("%.3f");
+        return Arrays.toString(inputs) + " -> " + Arrays.toString(labels);
     }
 }

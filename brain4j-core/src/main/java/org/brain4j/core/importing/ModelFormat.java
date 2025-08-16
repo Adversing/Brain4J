@@ -3,12 +3,16 @@ package org.brain4j.core.importing;
 import org.brain4j.common.tensor.autograd.Operation;
 import org.brain4j.common.tensor.autograd.impl.*;
 import org.brain4j.core.activation.impl.*;
+import org.brain4j.core.layer.Layer;
+import org.brain4j.core.layer.impl.DenseLayer;
+import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.model.Model;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface ModelFormat {

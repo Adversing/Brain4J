@@ -46,7 +46,7 @@ public interface Model extends Iterable<Layer> {
      * @param inputs the input tensors
      * @return the output tensor
      */
-    default Tensor predict(Tensor... inputs) {
+    default Tensor[] predict(Tensor... inputs) {
         return predict(new StatesCache(device()), inputs);
     }
 
@@ -56,7 +56,7 @@ public interface Model extends Iterable<Layer> {
      * @param inputs the input tensors
      * @return the output tensor
      */
-    default Tensor predict(StatesCache cache, Tensor... inputs) {
+    default Tensor[] predict(StatesCache cache, Tensor... inputs) {
         return predict(cache, false, inputs);
     }
 
@@ -67,7 +67,7 @@ public interface Model extends Iterable<Layer> {
      * @param training whether in training mode
      * @return the output tensor
      */
-    Tensor predict(StatesCache cache, boolean training, Tensor... inputs);
+    Tensor[] predict(StatesCache cache, boolean training, Tensor... inputs);
 
     /**
      * Executes a backpropagation pass for this model
@@ -75,7 +75,7 @@ public interface Model extends Iterable<Layer> {
      * @param outputs the outputs of the network
      * @param targets the target outputs
      */
-    void backpropagate(StatesCache cache, Tensor outputs, Tensor targets);
+    void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets);
 
     /**
      * Trains the model using full training parameters.

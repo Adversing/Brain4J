@@ -40,7 +40,6 @@ import static org.brain4j.common.constants.Constants.*;
  *
  * @author xEcho1337
  * @since 3.0
- * @see MultiModel
  */
 public class Sequential extends Layer implements Model {
 
@@ -113,58 +112,69 @@ public class Sequential extends Layer implements Model {
     }
 
     protected void makeEvaluation(
-        Pair<Tensor[], Tensor> batch,
+        Pair<Tensor[], Tensor[]> batch,
         Map<Integer, Tensor> classifications,
         AtomicReference<Double> totalLoss
     ) {
-        Tensor[] inputs = batch.first(); // [batch_size, input_size]
-        Tensor expected = batch.second(); // [batch_size, output_size]
+        Tensor[] inputs = batch.first();
+        Tensor[] labels = batch.second();
 
-        Tensor prediction = predict(inputs).cpu(); // [batch_size, output_size]
+        Tensor[] outputs = predict(inputs);
 
         for (Tensor input : inputs) {
             int batchSize = input.shape()[0];
 
-            for (int i = 0; i < batchSize; i++) {
-                Range range = Range.point(i);
+            for (int i = 0; i < outputs.length; i++) {
+                Tensor output = outputs[i];
+                Tensor label = labels[i];
 
-                Tensor output = prediction.slice(range).flatten();
-                Tensor target = expected.slice(range).flatten();
+                for (int b = 0; b < batchSize; b++) {
+                    Range range = Range.point(b);
 
-                int predIndex = output.argmax();
-                int targetIndex = target.argmax();
+                    Tensor sampleOutput = output.slice(range).flatten();
+                    Tensor sampleLabel = label.slice(range).flatten();
 
-                if (output.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
-                    predIndex = output.get(0) > 0.5 ? 1 : 0;
-                    targetIndex = (int) target.get(0);
+                    int predIndex = sampleOutput.argmax();
+                    int targetIndex = sampleLabel.argmax();
+
+                    if (sampleOutput.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
+                        predIndex = sampleOutput.get(0) > 0.5 ? 1 : 0;
+                        targetIndex = (int) sampleLabel.get(0);
+                    }
+
+                    double loss = lossFunction.calculate(sampleLabel, sampleOutput);
+                    totalLoss.updateAndGet(v -> v + loss);
+
+                    Tensor predictions = classifications.get(targetIndex);
+                    int pred = (int) predictions.get(predIndex);
+
+                    predictions.set(pred + 1, predIndex);
                 }
-
-                double loss = lossFunction.calculate(target, output);
-                totalLoss.updateAndGet(v -> v + loss);
-                
-                Tensor predictions = classifications.get(targetIndex);
-                int pred = (int) predictions.get(predIndex);
-
-                predictions.set(pred + 1, predIndex);
             }
         }
     }
 
-    protected void predictBatch(Pair<Tensor[], Tensor> batch, AtomicReference<Double> totalError) {
+    protected void predictBatch(Pair<Tensor[], Tensor[]> batch, AtomicReference<Double> totalError) {
         Tensor[] inputs = batch.first();
-        Tensor targets = batch.second();
+        Tensor[] targets = batch.second();
 
-        Tensor outputs = predict(inputs).cpu();
-        int batchSize = outputs.shape()[0];
+        Tensor[] outputs = predict(inputs);
 
-        for (int i = 0; i < batchSize; i++) {
-            Range range = new Range(i, i + 1);
+        for (int i = 0; i < outputs.length; i++) {
+            Tensor output = outputs[i].cpu();
+            Tensor label = targets[i].cpu();
 
-            Tensor output = outputs.slice(range).flatten();
-            Tensor target = targets.slice(range).flatten();
+            int batchSize = output.shape()[0];
 
-            double loss = lossFunction.calculate(target, output);
-            totalError.updateAndGet(v -> v + loss);
+            for (int b = 0; b < batchSize; b++) {
+                Range range = new Range(b, b + 1);
+
+                Tensor sampleOutput = output.slice(range).flatten();
+                Tensor sampleLabel = label.slice(range).flatten();
+
+                double loss = lossFunction.calculate(sampleLabel, sampleOutput);
+                totalError.updateAndGet(v -> v + loss);
+            }
         }
     }
 
@@ -282,7 +292,7 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public Tensor predict(StatesCache cache, boolean training, Tensor... inputs) {
+    public Tensor[] predict(StatesCache cache, boolean training, Tensor... inputs) {
         Tensor input = validateInputs(inputs);
         Tensor result = input.to(device).withGrad();
 
@@ -298,11 +308,11 @@ public class Sequential extends Layer implements Model {
             GpuContext.closeQueue(device);
         }
 
-        return result;
+        return new Tensor[]{result};
     }
 
     @Override
-    public void backpropagate(StatesCache cache, Tensor outputs, Tensor targets) {
+    public void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets) {
         int count = flattened.size() - 1;
         
         Layer last = flattened.getLast();
@@ -329,7 +339,7 @@ public class Sequential extends Layer implements Model {
         dataSource.reset();
         
         while (dataSource.hasNext()) {
-            Pair<Tensor[], Tensor> batch = dataSource.nextBatch();
+            Pair<Tensor[], Tensor[]> batch = dataSource.nextBatch();
             makeEvaluation(batch, classifications, totalLoss);
         }
 
@@ -340,9 +350,13 @@ public class Sequential extends Layer implements Model {
     public double loss(ListDataSource dataSource) {
         AtomicReference<Double> totalError = new AtomicReference<>(0.0);
 
-        Pair<Tensor[], Tensor> all = dataSource.allData();
-        predictBatch(all, totalError);
-        
+        dataSource.reset();
+
+        while (dataSource.hasNext()) {
+            Pair<Tensor[], Tensor[]> batch = dataSource.nextBatch();
+            predictBatch(batch, totalError);
+        }
+
         return totalError.get() / dataSource.size();
     }
     
