@@ -1,6 +1,6 @@
 package org.brain4j.core.loss.impl;
 
-import org.brain4j.common.tensor.Tensor;
+import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.loss.LossFunction;
 
 public class MeanSquaredError implements LossFunction {

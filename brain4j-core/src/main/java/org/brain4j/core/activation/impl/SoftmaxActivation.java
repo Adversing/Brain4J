@@ -1,8 +1,8 @@
 package org.brain4j.core.activation.impl;
 
-import org.brain4j.common.activation.Activation;
-import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.weightsinit.WeightInitialization;
+import org.brain4j.math.activation.Activation;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.weightsinit.WeightInitialization;
 import org.brain4j.core.weightsinit.UniformXavierInit;
 
 public class SoftmaxActivation implements Activation {

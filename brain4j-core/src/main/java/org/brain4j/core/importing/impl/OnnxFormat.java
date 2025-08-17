@@ -1,13 +1,12 @@
 package org.brain4j.core.importing.impl;
 
-import org.brain4j.common.Tensors;
-import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.autograd.Operation;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
 import org.brain4j.core.importing.ModelFormat;
 import org.brain4j.core.importing.onnx.ProtoOnnx;
-import org.brain4j.core.layer.Layer;
 import org.brain4j.core.model.Model;
 
 import java.io.File;

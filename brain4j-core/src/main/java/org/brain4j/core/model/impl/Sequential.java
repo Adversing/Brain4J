@@ -1,14 +1,14 @@
 package org.brain4j.core.model.impl;
 
-import org.brain4j.common.Commons;
-import org.brain4j.common.Pair;
-import org.brain4j.common.Tensors;
-import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.gpu.GpuContext;
-import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.impl.GpuTensor;
-import org.brain4j.common.tensor.index.Range;
+import org.brain4j.math.Commons;
+import org.brain4j.math.Pair;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.impl.GpuTensor;
+import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
-import static org.brain4j.common.constants.Constants.*;
+import static org.brain4j.math.constants.Constants.*;
 
 /**
  * Represents a simple feedforward neural network model.

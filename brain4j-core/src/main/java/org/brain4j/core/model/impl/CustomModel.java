@@ -1,10 +1,10 @@
 package org.brain4j.core.model.impl;
 
-import org.brain4j.common.Pair;
-import org.brain4j.common.Tensors;
-import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.index.Range;
+import org.brain4j.math.Pair;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;

@@ -1,10 +1,10 @@
 package org.brain4j.core;
 
 import ch.qos.logback.classic.Level;
-import org.brain4j.common.activation.Activation;
-import org.brain4j.common.gpu.GpuContext;
-import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.gpu.device.DeviceUtils;
+import org.brain4j.math.activation.Activation;
+import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.core.activation.Activations;
 import org.jocl.cl_context;
 import org.jocl.cl_program;

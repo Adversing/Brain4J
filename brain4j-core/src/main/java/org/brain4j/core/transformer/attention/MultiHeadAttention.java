@@ -1,10 +1,10 @@
 package org.brain4j.core.transformer.attention;
 
-import org.brain4j.common.Commons;
-import org.brain4j.common.Tensors;
-import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.weightsinit.WeightInitialization;
+import org.brain4j.math.Commons;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.weightsinit.WeightInitialization;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.NoClipper;
 import org.brain4j.core.importing.proto.ProtoModel;

@@ -1,11 +1,11 @@
 package org.brain4j.core.clipper.impl;
 
-import org.brain4j.common.gpu.GpuContext;
-import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.gpu.kernel.KernelFactory;
-import org.brain4j.common.gpu.memory.GpuQueue;
-import org.brain4j.common.tensor.impl.CpuTensor;
-import org.brain4j.common.tensor.impl.GpuTensor;
+import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.gpu.kernel.KernelFactory;
+import org.brain4j.math.gpu.memory.GpuQueue;
+import org.brain4j.math.tensor.impl.CpuTensor;
+import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.proto.SerializeUtils;

@@ -1,6 +1,6 @@
 package org.brain4j.core.training.optimizer;
 
-import org.brain4j.common.tensor.Tensor;
+import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.training.optimizer.impl.Adam;
 import org.brain4j.core.training.optimizer.impl.AdamW;
 import org.brain4j.core.training.optimizer.impl.GradientDescent;

@@ -1,6 +1,6 @@
 package org.brain4j.core.graphs;
 
-import org.brain4j.common.tensor.autograd.Operation;
+import org.brain4j.math.tensor.autograd.Operation;
 
 import java.util.List;
 

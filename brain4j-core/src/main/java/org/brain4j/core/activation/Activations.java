@@ -1,6 +1,6 @@
 package org.brain4j.core.activation;
 
-import org.brain4j.common.activation.Activation;
+import org.brain4j.math.activation.Activation;
 import org.brain4j.core.activation.impl.*;
 
 /**

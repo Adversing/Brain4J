@@ -1,6 +1,6 @@
 package org.brain4j.core.importing.impl;
 
-import org.brain4j.common.Commons;
+import org.brain4j.math.Commons;
 import org.brain4j.core.importing.ModelFormat;
 import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.importing.registry.LayerRegistry;

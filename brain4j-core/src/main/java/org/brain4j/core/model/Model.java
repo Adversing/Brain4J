@@ -1,14 +1,13 @@
 package org.brain4j.core.model;
 
-import org.brain4j.common.data.ListDataSource;
-import org.brain4j.common.gpu.device.Device;
-import org.brain4j.common.tensor.Tensor;
+import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.brain4j.core.training.wrappers.TrainingParams;
 

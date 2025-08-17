@@ -1,8 +1,8 @@
 package org.brain4j.core.training.wrappers;
 
-import org.brain4j.common.Commons;
-import org.brain4j.common.Tensors;
-import org.brain4j.common.tensor.Tensor;
+import org.brain4j.math.Commons;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.tensor.Tensor;
 
 import java.util.Map;
 
