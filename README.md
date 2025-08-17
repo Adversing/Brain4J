@@ -36,7 +36,7 @@ repositories {
 
 dependencies {
     implementation 'com.github.brain4j-org.brain4j:brain4j-core:2.9.1'
-    implementation 'com.github.brain4j-org.brain4j:brain4j-math:2.9.1'
+    implementation 'com.github.brain4j-org.brain4j:brain4j-common:2.9.1'
 }
 ```
 
