@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.transformer;
 
+import org.brain4j.common.activation.Activation;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
@@ -52,7 +53,7 @@ public class TransformerEncoder extends Layer {
     
     public TransformerEncoder() {
     }
-    
+
     /**
      * Constructs a new encoder block with the specified parameters.
      * @param numHeads the amount of heads in the attention block
@@ -60,14 +61,36 @@ public class TransformerEncoder extends Layer {
      * @param dropout the dropout used when training
      */
     public TransformerEncoder(int numHeads, int embeddingDim, double dropout) {
+        this(numHeads, embeddingDim, dropout, Activations.GELU);
+    }
+
+    /**
+     * Constructs a new encoder block with the specified parameters.
+     * @param numHeads the amount of heads in the attention block
+     * @param embeddingDim the embedding dimension of the input
+     * @param dropout the dropout used when training
+     * @param activation the activation used in the projection
+     */
+    public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activations activation) {
+        this(numHeads, embeddingDim, dropout, activation.function());
+    }
+
+    /**
+     * Constructs a new encoder block with the specified parameters.
+     * @param numHeads the amount of heads in the attention block
+     * @param embeddingDim the embedding dimension of the input
+     * @param dropout the dropout used when training
+     * @param activation the activation used in the projection
+     */
+    public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activation activation) {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
-        
+
         this.normalizer1 = new NormLayer(embeddingDim);
         this.normalizer2 = new NormLayer(embeddingDim);
-        this.upProjection = new DenseLayer(embeddingDim * 4, Activations.RELU);
+        this.upProjection = new DenseLayer(embeddingDim * 4, activation);
         this.downProjection = new DenseLayer(embeddingDim, Activations.LINEAR);
 
         this.attention = createAttention(numHeads, embeddingDim);
@@ -92,7 +115,6 @@ public class TransformerEncoder extends Layer {
         normalizer2.connect(this);
         upProjection.connect(this);
         downProjection.connect(upProjection);
-
         return this;
     }
 
@@ -111,7 +133,7 @@ public class TransformerEncoder extends Layer {
         normalizer2.toDevice(device);
         upProjection.toDevice(device);
         downProjection.toDevice(device);
-        attention.to(device);
+        attention.toDevice(device);
     }
     
     @Override

@@ -35,6 +35,17 @@ public class Tensors {
         return new CpuTensor(shape);
     }
 
+    public static Tensor range(int start, int end) {
+        int length = end - start;
+        Tensor result = Tensors.zeros(length);
+
+        for (int i = 0; i < length; i++) {
+            result.data()[i] = i + start;
+        }
+
+        return result;
+    }
+
     public static Tensor ones(int... shape) {
         Tensor result = new CpuTensor(shape);
         Arrays.fill(result.data(), 1);
@@ -72,6 +83,7 @@ public class Tensors {
 
         for (int i = 0; i < tensors.size(); i++) {
             Tensor current = tensors.get(i);
+
             if (current.rank() != dimension) {
                 throw new IllegalArgumentException(
                         "All input tensors must have the same dimension!"
@@ -135,16 +147,6 @@ public class Tensors {
         return concatGrad(tensors, -1);
     }
 
-    public static Tensor concatGradLast(List<Tensor> tensors, int dim) {
-        Tensor base = tensors.getFirst();
-        
-        for (int i = 1; i < tensors.size() - 1; i++) {
-            base = base.concat(tensors.get(i), dim);
-        }
-        
-        return base.concatGrad(tensors.getLast(), dim);
-    }
-    
     public static Tensor concatGrad(List<Tensor> tensors, int dim) {
         Tensor base = tensors.getFirst();
         

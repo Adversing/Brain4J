@@ -3,7 +3,6 @@ package org.brain4j.core.transformer.attention.head;
 import org.brain4j.common.Tensors;
 import org.brain4j.common.gpu.device.Device;
 import org.brain4j.common.tensor.Tensor;
-import org.brain4j.common.tensor.index.Range;
 import org.brain4j.common.weightsinit.WeightInitialization;
 import org.brain4j.core.activation.impl.SoftmaxActivation;
 import org.brain4j.core.clipper.GradientClipper;
@@ -37,15 +36,15 @@ public class AttentionHead {
     }
 
     public void initWeights(Random generator, WeightInitialization weightInit) {
-        this.queryWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
-        this.keyWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
-        this.valueWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
+        queryWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
+        keyWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
+        valueWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
     }
 
-    public void to(Device device) {
-        this.queryWeights.to(device);
-        this.keyWeights.to(device);
-        this.valueWeights.to(device);
+    public void toDevice(Device device) {
+        queryWeights.to(device);
+        keyWeights.to(device);
+        valueWeights.to(device);
     }
 
     public Tensor attend(Tensor input) {

@@ -52,9 +52,9 @@ public class MultiHeadAttention {
         return new AttentionHead(clipper, embeddingDim, headDimension);
     }
 
-    public void to(Device device) {
+    public void toDevice(Device device) {
         for (AttentionHead head : heads) {
-            head.to(device);
+            head.toDevice(device);
         }
     }
 
