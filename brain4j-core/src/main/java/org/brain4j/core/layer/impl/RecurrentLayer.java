@@ -163,7 +163,7 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public List<org.brain4j.core.importing.proto.ProtoModel.Tensor.Builder> weightsList() {
+    public List<ProtoModel.Tensor.Builder> weightsList() {
         return List.of(
             SerializeUtils.serializeTensor("input_weight", inputWeights),
             SerializeUtils.serializeTensor("hidden_weight", hiddenWeights),
