@@ -42,7 +42,7 @@ public interface Model extends Iterable<Layer> {
     Model add(int index, Layer layer);
     
     /**
-     * Computes a forward pass on the whole model.
+     * Computes a full forward pass on this model.
      * @param input the input tensor
      * @return the first output tensor
      */
@@ -51,7 +51,7 @@ public interface Model extends Iterable<Layer> {
     }
 
     /**
-     * Computes a forward pass on the whole model.
+     * Computes a full forward pass on this model.
      * @param cache the cache for this pass
      * @param inputs the input tensors
      * @return a collection of output tensors
@@ -59,8 +59,8 @@ public interface Model extends Iterable<Layer> {
     Tensor[] predict(StatesCache cache, Tensor... inputs);
 
     /**
-     * Executes a backpropagation pass for this model
-     * @param cache the states cache
+     * Computes a full backward pass on this model.
+     * @param cache the states cache of the forward pass
      * @param outputs the outputs of the network
      * @param targets the target outputs
      */
@@ -165,6 +165,19 @@ public interface Model extends Iterable<Layer> {
      * @return the device type of this model
      */
     Device device();
+    
+    /**
+     * Prints a formatted summary of the model architecture to the console,
+     * including weights, dimensions and activations of the layers, along with the total parameters.
+     *
+     * @throws IllegalStateException if the model is not compiled before calling this method
+     */
+    void summary();
+    
+    /**
+     * Resets all the gradients in the model.
+     */
+    void zeroGrad();
 
     /**
      * Returns an immutable list of layers composing the model.
@@ -227,17 +240,4 @@ public interface Model extends Iterable<Layer> {
      * @param lossFunction the new loss function
      */
     void setLossFunction(LossFunction lossFunction);
-
-    /**
-     * Prints a formatted summary of the model architecture to the console,
-     * including weights, dimensions and activations of the layers, along with the total parameters.
-     *
-     * @throws IllegalStateException if the model is not compiled before calling this method
-     */
-    void summary();
-
-    /**
-     * Resets all the gradients in the model.
-     */
-    void zeroGrad();
 }

@@ -407,7 +407,7 @@ public class Sequential extends Layer implements Model {
     @Override
     public void summary() {
         if (updater == null || optimizer == null) {
-            throw new IllegalStateException("The network is not compiled! Make sure to call compile() before.");
+            throw new IllegalStateException("The model is not compiled! Make sure to call compile() before.");
         }
 
         StringBuilder stats = new StringBuilder();
