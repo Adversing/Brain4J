@@ -40,7 +40,7 @@ public class GraphModel implements Model {
     }
 
     @Override
-    public Tensor[] predict(StatesCache cache, boolean training, Tensor... inputs) {
+    public Tensor[] predict(StatesCache cache, Tensor... inputs) {
         if (inputs.length != inputNames.size()) {
             throw new IllegalArgumentException("Expected " + inputNames.size() + " inputs, but got " + inputs.length);
         }
@@ -76,7 +76,7 @@ public class GraphModel implements Model {
             }
         }
         
-        if (!training && device != null) {
+        if (!cache.training() && device != null) {
             GpuContext.closeQueue(device);
         }
 
@@ -103,7 +103,7 @@ public class GraphModel implements Model {
     public Model add(int index, Layer layer) {
         throw new UnsupportedOperationException();
     }
-
+    
     @Override
     public void fit(ListDataSource train, ListDataSource validation, int epoches, int evaluateEvery) {
         throw new UnsupportedOperationException();

@@ -146,7 +146,7 @@ public class TransformerEncoder extends Layer {
 
         Tensor attended = attention.attend(cache, input);
         
-        if (training) {
+        if (cache.training()) {
             attended = dropout.forward(cache, attended);
         }
 
@@ -156,7 +156,7 @@ public class TransformerEncoder extends Layer {
         Tensor upProjected = upProjection.forward(cache, normalized);
         Tensor downProjected = downProjection.forward(cache, upProjected);
 
-        if (training) {
+        if (cache.training()) {
             downProjected = dropout.forward(cache, downProjected);
         }
 
