@@ -72,7 +72,7 @@ public class ConvLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         if (!validateInput(input)) {
             throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
         }

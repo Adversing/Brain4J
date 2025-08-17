@@ -31,7 +31,7 @@ public abstract class CustomModel {
 
     public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
     
-    public abstract void fit(StatesCache cache, Tensor output, Tensor label);
+    public abstract void fit(StatesCache cache, Tensor[] output, Tensor[] label);
     
     public abstract void zeroGrad();
     
@@ -71,8 +71,13 @@ public abstract class CustomModel {
         return new EvaluationResult(totalLoss.get() / dataSource.size(), classes, classifications);
     }
     
-    public void updateWeights(Tensor output) {
-        int elements = output.shape()[0];
+    public void updateWeights(Tensor[] outputs) {
+        int elements = 0;
+        
+        for (Tensor output : outputs) {
+            elements += output.shape()[0];
+        }
+        
         updater.updateWeights(elements);
     }
     
@@ -84,7 +89,7 @@ public abstract class CustomModel {
         Tensor[] inputs = batch.first();
         Tensor[] labels = batch.second();
 
-        Tensor[] outputs = forward(new StatesCache(), inputs);
+        Tensor[] outputs = forward(new StatesCache(false), inputs);
 
         for (Tensor input : inputs) {
             int batchSize = input.shape()[0];

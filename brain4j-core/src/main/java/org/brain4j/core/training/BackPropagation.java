@@ -26,20 +26,20 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         int index
     ) {
         Device device = model.device();
-        StatesCache cache = new StatesCache(device);
+        StatesCache cache = new StatesCache(true, device);
         
         long start = System.nanoTime();
         
         Tensor[] inputs = batch.first();
         Tensor[] labels = batch.second();
         
-        Tensor[] output = model.predict(cache, true, inputs);
+        Tensor[] output = model.predict(cache, inputs);
         model.backpropagate(cache, output, labels);
         
-        int elements = 1;
+        int elements = 0;
         
         for (Tensor input : inputs) {
-            elements *= input.shape()[0];
+            elements += input.shape()[0];
         }
         
         optimizer.postBatch();

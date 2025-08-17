@@ -30,7 +30,7 @@ public class PosEncodeLayer extends Layer {
     }
 
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         // [batch_size, seq_length, dimension]
         int[] shape = input.shape();
 

@@ -59,7 +59,7 @@ public class NormLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         return input.layerNorm(epsilon).mulGrad(weights).addGrad(bias);
     }
 

@@ -43,8 +43,8 @@ import static org.brain4j.common.constants.Constants.*;
  */
 public class Sequential extends Layer implements Model {
 
-    private static final Logger logger = LoggerFactory.getLogger(Sequential.class);
-    private static final Logger training = LoggerFactory.getLogger("training");
+    private static final Logger mainLogger = LoggerFactory.getLogger(Sequential.class);
+    private static final Logger trainingLogger = LoggerFactory.getLogger("training");
 
     /* Data structures in the model */
     protected final List<Layer> layers;
@@ -119,7 +119,7 @@ public class Sequential extends Layer implements Model {
         Tensor[] inputs = batch.first();
         Tensor[] labels = batch.second();
 
-        Tensor[] outputs = predict(inputs);
+        Tensor[] outputs = predict(new StatesCache(false), inputs);
 
         for (Tensor input : inputs) {
             int batchSize = input.shape()[0];
@@ -158,7 +158,7 @@ public class Sequential extends Layer implements Model {
         Tensor[] inputs = batch.first();
         Tensor[] targets = batch.second();
 
-        Tensor[] outputs = predict(inputs);
+        Tensor[] outputs = predict(new StatesCache(false), inputs);
 
         for (int i = 0; i < outputs.length; i++) {
             Tensor output = outputs[i].cpu();
@@ -218,7 +218,7 @@ public class Sequential extends Layer implements Model {
             result.f1Score() * 100
         );
 
-        training.info(formatted);
+        trainingLogger.info(formatted);
     }
 
     protected void printProgress(ListDataSource source, int epoch, int epoches, int batch, double tookMs) {
@@ -246,7 +246,7 @@ public class Sequential extends Layer implements Model {
         String message = String.format(intro + progressBar + batchesMsg + time,
             epoch, epoches, batch, total, timeStr);
 
-        training.info(message);
+        trainingLogger.info(message);
     }
 
     @Override
@@ -262,7 +262,7 @@ public class Sequential extends Layer implements Model {
         flattened.add(index, layer);
         return this;
     }
-
+    
     @Override
     public void fit(ListDataSource train, ListDataSource validation, int epoches, int evaluateEvery) {
         for (int epoch = 1; epoch <= epoches; epoch++) {
@@ -300,7 +300,7 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public Tensor[] predict(StatesCache cache, boolean training, Tensor... inputs) {
+    public Tensor[] predict(StatesCache cache, Tensor... inputs) {
         Tensor input = validateInputs(inputs);
         Tensor result = input.to(device).withGrad();
 
@@ -309,10 +309,10 @@ public class Sequential extends Layer implements Model {
         }
         
         for (Layer layer : flattened) {
-            result = layer.forward(cache, result, training);
+            result = layer.forward(cache, result);
         }
 
-        if (!training && device != null) {
+        if (!cache.training() && device != null) {
             GpuContext.closeQueue(device);
         }
 
@@ -444,7 +444,7 @@ public class Sequential extends Layer implements Model {
         stats.append("Total parameters: %s (%s)\n".formatted(parameters, sizeOfParams));
         stats.append(Commons.getHeader("", Commons.getHeaderChar()));
 
-        Arrays.stream(stats.toString().split("\n")).forEach(logger::info);
+        Arrays.stream(stats.toString().split("\n")).forEach(mainLogger::info);
     }
 
     private void append(
@@ -596,7 +596,7 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         Tensor pass = input;
         
         for (int i = 0; i < layers.size(); i++) {
@@ -606,7 +606,7 @@ public class Sequential extends Layer implements Model {
                 throw new IllegalStateException("Layer at index " + i + " is null!");
             }
 
-            pass = layer.forward(cache, pass, training);
+            pass = layer.forward(cache, pass);
         }
 
         return pass;

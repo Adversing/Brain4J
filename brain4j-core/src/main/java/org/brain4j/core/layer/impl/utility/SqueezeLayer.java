@@ -18,7 +18,7 @@ public class SqueezeLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         return dimension == -1 ? input.squeeze() : input.squeeze(dimension);
     }
     

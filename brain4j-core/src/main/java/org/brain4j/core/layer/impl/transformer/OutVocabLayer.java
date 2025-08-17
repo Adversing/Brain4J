@@ -63,7 +63,7 @@ public class OutVocabLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         int[] shape = input.shape();
 
         if (shape.length != 3) {

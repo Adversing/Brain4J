@@ -58,12 +58,12 @@ public abstract class Layer {
     
     /**
      * Performs a forward pass through this layer.
+     *
      * @param cache the states cache for this forward pass
      * @param input the input tensor
-     * @param training whether is training or not
      * @return the output tensor
      */
-    public abstract Tensor forward(StatesCache cache, Tensor input, boolean training);
+    public abstract Tensor forward(StatesCache cache, Tensor input);
 
     /**
      * Returns the output size of this layer, i.e. the number of neurons.

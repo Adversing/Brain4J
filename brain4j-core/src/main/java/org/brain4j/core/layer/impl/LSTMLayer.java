@@ -43,7 +43,7 @@ public class LSTMLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         // [batch_size, timesteps, dimension]
         if (input.rank() > 3) {
             throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");

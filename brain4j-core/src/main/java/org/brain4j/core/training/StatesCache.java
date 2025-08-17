@@ -12,13 +12,15 @@ public class StatesCache {
 
     private final Map<Layer, Tensor> inputStates;
     private final Map<Layer, Tensor> outputStates;
+    private final boolean training;
     private cl_command_queue commandQueue;
 
-    public StatesCache() {
-        this(null);
+    public StatesCache(boolean training) {
+        this(training, null);
     }
 
-    public StatesCache(Device device) {
+    public StatesCache(boolean training, Device device) {
+        this.training = training;
         this.inputStates = new HashMap<>();
         this.outputStates = new HashMap<>();
 
@@ -26,7 +28,11 @@ public class StatesCache {
             this.commandQueue = device.newCommandQueue();
         }
     }
-
+    
+    public boolean training() {
+        return training;
+    }
+    
     public Tensor input(Layer layer) {
         return inputStates.get(layer);
     }

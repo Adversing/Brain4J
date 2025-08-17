@@ -18,7 +18,7 @@ public class SliceLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         return input.sliceGrad(ranges);
     }
     

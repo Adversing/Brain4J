@@ -137,7 +137,7 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         if (input.rank() != 3) {
             throw new IllegalArgumentException(
                 "Expected input with shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
@@ -147,21 +147,21 @@ public class TransformerEncoder extends Layer {
         Tensor attended = attention.attend(cache, input);
         
         if (training) {
-            attended = dropout.forward(cache, attended, true);
+            attended = dropout.forward(cache, attended);
         }
 
         Tensor added = attended.add(input);
-        Tensor normalized = normalizer1.forward(cache, added, training);
+        Tensor normalized = normalizer1.forward(cache, added);
         
-        Tensor upProjected = upProjection.forward(cache, normalized, training);
-        Tensor downProjected = downProjection.forward(cache, upProjected, training);
+        Tensor upProjected = upProjection.forward(cache, normalized);
+        Tensor downProjected = downProjection.forward(cache, upProjected);
 
         if (training) {
-            downProjected = dropout.forward(cache, downProjected, true);
+            downProjected = dropout.forward(cache, downProjected);
         }
 
         Tensor added2 = downProjected.add(normalized);
-        normalized = normalizer2.forward(cache, added2, training);
+        normalized = normalizer2.forward(cache, added2);
 
         cache.rememberOutput(this, normalized);
         

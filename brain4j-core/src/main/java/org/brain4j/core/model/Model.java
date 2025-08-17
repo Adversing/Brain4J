@@ -40,34 +40,23 @@ public interface Model extends Iterable<Layer> {
      * @return this instance
      */
     Model add(int index, Layer layer);
-
+    
     /**
-     * Predicts the output from the input tensor.
-     * @param inputs the input tensors
-     * @return the output tensor
+     * Computes a forward pass on the whole model.
+     * @param input the input tensor
+     * @return the first output tensor
      */
-    default Tensor[] predict(Tensor... inputs) {
-        return predict(new StatesCache(device()), inputs);
+    default Tensor predict(Tensor input) {
+        return predict(new StatesCache(false, device()), input)[0];
     }
 
     /**
-     * Predicts output using a cache and input tensor.
-     * @param cache the states cache
+     * Computes a forward pass on the whole model.
+     * @param cache the cache for this pass
      * @param inputs the input tensors
-     * @return the output tensor
+     * @return a collection of output tensors
      */
-    default Tensor[] predict(StatesCache cache, Tensor... inputs) {
-        return predict(cache, false, inputs);
-    }
-
-    /**
-     * Predicts output with optional training mode.
-     * @param cache the states cache
-     * @param inputs the input tensors
-     * @param training whether in training mode
-     * @return the output tensor
-     */
-    Tensor[] predict(StatesCache cache, boolean training, Tensor... inputs);
+    Tensor[] predict(StatesCache cache, Tensor... inputs);
 
     /**
      * Executes a backpropagation pass for this model

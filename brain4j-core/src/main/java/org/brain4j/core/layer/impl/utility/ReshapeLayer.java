@@ -39,7 +39,7 @@ public class ReshapeLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input, boolean training) {
+    public Tensor forward(StatesCache cache, Tensor input) {
         int[] inputShape = input.shape();
         int[] newShape = new int[shape.length + 1];
 
