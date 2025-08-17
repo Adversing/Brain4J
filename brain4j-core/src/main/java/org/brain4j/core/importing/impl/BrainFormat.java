@@ -3,6 +3,7 @@ package org.brain4j.core.importing.impl;
 import org.brain4j.common.Commons;
 import org.brain4j.core.importing.ModelFormat;
 import org.brain4j.core.importing.proto.ProtoModel;
+import org.brain4j.core.importing.registry.LayerRegistry;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.transformer.TransformerEncoder;
 import org.brain4j.core.model.Model;
@@ -13,7 +14,13 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class BrainFormat implements ModelFormat {
-    
+
+    private final LayerRegistry registry = new LayerRegistry();
+
+    public BrainFormat() {
+        registry.registerAll(LAYER_IDENTITY_MAP);
+    }
+
     @Override
     public <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception {
         ProtoModel.Model protoModel = ProtoModel.Model.parseFrom(bytes);
@@ -30,8 +37,8 @@ public class BrainFormat implements ModelFormat {
             }
             
             int position = Integer.parseInt(parts[1]);
-            Layer wrapped = Commons.newInstance(layerType);
-            
+            Layer wrapped = registry.create(layerType);
+
             List<ProtoModel.Tensor> tensors = protoModel.getWeightsList().stream()
                 .filter(t -> t.getName().startsWith(layerId))
                 .toList();
@@ -84,10 +91,23 @@ public class BrainFormat implements ModelFormat {
         
         builder.build().writeTo(new FileOutputStream(file));
     }
-    
+
+    public LayerRegistry registry() {
+        return registry;
+    }
+
     public ProtoModel.Layer.Builder toProtoBuilder(Layer layer) {
+        String identifier = registry.fromState(layer.getClass());
+
+        if (identifier == null) {
+            throw new IllegalArgumentException(
+                "Unable to map layer " + layer.getClass().getName() + ". If you are using " +
+                "a custom layer, make sure to register it first."
+            );
+        }
+
         ProtoModel.Layer.Builder builder = ProtoModel.Layer.newBuilder()
-            .setType(layer.getClass().getName());
+            .setType(identifier);
         
         if (!(layer instanceof TransformerEncoder)) {
             builder.setBasic(
