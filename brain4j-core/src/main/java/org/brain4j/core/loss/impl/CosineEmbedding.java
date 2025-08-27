@@ -3,7 +3,7 @@ package org.brain4j.core.loss.impl;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.loss.LossFunction;
 
-public class CosineEmbeddingLoss implements LossFunction {
+public class CosineEmbedding implements LossFunction {
 
     @Override
     public double calculate(Tensor expected, Tensor predicted) {
