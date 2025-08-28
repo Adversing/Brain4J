@@ -50,7 +50,7 @@ public class EmbeddingLayer extends Layer {
 
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        throwIfTooManyInputs(1, inputs);
+        checkInputLength(1, inputs);
 
         Tensor input = inputs[0];
         int[] shape = input.shape();

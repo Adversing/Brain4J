@@ -53,15 +53,15 @@ public abstract class Layer {
     /**
      * Checks if the amount of inputs is greater than the maximum amount.
      * If so, throws an exception, otherwise will do nothing.
-     * @param maxInputs the maximum amount of accepted inputs
+     * @param length the maximum amount of accepted inputs
      * @param inputs the input tensors
      */
-    public void throwIfTooManyInputs(int maxInputs, Tensor... inputs) {
-        if (inputs.length < maxInputs) return;
+    public void checkInputLength(int length, Tensor... inputs) {
+        if (inputs.length == length) return;
 
         throw new IllegalArgumentException(
-            String.format("Too many inputs %s for layer %s! Expecting %s inputs",
-                inputs.length, this.getClass().getSimpleName(), maxInputs)
+            String.format("Input length mismatch! Got %s for layer %s but expecting %s inputs",
+                inputs.length, this.getClass().getSimpleName(), length)
         );
     }
 

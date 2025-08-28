@@ -256,4 +256,14 @@ public class Tensors {
 
         return newShape;
     }
+
+    public static Tensor eye(int n) {
+        Tensor result = Tensors.zeros(n, n);
+
+        for (int i = 0; i < n; i++) {
+            result.set(1, i, i);
+        }
+
+        return result;
+    }
 }

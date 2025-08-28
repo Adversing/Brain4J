@@ -31,7 +31,7 @@ public class PosEncodeLayer extends Layer {
 
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        throwIfTooManyInputs(1, inputs);
+        checkInputLength(1, inputs);
 
         // [batch_size, seq_length, dimension]
         Tensor input = inputs[0];

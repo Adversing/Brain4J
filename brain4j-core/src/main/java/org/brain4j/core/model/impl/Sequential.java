@@ -324,17 +324,6 @@ public class Sequential extends Layer implements Model {
         }
         
         for (Layer layer : flattened) {
-            for (Tensor input : result) {
-                boolean isValid = layer.validInput(input);
-
-                if (isValid) continue;
-
-                throw new IllegalArgumentException(
-                    String.format("Invalid input with shape %s for layer %s!", Arrays.toString(input.shape()),
-                        layer.getClass().getSimpleName())
-                );
-            }
-
             result = layer.forward(cache, result);
         }
 

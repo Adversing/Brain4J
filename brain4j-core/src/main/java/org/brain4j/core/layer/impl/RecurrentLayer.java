@@ -100,8 +100,8 @@ public class RecurrentLayer extends Layer {
             input = input.unsqueeze();
         }
         
-        int batch = input.shape()[0];
-        int timesteps = input.shape()[1];
+        int batch = input.shape(0);
+        int timesteps = input.shape(1);
 
         // [batch_size, timesteps, hidden_size]
         Tensor projectedInput = input.matmulGrad(inputWeights);

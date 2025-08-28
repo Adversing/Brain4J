@@ -75,7 +75,7 @@ public abstract class CustomModel {
         int elements = 0;
         
         for (Tensor output : outputs) {
-            elements += output.shape()[0];
+            elements += output.shape(0);
         }
         
         updater.updateWeights(elements);
@@ -92,7 +92,7 @@ public abstract class CustomModel {
         Tensor[] outputs = forward(new StatesCache(false), inputs);
 
         for (Tensor input : inputs) {
-            int batchSize = input.shape()[0];
+            int batchSize = input.shape(0);
 
             for (int i = 0; i < outputs.length; i++) {
                 Tensor output = outputs[i];

@@ -16,6 +16,13 @@ import java.util.function.Supplier;
 public interface Tensor extends Iterable<Float> {
 
     /**
+     * Returns the size of the n-dimension.
+     * @param index the n-dimension
+     * @return the dimension size
+     */
+    int shape(int index);
+
+    /**
      * Returns the shape of the tensor as an array of integers.
      * @return the shape of the tensor
      */

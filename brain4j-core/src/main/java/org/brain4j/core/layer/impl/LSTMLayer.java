@@ -55,8 +55,8 @@ public class LSTMLayer extends Layer {
             input = input.unsqueeze();
         }
         
-        int batch = input.shape()[0];
-        int timesteps = input.shape()[1];
+        int batch = input.shape(0);
+        int timesteps = input.shape(1);
         
         // [batch, timesteps, dimension] x [dimension, 4 * hidden_dim]
         // = [batch, timesteps, 4 * hidden_dim]

@@ -7,8 +7,8 @@ public class CosineEmbedding implements LossFunction {
 
     @Override
     public double calculate(Tensor expected, Tensor predicted) {
-        int batchSize = expected.shape()[0];
-        int dim = expected.shape()[1];
+        int batchSize = expected.shape(0);
+        int dim = expected.shape(1);
 
         double totalLoss = 0.0;
 

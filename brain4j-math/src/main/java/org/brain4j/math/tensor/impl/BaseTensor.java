@@ -191,6 +191,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
+    public int shape(int index) {
+        return shape[index];
+    }
+
+    @Override
     public int[] shape() {
         return shape;
     }
