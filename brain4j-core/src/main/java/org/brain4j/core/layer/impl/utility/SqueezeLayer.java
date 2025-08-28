@@ -18,8 +18,15 @@ public class SqueezeLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        return dimension == -1 ? input.squeeze() : input.squeeze(dimension);
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor[] results = new Tensor[inputs.length];
+
+        for (int i = 0; i < results.length; i++) {
+            Tensor input = inputs[i];
+            results[i] = dimension == -1 ? input.squeeze() : input.squeeze(dimension);
+        }
+
+        return results;
     }
     
     @Override

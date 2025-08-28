@@ -43,9 +43,15 @@ public class ActivationLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        cache.rememberOutput(this, input);
-        return input.activateGrad(activation);
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor[] result = new Tensor[inputs.length];
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] = inputs[i].activateGrad(activation);
+        }
+
+        cache.rememberOutput(this, result);
+        return result;
     }
 
     @Override

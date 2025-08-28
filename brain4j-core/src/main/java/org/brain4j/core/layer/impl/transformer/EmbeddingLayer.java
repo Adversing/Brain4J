@@ -49,7 +49,10 @@ public class EmbeddingLayer extends Layer {
     }
 
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        throwIfTooManyInputs(1, inputs);
+
+        Tensor input = inputs[0];
         int[] shape = input.shape();
 
         if (shape.length != 2) {
@@ -78,17 +81,17 @@ public class EmbeddingLayer extends Layer {
                 }
             });
 
-        cache.rememberInput(this, input);
+        cache.rememberInput(this, inputs);
         cache.rememberOutput(this, output);
 
         // [batch_size, seq_length, embedding_dim]
-        return output;
+        return new Tensor[] { output };
     }
 
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        Tensor input = cache.input(this);
-        Tensor output = cache.output(this);
+        Tensor input = cache.input(this)[0];
+        Tensor output = cache.output(this)[0];
         Tensor gradOutput = output.grad();
         
         int[] shape = output.shape();

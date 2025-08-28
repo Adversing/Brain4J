@@ -59,8 +59,9 @@ public class NormLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        return input.layerNorm(epsilon).mulGrad(weights).addGrad(bias);
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor input = inputs[0];
+        return new Tensor[] { input.layerNorm(epsilon).mulGrad(weights).addGrad(bias) };
     }
 
     @Override

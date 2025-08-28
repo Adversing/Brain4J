@@ -88,8 +88,10 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         // [batch_size, timesteps, dimension]
+        Tensor input = inputs[0];
+
         if (input.rank() > 3) {
             throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");
         }
@@ -122,7 +124,7 @@ public class RecurrentLayer extends Layer {
         Tensor output = sequence.matmulGrad(weights).addGrad(bias);
         
         cache.rememberOutput(this, output);
-        return output;
+        return new Tensor[]{ output };
     }
     
     @Override
@@ -143,7 +145,7 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public boolean validateInput(Tensor input) {
+    public boolean validInput(Tensor input) {
         return input.rank() == 3;
     }
 

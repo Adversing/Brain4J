@@ -63,7 +63,10 @@ public class OutVocabLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        throwIfTooManyInputs(1, inputs);
+
+        Tensor input = inputs[0];
         int[] shape = input.shape();
 
         if (shape.length != 3) {
@@ -76,8 +79,7 @@ public class OutVocabLayer extends Layer {
         Tensor activated = output.activateGrad(activation);
 
         cache.rememberOutput(this, output);
-
-        return activated;
+        return new Tensor[] { activated };
     }
 
     @Override

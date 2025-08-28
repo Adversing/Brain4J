@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class StatesCache {
 
-    private final Map<Layer, Tensor> inputStates;
-    private final Map<Layer, Tensor> outputStates;
+    private final Map<Layer, Tensor[]> inputStates;
+    private final Map<Layer, Tensor[]> outputStates;
     private final boolean training;
     private cl_command_queue commandQueue;
 
@@ -33,19 +33,19 @@ public class StatesCache {
         return training;
     }
     
-    public Tensor input(Layer layer) {
+    public Tensor[] input(Layer layer) {
         return inputStates.get(layer);
     }
 
-    public void rememberInput(Layer layer, Tensor tensor) {
+    public void rememberInput(Layer layer, Tensor... tensor) {
         inputStates.put(layer, tensor);
     }
 
-    public Tensor output(Layer layer) {
+    public Tensor[] output(Layer layer) {
         return outputStates.get(layer);
     }
 
-    public void rememberOutput(Layer layer, Tensor state) {
+    public void rememberOutput(Layer layer, Tensor... state) {
         outputStates.put(layer, state);
     }
     

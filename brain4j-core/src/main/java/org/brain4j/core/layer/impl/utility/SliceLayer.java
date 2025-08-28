@@ -18,8 +18,14 @@ public class SliceLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        return input.sliceGrad(ranges);
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor[] result = new Tensor[inputs.length];
+
+        for (int i = 0; i < inputs.length; i++) {
+            result[i] = inputs[i].sliceGrad(ranges);
+        }
+
+        return result;
     }
     
     @Override

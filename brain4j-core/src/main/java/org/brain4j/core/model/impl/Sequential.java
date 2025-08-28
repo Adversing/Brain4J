@@ -1,5 +1,6 @@
 package org.brain4j.core.model.impl;
 
+import org.brain4j.core.layer.impl.convolutional.InputLayer;
 import org.brain4j.math.Commons;
 import org.brain4j.math.Pair;
 import org.brain4j.math.Tensors;
@@ -72,6 +73,14 @@ public class Sequential extends Layer implements Model {
         this.layers = new ArrayList<>(List.of(layers));
         this.flattened = new ArrayList<>();
         this.seed = System.currentTimeMillis();
+
+        if (layers.length != 0) {
+            Layer layer = layers[0];
+
+            if (!(layer instanceof InputLayer)) {
+                throw new IllegalArgumentException("First layer must be an InputLayer!");
+            }
+        }
 
         for (Layer layer : layers) {
             if (layer instanceof Model subModel) {
@@ -178,23 +187,25 @@ public class Sequential extends Layer implements Model {
         }
     }
 
-    protected Tensor validateInputs(Tensor... inputs) {
-        if (inputs.length != 1) {
-            throw new IllegalArgumentException("Input array must contain one element. Got: " + inputs.length);
+    protected Tensor[] validateInputs(Tensor... inputs) {
+        Tensor[] result = new Tensor[inputs.length];
+
+        for (int i = 0; i < result.length; i++) {
+            Tensor input = inputs[i];
+
+            if (input == null || input.rank() == 0) {
+                throw new IllegalArgumentException("Input at " + i + " is either null or has dimension of 0!");
+            }
+
+            if (input.rank() < 2) {
+                // Shape: [batch_size, input_size]
+                input = input.reshape(1, input.elements());
+            }
+
+            result[i] = input;
         }
 
-        Tensor input = inputs[0];
-
-        if (input == null || input.rank() == 0) {
-            throw new IllegalArgumentException("Input is either null or has dimension of 0!");
-        }
-
-        if (input.rank() < 2) {
-            // Shape: [batch_size, input_size]
-            input = input.reshape(1, input.elements());
-        }
-
-        return input;
+        return result;
     }
 
     protected void printEvaluation(int step, int epoches, ListDataSource testSource) {
@@ -301,14 +312,29 @@ public class Sequential extends Layer implements Model {
     
     @Override
     public Tensor[] predict(StatesCache cache, Tensor... inputs) {
-        Tensor input = validateInputs(inputs);
-        Tensor result = input.to(device).withGrad();
+        Tensor[] validated = validateInputs(inputs);
+        Tensor[] result = new Tensor[validated.length];
+
+        for (int i = 0; i < validated.length; i++) {
+            result[i] = validated[i].to(device).withGrad();
+        }
 
         if (device != null) {
             GpuContext.updateQueue(device, cache.commandQueue());
         }
         
         for (Layer layer : flattened) {
+            for (Tensor input : result) {
+                boolean isValid = layer.validInput(input);
+
+                if (isValid) continue;
+
+                throw new IllegalArgumentException(
+                    String.format("Invalid input with shape %s for layer %s!", Arrays.toString(input.shape()),
+                        layer.getClass().getSimpleName())
+                );
+            }
+
             result = layer.forward(cache, result);
         }
 
@@ -316,7 +342,7 @@ public class Sequential extends Layer implements Model {
             GpuContext.closeQueue(device);
         }
 
-        return new Tensor[]{result};
+        return result;
     }
 
     @Override
@@ -596,8 +622,8 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        Tensor pass = input;
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor[] pass = inputs;
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layerAt(i);

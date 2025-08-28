@@ -30,21 +30,26 @@ public class ConvLayer extends Layer {
         this.kernelWidth = kernelWidth;
         this.kernelHeight = kernelHeight;
     }
-    
-    @Override
-    public Layer connect(Layer previous) {
-        this.channels = previous.size();
-        this.bias = Tensors.zeros(filters).withGrad();
-        this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth).withGrad();
 
-        return this;
+    @Override
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor input = inputs[0];
+
+        if (!validInput(input)) {
+            throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
+        }
+
+        Tensor convolved = input.convolveGrad(weights);
+        Tensor added = convolved.addGrad(bias.reshape(1, filters, 1, 1));
+
+        return new Tensor[] { added.activateGrad(activation) };
     }
 
     @Override
-    public void initWeights(Random generator, int input, int output) {
-        this.weights.map(x -> weightInit.generate(generator, input, output));
+    public int size() {
+        return filters;
     }
-    
+
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
         this.filters = SerializeUtils.attribute(layer, "filters", 0);
@@ -70,26 +75,24 @@ public class ConvLayer extends Layer {
         builder.putAttrs("stride", SerializeUtils.value(stride));
         builder.putAttrs("padding", SerializeUtils.value(padding));
     }
-    
+
+
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        if (!validateInput(input)) {
-            throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
-        }
-        
-        Tensor convolved = input.convolveGrad(weights);
-        Tensor added = convolved.addGrad(bias.reshape(1, filters, 1, 1));
-        
-        return added.activateGrad(activation);
+    public Layer connect(Layer previous) {
+        this.channels = previous.size();
+        this.bias = Tensors.zeros(filters).withGrad();
+        this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth).withGrad();
+
+        return this;
     }
 
     @Override
-    public int size() {
-        return filters;
+    public void initWeights(Random generator, int input, int output) {
+        this.weights.map(x -> weightInit.generate(generator, input, output));
     }
 
     @Override
-    public boolean validateInput(Tensor input) {
+    public boolean validInput(Tensor input) {
         // [batch_size, channels, height, width]
         return input.rank() == 4 && input.shape()[1] == channels;
     }

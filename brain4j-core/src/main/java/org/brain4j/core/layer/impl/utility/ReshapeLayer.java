@@ -34,20 +34,29 @@ public class ReshapeLayer extends Layer {
         ProtoModel.Tensor.Builder tensorBuilder =
             ProtoModel.Tensor.newBuilder()
                 .setName("shape")
-                .addAllShape(Arrays.stream(shape).boxed().collect(Collectors.toList()));
+                .addAllShape(Arrays.stream(shape)
+                    .boxed()
+                    .collect(Collectors.toList()));
         return List.of(tensorBuilder);
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        int[] inputShape = input.shape();
-        int[] newShape = new int[shape.length + 1];
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor[] result = new Tensor[inputs.length];
 
-        newShape[0] = inputShape[0];
+        for (int i = 0; i < result.length; i++) {
+            Tensor input = inputs[i];
 
-        System.arraycopy(shape, 0, newShape, 1, shape.length);
+            int[] inputShape = input.shape();
+            int[] newShape = new int[shape.length + 1];
 
-        return input.reshapeGrad(newShape);
+            newShape[0] = inputShape[0];
+            System.arraycopy(shape, 0, newShape, 1, shape.length);
+
+            result[i] = input.reshapeGrad(newShape);
+        }
+
+        return result;
     }
 
     @Override

@@ -30,8 +30,11 @@ public class PosEncodeLayer extends Layer {
     }
 
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        throwIfTooManyInputs(1, inputs);
+
         // [batch_size, seq_length, dimension]
+        Tensor input = inputs[0];
         int[] shape = input.shape();
 
         if (shape.length != 3) {
@@ -55,7 +58,7 @@ public class PosEncodeLayer extends Layer {
             System.arraycopy(addData, 0, posData, index, addData.length);
         }
 
-        return input.add(positional);
+        return new Tensor[] { input.add(positional) };
     }
 
     @Override

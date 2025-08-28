@@ -49,9 +49,11 @@ public class DropoutLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor input = inputs[0];
+
         if (cache.training()) {
-            return scale(input);
+            return new Tensor[] { scale(input) };
         }
 
         for (int i = 0; i < input.elements(); i++) {
@@ -62,7 +64,7 @@ public class DropoutLayer extends Layer {
             input.data()[i] = 0;
         }
 
-        return input;
+        return new Tensor[] { input };
     }
 
     @Override

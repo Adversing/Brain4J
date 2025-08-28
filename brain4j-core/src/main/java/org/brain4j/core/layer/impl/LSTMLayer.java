@@ -43,8 +43,10 @@ public class LSTMLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         // [batch_size, timesteps, dimension]
+        Tensor input = inputs[0];
+
         if (input.rank() > 3) {
             throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");
         }
@@ -92,7 +94,7 @@ public class LSTMLayer extends Layer {
         }
         
         // [batch_size, timesteps, hidden_dim]
-        return Tensors.concatGrad(List.of(hiddenStates), 1);
+        return new Tensor[] { Tensors.concatGrad(List.of(hiddenStates), 1) };
     }
     
     @Override

@@ -19,8 +19,8 @@ import java.util.Random;
  * This layer performs a linear transformation on the input tensor,
  * followed by the application of a specified activation function.
  * </p>
- * <p>Inputs are expected to have the shape <code>[batch_size, input_size]</code>,
- * outputs have the shape <code>[batch_size, dimension]</code> where <code>dimension</code>
+ * <p>Inputs are expected to have the shape <code>[batch_size, ..., input_size]</code>,
+ * outputs have the shape <code>[batch_size, ..., dimension]</code> where <code>dimension</code>
  * is the amount of neurons in this layer.
  * </p>
  * Weights are represented with the following shapes:
@@ -68,8 +68,6 @@ public class DenseLayer extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        if (previous == null) return this;
-
         // Shape: [input_size, output_size]
         this.weights = Tensors.zeros(previous.size(), dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();
@@ -107,21 +105,23 @@ public class DenseLayer extends Layer {
     }
     
     @Override
-    public Tensor forward(StatesCache cache, Tensor input) {
-        if (weights == null || weights.shape()[0] == 0) return input;
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        Tensor[] result = new Tensor[inputs.length];
+        Tensor[] beforeActivation = new Tensor[inputs.length];
 
-        if (!validateInput(input)) {
-            throw new IllegalArgumentException(
-                "Input dimension mismatch. Got: " + Arrays.toString(input.shape()) + " Expected: " + weights.shape()[0]
-            );
+        for (int i = 0; i < result.length; i++) {
+            Tensor input = inputs[i];
+
+            Tensor output = input
+                .matmulGrad(weights)
+                .addGrad(bias);
+
+            beforeActivation[i] = output;
+            result[i] = output.activateGrad(activation);
         }
 
-        Tensor output = input
-            .matmulGrad(weights)
-            .addGrad(bias);
-
-        cache.rememberOutput(this, output);
-        return output.activateGrad(activation);
+        cache.rememberOutput(this, beforeActivation);
+        return result;
     }
 
     @Override
@@ -130,9 +130,7 @@ public class DenseLayer extends Layer {
     }
 
     @Override
-    public boolean validateInput(Tensor input) {
-        if (weights == null) return true;
-        
+    public boolean validInput(Tensor input) {
         int[] shape = input.shape();
         int[] weightsShape = weights.shape();
 

@@ -1,6 +1,5 @@
 package org.brain4j.core.layer;
 
-import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -35,7 +34,37 @@ public abstract class Layer {
     
     public Layer() {
     }
-    
+
+    /**
+     * Performs a forward pass through this layer.
+     *
+     * @param cache  the states cache for this forward pass
+     * @param inputs the input tensors
+     * @return the output tensors
+     */
+    public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
+
+    /**
+     * Returns the output size of this layer, i.e. the number of neurons.
+     * @return the output size
+     */
+    public abstract int size();
+
+    /**
+     * Checks if the amount of inputs is greater than the maximum amount.
+     * If so, throws an exception, otherwise will do nothing.
+     * @param maxInputs the maximum amount of accepted inputs
+     * @param inputs the input tensors
+     */
+    public void throwIfTooManyInputs(int maxInputs, Tensor... inputs) {
+        if (inputs.length < maxInputs) return;
+
+        throw new IllegalArgumentException(
+            String.format("Too many inputs %s for layer %s! Expecting %s inputs",
+                inputs.length, this.getClass().getSimpleName(), maxInputs)
+        );
+    }
+
     /**
      * Deserializes the weights and the layer attributes.
      * @param tensors the layer weights
@@ -55,21 +84,6 @@ public abstract class Layer {
         
         builder.setClipper(clipperBuilder);
     }
-    
-    /**
-     * Performs a forward pass through this layer.
-     *
-     * @param cache the states cache for this forward pass
-     * @param input the input tensor
-     * @return the output tensor
-     */
-    public abstract Tensor forward(StatesCache cache, Tensor input);
-
-    /**
-     * Returns the output size of this layer, i.e. the number of neurons.
-     * @return the output size
-     */
-    public abstract int size();
 
     /**
      * Constructs the tensors for weights in this layer.
@@ -119,31 +133,23 @@ public abstract class Layer {
         Tensor[] outputs,
         LossFunction lossFunction
     ) {
-        Tensor preOutput = cache.output(this);
+        Tensor[] preOutputs = cache.output(this);
 
         if (targets.length != outputs.length) {
             throw new IllegalArgumentException("Targets amount does not equal to output amount.");
         }
 
-        Tensor totalDelta = null;
-
         for (int i = 0; i < outputs.length; i++) {
             Tensor output = outputs[i];
             Tensor target = targets[i];
+            Tensor preOutput = preOutputs[i];
 
             Tensor error = output.minus(target);
             Tensor derivatives = activation.derivative(preOutput);
-
             Tensor delta = lossFunction.delta(error, derivatives);
 
-            if (totalDelta == null) {
-                totalDelta = Tensors.zeros(delta.shape());
-            }
-
-            totalDelta.add(delta);
+            preOutput.backward(delta);
         }
-
-        preOutput.backward(totalDelta);
     }
 
     /**
@@ -177,7 +183,7 @@ public abstract class Layer {
      * @param input the input tensor
      * @return <code>true</code> if the input is valid, <code>false</code> otherwise
      */
-    public boolean validateInput(Tensor input) {
+    public boolean validInput(Tensor input) {
         return true;
     }
 
