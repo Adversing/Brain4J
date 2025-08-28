@@ -48,8 +48,8 @@ public class Sequential extends Layer implements Model {
     private static final Logger trainingLogger = LoggerFactory.getLogger("training");
 
     /* Data structures in the model */
-    protected final List<Layer> layers;
-    protected final List<Layer> flattened;
+    protected List<Layer> layers;
+    protected List<Layer> flattened;
 
     /* The device the model is hosted on */
     protected Device device;
@@ -388,7 +388,6 @@ public class Sequential extends Layer implements Model {
         this.device = device;
         
         if (device != null) {
-            GpuTensor.initKernels(device);
             Brain4J.initKernels(device);
         }
 

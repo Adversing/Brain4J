@@ -15,6 +15,5 @@ __kernel void l2_clip(
     const int length
 ) {
     int gid = get_global_id(0);
-
-
+    // TODO
 }

@@ -6,6 +6,7 @@ import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.core.activation.Activations;
+import org.brain4j.math.tensor.impl.GpuTensor;
 import org.jocl.cl_context;
 import org.jocl.cl_program;
 import org.slf4j.Logger;
@@ -53,8 +54,9 @@ public class Brain4J {
     }
 
     public static void initKernels(Device device) {
+        GpuTensor.initKernels(device);
+        
         cl_context context = device.context();
-
         cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
         cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
 
@@ -65,7 +67,7 @@ public class Brain4J {
             GpuContext.register(device, prefix + "_forward", activationsProgram);
             GpuContext.register(device, prefix + "_backward", activationsProgram);
         }
-
+        
         GpuContext.register(device, "hard_clip", gradientClipProgram);
         GpuContext.register(device, "l2_clip", gradientClipProgram);
     }

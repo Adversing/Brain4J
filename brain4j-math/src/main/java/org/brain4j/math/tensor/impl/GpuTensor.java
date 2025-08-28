@@ -12,6 +12,7 @@ import org.brain4j.math.tensor.Tensor;
 import org.jocl.*;
 
 import java.lang.ref.Cleaner;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import static org.jocl.CL.*;
@@ -105,7 +106,7 @@ public class GpuTensor extends BaseTensor {
         cl_program tensorOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/tensor_ops.cl");
         cl_program elementaryOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/elementary_ops.cl");
 
-        String[] tensorOpsKernels = { "matmul", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
+        String[] tensorOpsKernels = { "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
 
         for (String kernel : tensorOpsKernels) {
             GpuContext.register(device, kernel, tensorOpsProgram);
@@ -280,48 +281,153 @@ public class GpuTensor extends BaseTensor {
     public Tensor activate(Activation activation) {
         return super.activate(activation);
     }
-
     @Override
     public Tensor matmul(Tensor other) {
         if (!(other instanceof GpuTensor B)) {
             throw new IllegalArgumentException("Other tensor is not an instance of TensorGPU.");
         }
-
+        
         int[] shapeA = shape();
         int[] shapeB = other.shape();
-
-        if (shapeA[1] != shapeB[0]) {
-            throw new IllegalArgumentException("Incompatible shapes for matrix multiplication: " +
-                    Arrays.toString(shapeA) + " and " + Arrays.toString(shapeB));
+        
+        if (shapeA.length < 2 || shapeB.length < 2) {
+            throw new IllegalArgumentException("Both tensors must have rank >= 2.");
         }
-
-        int M = shapeA[0];
-        int K = shapeA[1];
-        int P = shapeB[1];
-
-        int[] outShape = new int[] { M, P };
+        
+        int M = shapeA[shapeA.length - 2];
+        int K = shapeA[shapeA.length - 1];
+        int Kb = shapeB[shapeB.length - 2];
+        int P = shapeB[shapeB.length - 1];
+        
+        if (K != Kb) {
+            throw new IllegalArgumentException("Incompatible inner dims for matmul: K != Kb (" + K + " != " + Kb + ")");
+        }
+        
+        int aBatchRank = shapeA.length - 2;
+        int bBatchRank = shapeB.length - 2;
+        int maxBatchRank = Math.max(aBatchRank, bBatchRank);
+        
+        int[] aBatch = new int[maxBatchRank];
+        int[] bBatch = new int[maxBatchRank];
+        for (int i = 0; i < maxBatchRank; ++i) {
+            int ai = i - (maxBatchRank - aBatchRank);
+            int bi = i - (maxBatchRank - bBatchRank);
+            aBatch[i] = (ai >= 0) ? shapeA[ai] : 1;
+            bBatch[i] = (bi >= 0) ? shapeB[bi] : 1;
+        }
+        
+        int[] outBatch = new int[maxBatchRank];
+        long batchCountLong = 1;
+        for (int i = 0; i < maxBatchRank; ++i) {
+            int da = aBatch[i];
+            int db = bBatch[i];
+            
+            if (da == db || da == 1 || db == 1) {
+                outBatch[i] = Math.max(da, db);
+            } else {
+                throw new IllegalArgumentException("Cannot broadcast batch dimension: " + Arrays.toString(aBatch) +
+                    " vs " + Arrays.toString(bBatch));
+            }
+            
+            batchCountLong *= outBatch[i];
+            
+            if (batchCountLong > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Batch size too large");
+            }
+        }
+        int batchCount = (int) batchCountLong;
+        
+        int[] outShape = new int[maxBatchRank + 2];
+        System.arraycopy(outBatch, 0, outShape, 0, maxBatchRank);
+        
+        outShape[maxBatchRank] = M;
+        outShape[maxBatchRank + 1] = P;
+        
         GpuTensor result = new GpuTensor(device, outShape);
-
-        int TILE_SIZE = 16;
-
-        long[] globalWorkSize = new long[] { roundUp(TILE_SIZE, M), roundUp(TILE_SIZE, P) };
-        long[] localWorkSize = new long[] { TILE_SIZE, TILE_SIZE };
-
+        
+        int matrixSizeA = M * K;
+        int matrixSizeB = K * P;
+        int matrixSizeC = M * P;
+        
+        int[] outStrides = new int[maxBatchRank];
+        int a = 1;
+        
+        for (int i = maxBatchRank - 1; i >= 0; --i) {
+            outStrides[i] = a;
+            a *= outBatch[i];
+        }
+        
+        int[] offsetsA = new int[batchCount];
+        int[] offsetsB = new int[batchCount];
+        int[] offsetsC = new int[batchCount];
+        
+        for (int b = 0; b < batchCount; ++b) {
+            int[] idx = new int[maxBatchRank];
+            for (int i = 0; i < maxBatchRank; ++i) {
+                idx[i] = (b / outStrides[i]) % outBatch[i];
+            }
+            
+            int linearA = 0;
+            for (int i = 0; i < aBatchRank; ++i) {
+                int alignedPos = i + (maxBatchRank - aBatchRank);
+                int dimSizeA = shapeA[i];
+                int chosen = (dimSizeA == 1) ? 0 : idx[alignedPos];
+                linearA = linearA * dimSizeA + chosen;
+            }
+            
+            int linearB = 0;
+            for (int i = 0; i < bBatchRank; ++i) {
+                int alignedPos = i + (maxBatchRank - bBatchRank);
+                int dimSizeB = shapeB[i];
+                int chosen = (dimSizeB == 1) ? 0 : idx[alignedPos];
+                linearB = linearB * dimSizeB + chosen;
+            }
+            
+            offsetsA[b] = linearA * matrixSizeA;
+            offsetsB[b] = linearB * matrixSizeB;
+            offsetsC[b] = b * matrixSizeC;
+        }
+        
+        final int TILE_SIZE = 16;
+        long[] globalWorkSize = new long[] {
+            roundUp(TILE_SIZE, M),
+            roundUp(TILE_SIZE, P),
+            batchCount
+        };
+        long[] localWorkSize = new long[] { TILE_SIZE, TILE_SIZE, 1 };
+        
+        IntBuffer offsetsABuf = IntBuffer.wrap(offsetsA);
+        IntBuffer offsetsBBuf = IntBuffer.wrap(offsetsB);
+        IntBuffer offsetsCBuf = IntBuffer.wrap(offsetsC);
+        
+        cl_context context = device.context();
+        
+        Pointer pointerA = Pointer.to(offsetsABuf);
+        Pointer pointerB = Pointer.to(offsetsBBuf);
+        Pointer pointerC = Pointer.to(offsetsCBuf);
+        
+        cl_mem memoryA = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, offsetsA.length, pointerA, null);
+        cl_mem memoryB = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, offsetsB.length, pointerB, null);
+        cl_mem memoryC = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, offsetsC.length, pointerC, null);
+        
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, "matmul")
+            KernelFactory.create(device, "matmul_batched")
                 .addMemParam(dataBuffer)
                 .addMemParam(B.dataBuffer)
                 .addMemParam(result.dataBuffer)
+                .addMemParam(memoryA)
+                .addMemParam(memoryB)
+                .addMemParam(memoryC)
                 .addIntParam(M)
                 .addIntParam(K)
                 .addIntParam(P)
-                .launch(queue, 2, globalWorkSize, localWorkSize);
+                .addIntParam(batchCount)
+                .launch(queue, 3, globalWorkSize, localWorkSize);
         }
-
+        
         return result;
     }
-
+    
     @Override
     public Tensor sum(int dim, boolean keepDim) {
         if (dim < 0 || dim >= shape.length) {
@@ -340,8 +446,7 @@ public class GpuTensor extends BaseTensor {
         GpuTensor result = new GpuTensor(device, newShape);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, "sum_along_dim")
+            KernelFactory.create(device, "sum_along_dim")
                 .addMemParam(dataBuffer)
                 .addMemParam(result.dataBuffer)
                 .addIntParam(reducedSize)

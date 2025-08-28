@@ -1,5 +1,65 @@
 #define TILE_SIZE 16
 
+__kernel void matmul_batched(
+    __global const float* A,
+    __global const float* B,
+    __global float* C,
+    __global const int* offsetsA,
+    __global const int* offsetsB,
+    __global const int* offsetsC,
+    const int M,
+    const int N,
+    const int P,
+    const int batchCount
+) {
+    int row = get_global_id(0);
+    int col = get_global_id(1);
+    int batch = get_global_id(2);
+
+    int local_row = get_local_id(0);
+    int local_col = get_local_id(1);
+
+    if (batch >= batchCount || row >= M || col >= P) return;
+
+    const __global float* A_batch = A + offsetsA[batch];
+    const __global float* B_batch = B + offsetsB[batch];
+    __global float* C_batch = C + offsetsC[batch];
+
+    __local float Asub[TILE_SIZE][TILE_SIZE];
+    __local float Bsub[TILE_SIZE][TILE_SIZE];
+
+    float sum = 0.0f;
+
+    int numTiles = (N + TILE_SIZE - 1) / TILE_SIZE;
+
+    for (int t = 0; t < numTiles; ++t) {
+        int tiled_col_A = t * TILE_SIZE + local_col;
+        int tiled_row_B = t * TILE_SIZE + local_row;
+
+        if (row < M && tiled_col_A < N) {
+            Asub[local_row][local_col] = A_batch[row * N + tiled_col_A];
+        } else {
+            Asub[local_row][local_col] = 0.0f;
+        }
+
+        if (tiled_row_B < N && col < P) {
+            Bsub[local_row][local_col] = B_batch[tiled_row_B * P + col];
+        } else {
+            Bsub[local_row][local_col] = 0.0f;
+        }
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        for (int k = 0; k < TILE_SIZE; ++k) {
+            sum += Asub[local_row][k] * Bsub[k][local_col];
+        }
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+
+    C_batch[row * P + col] = sum;
+}
+
 __kernel void matmul(
     __global float* A,
     __global float* B,

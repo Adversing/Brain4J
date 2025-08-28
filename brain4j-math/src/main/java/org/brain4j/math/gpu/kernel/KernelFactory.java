@@ -5,11 +5,12 @@ import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jocl.CL.clEnqueueNDRangeKernel;
-import static org.jocl.CL.clSetKernelArg;
+import static org.jocl.CL.*;
+import static org.jocl.CL.CL_MEM_READ_WRITE;
 
 public class KernelFactory {
 

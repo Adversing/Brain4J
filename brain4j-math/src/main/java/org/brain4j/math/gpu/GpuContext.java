@@ -38,7 +38,7 @@ public class GpuContext {
         cl_kernel kernel = deviceKernels.get(kernelName);
 
         if (kernel == null) {
-            throw new IllegalStateException("Kernel " + kernelName + " not registered for device: " + device);
+            throw new IllegalStateException("Kernel " + kernelName + " not registered for device: " + device.name());
         }
 
         return kernel;
@@ -64,7 +64,7 @@ public class GpuContext {
         ThreadLocal<GpuQueue> localQueue = queues.get(device);
 
         if (localQueue == null || localQueue.get() == null) {
-            throw new IllegalStateException("Command queue not set for device: " + device);
+            return null;
         }
 
         return localQueue.get();
