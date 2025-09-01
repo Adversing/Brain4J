@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation project(path: ':brain4j-math', configuration: 'shadow')
-    implementation project(path: ':brain4j-datasets', configuration: 'shadow')
 
     implementation 'org.jocl:jocl:2.0.5'
     implementation 'com.github.luben:zstd-jni:1.5.7-2'
