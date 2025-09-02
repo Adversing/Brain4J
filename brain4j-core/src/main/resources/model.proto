@@ -75,7 +75,7 @@ message AttrValue {
 }
 
 message Tensor {
-  string name = 1;  // es. "denselayer_0.weight"
-  repeated int32 shape = 2;  // es. [64,128]
+  string name = 1;  // e.g. "denselayer_0.weight"
+  repeated int32 shape = 2;  // e.g. [64,128]
   repeated float data = 3 [packed=true];
 }
