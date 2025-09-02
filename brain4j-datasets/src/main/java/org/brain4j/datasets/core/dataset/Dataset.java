@@ -1,14 +1,14 @@
 package org.brain4j.datasets.core.dataset;
 
-import org.apache.avro.generic.GenericRecord;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.parquet.avro.AvroParquetReader;
-import org.apache.parquet.hadoop.ParquetReader;
-import org.apache.parquet.hadoop.util.HadoopInputFile;
 import org.brain4j.datasets.api.DatasetInfo;
+import org.brain4j.datasets.format.FileFormat;
+import org.brain4j.datasets.format.RecordParser;
+import org.brain4j.math.Pair;
+import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.data.Sample;
+import org.brain4j.math.tensor.Tensor;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,25 +20,37 @@ public record Dataset(
         List<DatasetFile> files,
         Map<String, Object> config
 ) {
-
-    public record DatasetFile(String name, Path path, long size, String format) {
+    
+    /**
+     * Creates a ListDataSource from a {@link Dataset} object with a custom parser.
+     *
+     * @param parser a function that parses a sample
+     * @param format the format of files to use
+     * @param shuffle whether to shuffle the data
+     * @param batchSize the size of each batch
+     * @return a new ListDataSource containing the loaded data
+     * @throws IOException if an error occurs while reading the dataset files
+     */
+    public <T> ListDataSource createDataSource(
+        FileFormat<T> format,
+        RecordParser<T> parser,
+        boolean shuffle,
+        int batchSize
+    ) throws IOException {
+        List<Sample> samples = new ArrayList<>();
+        List<DatasetFile> dataFiles = getFilesByFormat(format.format());
         
-        public List<GenericRecord> extractRecords() throws IOException {
-            var hadoopPath = new org.apache.hadoop.fs.Path(path.toString());
-            var result = new ArrayList<GenericRecord>();
-            
-            HadoopInputFile inputFile = HadoopInputFile.fromPath(hadoopPath, new Configuration());
-            ParquetReader<GenericRecord> reader = AvroParquetReader.genericRecordReader(inputFile);
-            
-            GenericRecord record;
-            
-            while ((record = reader.read()) != null) {
-                result.add(record);
+        for (DatasetFile file : dataFiles) {
+            for (T record : format.read(file.path().toFile())) {
+                Pair<Tensor[], Tensor[]> pair = parser.parse(record, samples.size());
+                
+                if (pair == null) continue;
+                
+                samples.add(new Sample(pair.first(), pair.second()));
             }
-            
-            reader.close();
-            return result;
         }
+        
+        return new ListDataSource(samples, shuffle, batchSize);
     }
 
     public Optional<DatasetFile> getFile(String filename) {

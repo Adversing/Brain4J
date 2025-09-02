@@ -4,6 +4,7 @@ import org.brain4j.datasets.api.DatasetInfo;
 import org.brain4j.datasets.api.HuggingFaceClient;
 import org.brain4j.datasets.cache.manager.CacheManager;
 import org.brain4j.datasets.core.dataset.Dataset;
+import org.brain4j.datasets.core.dataset.DatasetFile;
 import org.brain4j.datasets.core.loader.config.LoadConfig;
 import org.brain4j.datasets.download.callback.ProgressCallback;
 import org.brain4j.datasets.download.manager.DownloadManager;
@@ -57,7 +58,7 @@ public class DatasetLoader implements AutoCloseable {
 
         String resolvedDatasetId = info.id();
 
-        List<Dataset.DatasetFile> files = new ArrayList<>();
+        List<DatasetFile> files = new ArrayList<>();
         List<String> filesToDownload = determineFilesToDownload(info, config);
 
         logger.debug("Files to download: {}", filesToDownload);
@@ -68,7 +69,7 @@ public class DatasetLoader implements AutoCloseable {
                 long size = Files.size(filePath);
                 String format = determineFileFormat(filename);
 
-                files.add(new Dataset.DatasetFile(filename, filePath, size, format));
+                files.add(new DatasetFile(filename, filePath, size, format));
                 logger.debug("Added file: {} ({} bytes, {})", filename, size, format);
             } catch (IOException e) {
                 logger.warn("Failed to process file {}: {}", filename, e.getMessage());
