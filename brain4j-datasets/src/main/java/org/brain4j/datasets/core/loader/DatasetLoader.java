@@ -2,7 +2,6 @@ package org.brain4j.datasets.core.loader;
 
 import org.brain4j.datasets.api.DatasetInfo;
 import org.brain4j.datasets.api.HuggingFaceClient;
-import org.brain4j.datasets.api.exception.DatasetException;
 import org.brain4j.datasets.cache.manager.CacheManager;
 import org.brain4j.datasets.core.dataset.Dataset;
 import org.brain4j.datasets.core.loader.config.LoadConfig;
@@ -10,6 +9,7 @@ import org.brain4j.datasets.download.callback.ProgressCallback;
 import org.brain4j.datasets.download.manager.DownloadManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +24,7 @@ public class DatasetLoader implements AutoCloseable {
     private final HuggingFaceClient client;
     private final CacheManager cacheManager;
     private final DownloadManager downloadManager;
-
+    
     public DatasetLoader() {
         this.client = new HuggingFaceClient();
         this.cacheManager = new CacheManager();
@@ -39,17 +39,17 @@ public class DatasetLoader implements AutoCloseable {
                 progressCallback);
     }
 
-    public Dataset loadDataset(String datasetId) throws DatasetException {
+    public Dataset loadDataset(String datasetId) throws Exception {
         return loadDataset(datasetId, LoadConfig.defaultConfig());
     }
 
-    public Dataset loadDataset(String datasetId, LoadConfig config) throws DatasetException {
+    public Dataset loadDataset(String datasetId, LoadConfig config) throws Exception {
         logger.info("Loading dataset: {}", datasetId);
 
         Optional<DatasetInfo> infoOpt = client.getDatasetInfo(datasetId);
 
         if (infoOpt.isEmpty()) {
-            throw new DatasetException("Dataset not found: " + datasetId);
+            throw new Exception("Dataset not found: " + datasetId);
         }
 
         DatasetInfo info = infoOpt.get();
@@ -93,7 +93,7 @@ public class DatasetLoader implements AutoCloseable {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return loadDataset(datasetId, config);
-            } catch (DatasetException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });

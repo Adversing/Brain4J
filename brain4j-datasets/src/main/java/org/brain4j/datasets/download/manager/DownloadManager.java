@@ -2,7 +2,6 @@ package org.brain4j.datasets.download.manager;
 
 import org.brain4j.datasets.api.FileDownloadResponse;
 import org.brain4j.datasets.api.HuggingFaceClient;
-import org.brain4j.datasets.api.exception.DatasetException;
 import org.brain4j.datasets.cache.manager.CacheManager;
 import org.brain4j.datasets.download.callback.ProgressCallback;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public class DownloadManager {
         this.progressCallback = progressCallback;
     }
 
-    public Path downloadFile(String datasetId, String filename) throws DatasetException {
+    public Path downloadFile(String datasetId, String filename) throws Exception {
         return downloadFile(datasetId, filename, false);
     }
 
@@ -48,7 +47,7 @@ public class DownloadManager {
         String datasetId,
         String filename,
         boolean force
-    ) throws DatasetException {
+    ) throws Exception {
         Path cachedPath = cacheManager.getCachedFilePath(datasetId, filename);
 
         if (!force && cacheManager.isCached(datasetId, filename)) {
@@ -68,7 +67,7 @@ public class DownloadManager {
             Files.copy(response.inputStream(), cachedPath, StandardCopyOption.REPLACE_EXISTING);
 
             if (!Files.exists(cachedPath)) {
-                throw new DatasetException("File was not created successfully: " + cachedPath);
+                throw new Exception("File was not created successfully: " + cachedPath);
             }
 
             long fileSize = Files.size(cachedPath);
@@ -83,7 +82,7 @@ public class DownloadManager {
             } catch (IOException cleanupException) {
                 logger.warn("Failed to clean up partial file: {}", cachedPath, cleanupException);
             }
-            throw new DatasetException("Failed to save downloaded file: " + filename, e);
+            throw new Exception("Failed to save downloaded file: " + filename, e);
         }
     }
 
@@ -102,7 +101,7 @@ public class DownloadManager {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return downloadFile(datasetId, filename, force);
-            } catch (DatasetException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, executor);

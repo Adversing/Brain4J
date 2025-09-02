@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class CacheManager {
+    
     private static final Logger logger = LoggerFactory.getLogger(CacheManager.class);
     private static final String DEFAULT_CACHE_DIR = System.getProperty("user.home") + "/.cache/brain4j/datasets";
 

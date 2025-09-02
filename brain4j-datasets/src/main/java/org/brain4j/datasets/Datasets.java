@@ -1,6 +1,5 @@
 package org.brain4j.datasets;
 
-import org.brain4j.datasets.api.exception.DatasetException;
 import org.brain4j.datasets.core.dataset.Dataset;
 import org.brain4j.datasets.core.loader.DatasetLoader;
 import org.brain4j.datasets.core.loader.config.LoadConfig;
@@ -12,27 +11,27 @@ public final class Datasets {
 
     private Datasets() {}
 
-    public static Dataset loadDataset(String datasetId) throws DatasetException {
+    public static Dataset loadDataset(String datasetId) throws Exception {
         try (DatasetLoader loader = new DatasetLoader()) {
             return loader.loadDataset(datasetId);
         } catch (Exception e) {
-            throw new DatasetException("Failed to load dataset: " + datasetId, e);
+            throw new Exception("Failed to load dataset: " + datasetId, e);
         }
     }
 
-    public static Dataset loadDataset(String datasetId, LoadConfig config) throws DatasetException {
+    public static Dataset loadDataset(String datasetId, LoadConfig config) throws Exception {
         try (DatasetLoader loader = new DatasetLoader()) {
             return loader.loadDataset(datasetId, config);
         } catch (Exception e) {
-            throw new DatasetException("Failed to load dataset: " + datasetId, e);
+            throw new Exception("Failed to load dataset: " + datasetId, e);
         }
     }
 
-    public static Dataset loadDataset(String datasetId, ProgressCallback progressCallback) throws DatasetException {
+    public static Dataset loadDataset(String datasetId, ProgressCallback progressCallback) throws Exception {
         try (DatasetLoader loader = new DatasetLoader(progressCallback)) {
             return loader.loadDataset(datasetId);
         } catch (Exception e) {
-            throw new DatasetException("Failed to load dataset: " + datasetId, e);
+            throw new Exception("Failed to load dataset: " + datasetId, e);
         }
     }
 

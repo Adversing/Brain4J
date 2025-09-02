@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(path: ':brain4j-datasets', configuration: 'shadow')
+    implementation project(':brain4j-datasets')
     implementation 'org.jocl:jocl:2.0.5'
 }
 
@@ -14,5 +14,6 @@ compileJava {
 
 shadowJar {
     minimize()
+    dependsOn ':brain4j-datasets:shadowJar'
     archiveFileName = "brain4j-math-${parent.version}.jar"
 }

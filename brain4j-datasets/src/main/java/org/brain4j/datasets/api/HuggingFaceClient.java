@@ -9,7 +9,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.brain4j.datasets.api.exception.DatasetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,7 @@ public class HuggingFaceClient implements AutoCloseable {
         this.userAgent = "brain4j-datasets/1.0.0";
     }
 
-    public Optional<DatasetInfo> getDatasetInfo(String datasetId) throws DatasetException {
+    public Optional<DatasetInfo> getDatasetInfo(String datasetId) throws Exception {
         validateDatasetId(datasetId);
 
         String encodedId = URLEncoder.encode(datasetId, StandardCharsets.UTF_8);
@@ -50,13 +49,13 @@ public class HuggingFaceClient implements AutoCloseable {
                 return processDatasetInfoResponse(response, datasetId);
             }
         } catch (IOException e) {
-            throw new DatasetException("Network error while retrieving dataset info for: " + datasetId, e);
+            throw new Exception("Network error while retrieving dataset info for: " + datasetId, e);
         } catch (ParseException e) {
-            throw new DatasetException("Failed to parse dataset info response for: " + datasetId, e);
+            throw new Exception("Failed to parse dataset info response for: " + datasetId, e);
         }
     }
 
-    public FileDownloadResponse downloadFile(String datasetId, String filename) throws DatasetException {
+    public FileDownloadResponse downloadFile(String datasetId, String filename) throws Exception {
         validateDatasetId(datasetId);
         validateFilename(filename);
 
@@ -84,19 +83,19 @@ public class HuggingFaceClient implements AutoCloseable {
                         // ignore close errors
                     }
                 }
-                throw new DatasetException(errorMessage);
+                throw new Exception(errorMessage);
             }
 
             return new FileDownloadResponse(response, response.getEntity().getContent());
         } catch (IOException e) {
-            throw new DatasetException("Network error while downloading file: " + filename, e);
+            throw new Exception("Network error while downloading file: " + filename, e);
         } catch (ParseException e) {
-            throw new DatasetException("Failed to parse file download response for: " + filename, e);
+            throw new Exception("Failed to parse file download response for: " + filename, e);
         }
     }
 
     private Optional<DatasetInfo> processDatasetInfoResponse(ClassicHttpResponse response, String datasetId)
-            throws DatasetException, IOException, ParseException {
+            throws Exception, IOException, ParseException {
         int statusCode = response.getCode();
         String responseBody = EntityUtils.toString(response.getEntity());
 
@@ -114,14 +113,14 @@ public class HuggingFaceClient implements AutoCloseable {
                 } catch (Exception e) {
                     logger.error("Failed to parse JSON response for dataset: {}", datasetId, e);
                     logger.error("Response body that failed to parse: {}", responseBody);
-                    throw new DatasetException("Failed to parse dataset info response: " + e.getMessage(), e);
+                    throw new Exception("Failed to parse dataset info response: " + e.getMessage(), e);
                 }
             }
             case 404 -> {
                 logger.warn("Dataset not found: {}", datasetId);
                 yield Optional.empty();
             }
-            default -> throw new DatasetException(
+            default -> throw new Exception(
                     "Failed to retrieve dataset info. Status: " + statusCode + ", Body: " + responseBody
             );
         };
