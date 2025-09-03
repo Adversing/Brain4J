@@ -50,7 +50,13 @@ public class DatasetLoader implements AutoCloseable {
         Optional<DatasetInfo> infoOpt = client.getDatasetInfo(datasetId);
 
         if (infoOpt.isEmpty()) {
-            throw new Exception("Dataset not found: " + datasetId);
+            throw new Exception(
+                        """
+                        Dataset not found: %s
+                        This error doesn't necessarily mean that the dataset doesn't exist, it could imply that the requested dataset is private or requires authentication.
+                        Unfortunately, this library doesn't support authentication yet.
+                        """.formatted(datasetId)
+            );
         }
 
         DatasetInfo info = infoOpt.get();
