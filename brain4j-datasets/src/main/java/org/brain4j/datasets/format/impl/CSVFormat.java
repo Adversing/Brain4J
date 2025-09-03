@@ -4,6 +4,7 @@ import org.brain4j.datasets.format.FileFormat;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class CSVFormat implements FileFormat<String> {
     @Override
@@ -13,6 +14,6 @@ public class CSVFormat implements FileFormat<String> {
     
     @Override
     public Iterable<String> read(File file) throws IOException {
-        throw new UnsupportedOperationException();
+        return Files.readAllLines(file.toPath());
     }
 }
