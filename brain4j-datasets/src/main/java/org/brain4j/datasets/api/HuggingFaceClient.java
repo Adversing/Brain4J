@@ -22,7 +22,7 @@ public class HuggingFaceClient implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(HuggingFaceClient.class);
     private static final String BASE_URL = "https://huggingface.co";
-    private static final String API_BASE_URL = "https://huggingface.co/api";
+    private static final String API_BASE_URL = BASE_URL + "/api";
 
     private final CloseableHttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -95,7 +95,7 @@ public class HuggingFaceClient implements AutoCloseable {
     }
 
     private Optional<DatasetInfo> processDatasetInfoResponse(ClassicHttpResponse response, String datasetId)
-            throws Exception, IOException, ParseException {
+            throws Exception {
         int statusCode = response.getCode();
         String responseBody = EntityUtils.toString(response.getEntity());
 
@@ -118,6 +118,10 @@ public class HuggingFaceClient implements AutoCloseable {
             }
             case 404 -> {
                 logger.warn("Dataset not found: {}", datasetId);
+                logger.warn("""
+                        This error doesn't necessarily mean that the dataset doesn't exist, it could imply that the requested dataset is private or requires authentication.
+                        Unfortunately, this library doesn't support authentication yet.
+                        """);
                 yield Optional.empty();
             }
             default -> throw new Exception(
