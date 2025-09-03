@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static java.io.File.separatorChar;
+
 public class CacheManager {
     
     private static final Logger logger = LoggerFactory.getLogger(CacheManager.class);
@@ -35,7 +37,7 @@ public class CacheManager {
     }
 
     public Path getCachedFilePath(String datasetId, String filename) {
-        String normalizedFilename = filename.replace('/', java.io.File.separatorChar);
+        String normalizedFilename = filename.replace('/', separatorChar);
         String hashedPrefix = hashFilename(datasetId + "/" + filename);
 
         return cacheDirectory.resolve(datasetId).resolve(hashedPrefix + "_" + normalizedFilename);
