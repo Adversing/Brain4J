@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(":brain4j-math")
+    implementation project(":brain4j-backends:backend-api")
+    implementation 'org.jocl:jocl:2.0.5'
+}

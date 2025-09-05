@@ -21,10 +21,8 @@ public class GpuTensor extends BaseTensor {
 
     /* Garbage collector stuff */
     private static final Cleaner CLEANER = Cleaner.create();
-    private final Cleaner.Cleanable cleanable;
-
+    
     private final Device device;
-
     private final cl_mem shapeBuffer;
     private final cl_mem stridesBuffer;
     private final cl_mem dataBuffer;
@@ -51,7 +49,7 @@ public class GpuTensor extends BaseTensor {
         long writeFlag = data.length > 0 ? CL_MEM_COPY_HOST_PTR : 1;
 
         this.dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE | writeFlag, dataSize, dataPointer, null);
-        this.cleanable = CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
+        CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
     }
 
     public GpuTensor(Device device, int[] shape, cl_mem otherBuffer) {
@@ -70,10 +68,10 @@ public class GpuTensor extends BaseTensor {
 
         this.shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
         this.stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
-
         this.dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE, dataSize, null, null);
-        this.cleanable = CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
-
+        
+        CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
+        
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             clEnqueueCopyBuffer(queue.clQueue(), otherBuffer, this.dataBuffer, 0, 0, dataSize,
                 0, null, null);

@@ -7,3 +7,4 @@ include 'brain4j-datasets'
 include "brain4j-backends:backend-api"
 include "brain4j-backends:backend-cuda"
 include "brain4j-backends:backend-metal"
+include "brain4j-backends:backend-opencl"
