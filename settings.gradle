@@ -3,8 +3,3 @@ rootProject.name = 'brain4j'
 include 'brain4j-core'
 include 'brain4j-math'
 include 'brain4j-datasets'
-
-include "brain4j-backends:backend-api"
-include "brain4j-backends:backend-cuda"
-include "brain4j-backends:backend-metal"
-include "brain4j-backends:backend-opencl"

@@ -261,7 +261,12 @@ public class GpuTensor extends BaseTensor {
     public Tensor pow(double value) {
         return launchScalarKernel("pow_scalar", (float) value);
     }
-
+    
+    @Override
+    public Tensor pow(Tensor other) {
+        return null;
+    }
+    
     @Override
     public Tensor sqrt() {
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {

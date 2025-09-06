@@ -1,5 +1,0 @@
-dependencies {
-    implementation project(":brain4j-math")
-    implementation project(":brain4j-backends:backend-api")
-    implementation files('../libs/jcuda-12.6.0.jar')
-}

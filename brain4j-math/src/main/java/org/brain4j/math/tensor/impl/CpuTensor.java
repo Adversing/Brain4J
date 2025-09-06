@@ -125,7 +125,16 @@ public class CpuTensor extends BaseTensor {
 
         return TensorBroadcast.add(this, other);
     }
-
+    
+    @Override
+    public Tensor add(double value) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] += (float) value;
+        }
+        
+        return this;
+    }
+    
     @Override
     public Tensor sub(Tensor other) {
         if (!(other instanceof CpuTensor)) {
@@ -136,12 +145,30 @@ public class CpuTensor extends BaseTensor {
     }
     
     @Override
+    public Tensor sub(double value) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] -= (float) value;
+        }
+        
+        return this;
+    }
+    
+    @Override
     public Tensor mul(Tensor other) {
         if (!(other instanceof CpuTensor)) {
             return mul(other.cpu());
         }
 
         return TensorBroadcast.mul(this, other);
+    }
+    
+    @Override
+    public Tensor mul(double value) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] *= (float) value;
+        }
+        
+        return this;
     }
 
     @Override
@@ -152,7 +179,16 @@ public class CpuTensor extends BaseTensor {
 
         return TensorBroadcast.div(this, other);
     }
-
+    
+    @Override
+    public Tensor div(double value) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] /= (float) value;
+        }
+        
+        return this;
+    }
+    
     @Override
     public Tensor pow(Tensor other) {
         if (!(other instanceof CpuTensor)) {
@@ -161,7 +197,25 @@ public class CpuTensor extends BaseTensor {
         
         return TensorBroadcast.pow(this, other);
     }
-
+    
+    @Override
+    public Tensor pow(double value) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (float) Math.pow(data[i], value);
+        }
+        
+        return this;
+    }
+    
+    @Override
+    public Tensor sqrt() {
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (float) Math.sqrt(data[i]);
+        }
+        
+        return this;
+    }
+    
     @Override
     public Tensor matmul(Tensor other) {
         int[] shapeA = this.shape;
