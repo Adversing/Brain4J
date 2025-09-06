@@ -9,7 +9,6 @@ import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.layer.Layer;
@@ -21,8 +20,6 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -44,9 +41,6 @@ import static org.brain4j.math.constants.Constants.*;
  * @since 3.0
  */
 public class Sequential extends Layer implements Model {
-
-    private static final Logger mainLogger = LoggerFactory.getLogger(Sequential.class);
-    private static final Logger trainingLogger = LoggerFactory.getLogger("training");
 
     /* Data structures in the model */
     protected List<Layer> layers;
@@ -230,7 +224,7 @@ public class Sequential extends Layer implements Model {
             result.f1Score() * 100
         );
 
-        trainingLogger.info(formatted);
+        System.out.print("\r" + formatted);
     }
 
     protected void printProgress(ListDataSource source, int epoch, int epoches, int batch, double tookMs) {
@@ -258,7 +252,7 @@ public class Sequential extends Layer implements Model {
         String message = String.format(intro + progressBar + batchesMsg + time,
             epoch, epoches, batch, total, timeStr);
 
-        trainingLogger.info(message);
+        System.out.print("\r" + message);
     }
 
     @Override
@@ -464,7 +458,7 @@ public class Sequential extends Layer implements Model {
         stats.append("Total parameters: %s (%s)\n".formatted(parameters, sizeOfParams));
         stats.append(Commons.getHeader("", Commons.getHeaderChar()));
 
-        Arrays.stream(stats.toString().split("\n")).forEach(mainLogger::info);
+        Arrays.stream(stats.toString().split("\n")).forEach(System.out::println);
     }
 
     private void append(

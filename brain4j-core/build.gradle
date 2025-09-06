@@ -1,25 +1,32 @@
 plugins {
-    id 'java'
-    id 'com.gradleup.shadow' version '9.0.0-beta10'
-    id 'com.google.protobuf' version '0.9.4'
+    id "java"
+    id "com.gradleup.shadow" version "9.0.0-beta10"
+    id "com.google.protobuf" version "0.9.4"
 }
 
 dependencies {
-    implementation project(':brain4j-math')
+    implementation project(":brain4j-math")
 
-    implementation 'org.jocl:jocl:2.0.5'
-    implementation 'com.google.code.gson:gson:2.13.1'
-    implementation 'com.google.protobuf:protobuf-java:4.31.1'
+    implementation "org.jocl:jocl:2.0.5"
+    implementation "com.google.code.gson:gson:2.13.1"
+    implementation "com.google.protobuf:protobuf-java:4.31.1"
 
-    testImplementation 'com.google.guava:guava:32.1.2-jre'
-    testImplementation 'org.apache.commons:commons-csv:1.10.0'
+    testImplementation "com.google.guava:guava:32.1.2-jre"
+    testImplementation "org.apache.commons:commons-csv:1.10.0"
 }
 
 shadowJar {
     minimize()
     archiveFileName = "brain4j-core-${parent.version}.jar"
+
+    relocate("com.google", "org.brain4j.relocated.google")
+    relocate("ch.qos.logback", "org.brain4j.relocated.logback")
+    relocate("org.slf4j", "org.brain4j.relocated.slf4j")
+    relocate("org.jocl", "org.brain4j.relocated.jocl")
+
+    exclude "org/brain4j/math/**"
 }
 
 tasks.withType(JavaExec).configureEach {
-    jvmArgs(['--add-modules', 'jdk.incubator.vector', '-XX:+UseSerialGC'])
+    jvmArgs(["--add-modules", "jdk.incubator.vector", "-XX:+UseSerialGC"])
 }

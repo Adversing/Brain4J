@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.utility;
 
+import org.brain4j.math.Commons;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
@@ -34,12 +35,12 @@ public class ActivationLayer extends Layer {
     @Override
     public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
         String activation = SerializeUtils.attribute(layer, "activation", "LINEAR");
-        this.activation = Activations.valueOf(activation).function();
+        this.activation = Commons.newInstance(activation);
     }
     
     @Override
     public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("activation", SerializeUtils.value(activation.name()));
+        builder.putAttrs("activation", SerializeUtils.value(activation.getClass().getName()));
     }
     
     @Override

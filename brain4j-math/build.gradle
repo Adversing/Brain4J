@@ -1,18 +1,18 @@
 plugins {
-    id 'java'
-    id 'com.gradleup.shadow' version '9.0.0-beta10'
+    id "java"
+    id "com.gradleup.shadow" version "9.0.0-beta10"
 }
 
 dependencies {
-    implementation 'org.jocl:jocl:2.0.5'
+    implementation "org.jocl:jocl:2.0.5"
 }
 
 compileJava {
-    options.compilerArgs.addAll(['--add-modules', 'jdk.incubator.vector'])
+    options.compilerArgs.addAll(["--add-modules", "jdk.incubator.vector"])
 }
 
 shadowJar {
     minimize()
-    dependsOn ':brain4j-datasets:shadowJar'
+    dependsOn ":brain4j-datasets:shadowJar"
     archiveFileName = "brain4j-math-${parent.version}.jar"
 }
