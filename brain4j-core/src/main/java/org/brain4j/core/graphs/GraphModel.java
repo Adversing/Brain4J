@@ -1,5 +1,6 @@
 package org.brain4j.core.graphs;
 
+import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
@@ -118,7 +119,12 @@ public class GraphModel implements Model {
     public double loss(ListDataSource dataSource) {
         return 0;
     }
-
+    
+    @Override
+    public Model compile(LossFunction lossFunction, Optimizer optimizer) {
+        return compile(lossFunction, optimizer, new StochasticUpdater());
+    }
+    
     @Override
     public Model compile(LossFunction lossFunction, Optimizer optimizer, Updater updater) {
         throw new UnsupportedOperationException();

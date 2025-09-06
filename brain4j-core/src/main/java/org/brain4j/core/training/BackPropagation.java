@@ -43,7 +43,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         }
         
         optimizer.postBatch();
-        updater.postBatch(elements);
+        updater.postBatch(optimizer.learningRate(), elements);
         model.zeroGrad();
         
         if (device != null) {
@@ -62,7 +62,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
             propagatePartition(batch, postBatchCallback, dataSource.cursor());
         }
         
-        updater.postFit(dataSource.size());
+        updater.postFit(optimizer.learningRate(), dataSource.size());
         model.zeroGrad();
     }
     

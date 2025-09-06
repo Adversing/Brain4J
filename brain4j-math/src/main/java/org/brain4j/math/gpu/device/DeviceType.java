@@ -5,13 +5,13 @@ public enum DeviceType {
     CPU(1 << 1),
     GPU(1 << 2);
 
-    private final long mask;
+    private final int mask;
 
-    DeviceType(long mask) {
+    DeviceType(int mask) {
         this.mask = mask;
     }
 
-    public long getMask() {
+    public int getMask() {
         return mask;
     }
 }

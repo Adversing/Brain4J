@@ -141,6 +141,15 @@ public interface Model extends Iterable<Layer> {
      * @return average loss
      */
     double loss(ListDataSource dataSource);
+    
+    /**
+     * Compiles the model by setting the loss function and optimizer.
+     *
+     * @param lossFunction the loss function to use
+     * @param optimizer the optimization algorithm
+     * @return the compiled model instance
+     */
+    Model compile(LossFunction lossFunction, Optimizer optimizer);
 
     /**
      * Compiles the model by setting the loss function, optimizer, and custom updater.
@@ -148,7 +157,7 @@ public interface Model extends Iterable<Layer> {
      * @param lossFunction the loss function to use
      * @param optimizer the optimization algorithm
      * @param updater the updater managing gradient application
-     * @return the compiled model instance for method chaining
+     * @return the compiled model instance
      */
     Model compile(LossFunction lossFunction, Optimizer optimizer, Updater updater);
 

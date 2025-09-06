@@ -6,16 +6,16 @@ public class AdamW extends Adam {
 
     private double weightDecay;
 
-    public AdamW() {
-        this(0.001);
+    public AdamW(double learningRate) {
+        this(learningRate, 0.001);
     }
 
-    public AdamW(double weightDecay) {
-        this(weightDecay, 0.9, 0.999, 1e-8);
+    public AdamW(double learningRate, double weightDecay) {
+        this(learningRate, weightDecay, 0.9, 0.999, 1e-8);
     }
 
-    public AdamW(double weightDecay, double beta1, double beta2, double epsilon) {
-        super(beta1, beta2, epsilon);
+    public AdamW(double learningRate, double weightDecay, double beta1, double beta2, double epsilon) {
+        super(learningRate, beta1, beta2, epsilon);
         this.weightDecay = weightDecay;
     }
 

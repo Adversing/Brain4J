@@ -1,4 +1,4 @@
-package org.brain4j.core.model.impl;
+package org.brain4j.core.model;
 
 import org.brain4j.math.Pair;
 import org.brain4j.math.Tensors;
@@ -78,7 +78,7 @@ public abstract class CustomModel {
             elements += output.shape(0);
         }
         
-        updater.updateWeights(elements);
+        updater.updateWeights(optimizer.learningRate(), elements);
     }
     
     protected void makeEvaluation(

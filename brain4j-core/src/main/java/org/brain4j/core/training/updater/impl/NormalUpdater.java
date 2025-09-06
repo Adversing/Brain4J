@@ -4,13 +4,9 @@ import org.brain4j.core.training.updater.Updater;
 
 public class NormalUpdater extends Updater {
     
-    public NormalUpdater(double learningRate) {
-        super(learningRate);
-    }
-    
     @Override
-    public void postFit(int samples) {
-        updateWeights(samples);
+    public void postFit(double learningRate, int samples) {
+        updateWeights(learningRate, samples);
         resetGradients();
     }
 }

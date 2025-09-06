@@ -152,7 +152,7 @@ public class BytePairTokenizer implements Tokenizer {
         }
     }
 
-    public void fit(List<String> corpus, int numMerges, int evaluateDelay) {
+    public void fit(List<String> corpus, int numMerges, int evaluateDelay) throws InterruptedException {
         if (merges.isEmpty()) {
             for (String word : corpus) {
                 String token = String.join(" ", word.split(""));

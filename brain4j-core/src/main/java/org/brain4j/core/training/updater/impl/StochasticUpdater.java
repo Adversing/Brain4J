@@ -4,13 +4,9 @@ import org.brain4j.core.training.updater.Updater;
 
 public class StochasticUpdater extends Updater {
     
-    public StochasticUpdater(double learningRate) {
-        super(learningRate);
-    }
-    
     @Override
-    public void postBatch(int samples) {
-        updateWeights(samples);
+    public void postBatch(double learningRate, int samples) {
+        updateWeights(learningRate, samples);
         resetGradients();
     }
 }
