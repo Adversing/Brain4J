@@ -7,8 +7,6 @@ import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.core.clipper.GradientClipper;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.jocl.cl_kernel;
 
 public class HardClipper implements GradientClipper {
@@ -19,16 +17,6 @@ public class HardClipper implements GradientClipper {
     }
     
     public HardClipper(double bound) { this.bound = bound; }
-    
-    @Override
-    public void serialize(ProtoModel.Clipper.Builder builder) {
-        builder.putAttrs("bound", SerializeUtils.value(bound));
-    }
-    
-    @Override
-    public void deserialize(ProtoModel.Clipper protoClipper) {
-        this.bound = SerializeUtils.attribute(protoClipper.getAttrsMap(), "bound", 5);
-    }
     
     @Override
     public void clipCpu(CpuTensor grad) {

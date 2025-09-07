@@ -4,8 +4,6 @@ import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
@@ -179,55 +177,6 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.numHeads = SerializeUtils.attribute(layer, "num_heads", 0);
-        this.embeddingDim = SerializeUtils.attribute(layer, "embedding_dim", 0);
-        
-        if (!layer.hasTransformer()) {
-            throw new IllegalArgumentException("Transformer layer is missing a transformer instance!");
-        }
-        
-        ProtoModel.Transformer transformer = layer.getTransformer();
-        
-        this.attention = new MultiHeadAttention();
-        this.upProjection = new DenseLayer();
-        this.downProjection = new DenseLayer();
-        this.normalizer1 = new NormLayer();
-        this.normalizer2 = new NormLayer();
-        this.dropout = new DropoutLayer();
-        
-        attention.deserialize(transformer.getAttention());
-        upProjection.deserialize(SerializeUtils.filterByName(tensors, "up_projection"), transformer.getUpProjection());
-        downProjection.deserialize(SerializeUtils.filterByName(tensors, "down_projection"), transformer.getDownProjection());
-        normalizer1.deserialize(SerializeUtils.filterByName(tensors, "normalizer_1"), transformer.getNormalizer1());
-        normalizer2.deserialize(SerializeUtils.filterByName(tensors, "normalizer_2"), transformer.getNormalizer2());
-        dropout.deserialize(List.of(), transformer.getDropout());
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        ProtoModel.Transformer.Builder transformerBuilder =
-            ProtoModel.Transformer.newBuilder()
-                .setAttention(attention.serialize());
-        
-        ProtoModel.Layer.Builder upProjBuilder = buildLayer(upProjection);
-        ProtoModel.Layer.Builder downProjBuilder = buildLayer(downProjection);
-        ProtoModel.Layer.Builder dropoutBuilder = buildLayer(dropout);
-        ProtoModel.Layer.Builder normalizer1Builder = buildLayer(normalizer1);
-        ProtoModel.Layer.Builder normalizer2Builder = buildLayer(normalizer2);
-        
-        transformerBuilder.setUpProjection(upProjBuilder.build());
-        transformerBuilder.setDownProjection(downProjBuilder.build());
-        transformerBuilder.setDropout(dropoutBuilder.build());
-        transformerBuilder.setNormalizer1(normalizer1Builder.build());
-        transformerBuilder.setNormalizer2(normalizer2Builder.build());
-        
-        builder.putAttrs("num_heads", SerializeUtils.value(numHeads))
-            .putAttrs("embedding_dim", SerializeUtils.value(embeddingDim))
-            .setTransformer(transformerBuilder.build());
-    }
-    
-    @Override
     public int size() {
         return embeddingDim;
     }
@@ -238,31 +187,6 @@ public class TransformerEncoder extends Layer {
             + downProjection.totalWeights()
             + normalizer1.totalWeights()
             + attention.totalWeights();
-    }
-    
-    @Override
-    public List<ProtoModel.Tensor.Builder> weightsList() {
-        return List.of(
-            SerializeUtils.serializeTensor("normalizer_1.weight", normalizer1.weights()),
-            SerializeUtils.serializeTensor("normalizer_1.bias", normalizer1.bias()),
-            SerializeUtils.serializeTensor("normalizer_2.weight", normalizer2.weights()),
-            SerializeUtils.serializeTensor("normalizer_2.bias", normalizer2.bias()),
-            SerializeUtils.serializeTensor("up_projection.weight", upProjection.weights()),
-            SerializeUtils.serializeTensor("up_projection.bias", upProjection.bias()),
-            SerializeUtils.serializeTensor("down_projection.weight", downProjection.weights()),
-            SerializeUtils.serializeTensor("down_projection.bias", downProjection.bias())
-        );
-    }
-    
-    private ProtoModel.Layer.Builder buildLayer(Layer layer) {
-        ProtoModel.Layer.Builder builder =
-            ProtoModel.Layer.newBuilder()
-                .setType(layer.getClass().getName())
-                .setBasic(ProtoModel.BasicLayer.newBuilder()
-                    .setDimension(layer.size()));
-    
-        layer.serialize(builder);
-        return builder;
     }
     
     public DenseLayer upProjection() {

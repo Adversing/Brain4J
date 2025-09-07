@@ -3,8 +3,6 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.impl.SoftmaxActivation;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -35,31 +33,6 @@ public class OutVocabLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.vocabSize = SerializeUtils.attribute(layer, "vocab_size", 0);
-        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
-        
-        for (ProtoModel.Tensor tensor : tensors) {
-            if (tensor.getName().contains("weight")) {
-                this.weights = SerializeUtils.deserializeTensor(tensor);
-            }
-        }
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("vocab_size", SerializeUtils.value(vocabSize));
-        builder.putAttrs("dimension", SerializeUtils.value(dimension));
-    }
-    
-    @Override
-    public List<ProtoModel.Tensor.Builder> weightsList() {
-        return List.of(
-            SerializeUtils.serializeTensor("weight", weights)
-        );
     }
     
     @Override

@@ -2,8 +2,6 @@ package org.brain4j.core.layer.impl.transformer;
 
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -66,18 +64,6 @@ public class PosEncodeLayer extends Layer {
         return 0;
     }
 
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("length", SerializeUtils.value(length));
-        builder.putAttrs("dimension", SerializeUtils.value(dimension));
-    }
-
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.length = SerializeUtils.attribute(layer, "length", 0);
-        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
-    }
-
     public Tensor generate(int position, int embeddingDim) {
         Tensor token = Tensors.zeros(embeddingDim);
 
@@ -91,10 +77,5 @@ public class PosEncodeLayer extends Layer {
         }
 
         return token.reshape(1, embeddingDim);
-    }
-    
-    @Override
-    public List<ProtoModel.Tensor.Builder> weightsList() {
-        return List.of();
     }
 }

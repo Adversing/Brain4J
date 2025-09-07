@@ -7,8 +7,6 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.weightsinit.WeightInitialization;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.NoClipper;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
@@ -94,37 +92,6 @@ public class MultiHeadAttention {
     public void backward(Updater updater, Optimizer optimizer) {
         for (AttentionHead head : heads) {
             head.backward(updater, optimizer);
-        }
-    }
-
-    public ProtoModel.MultiHeadAttention serialize() {
-        ProtoModel.MultiHeadAttention.Builder builder =
-            ProtoModel.MultiHeadAttention.newBuilder()
-                .setOutWeight(SerializeUtils.serializeTensor("out_weight", outProjWeights))
-                .putAttrs("gradient_clipper", SerializeUtils.value(clipper.getClass().getName()))
-                .putAttrs("head_count", SerializeUtils.value(headCount))
-                .putAttrs("embedding_dim", SerializeUtils.value(embeddingDim))
-                .putAttrs("head_dimension", SerializeUtils.value(headDimension));
-        
-        for (AttentionHead head : heads()) {
-            builder.addHeads(head.serialize());
-        }
-        
-        return builder.build();
-    }
-    
-    public void deserialize(ProtoModel.MultiHeadAttention attention) {
-        this.outProjWeights = SerializeUtils.deserializeTensor(attention.getOutWeight());
-        this.clipper = Commons.newInstance(SerializeUtils.attribute(attention.getAttrsMap(), "gradient_clipper", NoClipper.class.getName()));
-        this.headCount = SerializeUtils.attribute(attention.getAttrsMap(), "head_count", 0);
-        this.embeddingDim = SerializeUtils.attribute(attention.getAttrsMap(), "embedding_dim", 0);
-        this.headDimension = SerializeUtils.attribute(attention.getAttrsMap(), "head_dimension", 0);
-        this.heads = new ArrayList<>();
-        
-        for (ProtoModel.AttentionHead protoHead : attention.getHeadsList()) {
-            AttentionHead head = createAttentionHead();
-            head.deserialize(protoHead);
-            heads.add(head);
         }
     }
 

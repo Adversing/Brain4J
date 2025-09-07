@@ -1,8 +1,6 @@
 package org.brain4j.core.layer.impl.utility;
 
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -27,16 +25,6 @@ public class SqueezeLayer extends Layer {
         }
 
         return results;
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("dimension", SerializeUtils.value(dimension));
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
     }
     
     @Override

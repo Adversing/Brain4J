@@ -1,8 +1,6 @@
 package org.brain4j.core.layer.impl;
 
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -36,16 +34,6 @@ public class DropoutLayer extends Layer {
 
         this.random = Random.from(new SplittableRandom());
         this.dropoutRate = dropoutRate;
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.dropoutRate = SerializeUtils.attribute(layer, "dropout_rate", 0.0);
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("dropout_rate", SerializeUtils.value(dropoutRate));
     }
     
     @Override

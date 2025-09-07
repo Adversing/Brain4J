@@ -1,24 +1,44 @@
 package org.brain4j.core.importing.impl;
 
+import org.brain4j.core.activation.impl.*;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
-import org.brain4j.core.importing.ModelFormat;
+import org.brain4j.core.importing.format.ModelFormat;
 import org.brain4j.core.importing.onnx.ProtoOnnx;
 import org.brain4j.core.model.Model;
+import org.brain4j.math.tensor.autograd.impl.*;
 
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
 public class OnnxFormat implements ModelFormat {
+    
+    private final static Map<String, Operation> OPERATION_MAPPINGS = new HashMap<>() {
+        {
+            put("Add", new AddOperation());
+            put("Sub", new SubOperation());
+            put("Mul", new MulOperation());
+            put("Div", new DivOperation());
+            put("Gemm", new GemmOperation());
+            put("MatMul", new MatMulOperation());
+            
+            put("Relu", new ActivationOperation(new ReLUActivation()));
+            put("Sigmoid", new ActivationOperation(new SigmoidActivation()));
+            put("Tanh", new ActivationOperation(new TanhActivation()));
+            put("LeakyRelu", new ActivationOperation(new LeakyReLUActivation()));
+            put("Gelu", new ActivationOperation(new GELUActivation()));
+            put("Softmax", new ActivationOperation(new SoftmaxActivation()));
+            
+            put("LayerNormalization", new LayerNormOperation( 1e-5));
+        }
+    };
     
     @Override
     public <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception {
@@ -33,7 +53,7 @@ public class OnnxFormat implements ModelFormat {
         }
         
         for (ProtoOnnx.NodeProto node : graph.getNodeList()) {
-            Operation operation = OPERATION_MAP.get(node.getOpType());
+            Operation operation = OPERATION_MAPPINGS.get(node.getOpType());
             
             if (operation == null) {
                 throw new IllegalArgumentException("Unknown or missing operation type: " + node.getOpType());

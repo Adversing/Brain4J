@@ -4,8 +4,6 @@ import org.brain4j.math.Commons;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -30,17 +28,6 @@ public class ActivationLayer extends Layer {
     public Layer connect(Layer previous) {
         this.dimension = previous.size();
         return this;
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        String activation = SerializeUtils.attribute(layer, "activation", "LINEAR");
-        this.activation = Commons.newInstance(activation);
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("activation", SerializeUtils.value(activation.getClass().getName()));
     }
     
     @Override

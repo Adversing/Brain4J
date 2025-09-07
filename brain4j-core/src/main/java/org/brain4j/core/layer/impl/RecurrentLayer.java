@@ -4,9 +4,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.activation.Activations;
-import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
@@ -61,30 +59,6 @@ public class RecurrentLayer extends Layer {
         this.inputWeights.map(x -> weightInit.generate(generator, input, output));
         this.hiddenWeights.map(x -> weightInit.generate(generator, hiddenDimension, hiddenDimension));
         this.weights.map(x -> weightInit.generate(generator, hiddenDimension, output));
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
-        this.hiddenDimension = SerializeUtils.attribute(layer, "hidden_dimension", 0);
-        
-        for (ProtoModel.Tensor tensor : tensors) {
-            String name = tensor.getName().substring(tensor.getName().lastIndexOf('.') + 1);
-            switch (name) {
-                case "input_weight" -> this.inputWeights = SerializeUtils.deserializeTensor(tensor);
-                case "hidden_weight" -> this.hiddenWeights = SerializeUtils.deserializeTensor(tensor);
-                case "hidden_bias" -> this.hiddenBias = SerializeUtils.deserializeTensor(tensor);
-                case "weights" -> this.weights = SerializeUtils.deserializeTensor(tensor);
-                case "bias" -> this.bias = SerializeUtils.deserializeTensor(tensor);
-            }
-        }
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("dimension", SerializeUtils.value(dimension));
-        builder.putAttrs("hidden_dimension", SerializeUtils.value(hiddenDimension));
-        builder.putAttrs("activation", SerializeUtils.value(activation.name()));
     }
     
     @Override
@@ -162,16 +136,5 @@ public class RecurrentLayer extends Layer {
     @Override
     public int totalWeights() {
         return weights.elements() + inputWeights.elements() + hiddenWeights.elements();
-    }
-    
-    @Override
-    public List<ProtoModel.Tensor.Builder> weightsList() {
-        return List.of(
-            SerializeUtils.serializeTensor("input_weight", inputWeights),
-            SerializeUtils.serializeTensor("hidden_weight", hiddenWeights),
-            SerializeUtils.serializeTensor("hidden_bias", hiddenBias),
-            SerializeUtils.serializeTensor("weights", weights),
-            SerializeUtils.serializeTensor("bias", bias)
-        );
     }
 }

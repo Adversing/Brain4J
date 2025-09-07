@@ -98,6 +98,11 @@ public class LSTMLayer extends Layer {
     }
     
     @Override
+    public int size() {
+        return dimension;
+    }
+    
+    @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         super.backward(cache, updater, optimizer);
 
@@ -115,10 +120,5 @@ public class LSTMLayer extends Layer {
     @Override
     public int totalWeights() {
         return weights.elements() + hiddenWeights.elements();
-    }
-    
-    @Override
-    public int size() {
-        return dimension;
     }
 }

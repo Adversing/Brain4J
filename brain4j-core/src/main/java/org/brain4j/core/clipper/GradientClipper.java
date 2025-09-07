@@ -3,7 +3,6 @@ package org.brain4j.core.clipper;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.brain4j.core.importing.proto.ProtoModel;
 
 /**
  * Gradient clipping is a technique used to prevent the gradients
@@ -20,10 +19,6 @@ public interface GradientClipper {
            clipGpu(gradGpu);
        }
     }
-
-    void serialize(ProtoModel.Clipper.Builder builder);
-    
-    void deserialize(ProtoModel.Clipper protoClipper);
     
     /**
      * Clips the input gradient tensor in the CPU backend.

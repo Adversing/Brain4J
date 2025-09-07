@@ -1,5 +1,6 @@
 package org.brain4j.core.layer;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -7,14 +8,13 @@ import org.brain4j.math.weightsinit.WeightInitialization;
 import org.brain4j.core.activation.impl.LinearActivation;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.clipper.impl.HardClipper;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -33,6 +33,25 @@ public abstract class Layer {
     protected Tensor bias;
     
     public Layer() {
+    }
+    
+    /**
+     * Constructs the tensors for weights in this layer.
+     * @param previous the previous layer in the model
+     * @return this layer by default
+     */
+    public Layer connect(Layer previous) {
+        return this;
+    }
+    
+    /**
+     * Initializes the previously constructed weights with random values.
+     * @param generator the random number generator
+     * @param input the input dimension
+     * @param output the output dimension
+     */
+    public void initWeights(Random generator, int input, int output) {
+        // No-op
     }
 
     /**
@@ -65,45 +84,12 @@ public abstract class Layer {
         );
     }
 
-    /**
-     * Deserializes the weights and the layer attributes.
-     * @param tensors the layer weights
-     * @param layer the layer instance, containing attributes
-     */
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
+    public void deserialize(JsonObject object) {
     }
     
-    /**
-     * Serializes this layer in the provided builder.
-     * @param builder the builder that will store the data
-     */
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        ProtoModel.Clipper.Builder clipperBuilder = ProtoModel.Clipper.newBuilder();
-        
-        clipper.serialize(clipperBuilder);
-        
-        builder.setClipper(clipperBuilder);
+    public void serialize(JsonObject object) {
     }
-
-    /**
-     * Constructs the tensors for weights in this layer.
-     * @param previous the previous layer in the model
-     * @return this layer by default
-     */
-    public Layer connect(Layer previous) {
-        return this;
-    }
-
-    /**
-     * Initializes the previously constructed weights with random values.
-     * @param generator the random number generator
-     * @param input the input dimension
-     * @param output the output dimension
-     */
-    public void initWeights(Random generator, int input, int output) {
-        // No-op
-    }
-
+    
     /**
      * Ports the weights of this layer to the specified device memory.
      * @param device the device to port the weights on
@@ -280,10 +266,7 @@ public abstract class Layer {
         return weights.elements();
     }
     
-    public List<ProtoModel.Tensor.Builder> weightsList() {
-        return List.of(
-            SerializeUtils.serializeTensor("weight", weights),
-            SerializeUtils.serializeTensor("bias", bias)
-        );
+    public Map<String, Tensor> weightsMap() {
+        return Map.of();
     }
 }

@@ -2,8 +2,6 @@ package org.brain4j.core.layer.impl;
 
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -38,24 +36,6 @@ public class NormLayer extends Layer {
         this.bias = Tensors.zeros(previous.size()).withGrad();
 
         return this;
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        this.epsilon = SerializeUtils.attribute(layer, "epsilon", 0.0);
-        
-        for (ProtoModel.Tensor tensor : tensors) {
-            String name = tensor.getName().substring(tensor.getName().lastIndexOf('.') + 1);
-            switch (name) {
-                case "weight" -> weights = SerializeUtils.deserializeTensor(tensor);
-                case "bias" -> bias = SerializeUtils.deserializeTensor(tensor);
-            }
-        }
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("epsilon", SerializeUtils.value(epsilon));
     }
     
     @Override

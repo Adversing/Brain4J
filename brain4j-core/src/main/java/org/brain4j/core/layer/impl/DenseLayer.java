@@ -1,16 +1,15 @@
 package org.brain4j.core.layer.impl;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.proto.SerializeUtils;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -83,28 +82,6 @@ public class DenseLayer extends Layer {
     }
     
     @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        String activation = SerializeUtils.attribute(layer, "activation", "LINEAR");
-        
-        this.dimension = SerializeUtils.attribute(layer, "dimension", 0);
-        this.activation = Activations.valueOf(activation.toUpperCase()).function();
-        
-        for (ProtoModel.Tensor tensor : tensors) {
-            String name = tensor.getName().substring(tensor.getName().lastIndexOf('.') + 1);
-            switch (name) {
-                case "weight" -> this.weights = SerializeUtils.deserializeTensor(tensor);
-                case "bias" -> this.bias = SerializeUtils.deserializeTensor(tensor);
-            }
-        }
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        builder.putAttrs("dimension", SerializeUtils.value(dimension));
-        builder.putAttrs("activation", SerializeUtils.value(activation.name()));
-    }
-    
-    @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor[] result = new Tensor[inputs.length];
         Tensor[] beforeActivation = new Tensor[inputs.length];
@@ -123,10 +100,20 @@ public class DenseLayer extends Layer {
         cache.rememberOutput(this, beforeActivation);
         return result;
     }
-
+    
     @Override
     public int size() {
         return dimension;
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        super.deserialize(object);
     }
 
     @Override
@@ -135,5 +122,10 @@ public class DenseLayer extends Layer {
         int[] weightsShape = weights.shape();
 
         return shape[shape.length - 1] == weightsShape[0];
+    }
+    
+    @Override
+    public Map<String, Tensor> weightsMap() {
+        return Map.of("weights", weights, "bias", bias);
     }
 }

@@ -1,121 +1,127 @@
 package org.brain4j.core.importing.impl;
 
-import org.brain4j.math.Commons;
-import org.brain4j.core.importing.ModelFormat;
-import org.brain4j.core.importing.proto.ProtoModel;
-import org.brain4j.core.importing.registry.LayerRegistry;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.layer.impl.transformer.TransformerEncoder;
+import org.brain4j.core.importing.format.ModelFormat;
 import org.brain4j.core.model.Model;
+import org.brain4j.math.activation.Activation;
+import org.brain4j.math.tensor.Tensor;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static org.brain4j.core.importing.Registries.*;
 
 public class BrainFormat implements ModelFormat {
-
-    private final LayerRegistry registry = new LayerRegistry();
+    
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final int FORMAT_VERSION = 1;
 
     public BrainFormat() {
-        registry.registerAll(LAYER_IDENTITY_MAP);
     }
 
     @Override
     public <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception {
-        ProtoModel.Model protoModel = ProtoModel.Model.parseFrom(bytes);
-        Map<Integer, Layer> positionMap = new HashMap<>();
-        
-        for (ProtoModel.Layer layer : protoModel.getLayersList()) {
-            String layerType = layer.getType();
-            String layerId = layer.getName();
-            
-            String[] parts = layerId.split("\\.");
-            
-            if (parts.length == 0) {
-                throw new IllegalArgumentException("Layer does not match format!");
-            }
-            
-            int position = Integer.parseInt(parts[1]);
-            Layer wrapped = registry.create(layerType);
-
-            List<ProtoModel.Tensor> tensors = protoModel.getWeightsList().stream()
-                .filter(t -> t.getName().startsWith(layerId))
-                .toList();
-            
-            wrapped.deserialize(tensors, layer);
-            positionMap.put(position, wrapped);
-        }
-        
-        T model = constructor.get();
-        model.setLossFunction(Commons.newInstance(protoModel.getLossFunction()));
-        
-        positionMap.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .forEach(e -> model.add(e.getValue()));
-        
-        return model;
+        return constructor.get();
     }
     
     @Override
-    public void serialize(Model model, File file) throws IOException {
-        ProtoModel.Model.Builder builder =
-            ProtoModel.Model.newBuilder()
-                .setVersion(1)
-                .setName(file.getName())
-                .setCreated(Instant.now().toString())
-                .setLossFunction(model.lossFunction().getClass().getName());
+    public void serialize(Model model, File file) {
+        Map<String, Tensor> globalWeightsMap = new HashMap<>();
+        
+        String metadata = buildMetadata(model, globalWeightsMap);
+        String weights = buildWeights(model, globalWeightsMap);
+        
+        String[] files = { "metadata.json", "weights.safetensors" };
+        String[] content = { metadata, weights };
+        
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.setLevel(Deflater.BEST_COMPRESSION);
+            
+            for (int i = 0; i < files.length; i++) {
+                ZipEntry metaEntry = new ZipEntry(files[i]);
+                byte[] fileContent = content[i].getBytes();
+                
+                metaEntry.setMethod(ZipEntry.DEFLATED);
+                metaEntry.setSize(fileContent.length);
+                
+                zos.putNextEntry(metaEntry);
+                zos.write(fileContent);
+            }
+            
+            zos.closeEntry();
+            zos.close();
+            
+            byte[] zipData = baos.toByteArray();
+            
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(zipData);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private String buildWeights(Model model, Map<String, Tensor> globalWeightsMap) {
+        return "SKIBIDI\nWOO";
+    }
+    
+    private String buildMetadata(Model model, Map<String, Tensor> globalWeightsMap) {
+        JsonObject object = new JsonObject();
+        Instant date = Instant.now();
+        
+        object.addProperty("format_version", FORMAT_VERSION);
+        object.addProperty("created_at", date.toString());
+        object.addProperty("weights_file", "weights.safetensors");
         
         List<Layer> layers = model.flattened();
+        JsonArray array = new JsonArray();
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);
+            JsonObject data = new JsonObject();
             
-            String name = layer.getClass().getSimpleName().toLowerCase();
-            String id = name + "." + i;
+            Class<? extends Layer> layerClass = layer.getClass();
+            Class<? extends Activation> activationClass = layer.activation().getClass();
+            Class<? extends GradientClipper> clipperClass = layer.clipper().getClass();
             
-            ProtoModel.Layer.Builder layerBuilder = toProtoBuilder(layer).setName(id);
-            layer.serialize(layerBuilder);
+            Map<String, Tensor> weightsMap = layer.weightsMap();
+            String identifier = LAYER_REGISTRY.fromClass(layerClass);
             
-            List<ProtoModel.Tensor.Builder> tensorsBuilders = layer.weightsList();
-            List<ProtoModel.Tensor> tensors = new ArrayList<>();
+            data.addProperty("index", i);
+            data.addProperty("type", identifier);
+            data.addProperty("activation", ACTIVATION_REGISTRY.fromClass(activationClass));
+            data.addProperty("clipper", CLIPPERS_REGISTRY.fromClass(clipperClass));
             
-            for (ProtoModel.Tensor.Builder tensorBuilder : tensorsBuilders) {
-                tensorBuilder.setName(id + "." + tensorBuilder.getName());
-                tensors.add(tensorBuilder.build());
+            layer.serialize(data);
+            
+            JsonArray weightsArray = new JsonArray();
+            
+            for (Map.Entry<String, Tensor> entry : weightsMap.entrySet()) {
+                String id = String.format("%s.%s.%s", identifier, i, entry.getKey());
+                globalWeightsMap.put(id, entry.getValue());
+                weightsArray.add(id);
             }
             
-            builder.addLayers(layerBuilder.build());
-            builder.addAllWeights(tensors);
+            data.add("weights", weightsArray);
+            array.add(data);
         }
         
-        builder.build().writeTo(new FileOutputStream(file));
-    }
-
-    public LayerRegistry registry() {
-        return registry;
-    }
-
-    public ProtoModel.Layer.Builder toProtoBuilder(Layer layer) {
-        String identifier = registry.fromState(layer.getClass());
-
-        if (identifier == null) {
-            throw new IllegalArgumentException(
-                "Unable to map layer " + layer.getClass().getName() + ". If you are using " +
-                "a custom layer, make sure to register it first."
-            );
-        }
-
-        ProtoModel.Layer.Builder builder = ProtoModel.Layer.newBuilder()
-            .setType(identifier);
+        object.add("architecture", array);
         
-        if (!(layer instanceof TransformerEncoder)) {
-            builder.setBasic(
-                ProtoModel.BasicLayer.newBuilder()
-                    .setDimension(layer.size())
-            );
-        }
-        
-        return builder;
+        return GSON.toJson(object);
     }
 }

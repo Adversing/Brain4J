@@ -2,7 +2,6 @@ package org.brain4j.core.layer.impl.utility;
 
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
-import org.brain4j.core.importing.proto.ProtoModel;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
@@ -26,16 +25,6 @@ public class SliceLayer extends Layer {
         }
 
         return result;
-    }
-    
-    @Override
-    public void serialize(ProtoModel.Layer.Builder builder) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    @Override
-    public void deserialize(List<ProtoModel.Tensor> tensors, ProtoModel.Layer layer) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override
