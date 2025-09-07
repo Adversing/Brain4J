@@ -66,19 +66,43 @@ public class AttentionHead {
     public Tensor attend(StatesCache cache, Tensor input) {
         return attend(input);
     }
-
+    
+    public GradientClipper clipper() {
+        return clipper;
+    }
+    
     public Tensor queryWeights() {
         return queryWeights;
     }
-
+    
+    public void setQueryWeights(Tensor queryWeights) {
+        this.queryWeights = queryWeights;
+    }
+    
     public Tensor keyWeights() {
         return keyWeights;
     }
-
+    
+    public void setKeyWeights(Tensor keyWeights) {
+        this.keyWeights = keyWeights;
+    }
+    
     public Tensor valueWeights() {
         return valueWeights;
     }
-
+    
+    public void setValueWeights(Tensor valueWeights) {
+        this.valueWeights = valueWeights;
+    }
+    
+    public void setEmbedDimension(int embedDimension) {
+        this.embedDimension = embedDimension;
+    }
+    
+    public void setHeadDimension(int headDimension) {
+        this.headDimension = headDimension;
+    }
+    
     public int embedDimension() {
         return embedDimension;
     }

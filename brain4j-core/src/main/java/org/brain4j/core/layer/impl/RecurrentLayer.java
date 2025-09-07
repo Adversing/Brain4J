@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
@@ -10,6 +11,7 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -98,7 +100,27 @@ public class RecurrentLayer extends Layer {
         Tensor output = sequence.matmulGrad(weights).addGrad(bias);
         
         cache.rememberOutput(this, output);
-        return new Tensor[]{ output };
+        return new Tensor[] { output };
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+        object.addProperty("hidden_dimension", hiddenDimension);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
+        this.hiddenDimension = object.get("hidden_dimension").getAsInt();
+    }
+    
+    @Override
+    public void loadWeights(Map<String, Tensor> mappedWeights) {
+        super.loadWeights(mappedWeights);
+        this.inputWeights = mappedWeights.get("input_weights");
+        this.hiddenWeights = mappedWeights.get("hidden_weights");
+        this.hiddenBias = mappedWeights.get("hidden_bias");
     }
     
     @Override
@@ -136,5 +158,14 @@ public class RecurrentLayer extends Layer {
     @Override
     public int totalWeights() {
         return weights.elements() + inputWeights.elements() + hiddenWeights.elements();
+    }
+    
+    @Override
+    public Map<String, Tensor> weightsMap() {
+        var result = super.weightsMap();
+        result.put("input_weights", inputWeights);
+        result.put("hidden_weights", hiddenWeights);
+        result.put("hidden_bias", hiddenBias);
+        return result;
     }
 }

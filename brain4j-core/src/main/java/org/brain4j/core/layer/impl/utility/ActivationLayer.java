@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.utility;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Commons;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
@@ -45,5 +46,15 @@ public class ActivationLayer extends Layer {
     @Override
     public int size() {
         return dimension;
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
     }
 }

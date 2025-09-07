@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.transformer;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
@@ -44,6 +45,17 @@ public class EmbeddingLayer extends Layer {
         this.vocabSize = vocabSize;
         this.embeddingDim = embeddingDim;
         this.weightInit = new UniformXavierInit();
+    }
+    
+    @Override
+    public Layer connect(Layer previous) {
+        this.weights = Tensors.zeros(vocabSize, embeddingDim).withGrad();
+        return this;
+    }
+    
+    @Override
+    public void initWeights(Random generator, int input, int output) {
+        this.weights.map(x -> weightInit.generate(generator, input, output));
     }
 
     @Override
@@ -121,18 +133,19 @@ public class EmbeddingLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
-        this.weights = Tensors.zeros(vocabSize, embeddingDim).withGrad();
-        return this;
-    }
-
-    @Override
-    public void initWeights(Random generator, int input, int output) {
-        this.weights.map(x -> weightInit.generate(generator, input, output));
-    }
-
-    @Override
     public int size() {
         return embeddingDim;
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("vocab_size", vocabSize);
+        object.addProperty("embedding_dim", embeddingDim);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.vocabSize =  object.get("vocab_size").getAsInt();
+        this.embeddingDim = object.get("embedding_dim").getAsInt();
     }
 }

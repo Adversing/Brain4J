@@ -11,7 +11,11 @@ public class Lion extends Optimizer {
 
     private Map<Tensor, Tensor> momentumHistory;
     private double beta;
-
+    
+    public Lion() {
+        super(0);
+    }
+    
     public Lion(double learningRate, double beta) {
         super(learningRate);
         this.beta = beta;

@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
@@ -43,7 +44,17 @@ public class NormLayer extends Layer {
         Tensor input = inputs[0];
         return new Tensor[] { input.layerNorm(epsilon).mulGrad(weights).addGrad(bias) };
     }
-
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("epsilon", epsilon);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.epsilon = object.get("epsilon").getAsDouble();
+    }
+    
     @Override
     public int size() {
         return weights.elements();
@@ -53,7 +64,8 @@ public class NormLayer extends Layer {
         return epsilon;
     }
 
-    public void setEpsilon(double epsilon) {
+    public NormLayer epsilon(double epsilon) {
         this.epsilon = epsilon;
+        return this;
     }
 }

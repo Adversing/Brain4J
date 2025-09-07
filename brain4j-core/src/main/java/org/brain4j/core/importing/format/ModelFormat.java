@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public interface ModelFormat {
-    <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception;
+    <T extends Model> T deserialize(File file, Supplier<T> constructor);
     
-    void serialize(Model model, File file) throws IOException;
+    void serialize(Model model, File file);
 }

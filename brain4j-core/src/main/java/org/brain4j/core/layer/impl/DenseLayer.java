@@ -8,6 +8,7 @@ import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -113,19 +114,14 @@ public class DenseLayer extends Layer {
     
     @Override
     public void deserialize(JsonObject object) {
-        super.deserialize(object);
+        this.dimension = object.get("dimension").getAsInt();
     }
-
+    
     @Override
     public boolean validInput(Tensor input) {
         int[] shape = input.shape();
         int[] weightsShape = weights.shape();
 
         return shape[shape.length - 1] == weightsShape[0];
-    }
-    
-    @Override
-    public Map<String, Tensor> weightsMap() {
-        return Map.of("weights", weights, "bias", bias);
     }
 }

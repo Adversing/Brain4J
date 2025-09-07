@@ -1,5 +1,7 @@
 package org.brain4j.core.importing.format;
 
+import org.brain4j.math.Commons;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,5 +26,9 @@ public class GeneralRegistry<T> {
     
     public Class<? extends T> fromId(String identifier) {
         return idToClass.get(identifier);
+    }
+    
+    public T toInstance(String identifier) throws Exception {
+        return Commons.newInstance(fromId(identifier));
     }
 }

@@ -9,21 +9,49 @@ import org.brain4j.core.importing.format.GeneralRegistry;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.*;
 import org.brain4j.core.layer.impl.convolutional.ConvLayer;
-import org.brain4j.core.layer.impl.convolutional.InputLayer;
+import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.layer.impl.transformer.*;
 import org.brain4j.core.layer.impl.utility.ActivationLayer;
 import org.brain4j.core.layer.impl.utility.ReshapeLayer;
 import org.brain4j.core.layer.impl.utility.SliceLayer;
 import org.brain4j.core.layer.impl.utility.SqueezeLayer;
+import org.brain4j.core.loss.LossFunction;
+import org.brain4j.core.loss.impl.*;
+import org.brain4j.core.training.optimizer.Optimizer;
+import org.brain4j.core.training.optimizer.impl.Adam;
+import org.brain4j.core.training.optimizer.impl.AdamW;
+import org.brain4j.core.training.optimizer.impl.GradientDescent;
+import org.brain4j.core.training.optimizer.impl.Lion;
+import org.brain4j.core.training.updater.Updater;
+import org.brain4j.core.training.updater.impl.NormalUpdater;
+import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.math.activation.Activation;
 
 public class Registries {
     
+    public static final GeneralRegistry<Optimizer> OPTIMIZERS_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<LossFunction> LOSS_FUNCTION_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<Updater> UPDATERS_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<GradientClipper> CLIPPERS_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<Activation> ACTIVATION_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<Layer> LAYER_REGISTRY = new GeneralRegistry<>();
     
     static {
+        OPTIMIZERS_REGISTRY.register("adam", Adam.class);
+        OPTIMIZERS_REGISTRY.register("adamw", AdamW.class);
+        OPTIMIZERS_REGISTRY.register("gradient_descent", GradientDescent.class);
+        OPTIMIZERS_REGISTRY.register("lion", Lion.class);
+        
+        UPDATERS_REGISTRY.register("stochastic", StochasticUpdater.class);
+        UPDATERS_REGISTRY.register("normal", NormalUpdater.class);
+        
+        LOSS_FUNCTION_REGISTRY.register("binary_cross_entropy", BinaryCrossEntropy.class);
+        LOSS_FUNCTION_REGISTRY.register("cosine_embedding", CosineEmbedding.class);
+        LOSS_FUNCTION_REGISTRY.register("cross_entropy", CrossEntropy.class);
+        LOSS_FUNCTION_REGISTRY.register("huber_loss", HuberLoss.class);
+        LOSS_FUNCTION_REGISTRY.register("mean_absolute_error", MeanAbsoluteError.class);
+        LOSS_FUNCTION_REGISTRY.register("mean_squared_error", MeanSquaredError.class);
+        
         CLIPPERS_REGISTRY.register("none", NoClipper.class);
         CLIPPERS_REGISTRY.register("hard", HardClipper.class);
         CLIPPERS_REGISTRY.register("l2", L2Clipper.class);

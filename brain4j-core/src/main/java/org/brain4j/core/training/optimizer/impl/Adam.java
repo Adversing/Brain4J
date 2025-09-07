@@ -23,7 +23,11 @@ public class Adam extends Optimizer {
     protected float epsilon;
 
     protected int timestep = 1;
-
+    
+    protected Adam() {
+        super(0);
+    }
+    
     public Adam(double learningRate) {
         this(learningRate, 0.9, 0.999, 1e-8);
     }

@@ -3,6 +3,7 @@ package org.brain4j.math;
 import org.brain4j.math.tensor.Tensor;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.List;
 
@@ -161,7 +162,15 @@ public class Commons {
         
         try {
             Class<?> clazz = Class.forName(classPath);
-            
+            return (T) newInstance(clazz);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    @SuppressWarnings("all")
+    public static <T> T newInstance(Class<T> clazz) {
+        try {
             Constructor<?> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             
@@ -174,17 +183,7 @@ public class Commons {
     public static double clamp(float value, double minimum, double maximum) {
         return Math.min(Math.max(value, minimum), maximum);
     }
-
-    public static void waitAll(List<Thread> threads) {
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace(System.err);
-            }
-        }
-    }
-
+    
     public static String getHeaderChar() {
         return "━";
     }

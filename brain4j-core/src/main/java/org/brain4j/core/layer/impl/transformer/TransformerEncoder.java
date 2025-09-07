@@ -1,5 +1,7 @@
 package org.brain4j.core.layer.impl.transformer;
 
+import com.google.gson.JsonObject;
+import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -16,6 +18,7 @@ import org.brain4j.core.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -168,7 +171,56 @@ public class TransformerEncoder extends Layer {
         
         return new Tensor[] { normalized };
     }
-
+    
+    @Override
+    public int size() {
+        return embeddingDim;
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("heads", numHeads);
+        object.addProperty("embedding_dim", embeddingDim);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.numHeads = object.get("heads").getAsInt();
+        this.embeddingDim = object.get("embedding_dim").getAsInt();
+    }
+    
+    @Override
+    public void loadWeights(Map<String, Tensor> mappedWeights) {
+        this.upProjection = new DenseLayer();
+        this.downProjection = new DenseLayer();
+        this.normalizer1 = new NormLayer();
+        this.normalizer2 = new NormLayer();
+        this.attention = createAttention(numHeads, embeddingDim);
+        
+        upProjection.setWeights(mappedWeights.get("up_projection.weights"));
+        upProjection.setBias(mappedWeights.get("up_projection.bias"));
+        downProjection.setWeights(mappedWeights.get("down_projection.weights"));
+        downProjection.setBias(mappedWeights.get("down_projection.bias"));
+        normalizer1.setWeights(mappedWeights.get("normalizer_1.weights"));
+        normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
+        normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
+        normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
+        attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
+        
+        for (int i = 0; i < numHeads; i++) {
+            String prefix = "attention_head." + i + ".";
+            Tensor queryWeights = mappedWeights.get(prefix + ".query");
+            Tensor keyWeights = mappedWeights.get(prefix + ".key");
+            Tensor valueWeights = mappedWeights.get(prefix + ".value");
+            
+            AttentionHead head = attention.createAttentionHead();
+            
+            head.setQueryWeights(queryWeights);
+            head.setKeyWeights(keyWeights);
+            head.setValueWeights(valueWeights);
+        }
+    }
+    
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         attention.backward(updater, optimizer);
@@ -177,16 +229,38 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public int size() {
-        return embeddingDim;
-    }
-
-    @Override
     public int totalWeights() {
         return upProjection.totalWeights()
             + downProjection.totalWeights()
             + normalizer1.totalWeights()
+            + normalizer2.totalWeights()
             + attention.totalWeights();
+    }
+    
+    @Override
+    public Map<String, Tensor> weightsMap() {
+        var result = super.weightsMap();
+        
+        result.put("up_projection.weights", upProjection.weights());
+        result.put("up_projection.bias", upProjection.bias());
+        result.put("down_projection.weights", downProjection.weights());
+        result.put("down_projection.bias", downProjection.bias());
+        result.put("normalizer_1.weights", normalizer1.weights());
+        result.put("normalizer_1.bias", normalizer1.bias());
+        result.put("normalizer_2.weights", normalizer2.weights());
+        result.put("normalizer_2.bias", normalizer2.bias());
+        
+        List<AttentionHead> heads = attention.heads();
+        
+        for (int i = 0; i < heads.size(); i++) {
+            AttentionHead head = heads.get(i);
+            result.put("attention_head." + i + ".query", head.queryWeights());
+            result.put("attention_head." + i + ".key", head.keyWeights());
+            result.put("attention_head." + i + ".value", head.valueWeights());
+        }
+        
+        result.put("attention.out_proj", attention.outProjWeights());
+        return result;
     }
     
     public DenseLayer upProjection() {

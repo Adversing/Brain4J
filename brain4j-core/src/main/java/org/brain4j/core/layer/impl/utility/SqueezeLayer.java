@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.utility;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
@@ -16,6 +17,12 @@ public class SqueezeLayer extends Layer {
     }
     
     @Override
+    public Layer connect(Layer previous) {
+        this.size = previous.size();
+        return this;
+    }
+    
+    @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor[] results = new Tensor[inputs.length];
 
@@ -28,13 +35,19 @@ public class SqueezeLayer extends Layer {
     }
     
     @Override
-    public Layer connect(Layer previous) {
-        this.size = previous.size();
-        return this;
+    public int size() {
+        return size;
     }
     
     @Override
-    public int size() {
-        return size;
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+        object.addProperty("size", size);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
+        this.size = object.get("size").getAsInt();
     }
 }

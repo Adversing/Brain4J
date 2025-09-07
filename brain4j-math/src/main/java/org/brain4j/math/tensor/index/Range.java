@@ -35,14 +35,22 @@ public class Range {
         return end >= 0 ? Math.min(end, dimSize) : end + dimSize;
     }
     
-    public int step() {
-        return step;
-    }
-    
     public int size(int dimSize) {
         int s = start(dimSize);
         int e = end(dimSize);
         return (e - s + step - 1) / step;
+    }
+    
+    public int start() {
+        return start;
+    }
+    
+    public int end() {
+        return end;
+    }
+    
+    public int step() {
+        return step;
     }
     
     @Override

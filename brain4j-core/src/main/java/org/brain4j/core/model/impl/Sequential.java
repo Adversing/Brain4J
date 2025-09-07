@@ -1,6 +1,6 @@
 package org.brain4j.core.model.impl;
 
-import org.brain4j.core.layer.impl.convolutional.InputLayer;
+import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.math.Commons;
 import org.brain4j.math.Pair;

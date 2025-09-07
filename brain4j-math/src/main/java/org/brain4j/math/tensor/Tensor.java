@@ -39,6 +39,12 @@ public interface Tensor extends Iterable<Float> {
      * @return the strides of the tensor
      */
     int[] strides();
+    
+    /**
+     * Converts the tensor data to a byte array.
+     * @return a byte array
+     */
+    byte[] toByteArray();
 
     /**
      * Gets the linear index of the specified indices in the tensor.

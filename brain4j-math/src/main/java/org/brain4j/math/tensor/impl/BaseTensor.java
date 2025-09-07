@@ -11,6 +11,8 @@ import org.brain4j.math.tensor.broadcast.TensorBroadcast;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelMap;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -209,7 +211,21 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     public int[] strides() {
         return strides;
     }
-
+    
+    @Override
+    public byte[] toByteArray() {
+        float[] data = data(); // gpu workaround
+        
+        ByteBuffer buffer = ByteBuffer.allocate(data.length * 4);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        
+        for (float value : data) {
+            buffer.putFloat(value);
+        }
+        
+        return buffer.array();
+    }
+    
     @Override
     public int getLinearIndex(int... indices) {
         if (indices.length != shape.length) {

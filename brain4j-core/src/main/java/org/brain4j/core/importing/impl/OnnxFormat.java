@@ -14,6 +14,8 @@ import org.brain4j.math.tensor.autograd.impl.*;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -41,50 +43,52 @@ public class OnnxFormat implements ModelFormat {
     };
     
     @Override
-    public <T extends Model> T deserialize(byte[] bytes, Supplier<T> constructor) throws Exception {
-        ProtoOnnx.ModelProto proto = ProtoOnnx.ModelProto.parseFrom(bytes);
-        ProtoOnnx.GraphProto graph = proto.getGraph();
-        
-        GraphModel.Builder model = GraphModel.newGraph();
-        
-        for (ProtoOnnx.TensorProto tensor : graph.getInitializerList()) {
-            Tensor weight = deserializeTensor(tensor);
-            model.initializer(tensor.getName(), weight);
-        }
-        
-        for (ProtoOnnx.NodeProto node : graph.getNodeList()) {
-            Operation operation = OPERATION_MAPPINGS.get(node.getOpType());
+    public <T extends Model> T deserialize(File file, Supplier<T> constructor) {
+        try {
+            byte[] data = Files.readAllBytes(file.toPath());
             
-            if (operation == null) {
-                throw new IllegalArgumentException("Unknown or missing operation type: " + node.getOpType());
+            ProtoOnnx.ModelProto proto = ProtoOnnx.ModelProto.parseFrom(data);
+            ProtoOnnx.GraphProto graph = proto.getGraph();
+            
+            GraphModel.Builder model = GraphModel.newGraph();
+            
+            for (ProtoOnnx.TensorProto tensor : graph.getInitializerList()) {
+                Tensor weight = deserializeTensor(tensor);
+                model.initializer(tensor.getName(), weight);
             }
             
-            if (node.getInputCount() != operation.requiredInputs()) {
-                throw new IllegalArgumentException(
-                    "Node " + node.getOpType() + " requires " + node.getInputCount()
-                        + " inputs but operation requires " + operation.requiredInputs()
-                );
+            for (ProtoOnnx.NodeProto node : graph.getNodeList()) {
+                Operation operation = OPERATION_MAPPINGS.get(node.getOpType());
+                
+                if (operation == null) {
+                    throw new IllegalArgumentException("Unknown or missing operation type: " + node.getOpType());
+                }
+                
+                if (node.getInputCount() != operation.requiredInputs()) {
+                    throw new IllegalArgumentException(
+                        "Node " + node.getOpType() + " requires " + node.getInputCount()
+                            + " inputs but operation requires " + operation.requiredInputs()
+                    );
+                }
+                
+                model.addNode(new GraphNode(node.getName(), operation, node.getInputList(), node.getOutputList()));
             }
             
-            model.addNode(new GraphNode(
-                node.getName(),
-                operation,
-                node.getInputList(),
-                node.getOutputList()
-            ));
-        }
-        
-        List<String> inputs = graph.getInputList().stream()
-            .map(ProtoOnnx.ValueInfoProto::getName)
-            .toList();
-        
-        List<String> outputs = graph.getOutputList().stream()
-            .map(ProtoOnnx.ValueInfoProto::getName)
-            .toList();
-
-        return (T) model.inputs(inputs)
+            List<String> inputs = graph.getInputList().stream()
+                .map(ProtoOnnx.ValueInfoProto::getName)
+                .toList();
+            
+            List<String> outputs = graph.getOutputList().stream()
+                .map(ProtoOnnx.ValueInfoProto::getName)
+                .toList();
+            
+            return (T) model.inputs(inputs)
                 .outputs(outputs)
                 .compile();
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            return null;
+        }
     }
     
     @Override
@@ -95,8 +99,7 @@ public class OnnxFormat implements ModelFormat {
     private ProtoOnnx.TensorProto serializeTensor(Tensor tensor) {
         ProtoOnnx.TensorProto.Builder builder = ProtoOnnx.TensorProto.newBuilder();
 
-        List<Long> dimensions = Arrays
-            .stream(tensor.shape())
+        List<Long> dimensions = Arrays.stream(tensor.shape())
             .asLongStream()
             .boxed()
             .toList();
@@ -107,8 +110,7 @@ public class OnnxFormat implements ModelFormat {
             data.add(value);
         }
 
-        return builder
-            .addAllDims(dimensions)
+        return builder.addAllDims(dimensions)
             .addAllFloatData(data)
             .build();
     }

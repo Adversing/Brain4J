@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.graph;
 
+import com.google.gson.JsonObject;
 import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
@@ -58,7 +59,17 @@ public class GraphConvLayer extends Layer {
     public int size() {
         return dimension;
     }
-
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
+    }
+    
     @Override
     public boolean validInput(Tensor input) {
         return input.rank() == 3;

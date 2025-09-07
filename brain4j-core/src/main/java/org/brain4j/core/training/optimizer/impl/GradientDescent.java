@@ -5,6 +5,10 @@ import org.brain4j.core.training.optimizer.Optimizer;
 
 public class GradientDescent extends Optimizer {
     
+    protected GradientDescent() {
+        super(0);
+    }
+    
     public GradientDescent(double learningRate) {
         super(learningRate);
     }

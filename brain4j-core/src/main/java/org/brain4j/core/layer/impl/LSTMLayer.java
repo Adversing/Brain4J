@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
@@ -11,6 +12,7 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class LSTMLayer extends Layer {
@@ -103,6 +105,24 @@ public class LSTMLayer extends Layer {
     }
     
     @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+        object.addProperty("hidden_dimension", hiddenDimension);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
+        this.hiddenDimension = object.get("hidden_dimension").getAsInt();
+    }
+    
+    @Override
+    public void loadWeights(Map<String, Tensor> mappedWeights) {
+        super.loadWeights(mappedWeights);
+        this.hiddenWeights = mappedWeights.get("hidden_dimension");
+    }
+    
+    @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         super.backward(cache, updater, optimizer);
 
@@ -120,5 +140,12 @@ public class LSTMLayer extends Layer {
     @Override
     public int totalWeights() {
         return weights.elements() + hiddenWeights.elements();
+    }
+    
+    @Override
+    public Map<String, Tensor> weightsMap() {
+        var result = super.weightsMap();
+        result.put("hidden_weights", hiddenWeights);
+        return result;
     }
 }

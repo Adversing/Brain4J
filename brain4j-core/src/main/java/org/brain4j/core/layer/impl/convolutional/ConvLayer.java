@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.convolutional;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.Activations;
@@ -8,6 +9,7 @@ import org.brain4j.core.training.StatesCache;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class ConvLayer extends Layer {
@@ -61,7 +63,27 @@ public class ConvLayer extends Layer {
     public int size() {
         return filters;
     }
-
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("channels", channels);
+        object.addProperty("filters", filters);
+        object.addProperty("kernel_width", kernelWidth);
+        object.addProperty("kernel_height", kernelHeight);
+        object.addProperty("stride", stride);
+        object.addProperty("padding", padding);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.channels = object.get("channels").getAsInt();
+        this.filters = object.get("filters").getAsInt();
+        this.kernelWidth = object.get("kernel_width").getAsInt();
+        this.kernelHeight = object.get("kernel_height").getAsInt();
+        this.stride = object.get("stride").getAsInt();
+        this.padding = object.get("padding").getAsInt();
+    }
+    
     @Override
     public boolean validInput(Tensor input) {
         // [batch_size, channels, height, width]

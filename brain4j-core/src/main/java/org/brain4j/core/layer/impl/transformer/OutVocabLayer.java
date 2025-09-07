@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.transformer;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.activation.impl.SoftmaxActivation;
@@ -58,5 +59,17 @@ public class OutVocabLayer extends Layer {
     @Override
     public int size() {
         return vocabSize;
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("vocab_size", vocabSize);
+        object.addProperty("dimension", dimension);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.vocabSize = object.get("vocab_size").getAsInt();
+        this.dimension = object.get("dimension").getAsInt();
     }
 }

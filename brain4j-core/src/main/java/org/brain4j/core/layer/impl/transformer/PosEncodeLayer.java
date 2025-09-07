@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.transformer;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
@@ -20,6 +21,7 @@ public class PosEncodeLayer extends Layer {
     }
 
     public PosEncodeLayer(int length, int dimension) {
+        this.dimension = dimension;
         this.length = length;
 
         for (int i = 0; i < length; i++) {
@@ -63,7 +65,19 @@ public class PosEncodeLayer extends Layer {
     public int size() {
         return 0;
     }
-
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+        object.addProperty("length", length);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
+        this.length = object.get("length").getAsInt();
+    }
+    
     public Tensor generate(int position, int embeddingDim) {
         Tensor token = Tensors.zeros(embeddingDim);
 

@@ -5,7 +5,10 @@ import org.brain4j.math.tensor.Tensor;
 public class AdamW extends Adam {
 
     private double weightDecay;
-
+    
+    protected AdamW() {
+    }
+    
     public AdamW(double learningRate) {
         this(learningRate, 0.001);
     }

@@ -13,6 +13,7 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -83,11 +84,23 @@ public abstract class Layer {
                 inputs.length, this.getClass().getSimpleName(), length)
         );
     }
-
-    public void deserialize(JsonObject object) {
-    }
     
     public void serialize(JsonObject object) {
+        // No-op
+    }
+    
+    public void deserialize(JsonObject object) {
+        // No-op
+    }
+    
+    public void loadWeights(Map<String, Tensor> mappedWeights) {
+        if (mappedWeights.containsKey("weights")) {
+            this.weights = mappedWeights.get("weights");
+        }
+        
+        if (mappedWeights.containsKey("bias")) {
+            this.bias = mappedWeights.get("bias");
+        }
     }
     
     /**
@@ -98,7 +111,7 @@ public abstract class Layer {
         if (weights != null) {
             weights = weights.to(device).withGrad();
         }
-
+        
         if (bias != null) {
             bias = bias.to(device).withGrad();
         }
@@ -180,7 +193,12 @@ public abstract class Layer {
     public Activation activation() {
         return activation;
     }
-
+    
+    public Layer activation(Activation activation) {
+        this.activation = activation;
+        return this;
+    }
+    
     /**
      * Gets the gradient clipping function for this layer.
      * @return the gradient clipping function
@@ -188,7 +206,7 @@ public abstract class Layer {
     public GradientClipper clipper() {
         return clipper;
     }
-
+    
     /**
      * Sets the gradient clipping function for this layer.
      * @param clipper the new gradient clipping function
@@ -229,13 +247,21 @@ public abstract class Layer {
             bias.zerograd();
         }
     }
-
+    
     /**
      * Gets the weights of this layer.
      * @return the weights
      */
     public Tensor weights() {
         return weights;
+    }
+    
+    /**
+     * Updates the weights of this layer.
+     * @param weights the new weights
+     */
+    public void setWeights(Tensor weights) {
+        this.weights = weights;
     }
 
     /**
@@ -245,7 +271,15 @@ public abstract class Layer {
     public Tensor bias() {
         return bias;
     }
-
+    
+    /**
+     * Updates the bias of this layer.
+     * @param bias the new bias
+     */
+    public void setBias(Tensor bias) {
+        this.bias = bias;
+    }
+    
     /**
      * Gets the total number of biases in this layer.
      * @return 0 if bias is <code>null</code>, otherwise the number of elements in the bias tensor
@@ -267,6 +301,11 @@ public abstract class Layer {
     }
     
     public Map<String, Tensor> weightsMap() {
-        return Map.of();
+        Map<String, Tensor> result = new HashMap<>();
+        
+        if (weights != null) result.put("weights", weights);
+        if (bias != null) result.put("bias", bias);
+        
+        return result;
     }
 }
