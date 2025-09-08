@@ -218,6 +218,8 @@ public class TransformerEncoder extends Layer {
             head.setQueryWeights(queryWeights);
             head.setKeyWeights(keyWeights);
             head.setValueWeights(valueWeights);
+            
+            attention.heads().add(head);
         }
     }
     
@@ -226,6 +228,14 @@ public class TransformerEncoder extends Layer {
         attention.backward(updater, optimizer);
         upProjection.backward(cache, updater, optimizer);
         downProjection.backward(cache, updater, optimizer);
+    }
+    
+    @Override
+    public int totalBiases() {
+        return upProjection.totalBiases()
+            + downProjection.totalBiases()
+            + normalizer1.totalBiases()
+            + normalizer2.totalBiases();
     }
     
     @Override

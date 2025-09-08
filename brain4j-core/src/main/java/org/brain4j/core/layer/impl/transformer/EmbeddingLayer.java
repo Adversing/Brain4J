@@ -97,6 +97,23 @@ public class EmbeddingLayer extends Layer {
         // [batch_size, seq_length, embedding_dim]
         return new Tensor[] { output };
     }
+    
+    @Override
+    public int size() {
+        return embeddingDim;
+    }
+    
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("vocab_size", vocabSize);
+        object.addProperty("embedding_dim", embeddingDim);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.vocabSize =  object.get("vocab_size").getAsInt();
+        this.embeddingDim = object.get("embedding_dim").getAsInt();
+    }
 
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
@@ -130,22 +147,5 @@ public class EmbeddingLayer extends Layer {
 
         clipper.clip(optimized);
         updater.change(weights, optimized);
-    }
-
-    @Override
-    public int size() {
-        return embeddingDim;
-    }
-    
-    @Override
-    public void serialize(JsonObject object) {
-        object.addProperty("vocab_size", vocabSize);
-        object.addProperty("embedding_dim", embeddingDim);
-    }
-    
-    @Override
-    public void deserialize(JsonObject object) {
-        this.vocabSize =  object.get("vocab_size").getAsInt();
-        this.embeddingDim = object.get("embedding_dim").getAsInt();
     }
 }
