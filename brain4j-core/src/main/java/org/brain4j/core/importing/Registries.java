@@ -53,7 +53,7 @@ public class Registries {
         LOSS_FUNCTION_REGISTRY.register("mean_squared_error", MeanSquaredError.class);
         
         CLIPPERS_REGISTRY.register("none", NoClipper.class);
-        CLIPPERS_REGISTRY.register("hard", HardClipper.class);
+        CLIPPERS_REGISTRY.register("clamp", HardClipper.class);
         CLIPPERS_REGISTRY.register("l2", L2Clipper.class);
         
         ACTIVATION_REGISTRY.register("elu", ELUActivation.class);

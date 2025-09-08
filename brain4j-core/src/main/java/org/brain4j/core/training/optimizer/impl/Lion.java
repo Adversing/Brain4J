@@ -12,7 +12,7 @@ public class Lion extends Optimizer {
     private Map<Tensor, Tensor> momentumHistory;
     private double beta;
     
-    public Lion() {
+    private Lion() {
         super(0);
     }
     
