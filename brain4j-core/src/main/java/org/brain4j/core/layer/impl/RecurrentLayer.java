@@ -102,6 +102,11 @@ public class RecurrentLayer extends Layer {
         cache.rememberOutput(this, output);
         return new Tensor[] { output };
     }
+
+    @Override
+    public int size() {
+        return dimension;
+    }
     
     @Override
     public void serialize(JsonObject object) {
@@ -146,8 +151,11 @@ public class RecurrentLayer extends Layer {
     }
 
     @Override
-    public int size() {
-        return dimension;
+    public void resetGrad() {
+        super.resetGrad();
+        inputWeights.zerograd();
+        hiddenWeights.zerograd();
+        hiddenBias.zerograd();
     }
     
     @Override

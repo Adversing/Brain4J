@@ -131,7 +131,13 @@ public class LSTMLayer extends Layer {
         clipper.clip(weightsGrad);
         updater.change(hiddenWeights, weightsGrad);
     }
-    
+
+    @Override
+    public void resetGrad() {
+        super.resetGrad();
+        hiddenWeights.zerograd();
+    }
+
     @Override
     public int totalBiases() {
         return bias.elements();

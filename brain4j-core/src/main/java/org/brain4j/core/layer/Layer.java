@@ -175,6 +175,19 @@ public abstract class Layer {
     }
 
     /**
+     * Resets the gradients for all the weights in this layer.
+     */
+    public void resetGrad() {
+        if (weights != null) {
+            weights.zerograd();
+        }
+
+        if (bias != null) {
+            bias.zerograd();
+        }
+    }
+
+    /**
      * Validates if the input can be passed as an input to this layer.
      * This is done by checking the input dimension and comparing it
      * to the layer's expected dimension.
@@ -233,19 +246,6 @@ public abstract class Layer {
     public Layer weightInit(WeightInitialization weightInit) {
         this.weightInit = weightInit;
         return this;
-    }
-
-    /**
-     * Resets the gradients for all the weights in this layer.
-     */
-    public void resetGrad() {
-        if (weights != null) {
-            weights.zerograd();
-        }
-
-        if (bias != null) {
-            bias.zerograd();
-        }
     }
     
     /**

@@ -76,7 +76,6 @@ public class Registries {
         LAYER_REGISTRY.register("conv_2d", ConvLayer.class);
         
         LAYER_REGISTRY.register("embedding", EmbeddingLayer.class);
-        LAYER_REGISTRY.register("vocab", OutVocabLayer.class);
         LAYER_REGISTRY.register("positional_encode", PosEncodeLayer.class);
         LAYER_REGISTRY.register("transformer_decoder", TransformerDecoder.class);
         LAYER_REGISTRY.register("transformer_encoder", TransformerEncoder.class);

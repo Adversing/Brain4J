@@ -69,14 +69,6 @@ public class Sequential extends Layer implements Model {
         this.flattened = new ArrayList<>();
         this.seed = System.currentTimeMillis();
 
-        if (layers.length != 0) {
-            Layer layer = layers[0];
-
-            if (!(layer instanceof InputLayer)) {
-                throw new IllegalArgumentException("First layer must be an InputLayer!");
-            }
-        }
-
         for (Layer layer : layers) {
             if (layer instanceof Model subModel) {
                 flattened.addAll(subModel.flattened());
@@ -307,6 +299,16 @@ public class Sequential extends Layer implements Model {
     
     @Override
     public Tensor[] predict(StatesCache cache, Tensor... inputs) {
+        if (flattened.isEmpty()) {
+            throw new IllegalArgumentException("No layers found!");
+        }
+
+        Layer first = flattened.getFirst();
+
+        if (!(first instanceof InputLayer)) {
+            throw new IllegalArgumentException("First layer must be an InputLayer!");
+        }
+
         Tensor[] validated = validateInputs(inputs);
         Tensor[] result = new Tensor[validated.length];
 
@@ -317,7 +319,7 @@ public class Sequential extends Layer implements Model {
         if (device != null) {
             GpuContext.updateQueue(device, cache.commandQueue());
         }
-        
+
         for (Layer layer : flattened) {
             result = layer.forward(cache, result);
         }
@@ -331,14 +333,10 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets) {
-        int count = flattened.size() - 1;
-        
         Layer last = flattened.getLast();
         last.computeLoss(cache, targets, outputs, lossFunction);
 
-        for (int l = count; l >= 0; l--) {
-            Layer layer = flattened.get(l);
-
+        for (Layer layer : flattened) {
             layer.backward(cache, updater, optimizer);
         }
     }
