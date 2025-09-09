@@ -15,8 +15,8 @@ public class StatesCache {
     private final boolean training;
     private cl_command_queue commandQueue;
 
-    public StatesCache(boolean training) {
-        this(training, null);
+    public StatesCache() {
+        this(false, null);
     }
 
     public StatesCache(boolean training, Device device) {

@@ -89,7 +89,7 @@ public abstract class CustomModel {
         Tensor[] inputs = batch.first();
         Tensor[] labels = batch.second();
 
-        Tensor[] outputs = forward(new StatesCache(false), inputs);
+        Tensor[] outputs = forward(new StatesCache(), inputs);
 
         for (Tensor input : inputs) {
             int batchSize = input.shape(0);
