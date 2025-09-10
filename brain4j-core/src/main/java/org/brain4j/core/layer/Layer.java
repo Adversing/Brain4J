@@ -122,25 +122,25 @@ public abstract class Layer {
      * This method should only be called for the last layer of the neural network.
      *
      * @param cache the state cache of this inference
-     * @param targets the target tensor
-     * @param outputs the output tensor
+     * @param labels the label tensors
+     * @param outputs the output tensors
      * @param lossFunction the loss function of this model
      */
     public void computeLoss(
         StatesCache cache,
-        Tensor[] targets,
+        Tensor[] labels,
         Tensor[] outputs,
         LossFunction lossFunction
     ) {
         Tensor[] preOutputs = cache.output(this);
 
-        if (targets.length != outputs.length) {
+        if (labels.length != outputs.length) {
             throw new IllegalArgumentException("Targets amount does not equal to output amount.");
         }
 
         for (int i = 0; i < outputs.length; i++) {
             Tensor output = outputs[i];
-            Tensor target = targets[i];
+            Tensor target = labels[i];
             Tensor preOutput = preOutputs[i];
 
             Tensor error = output.minus(target);

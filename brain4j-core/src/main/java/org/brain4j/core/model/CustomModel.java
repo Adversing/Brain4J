@@ -31,7 +31,7 @@ public abstract class CustomModel {
 
     public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
     
-    public abstract void fit(StatesCache cache, Tensor[] output, Tensor[] label);
+    public abstract void fit(StatesCache cache, Tensor[] labels, Tensor[] outputs);
     
     public abstract void zeroGrad();
     

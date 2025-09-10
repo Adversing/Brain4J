@@ -79,7 +79,7 @@ public class Sequential extends Layer implements Model {
         }
     }
 
-    protected void connectLayers() {
+    public void connectLayers() {
         if (layers.isEmpty()) return;
 
         Layer previous = null;
