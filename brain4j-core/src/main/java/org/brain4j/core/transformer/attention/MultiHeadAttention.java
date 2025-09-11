@@ -88,6 +88,12 @@ public class MultiHeadAttention {
     }
 
     public void backward(Updater updater, Optimizer optimizer) {
+        Tensor grad = outProjWeights.grad();
+        Tensor optimized = optimizer.step(outProjWeights, grad);
+        
+        clipper.clip(optimized);
+        updater.change(outProjWeights, optimized);
+        
         for (AttentionHead head : heads) {
             head.backward(updater, optimizer);
         }

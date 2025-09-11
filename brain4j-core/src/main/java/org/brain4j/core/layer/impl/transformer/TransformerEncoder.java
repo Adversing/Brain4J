@@ -225,6 +225,8 @@ public class TransformerEncoder extends Layer {
     
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        normalizer1.backward(cache, updater, optimizer);
+        normalizer2.backward(cache, updater, optimizer);
         attention.backward(updater, optimizer);
         upProjection.backward(cache, updater, optimizer);
         downProjection.backward(cache, updater, optimizer);
