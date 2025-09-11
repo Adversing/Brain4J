@@ -127,7 +127,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         int cols = shape[1];
         
         for (int r = 0; r < rows; r++) {
-            softmax1D(data, r * cols, cols, temperature);
+            softmax1D(result.data(), r * cols, cols, temperature);
         }
         
         return result;

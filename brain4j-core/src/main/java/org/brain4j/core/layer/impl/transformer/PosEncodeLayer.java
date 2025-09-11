@@ -63,7 +63,7 @@ public class PosEncodeLayer extends Layer {
 
     @Override
     public int size() {
-        return 0;
+        return dimension;
     }
     
     @Override

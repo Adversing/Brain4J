@@ -8,9 +8,6 @@ import org.brain4j.core.activation.Activations;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.StatesCache;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
