@@ -297,3 +297,72 @@ __kernel void softmax_last_dim(
         output[offset + i] /= sum;
     }
 }
+
+__kernel void concat_last_dim(
+    __global const float* A,
+    __global const float* B,
+    __global float* C,
+    const int outerSize,
+    const int lastA,
+    const int lastB,
+    const int concatLast
+) {
+    int gid = get_global_id(0);
+    int total = outerSize * concatLast;
+    if (gid >= total) return;
+
+    int row = gid / concatLast;
+    int col = gid % concatLast;
+
+    if (col < lastA) {
+        int aIdx = row * lastA + col;
+        C[gid] = A[aIdx];
+    } else {
+        int bIdx = row * lastB + (col - lastA);
+        C[gid] = B[bIdx];
+    }
+}
+
+__kernel void concat_copy_a(
+    __global const float* A,
+    __global float* C,
+    const int numBlocks,
+    const int thisDim,
+    const int otherDim,
+    const int blockSize
+) {
+    int gid = get_global_id(0);
+    int blockElem = thisDim * blockSize;
+    int total = numBlocks * blockElem;
+    if (gid >= total) return;
+
+    int block = gid / blockElem;
+    int inBlockIdx = gid % blockElem;
+
+    int destStride = (thisDim + otherDim) * blockSize;
+    int destIndex = block * destStride + inBlockIdx;
+
+    C[destIndex] = A[gid];
+}
+
+__kernel void concat_copy_b(
+    __global const float* B,
+    __global float* C,
+    const int numBlocks,
+    const int thisDim,
+    const int otherDim,
+    const int blockSize
+) {
+    int gid = get_global_id(0);
+    int blockElem = otherDim * blockSize;
+    int total = numBlocks * blockElem;
+    if (gid >= total) return;
+
+    int block = gid / blockElem;
+    int inBlockIdx = gid % blockElem;
+
+    int destStride = (thisDim + otherDim) * blockSize;
+    int destIndex = block * destStride + thisDim * blockSize + inBlockIdx;
+
+    C[destIndex] = B[gid];
+}

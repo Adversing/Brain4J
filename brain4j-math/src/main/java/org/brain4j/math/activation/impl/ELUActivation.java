@@ -1,21 +1,21 @@
-package org.brain4j.core.activation.impl;
+package org.brain4j.math.activation.impl;
 
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.brain4j.math.weightsinit.WeightInitialization;
 import org.brain4j.math.weightsinit.NormalHeInit;
+import org.brain4j.math.weightsinit.WeightInitialization;
 import org.jocl.cl_kernel;
 
-public class LeakyReLUActivation implements Activation {
+public class ELUActivation implements Activation {
 
     private final double alpha;
 
-    public LeakyReLUActivation() {
-        this(0.01);
+    public ELUActivation() {
+        this(1.0);
     }
 
-    public LeakyReLUActivation(double alpha) {
+    public ELUActivation(double alpha) {
         this.alpha = alpha;
     }
 
@@ -26,17 +26,17 @@ public class LeakyReLUActivation implements Activation {
 
     @Override
     public double activate(double input) {
-        return Math.max(alpha * input, input);
+        return input > 0 ? input : (alpha * Math.exp(input) - 1);
     }
 
     @Override
     public double derivative(double input) {
-        return input > 0 ? 1 : alpha;
+        return input > 0 ? 1 : (alpha * Math.exp(input));
     }
 
     @Override
     public String kernelPrefix() {
-        return "leakyrelu";
+        return "elu";
     }
 
     @Override

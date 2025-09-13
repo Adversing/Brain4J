@@ -433,8 +433,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
     
     @Override
-    public Tensor broadcastLike(Tensor target) {
-        int[] targetShape = target.shape();
+    public Tensor broadcastLike(Tensor other) {
+        int[] targetShape = other.shape();
         
         if (Arrays.equals(shape, targetShape)) {
             return this;

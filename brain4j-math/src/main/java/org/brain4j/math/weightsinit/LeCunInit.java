@@ -1,4 +1,4 @@
-package org.brain4j.core.weightsinit;
+package org.brain4j.math.weightsinit;
 
 import org.brain4j.math.weightsinit.WeightInitialization;
 

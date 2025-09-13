@@ -14,7 +14,7 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.transformer.attention.MultiHeadAttention;
-import org.brain4j.core.weightsinit.UniformXavierInit;
+import org.brain4j.math.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.List;

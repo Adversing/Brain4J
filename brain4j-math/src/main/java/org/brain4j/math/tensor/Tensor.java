@@ -1,6 +1,9 @@
 package org.brain4j.math.tensor;
 
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.activation.impl.ReLUActivation;
+import org.brain4j.math.activation.impl.SigmoidActivation;
+import org.brain4j.math.activation.impl.TanhActivation;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceType;
 import org.brain4j.math.lang.DoubleToDoubleFunction;
@@ -367,8 +370,13 @@ public interface Tensor extends Iterable<Float> {
      * @return the unsqueezed tensor
      */
     Tensor unsqueeze();
-    
-    Tensor broadcastLike(Tensor input);
+
+    /**
+     * Broadcasts this tensor to match the shape of the other tensor.
+     * @param other the other tensor
+     * @return a copy of the current tensor, with the same shape as the other one
+     */
+    Tensor broadcastLike(Tensor other);
 
     /**
      * Unsqueezes the tensor by adding a dimension with one at the specified dimension
@@ -391,20 +399,72 @@ public interface Tensor extends Iterable<Float> {
      * @return true if the tensor is transposed, false otherwise
      */
     boolean transposed();
-    
-    //=============================================================
-    // Statistical operations
-    //=============================================================
-
+    /**
+     * Computes and returns the sum of all elements in the tensor.
+     * @return the sum of all values in the tensor as a double
+     */
     double sum();
+
+    /**
+     * Computes and returns the mean (average) of all elements in the tensor.
+     * @return the mean of all values in the tensor as a double
+     */
     double mean();
+
+    /**
+     * Computes and returns the variance of all elements in the tensor.
+     * <p>
+     * Variance is calculated as the average of the squared deviations from the mean.
+     *
+     * @return the variance of all values in the tensor as a double
+     */
     double variance();
+
+    /**
+     * Returns the maximum value among all elements in the tensor.
+     * <p>
+     * If the tensor is empty, this method returns Double.NEGATIVE_INFINITY.
+     *
+     * @return the maximum value in the tensor as a double
+     */
     double max();
+
+    /**
+     * Returns the minimum value among all elements in the tensor.
+     * <p>
+     * If the tensor is empty, this method returns Double.POSITIVE_INFINITY.
+     *
+     * @return the minimum value in the tensor as a double
+     */
     double min();
+
+    /**
+     * Computes the sum of elements along the specified dimension.
+     *
+     * @param dim the dimension along which to sum the elements
+     * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
+     * @return a new tensor containing the sum along the specified dimension
+     */
     Tensor sum(int dim, boolean keepDim);
+
+    /**
+     * Computes the mean of elements along the specified dimension.
+     *
+     * @param dim the dimension along which to compute the mean
+     * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
+     * @return a new tensor containing the mean along the specified dimension
+     */
     Tensor mean(int dim, boolean keepDim);
+
+    /**
+     * Computes the sign of each element in the tensor.
+     * <p>
+     * The sign is defined as: -1 for negative values, 0 for zero, and 1 for positive values.
+     *
+     * @return a new tensor with the sign of each element
+     */
     Tensor sign();
-    
+
     /**
      * Reshapes the current tensor to a new shape.
      * @param newShape the new shape of the tensor
@@ -651,4 +711,32 @@ public interface Tensor extends Iterable<Float> {
      * @return the tensor values on a string
      */
     String toString(String format);
+
+    private Tensor activateAuto(Activation function) {
+        return usesGrad() ? activateGrad(function) : activate(function);
+    }
+
+    /**
+     * Computes the ReLU activation on this tensor.
+     * @return a copy of this tensor with the activated values
+     */
+    default Tensor relu() {
+        return activateAuto(new ReLUActivation());
+    }
+
+    /**
+     * Computes the Sigmoid activation on this tensor.
+     * @return a copy of this tensor with the activated values
+     */
+    default Tensor sigmoid() {
+        return activateAuto(new SigmoidActivation());
+    }
+
+    /**
+     * Computes the Tanh activation on this tensor.
+     * @return a copy of this tensor with the activated values
+     */
+    default Tensor tanh() {
+        return activateAuto(new TanhActivation());
+    }
 }

@@ -13,7 +13,15 @@ dependencies {
 
     testImplementation "com.google.guava:guava:32.1.2-jre"
     testImplementation "org.apache.commons:commons-csv:1.10.0"
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
     testImplementation project(":brain4j-datasets")
+}
+
+test {
+    useJUnitPlatform()
 }
 
 shadowJar {

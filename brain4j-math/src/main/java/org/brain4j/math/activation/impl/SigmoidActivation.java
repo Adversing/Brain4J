@@ -1,10 +1,10 @@
-package org.brain4j.core.activation.impl;
+package org.brain4j.math.activation.impl;
 
+import org.brain4j.math.weightsinit.UniformXavierInit;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.weightsinit.WeightInitialization;
-import org.brain4j.math.weightsinit.UniformXavierInit;
 
-public class TanhActivation implements Activation {
+public class SigmoidActivation implements Activation {
 
     @Override
     public WeightInitialization defaultWeightInit() {
@@ -13,17 +13,17 @@ public class TanhActivation implements Activation {
 
     @Override
     public double activate(double input) {
-        return Math.tanh(input);
+        return 1 / (1 + Math.exp(-input));
     }
 
     @Override
     public double derivative(double input) {
-        double activated = Math.tanh(input);
-        return 1.0 - activated * activated;
+        double activated = activate(input);
+        return activated * (1 - activated);
     }
 
     @Override
     public String kernelPrefix() {
-        return "tanh";
+        return "sigmoid";
     }
 }

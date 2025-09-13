@@ -1,8 +1,8 @@
-package org.brain4j.core.activation.impl;
+package org.brain4j.math.activation.impl;
 
+import org.brain4j.math.weightsinit.NormalXavierInit;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.weightsinit.WeightInitialization;
-import org.brain4j.math.weightsinit.NormalXavierInit;
 
 import static org.brain4j.math.constants.Constants.PI;
 

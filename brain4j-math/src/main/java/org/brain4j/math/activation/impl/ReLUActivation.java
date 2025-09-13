@@ -1,29 +1,28 @@
-package org.brain4j.core.activation.impl;
+package org.brain4j.math.activation.impl;
 
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.weightsinit.NormalHeInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
-import org.brain4j.math.weightsinit.UniformXavierInit;
 
-public class TanhActivation implements Activation {
+public class ReLUActivation implements Activation {
 
     @Override
     public WeightInitialization defaultWeightInit() {
-        return new UniformXavierInit();
+        return new NormalHeInit();
     }
 
     @Override
     public double activate(double input) {
-        return Math.tanh(input);
+        return Math.max(0, input);
     }
 
     @Override
     public double derivative(double input) {
-        double activated = Math.tanh(input);
-        return 1.0 - activated * activated;
+        return input > 0 ? 1 : 0;
     }
 
     @Override
     public String kernelPrefix() {
-        return "tanh";
+        return "relu";
     }
 }

@@ -9,6 +9,7 @@ import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.memory.CollectableState;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 import org.jocl.*;
 
 import java.lang.ref.Cleaner;
@@ -104,7 +105,7 @@ public class GpuTensor extends BaseTensor {
         cl_program tensorOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/tensor_ops.cl");
         cl_program elementaryOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/elementary_ops.cl");
 
-        String[] tensorOpsKernels = { "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
+        String[] tensorOpsKernels = { "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
 
         for (String kernel : tensorOpsKernels) {
             GpuContext.register(device, kernel, tensorOpsProgram);
@@ -125,8 +126,7 @@ public class GpuTensor extends BaseTensor {
 
     private Tensor launchScalarKernel(String kernelName, float value) {
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, kernelName)
+            KernelFactory.create(device, kernelName)
                 .addMemParam(dataBuffer)
                 .addFloatParam(value)
                 .addIntParam(size)
@@ -147,8 +147,7 @@ public class GpuTensor extends BaseTensor {
         int batch = (broadcastDim == -1) ? 0 : shape[0];
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, kernelName)
+            KernelFactory.create(device, kernelName)
                 .addMemParam(dataBuffer)
                 .addMemParam(B.dataBuffer)
                 .addIntParam(size)
@@ -201,8 +200,7 @@ public class GpuTensor extends BaseTensor {
         int outColStride = result.strides[1];
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, "transpose")
+            KernelFactory.create(device, "transpose")
                 .addMemParam(dataBuffer)
                 .addMemParam(result.dataBuffer)
                 .addIntParam(rows)
@@ -270,8 +268,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor sqrt() {
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, "sqrt")
+            KernelFactory.create(device, "sqrt")
                 .addMemParam(dataBuffer)
                 .addIntParam(size)
                 .launch(queue, 1, size);
@@ -452,13 +449,140 @@ public class GpuTensor extends BaseTensor {
             KernelFactory.create(device, "sum_along_dim")
                 .addMemParam(dataBuffer)
                 .addMemParam(result.dataBuffer)
-                .addIntParam(reducedSize)
                 .addIntParam(outerSize)
+                .addIntParam(reducedSize)
                 .addIntParam(innerSize)
                 .launch(queue, 2, outerSize, innerSize);
         }
 
         return result;
+    }
+
+    @Override
+    public Tensor reshape(int... newShape) {
+        int newSize = Tensors.computeSize(newShape);
+
+        if (newSize != data().length) {
+            throw new IllegalArgumentException(
+                "The total new dimension (" + newSize + ") does not match the current dimension (" + data().length + ")"
+            );
+        }
+
+        return new GpuTensor(device, newShape, dataBuffer);
+    }
+
+    @Override
+    public Tensor concat(Tensor other) {
+        if (!(other instanceof GpuTensor)) {
+            other = other.gpu(device);
+        }
+
+        GpuTensor B = (GpuTensor) other;
+
+        if (shape.length != B.shape.length) {
+            throw new IllegalArgumentException("Concatenation is only supported for tensors with the same number of dimensions.");
+        }
+        for (int i = 0; i < shape.length - 1; i++) {
+            if (shape[i] != B.shape[i]) {
+                throw new IllegalArgumentException("Shapes must match on all dimensions except the last.");
+            }
+        }
+
+        int rank = shape.length;
+        int lastA = shape[rank - 1];
+        int lastB = B.shape[rank - 1];
+        int concatLast = lastA + lastB;
+
+        int[] newShape = Arrays.copyOf(shape, rank);
+        newShape[rank - 1] = concatLast;
+
+        int outerSize = 1;
+        for (int i = 0; i < rank - 1; i++) outerSize *= shape[i];
+
+        GpuTensor result = new GpuTensor(device, newShape);
+        if (usesGrad()) result.setAutogradContext(autogradContext);
+
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
+            KernelFactory.create(device, "concat_last_dim")
+                .addMemParam(this.dataBuffer)
+                .addMemParam(B.dataBuffer)
+                .addMemParam(result.dataBuffer)
+                .addIntParam(outerSize)
+                .addIntParam(lastA)
+                .addIntParam(lastB)
+                .addIntParam(concatLast)
+                .launch(queue, 1, (long) outerSize * concatLast);
+        }
+
+        return result;
+    }
+
+    @Override
+    public Tensor concat(Tensor other, int dimension) {
+        if (!(other instanceof GpuTensor)) {
+            other = other.gpu(device);
+        }
+
+        GpuTensor B = (GpuTensor) other;
+
+        if (shape.length != B.shape.length) {
+            throw new IllegalArgumentException("Tensors must have the same rank.");
+        }
+
+        int rank = rank();
+        if (dimension < 0 || dimension >= rank) {
+            throw new IllegalArgumentException("Invalid dimension: " + dimension);
+        }
+
+        for (int i = 0; i < rank; i++) {
+            if (i != dimension && shape[i] != B.shape[i]) {
+                throw new IllegalArgumentException("Shapes must match in all dimensions except the concatenation one.");
+            }
+        }
+
+        int[] newShape = Arrays.copyOf(shape, rank);
+        newShape[dimension] += B.shape[dimension];
+
+        int blockSize = 1;
+        int numBlocks = 1;
+        for (int i = dimension + 1; i < rank; i++) blockSize *= shape[i];
+        for (int i = 0; i < dimension; i++) numBlocks *= shape[i];
+
+        int thisDim = shape[dimension];
+        int otherDim = B.shape[dimension];
+
+        GpuTensor result = new GpuTensor(device, newShape);
+        if (usesGrad()) result.setAutogradContext(autogradContext);
+
+        int totalA = numBlocks * thisDim * blockSize;
+        int totalB = numBlocks * otherDim * blockSize;
+
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
+            KernelFactory.create(device, "concat_copy_a")
+                .addMemParam(this.dataBuffer)
+                .addMemParam(result.dataBuffer)
+                .addIntParam(numBlocks)
+                .addIntParam(thisDim)
+                .addIntParam(otherDim)
+                .addIntParam(blockSize)
+                .launch(queue, 1, totalA);
+
+            KernelFactory.create(device, "concat_copy_b")
+                .addMemParam(B.dataBuffer)
+                .addMemParam(result.dataBuffer)
+                .addIntParam(numBlocks)
+                .addIntParam(thisDim)
+                .addIntParam(otherDim)
+                .addIntParam(blockSize)
+                .launch(queue, 1, totalB);
+        }
+
+        return result;
+    }
+
+    @Override
+    public Tensor slice(Range... ranges) {
+        return super.slice(ranges);
     }
 
     @Override
@@ -472,8 +596,7 @@ public class GpuTensor extends BaseTensor {
         }
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, "layer_norm")
+            KernelFactory.create(device, "layer_norm")
                 .addMemParam(dataBuffer)
                 .addIntParam(batchSize)
                 .addIntParam(featuresSize)
@@ -490,15 +613,7 @@ public class GpuTensor extends BaseTensor {
 
         cl_command_queue queue = device.newCommandQueue();
         clEnqueueReadBuffer(
-                queue,
-                dataBuffer,
-                CL_TRUE,
-                0,
-                (long) size * Sizeof.cl_float,
-                Pointer.to(buffer),
-                0,
-                null,
-                null
+            queue, dataBuffer, CL_TRUE, 0, (long) size * Sizeof.cl_float, Pointer.to(buffer), 0, null, null
         );
 
         clFinish(queue);
@@ -530,8 +645,7 @@ public class GpuTensor extends BaseTensor {
         int rows = size / lastDim;
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(device, "softmax_last_dim")
+            KernelFactory.create(device, "softmax_last_dim")
                 .addMemParam(dataBuffer)
                 .addMemParam(result.dataBuffer)
                 .addIntParam(lastDim)

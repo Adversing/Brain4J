@@ -12,6 +12,8 @@ import org.jocl.cl_program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Entry point for the Brain4J machine learning framework.
  * <p>
@@ -70,6 +72,16 @@ public class Brain4J {
         
         GpuContext.register(device, "hard_clip", gradientClipProgram);
         GpuContext.register(device, "l2_clip", gradientClipProgram);
+    }
+
+    public static Device firstDevice() {
+        List<String> devices = DeviceUtils.allDeviceNames();
+
+        if (devices.isEmpty()) {
+            throw new IllegalStateException("No GPU-acceleration device has been found!");
+        }
+
+        return DeviceUtils.findDevice(devices.getFirst());
     }
 
     public static Device findDevice(String deviceName) {
