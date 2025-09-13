@@ -37,13 +37,13 @@ public abstract class Updater {
             Tensor weights = entry.getKey();
             Tensor gradient = entry.getValue();
             
-            if (gradient != null && weights != null) {
-                while (gradient.rank() > weights.rank()) {
-                    gradient = gradient.sum(0, false);
-                }
-                
-                weights.sub(gradient.div(samples).mul(learningRate));
+            if (gradient == null || weights == null) continue;
+            
+            while (gradient.rank() > weights.rank()) {
+                gradient = gradient.sum(0, false);
             }
+            
+            weights.sub(gradient.div(samples).mul(learningRate));
         }
     }
 

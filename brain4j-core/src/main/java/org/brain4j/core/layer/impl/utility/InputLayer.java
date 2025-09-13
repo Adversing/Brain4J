@@ -63,4 +63,8 @@ public class InputLayer extends Layer {
 
         return true;
     }
+    
+    public int[] shape() {
+        return shape;
+    }
 }

@@ -83,7 +83,7 @@ public class DenseLayer extends Layer {
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor[] result = new Tensor[inputs.length];
         Tensor[] beforeActivation = new Tensor[inputs.length];
-
+        
         for (int i = 0; i < result.length; i++) {
             Tensor input = inputs[i];
 

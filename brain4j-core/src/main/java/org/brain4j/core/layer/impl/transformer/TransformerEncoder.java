@@ -173,20 +173,17 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        normalizer2.backward(cache, updater, optimizer);
+        downProjection.backward(cache, updater, optimizer);
+        upProjection.backward(cache, updater, optimizer);
+        normalizer1.backward(cache, updater, optimizer);
+        attention.backward(updater, optimizer);
+    }
+    
+    @Override
     public int size() {
         return embeddingDim;
-    }
-    
-    @Override
-    public void serialize(JsonObject object) {
-        object.addProperty("heads", numHeads);
-        object.addProperty("embedding_dim", embeddingDim);
-    }
-    
-    @Override
-    public void deserialize(JsonObject object) {
-        this.numHeads = object.get("heads").getAsInt();
-        this.embeddingDim = object.get("embedding_dim").getAsInt();
     }
     
     @Override
@@ -208,7 +205,7 @@ public class TransformerEncoder extends Layer {
         attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
         
         for (int i = 0; i < numHeads; i++) {
-            String prefix = "attention_head." + i + ".";
+            String prefix = "attention_head." + i;
             Tensor queryWeights = mappedWeights.get(prefix + ".query");
             Tensor keyWeights = mappedWeights.get(prefix + ".key");
             Tensor valueWeights = mappedWeights.get(prefix + ".value");
@@ -224,12 +221,15 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        normalizer1.backward(cache, updater, optimizer);
-        normalizer2.backward(cache, updater, optimizer);
-        attention.backward(updater, optimizer);
-        upProjection.backward(cache, updater, optimizer);
-        downProjection.backward(cache, updater, optimizer);
+    public void serialize(JsonObject object) {
+        object.addProperty("heads", numHeads);
+        object.addProperty("embedding_dim", embeddingDim);
+    }
+    
+    @Override
+    public void deserialize(JsonObject object) {
+        this.numHeads = object.get("heads").getAsInt();
+        this.embeddingDim = object.get("embedding_dim").getAsInt();
     }
     
     @Override

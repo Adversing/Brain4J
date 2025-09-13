@@ -1,90 +1,74 @@
 package org.brain4j.core.importing.impl;
 
+import org.brain4j.core.Brain4J;
 import org.brain4j.core.activation.impl.*;
+import org.brain4j.core.importing.onnx.ProtoOnnx;
+import org.brain4j.core.layer.Layer;
+import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
 import org.brain4j.core.importing.format.ModelFormat;
-import org.brain4j.core.importing.onnx.ProtoOnnx;
+import org.brain4j.core.importing.onnx.ProtoOnnx.*;
 import org.brain4j.core.model.Model;
-import org.brain4j.math.tensor.autograd.impl.*;
+import org.brain4j.math.tensor.autograd.impl.ActivationOperation;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+
+import static org.brain4j.core.importing.Registries.LAYER_REGISTRY;
+import static org.brain4j.core.importing.Registries.ONNX_OPERATIONS_REGISTRY;
 
 @SuppressWarnings("unchecked")
 public class OnnxFormat implements ModelFormat {
     
-    private final static Map<String, Operation> OPERATION_MAPPINGS = new HashMap<>() {
-        {
-            put("Add", new AddOperation());
-            put("Sub", new SubOperation());
-            put("Mul", new MulOperation());
-            put("Div", new DivOperation());
-            put("Gemm", new GemmOperation());
-            put("MatMul", new MatMulOperation());
-            
-            put("Relu", new ActivationOperation(new ReLUActivation()));
-            put("Sigmoid", new ActivationOperation(new SigmoidActivation()));
-            put("Tanh", new ActivationOperation(new TanhActivation()));
-            put("LeakyRelu", new ActivationOperation(new LeakyReLUActivation()));
-            put("Gelu", new ActivationOperation(new GELUActivation()));
-            put("Softmax", new ActivationOperation(new SoftmaxActivation()));
-            
-            put("LayerNormalization", new LayerNormOperation( 1e-5));
-        }
-    };
+    private static final Map<Class<? extends Activation>, String> ACTIVATION_MAP = Map.of(
+        ReLUActivation.class, "Relu",
+        GELUActivation.class, "Gelu",
+        SoftmaxActivation.class, "Softmax",
+        SigmoidActivation.class, "Sigmoid",
+        TanhActivation.class, "Tanh",
+        LeakyReLUActivation.class, "LeakyReLU"
+    );
     
     @Override
     public <T extends Model> T deserialize(File file, Supplier<T> constructor) {
         try {
             byte[] data = Files.readAllBytes(file.toPath());
             
-            ProtoOnnx.ModelProto proto = ProtoOnnx.ModelProto.parseFrom(data);
-            ProtoOnnx.GraphProto graph = proto.getGraph();
-            
+            ModelProto modelProto = ModelProto.parseFrom(data);
+            GraphProto graphProto = modelProto.getGraph();
             GraphModel.Builder model = GraphModel.newGraph();
             
-            for (ProtoOnnx.TensorProto tensor : graph.getInitializerList()) {
-                Tensor weight = deserializeTensor(tensor);
-                model.initializer(tensor.getName(), weight);
+            for (TensorProto tensor : graphProto.getInitializerList()) {
+                model.initializer(tensor.getName(), deserializeTensor(tensor));
             }
             
-            for (ProtoOnnx.NodeProto node : graph.getNodeList()) {
-                Operation operation = OPERATION_MAPPINGS.get(node.getOpType());
+            for (NodeProto node : graphProto.getNodeList()) {
+                Operation op = ONNX_OPERATIONS_REGISTRY.toInstance(node.getOpType());
                 
-                if (operation == null) {
-                    throw new IllegalArgumentException("Unknown or missing operation type: " + node.getOpType());
+                if (op == null) throw new IllegalArgumentException("Unknown operation: " + node.getOpType());
+                
+                if (node.getInputCount() != op.requiredInputs()) {
+                    throw new IllegalArgumentException("Node " + node.getOpType() + " requires "
+                        + node.getInputCount() + " inputs but operation requires " + op.requiredInputs());
                 }
                 
-                if (node.getInputCount() != operation.requiredInputs()) {
-                    throw new IllegalArgumentException(
-                        "Node " + node.getOpType() + " requires " + node.getInputCount()
-                            + " inputs but operation requires " + operation.requiredInputs()
-                    );
-                }
-                
-                model.addNode(new GraphNode(node.getName(), operation, node.getInputList(), node.getOutputList()));
+                model.addNode(new GraphNode(node.getName(), op, node.getInputList(), node.getOutputList()));
             }
             
-            List<String> inputs = graph.getInputList().stream()
-                .map(ProtoOnnx.ValueInfoProto::getName)
-                .toList();
+            List<String> inputs = graphProto.getInputList().stream().map(ValueInfoProto::getName).toList();
+            List<String> outputs = graphProto.getOutputList().stream().map(ValueInfoProto::getName).toList();
             
-            List<String> outputs = graph.getOutputList().stream()
-                .map(ProtoOnnx.ValueInfoProto::getName)
-                .toList();
+            return (T) model.inputs(inputs).outputs(outputs).compile();
             
-            return (T) model.inputs(inputs)
-                .outputs(outputs)
-                .compile();
         } catch (Exception e) {
             e.printStackTrace(System.err);
             return null;
@@ -93,47 +77,157 @@ public class OnnxFormat implements ModelFormat {
     
     @Override
     public void serialize(Model model, File file) {
-        throw new UnsupportedOperationException();
-    }
-
-    private ProtoOnnx.TensorProto serializeTensor(Tensor tensor) {
-        ProtoOnnx.TensorProto.Builder builder = ProtoOnnx.TensorProto.newBuilder();
-
-        List<Long> dimensions = Arrays.stream(tensor.shape())
-            .asLongStream()
-            .boxed()
-            .toList();
-
-        List<Float> data = new ArrayList<>();
-
-        for (float value : tensor.data()) {
-            data.add(value);
+        GraphProto.Builder graphBuilder = GraphProto.newBuilder();
+        ModelProto.Builder modelBuilder = ModelProto.newBuilder();
+        
+        Map<Tensor, String> weightsMap = new HashMap<>();
+        Map<Tensor, String> tensorNames = new HashMap<>();
+        AtomicInteger counter = new AtomicInteger(0);
+        
+        addInitializers(model, graphBuilder, weightsMap);
+        
+        Layer inputLayer = model.layers().getFirst();
+        
+        if (!(inputLayer instanceof InputLayer wrapped)) {
+            throw new IllegalArgumentException("First layer is not an input layer!");
         }
-
-        return builder.addAllDims(dimensions)
-            .addAllFloatData(data)
+        
+        Tensor input = Tensors.zeros(wrapped.shape()).unsqueeze();
+        Tensor output = model.predict(input.withGrad());
+        
+        extractInput(input, graphBuilder, counter, tensorNames, weightsMap);
+        extractOutput(output, graphBuilder, counter, tensorNames, weightsMap);
+        
+        List<NodeProto> nodes = buildNodesFromTensor(output, counter, tensorNames, weightsMap);
+        Collections.reverse(nodes);
+        graphBuilder.addAllNode(nodes);
+        
+        graphBuilder.setName(file.getName());
+        OperatorSetIdProto opset = OperatorSetIdProto.newBuilder().setDomain("").setVersion(13).build();
+        ModelProto modelProto = modelBuilder
+            .setIrVersion(9)
+            .setProducerName("Brain4J")
+            .setProducerVersion(Brain4J.version())
+            .setGraph(graphBuilder)
+            .addOpsetImport(opset)
             .build();
-    }
-
-    private Tensor deserializeTensor(ProtoOnnx.TensorProto tensor) {
-        byte[] rawData = tensor.getRawData().toByteArray();
-
-        ByteBuffer dataBuffer = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);
-        List<Long> dimensions = tensor.getDimsList();
-
-        int[] shape = new int[dimensions.size()];
-
-        for (int i = 0; i < shape.length; i++) {
-            shape[i] = Math.toIntExact(dimensions.get(i));
+        
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            out.write(modelProto.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
         }
-
+    }
+    
+    private void addInitializers(Model model, GraphProto.Builder graphBuilder, Map<Tensor, String> weightsMap) {
+        List<Layer> layers = model.flattened();
+        
+        for (int i = 0; i < layers.size(); i++) {
+            Layer layer = layers.get(i);
+            String layerId = LAYER_REGISTRY.fromClass(layer.getClass());
+            
+            for (Map.Entry<String, Tensor> weight : layer.weightsMap().entrySet()) {
+                String name = String.format("%s.%d.%s", layerId, i, weight.getKey());
+                
+                weightsMap.put(weight.getValue(), name);
+                graphBuilder.addInitializer(serializeTensor(name, weight.getValue()));
+            }
+        }
+    }
+    
+    private List<NodeProto> buildNodesFromTensor(Tensor output, AtomicInteger counter,
+                                                 Map<Tensor, String> tensorNames, Map<Tensor, String> weightsMap) {
+        Queue<Tensor> queue = new LinkedList<>();
+        Set<Tensor> visited = new HashSet<>();
+        List<NodeProto> nodes = new ArrayList<>();
+        
+        queue.add(output);
+        
+        while (!queue.isEmpty()) {
+            Tensor tensor = queue.poll();
+            AutogradContext context = tensor.autogradContext();
+            
+            if (context == null || context.operation() == null) continue;
+            
+            Operation op = context.operation();
+            String opType = op instanceof ActivationOperation act ? extractActivation(act) :
+                ONNX_OPERATIONS_REGISTRY.fromClass(op.getClass());
+            
+            NodeProto.Builder node = NodeProto.newBuilder()
+                .setName(opType + "_" + Math.abs(UUID.randomUUID().hashCode()))
+                .setOpType(opType);
+            
+            for (Tensor in : context.inputs()) {
+                node.addInput(generateName(counter, in, tensorNames, weightsMap));
+                
+                if (visited.add(in)) queue.add(in);
+            }
+            
+            node.addOutput(generateName(counter, tensor, tensorNames, weightsMap));
+            nodes.add(node.build());
+        }
+        
+        return nodes;
+    }
+    
+    private String extractActivation(ActivationOperation op) {
+        return ACTIVATION_MAP.getOrDefault(op.activation().getClass(), "unknown");
+    }
+    
+    private String generateName(AtomicInteger counter, Tensor tensor,
+                                Map<Tensor, String> tensorNames, Map<Tensor,String> weightsMap) {
+        if (weightsMap.containsKey(tensor)) return weightsMap.get(tensor);
+        return tensorNames.computeIfAbsent(tensor, t -> "tensor_" + counter.getAndIncrement());
+    }
+    
+    private void extractInput(Tensor input, GraphProto.Builder graphBuilder, AtomicInteger counter,
+                              Map<Tensor, String> tensorNames, Map<Tensor, String> weightsMap) {
+        ValueInfoProto.Builder proto = ValueInfoProto.newBuilder();
+        extractTensor(input, counter, tensorNames, weightsMap, proto, input.shape());
+        graphBuilder.addInput(proto);
+    }
+    
+    private void extractOutput(Tensor output, GraphProto.Builder graphBuilder, AtomicInteger counter,
+                               Map<Tensor, String> tensorNames, Map<Tensor, String> weightsMap) {
+        ValueInfoProto.Builder proto = ValueInfoProto.newBuilder();
+        extractTensor(output, counter, tensorNames, weightsMap, proto, output.shape());
+        graphBuilder.addOutput(proto);
+    }
+    
+    private void extractTensor(Tensor tensor, AtomicInteger counter, Map<Tensor, String> tensorNames,
+                               Map<Tensor, String> weightsMap, ValueInfoProto.Builder proto, int[] shape) {
+        TypeProto.Tensor.Builder tensorProto = TypeProto.Tensor.newBuilder();
+        TensorShapeProto.Builder shapeProto = TensorShapeProto.newBuilder();
+        
+        for (int dim : shape) shapeProto.addDim(TensorShapeProto.Dimension.newBuilder().setDimValue(dim));
+        
+        tensorProto.setElemType(TensorProto.DataType.FLOAT.getNumber()).setShape(shapeProto);
+        
+        proto.setName(generateName(counter, tensor, tensorNames, weightsMap))
+            .setType(TypeProto.newBuilder().setTensorType(tensorProto));
+    }
+    
+    private TensorProto serializeTensor(String name, Tensor tensor) {
+        TensorProto.Builder builder = TensorProto.newBuilder()
+            .setName(name)
+            .setDataType(TensorProto.DataType.FLOAT.getNumber());
+        
+        for (long dim : tensor.shape()) builder.addDims(dim);
+        for (float val : tensor.data()) builder.addFloatData(val);
+        
+        return builder.build();
+    }
+    
+    private Tensor deserializeTensor(TensorProto tensor) {
+        List<Float> raw = tensor.getFloatDataList();
+        int[] shape = tensor.getDimsList().stream().mapToInt(Long::intValue).toArray();
+        
         Tensor result = Tensors.create(shape);
         float[] data = result.data();
         
-        for (int i = 0; i < data.length; i++) {
-            data[i] = dataBuffer.getFloat();
-        }
+        for (int i = 0; i < data.length; i++) data[i] = raw.get(i);
         
         return result;
     }
 }
+

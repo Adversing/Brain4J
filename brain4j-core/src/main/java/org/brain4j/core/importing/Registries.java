@@ -9,12 +9,8 @@ import org.brain4j.core.importing.format.GeneralRegistry;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.*;
 import org.brain4j.core.layer.impl.convolutional.ConvLayer;
-import org.brain4j.core.layer.impl.utility.InputLayer;
+import org.brain4j.core.layer.impl.utility.*;
 import org.brain4j.core.layer.impl.transformer.*;
-import org.brain4j.core.layer.impl.utility.ActivationLayer;
-import org.brain4j.core.layer.impl.utility.ReshapeLayer;
-import org.brain4j.core.layer.impl.utility.SliceLayer;
-import org.brain4j.core.layer.impl.utility.SqueezeLayer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.*;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -26,9 +22,12 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.updater.impl.NormalUpdater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.tensor.autograd.Operation;
+import org.brain4j.math.tensor.autograd.impl.*;
 
 public class Registries {
     
+    public static final GeneralRegistry<Operation> ONNX_OPERATIONS_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<Optimizer> OPTIMIZERS_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<LossFunction> LOSS_FUNCTION_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<Updater> UPDATERS_REGISTRY = new GeneralRegistry<>();
@@ -37,6 +36,22 @@ public class Registries {
     public static final GeneralRegistry<Layer> LAYER_REGISTRY = new GeneralRegistry<>();
     
     static {
+        ONNX_OPERATIONS_REGISTRY.register("Add", AddOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Add", AddOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Sub", SubOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Mul", MulOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Div", DivOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Gemm", GemmOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("MatMul", MatMulOperation.class);
+        
+        ONNX_OPERATIONS_REGISTRY.register("Relu", () -> new ActivationOperation(new ReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", () -> new ActivationOperation(new SigmoidActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Tanh", () -> new ActivationOperation(new TanhActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", () -> new ActivationOperation(new LeakyReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Gelu", () -> new ActivationOperation(new GELUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Softmax", () -> new ActivationOperation(new SoftmaxActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("LayerNormalization", () -> new LayerNormOperation( 1e-5));
+        
         OPTIMIZERS_REGISTRY.register("adam", Adam.class);
         OPTIMIZERS_REGISTRY.register("adamw", AdamW.class);
         OPTIMIZERS_REGISTRY.register("gradient_descent", GradientDescent.class);

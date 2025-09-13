@@ -12,6 +12,8 @@ import org.brain4j.math.tensor.parallel.ParallelTranspose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 public class CpuTensor extends BaseTensor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CpuTensor.class);
@@ -235,7 +237,8 @@ public class CpuTensor extends BaseTensor {
         int p = shapeB[rankB - 1];
 
         if (n != k) {
-            throw new IllegalArgumentException("Inner dimensions must match: " + n + " != " + k);
+            throw new IllegalArgumentException("Inner dimensions must match: " + n + " != " + k +
+                ". A: " + Arrays.toString(shapeA) + ", B: " + Arrays.toString(shapeB));
         }
 
         int maxBatchDims = Math.max(rankA, rankB) - 2;

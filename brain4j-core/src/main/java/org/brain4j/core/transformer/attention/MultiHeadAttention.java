@@ -80,7 +80,7 @@ public class MultiHeadAttention {
     }
 
     public int totalWeights() {
-        return heads.stream().mapToInt(AttentionHead::totalWeights).sum();
+        return 3 * embeddingDim * embeddingDim + outProjWeights.elements();
     }
 
     public List<AttentionHead> heads() {

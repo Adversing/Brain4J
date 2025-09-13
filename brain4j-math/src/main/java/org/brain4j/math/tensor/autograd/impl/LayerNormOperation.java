@@ -5,7 +5,7 @@ import org.brain4j.math.tensor.autograd.Operation;
 
 public class LayerNormOperation implements Operation {
 
-    private double epsilon;
+    private final double epsilon;
 
     public LayerNormOperation(double epsilon) {
         this.epsilon = epsilon;

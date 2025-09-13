@@ -29,4 +29,8 @@ public class ActivationOperation implements Operation {
 
         return new Tensor[] { gradInput };
     }
+    
+    public Activation activation() {
+        return activation;
+    }
 }

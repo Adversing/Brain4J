@@ -64,7 +64,9 @@ public class GraphModel implements Model {
                 Tensor input = computed.get(inputNames.get(j));
 
                 if (input == null) {
-                    throw new IllegalStateException("Missing tensor for input: " + inputNames.get(j));
+                    throw new IllegalStateException(
+                        "Missing tensor for input: " + inputNames.get(j) + " for node " + node.name()
+                    );
                 }
 
                 inputTensors[j] = input.to(device);
