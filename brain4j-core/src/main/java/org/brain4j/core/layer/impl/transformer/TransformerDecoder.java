@@ -3,8 +3,13 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
+import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
 import org.brain4j.core.transformer.attention.MultiHeadAttention;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
+
+import java.util.Arrays;
 
 /**
  * Implements a single decoder block of the Transformer architecture,
@@ -43,5 +48,64 @@ public class TransformerDecoder extends TransformerEncoder {
 
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
         return new MaskedMultiHeadAttention(clipper, heads, embeddingDim);
+    }
+
+    @Override
+    public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        checkInputLength(1, inputs);
+        Tensor input = inputs[0];
+
+        if (input.rank() != 3) {
+            throw new IllegalArgumentException(
+                "Expected input with shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
+            );
+        }
+
+        Tensor attended = attention.attend(cache, input);
+
+        if (cache.training()) {
+            attended = dropout.forward(cache, attended)[0];
+        }
+
+        Tensor added = attended.add(input);
+        Tensor normalized = normalizer1.forward(cache, added)[0];
+
+        Tensor upProjected, downProjected;
+
+        Tensor[] upCache = cache.output(upProjection);
+        Tensor[] downCache = cache.output(downProjection);
+
+        int seqLength = input.shape(1);
+
+        if (upCache.length == 0 || downCache.length == 0) {
+            upProjected = upProjection.forward(cache, normalized)[0];
+            downProjected = downProjection.forward(cache, upProjected)[0];
+        } else {
+            Tensor cacheUp = upCache[0];
+            Tensor cacheDown = downCache[0];
+
+            Range[] ranges = { Range.all(), Range.point(seqLength - 1), Range.all() };
+            Tensor sliced = normalized.sliceGrad(ranges);
+
+            Tensor upProj = upProjection.forward(cache, sliced)[0];
+            Tensor downProj = downProjection.forward(cache, upProj)[0];
+
+            upProjected = cacheUp.concatGrad(upProj, 1);
+            downProjected = cacheDown.concatGrad(downProj, 1);
+        }
+
+        cache.rememberOutput(upProjection, upProjected);
+        cache.rememberOutput(downProjection, downProjected);
+
+        if (cache.training()) {
+            downProjected = dropout.forward(cache, downProjected)[0];
+        }
+
+        Tensor added2 = downProjected.add(normalized);
+        normalized = normalizer2.forward(cache, added2)[0];
+
+        cache.rememberOutput(this, normalized);
+
+        return new Tensor[] { normalized };
     }
 }

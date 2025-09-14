@@ -29,8 +29,7 @@ public class HardClipper implements GradientClipper {
         cl_kernel kernel = GpuContext.kernel(device, kernelName());
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory
-                .create(kernel)
+            KernelFactory.create(kernel)
                 .addMemParam(grad.dataBuffer())
                 .addFloatParam((float) bound)
                 .addIntParam(grad.size())

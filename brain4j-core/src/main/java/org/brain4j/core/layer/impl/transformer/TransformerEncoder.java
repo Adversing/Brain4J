@@ -1,6 +1,7 @@
 package org.brain4j.core.layer.impl.transformer;
 
 import com.google.gson.JsonObject;
+import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.Device;
@@ -14,6 +15,7 @@ import org.brain4j.core.training.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.transformer.attention.MultiHeadAttention;
+import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
@@ -156,7 +158,7 @@ public class TransformerEncoder extends Layer {
 
         Tensor added = attended.add(input);
         Tensor normalized = normalizer1.forward(cache, added)[0];
-        
+
         Tensor upProjected = upProjection.forward(cache, normalized)[0];
         Tensor downProjected = downProjection.forward(cache, upProjected)[0];
 

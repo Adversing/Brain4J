@@ -66,6 +66,30 @@ public class AttentionHead {
     public Tensor attend(StatesCache cache, Tensor input) {
         return attend(input);
     }
+
+    public void backward(Updater updater, Optimizer optimizer) {
+        Tensor queryGrad = queryWeights.grad();
+        Tensor keyGrad = keyWeights.grad();
+        Tensor valueGrad = valueWeights.grad();
+
+        Tensor optimizedQuery = optimizer.step(queryWeights, queryGrad);
+        Tensor optimizedKey = optimizer.step(keyWeights, keyGrad);
+        Tensor optimizedValue = optimizer.step(valueWeights, valueGrad);
+
+        clipper.clip(optimizedQuery);
+        clipper.clip(optimizedKey);
+        clipper.clip(optimizedValue);
+
+        updater.change(queryWeights, optimizedQuery);
+        updater.change(keyWeights, optimizedKey);
+        updater.change(valueWeights, optimizedValue);
+    }
+
+    public void resetGrad() {
+        keyWeights.zerograd();
+        queryWeights.zerograd();
+        valueWeights.zerograd();
+    }
     
     public GradientClipper clipper() {
         return clipper;
@@ -113,29 +137,5 @@ public class AttentionHead {
 
     public int totalWeights() {
         return queryWeights.elements() + keyWeights.elements() + valueWeights.elements();
-    }
-
-    public void backward(Updater updater, Optimizer optimizer) {
-        Tensor queryGrad = queryWeights.grad();
-        Tensor keyGrad = keyWeights.grad();
-        Tensor valueGrad = valueWeights.grad();
-
-        Tensor optimizedQuery = optimizer.step(queryWeights, queryGrad);
-        Tensor optimizedKey = optimizer.step(keyWeights, keyGrad);
-        Tensor optimizedValue = optimizer.step(valueWeights, valueGrad);
-
-        clipper.clip(optimizedQuery);
-        clipper.clip(optimizedKey);
-        clipper.clip(optimizedValue);
-
-        updater.change(queryWeights, optimizedQuery);
-        updater.change(keyWeights, optimizedKey);
-        updater.change(valueWeights, optimizedValue);
-    }
-    
-    public void resetGrad() {
-        keyWeights.zerograd();
-        queryWeights.zerograd();
-        valueWeights.zerograd();
     }
 }

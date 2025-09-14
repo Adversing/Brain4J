@@ -117,16 +117,20 @@ public class Tensors {
         }
     }
 
-    public static Tensor triangularMask(int dimension) {
-        Tensor mask = Tensors.zeros(dimension, dimension);
+    public static Tensor triangularMask(int firstDim, int secondDim) {
+        Tensor mask = Tensors.zeros(firstDim, secondDim);
 
-        for (int i = 0; i < dimension; i++) {
-            for (int j = i + 1; j < dimension; j++) {
+        for (int i = 0; i < firstDim; i++) {
+            for (int j = i + 1; j < secondDim; j++) {
                 mask.set(Float.NEGATIVE_INFINITY, i, j);
             }
         }
 
         return mask;
+    }
+
+    public static Tensor triangularMask(int dimension) {
+        return triangularMask(dimension, dimension);
     }
 
     public static Tensor concat(List<Tensor> tensors) {

@@ -7,7 +7,7 @@ import org.brain4j.core.clipper.GradientClipper;
 
 public class L2Clipper implements GradientClipper {
 
-    private double scale;
+    private final double scale;
 
     public L2Clipper(double scale) { this.scale = scale; }
     
