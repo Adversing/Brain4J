@@ -1,9 +1,10 @@
 package org.brain4j.math.gpu;
 
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
-import org.jocl.cl_command_queue;
 import org.jocl.cl_kernel;
+import org.jocl.cl_command_queue;
 import org.jocl.cl_program;
 
 import java.util.HashMap;
@@ -17,8 +18,7 @@ public class GpuContext {
     private static final Map<Device, Map<String, cl_kernel>> kernelCache = new HashMap<>();
 
     public static void register(Device device, String kernelName, cl_program program) {
-        kernelCache
-            .computeIfAbsent(device, d -> new HashMap<>())
+        kernelCache.computeIfAbsent(device, d -> new HashMap<>())
             .compute(kernelName, (name, existingKernel) -> {
                 if (existingKernel != null) {
                     throw new IllegalArgumentException("Kernel " + name + " already initialized for device " + device);
@@ -44,10 +44,10 @@ public class GpuContext {
         return kernel;
     }
 
-    public static void updateQueue(Device device, cl_command_queue newQueue) {
-        queues
-            .computeIfAbsent(device, d -> new ThreadLocal<>())
-            .set(new GpuQueue(newQueue, false));
+    public static void updateQueue(Device device, StatesCache cache) {
+        cl_command_queue queue = cache.commandQueue();
+        GpuQueue updated = new GpuQueue(queue, false);
+        queues.computeIfAbsent(device, d -> new ThreadLocal<>()).set(updated);
     }
 
     public static GpuQueue getOrCreate(Device device) {
@@ -75,8 +75,14 @@ public class GpuContext {
         clReleaseCommandQueue(queue);
     }
 
-    public static void closeQueue(Device device) {
-        GpuQueue commandQueue = queue(device);
-        closeQueue(commandQueue.clQueue());
+    public static void closeQueue(Device device, StatesCache cache) {
+        GpuQueue queue = queue(device);
+
+        if (queue == null) {
+            throw new IllegalStateException("No command queue registered for device: " + device);
+        }
+
+        cl_command_queue commandQueue = queue.queue();
+        closeQueue(commandQueue);
     }
 }

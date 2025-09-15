@@ -5,12 +5,10 @@ import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jocl.CL.*;
-import static org.jocl.CL.CL_MEM_READ_WRITE;
 
 public class KernelFactory {
 
@@ -48,11 +46,11 @@ public class KernelFactory {
     }
 
     public void launch(GpuQueue queue, int workDim, long... globalWorkSize) {
-        launch(queue.clQueue(), workDim, globalWorkSize);
+        launch(queue.queue(), workDim, globalWorkSize);
     }
 
     public void launch(GpuQueue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
-        launch(queue.clQueue(), workDim, globalWorkSize, localWorkSize);
+        launch(queue.queue(), workDim, globalWorkSize, localWorkSize);
     }
 
     public void launch(cl_command_queue queue, int workDim, long... globalWorkSize) {

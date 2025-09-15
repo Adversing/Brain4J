@@ -1,14 +1,11 @@
 package org.brain4j.core.layer.impl.utility;
 
 import com.google.gson.JsonObject;
-import org.brain4j.math.Commons;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.core.activation.Activations;
+import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.training.StatesCache;
-
-import java.util.List;
+import org.brain4j.math.data.StatesCache;
 
 public class ActivationLayer extends Layer {
 

@@ -2,6 +2,7 @@ package org.brain4j.math.tensor.impl;
 
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.activation.Activations;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
@@ -12,6 +13,7 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.jocl.*;
 
+import java.io.FileOutputStream;
 import java.lang.ref.Cleaner;
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -74,7 +76,7 @@ public class GpuTensor extends BaseTensor {
         CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            clEnqueueCopyBuffer(queue.clQueue(), otherBuffer, this.dataBuffer, 0, 0, dataSize,
+            clEnqueueCopyBuffer(queue.queue(), otherBuffer, this.dataBuffer, 0, 0, dataSize,
                 0, null, null);
         }
     }
@@ -101,10 +103,12 @@ public class GpuTensor extends BaseTensor {
 
     public static void initKernels(Device device) {
         cl_context context = device.context();
-
+        
         cl_program tensorOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/tensor_ops.cl");
         cl_program elementaryOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/elementary_ops.cl");
-
+        cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
+        cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
+        
         String[] tensorOpsKernels = { "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
 
         for (String kernel : tensorOpsKernels) {
@@ -116,6 +120,17 @@ public class GpuTensor extends BaseTensor {
         for (String kernel : scalarKernels) {
             GpuContext.register(device, kernel, elementaryOpsProgram);
         }
+        
+        for (Activations activation : Activations.values()) {
+            Activation function = activation.function();
+            String prefix = function.kernelPrefix();
+            
+            GpuContext.register(device, prefix + "_forward", activationsProgram);
+            GpuContext.register(device, prefix + "_backward", activationsProgram);
+        }
+        
+        GpuContext.register(device, "hard_clip", gradientClipProgram);
+        GpuContext.register(device, "l2_clip", gradientClipProgram);
     }
 
     private long roundUp(int groupSize, int globalSize) {

@@ -8,7 +8,7 @@ import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;

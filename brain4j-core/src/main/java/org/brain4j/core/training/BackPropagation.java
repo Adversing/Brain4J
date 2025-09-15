@@ -2,6 +2,7 @@ package org.brain4j.core.training;
 
 import org.brain4j.math.Pair;
 import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -47,7 +48,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         model.zeroGrad();
         
         if (device != null) {
-            GpuContext.closeQueue(device);
+//            GpuContext.closeQueue(device);
         }
         
         double took = (System.nanoTime() - start) / 1e6;

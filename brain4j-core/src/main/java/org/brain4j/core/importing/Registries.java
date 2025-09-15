@@ -1,10 +1,10 @@
 package org.brain4j.core.importing;
 
-import org.brain4j.core.activation.impl.*;
-import org.brain4j.core.clipper.GradientClipper;
-import org.brain4j.core.clipper.impl.HardClipper;
-import org.brain4j.core.clipper.impl.L2Clipper;
-import org.brain4j.core.clipper.impl.NoClipper;
+import org.brain4j.math.activation.impl.*;
+import org.brain4j.math.clipper.GradientClipper;
+import org.brain4j.math.clipper.impl.HardClipper;
+import org.brain4j.math.clipper.impl.L2Clipper;
+import org.brain4j.math.clipper.impl.NoClipper;
 import org.brain4j.core.importing.format.GeneralRegistry;
 import org.brain4j.core.importing.onnx.ProtoOnnx.*;
 import org.brain4j.core.layer.Layer;

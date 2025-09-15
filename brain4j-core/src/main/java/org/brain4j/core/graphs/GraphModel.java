@@ -8,7 +8,7 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
@@ -47,7 +47,7 @@ public class GraphModel implements Model {
         }
         
         if (device != null) {
-            GpuContext.updateQueue(device, cache.commandQueue());
+            GpuContext.updateQueue(device, cache);
         }
 
         Map<String, Tensor> computed = new HashMap<>(initializers);
@@ -80,7 +80,7 @@ public class GraphModel implements Model {
         }
         
         if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device);
+            GpuContext.closeQueue(device, cache);
         }
 
         Tensor[] outputs = new Tensor[outputNames.size()];

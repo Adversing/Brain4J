@@ -1,5 +1,5 @@
 import org.brain4j.core.Brain4J;
-import org.brain4j.core.activation.Activations;
+import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;

@@ -31,9 +31,9 @@ shadowJar {
     relocate("com.google", "org.brain4j.relocated.google")
     relocate("ch.qos.logback", "org.brain4j.relocated.logback")
     relocate("org.slf4j", "org.brain4j.relocated.slf4j")
-    relocate("org.jocl", "org.brain4j.relocated.jocl")
 
     exclude "org/brain4j/math/**"
+    exclude "org/jocl/**"
 }
 
 tasks.withType(JavaExec).configureEach {

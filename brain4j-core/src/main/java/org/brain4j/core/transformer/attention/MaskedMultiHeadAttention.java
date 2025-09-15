@@ -1,7 +1,7 @@
 package org.brain4j.core.transformer.attention;
 
-import org.brain4j.core.clipper.GradientClipper;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.clipper.GradientClipper;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.core.transformer.attention.head.MaskedAttentionHead;
 import org.brain4j.math.Tensors;

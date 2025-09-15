@@ -2,7 +2,7 @@ package org.brain4j.core.model.impl;
 
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.tensor.Tensor;
 
@@ -44,7 +44,7 @@ public class Transformer extends Sequential {
         }
         
         if (device != null) {
-            GpuContext.updateQueue(device, cache.commandQueue());
+            GpuContext.updateQueue(device, cache);
         }
         
         for (Layer layer : flattened) {
@@ -52,7 +52,7 @@ public class Transformer extends Sequential {
         }
         
         if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device);
+            GpuContext.closeQueue(device, cache);
         }
         
         return result;

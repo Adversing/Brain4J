@@ -3,9 +3,8 @@ package org.brain4j.core.layer.impl;
 import com.google.gson.JsonObject;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 
-import java.util.List;
 import java.util.Random;
 import java.util.SplittableRandom;
 

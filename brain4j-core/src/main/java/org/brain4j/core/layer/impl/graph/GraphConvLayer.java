@@ -1,9 +1,9 @@
 package org.brain4j.core.layer.impl.graph;
 
 import com.google.gson.JsonObject;
-import org.brain4j.core.activation.Activations;
+import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;

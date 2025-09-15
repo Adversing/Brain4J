@@ -16,7 +16,7 @@ import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.BackPropagation;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
@@ -317,7 +317,7 @@ public class Sequential extends Layer implements Model {
         }
 
         if (device != null) {
-            GpuContext.updateQueue(device, cache.commandQueue());
+            GpuContext.updateQueue(device, cache);
         }
 
         for (Layer layer : flattened) {
@@ -325,7 +325,7 @@ public class Sequential extends Layer implements Model {
         }
 
         if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device);
+            GpuContext.closeQueue(device, cache);
         }
 
         return result;

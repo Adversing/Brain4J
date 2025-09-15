@@ -1,7 +1,7 @@
 package org.brain4j.core.importing.impl;
 
 import org.brain4j.core.Brain4J;
-import org.brain4j.core.activation.impl.*;
+import org.brain4j.math.activation.impl.*;
 import org.brain4j.core.importing.onnx.ProtoOnnx;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
@@ -68,7 +68,6 @@ public class OnnxFormat implements ModelFormat {
             List<String> outputs = graphProto.getOutputList().stream().map(ValueInfoProto::getName).toList();
             
             return (T) model.inputs(inputs).outputs(outputs).compile();
-            
         } catch (Exception e) {
             e.printStackTrace(System.err);
             return null;
@@ -78,7 +77,6 @@ public class OnnxFormat implements ModelFormat {
     @Override
     public void serialize(Model model, File file) {
         GraphProto.Builder graphBuilder = GraphProto.newBuilder();
-        ModelProto.Builder modelBuilder = ModelProto.newBuilder();
         
         Map<Tensor, String> weightsMap = new HashMap<>();
         Map<Tensor, String> tensorNames = new HashMap<>();
@@ -103,8 +101,12 @@ public class OnnxFormat implements ModelFormat {
         graphBuilder.addAllNode(nodes);
         
         graphBuilder.setName(file.getName());
-        OperatorSetIdProto opset = OperatorSetIdProto.newBuilder().setDomain("").setVersion(13).build();
-        ModelProto modelProto = modelBuilder
+        OperatorSetIdProto opset = OperatorSetIdProto.newBuilder()
+            .setDomain("")
+            .setVersion(13)
+            .build();
+        
+        ModelProto modelProto = ModelProto.newBuilder()
             .setIrVersion(9)
             .setProducerName("Brain4J")
             .setProducerVersion(Brain4J.version())

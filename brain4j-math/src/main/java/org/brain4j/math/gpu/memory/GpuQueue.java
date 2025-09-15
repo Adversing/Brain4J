@@ -3,23 +3,11 @@ package org.brain4j.math.gpu.memory;
 import org.brain4j.math.gpu.GpuContext;
 import org.jocl.cl_command_queue;
 
-public class GpuQueue implements AutoCloseable {
-
-    private final cl_command_queue clQueue;
-    private final boolean shouldClose;
-
-    public GpuQueue(cl_command_queue clQueue, boolean shouldClose) {
-        this.clQueue = clQueue;
-        this.shouldClose = shouldClose;
-    }
-
+public record GpuQueue(cl_command_queue queue, boolean shouldClose) implements AutoCloseable {
+    
     @Override
     public void close() {
         if (!shouldClose) return;
-        GpuContext.closeQueue(clQueue);
-    }
-
-    public cl_command_queue clQueue() {
-        return clQueue;
+        GpuContext.closeQueue(queue);
     }
 }

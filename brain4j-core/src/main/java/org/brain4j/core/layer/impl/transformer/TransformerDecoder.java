@@ -3,7 +3,7 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
-import org.brain4j.core.training.StatesCache;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
 import org.brain4j.core.transformer.attention.MultiHeadAttention;
 import org.brain4j.math.tensor.Tensor;
