@@ -48,7 +48,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         model.zeroGrad();
         
         if (device != null) {
-//            GpuContext.closeQueue(device);
+            GpuContext.closeQueue(device);
         }
         
         double took = (System.nanoTime() - start) / 1e6;

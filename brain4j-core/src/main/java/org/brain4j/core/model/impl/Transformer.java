@@ -52,7 +52,7 @@ public class Transformer extends Sequential {
         }
         
         if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device, cache);
+            GpuContext.closeQueue(device);
         }
         
         return result;

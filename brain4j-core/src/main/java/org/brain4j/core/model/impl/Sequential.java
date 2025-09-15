@@ -325,7 +325,7 @@ public class Sequential extends Layer implements Model {
         }
 
         if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device, cache);
+            GpuContext.closeQueue(device);
         }
 
         return result;

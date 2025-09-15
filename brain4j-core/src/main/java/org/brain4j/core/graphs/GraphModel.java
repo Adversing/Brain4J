@@ -80,7 +80,7 @@ public class GraphModel implements Model {
         }
         
         if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device, cache);
+            GpuContext.closeQueue(device);
         }
 
         Tensor[] outputs = new Tensor[outputNames.size()];

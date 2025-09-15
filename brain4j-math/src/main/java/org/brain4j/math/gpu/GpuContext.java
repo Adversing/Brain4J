@@ -75,7 +75,7 @@ public class GpuContext {
         clReleaseCommandQueue(queue);
     }
 
-    public static void closeQueue(Device device, StatesCache cache) {
+    public static void closeQueue(Device device) {
         GpuQueue queue = queue(device);
 
         if (queue == null) {
