@@ -6,6 +6,7 @@ import org.brain4j.core.clipper.impl.HardClipper;
 import org.brain4j.core.clipper.impl.L2Clipper;
 import org.brain4j.core.clipper.impl.NoClipper;
 import org.brain4j.core.importing.format.GeneralRegistry;
+import org.brain4j.core.importing.onnx.ProtoOnnx.*;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.*;
 import org.brain4j.core.layer.impl.convolutional.ConvLayer;
@@ -27,13 +28,13 @@ import org.brain4j.math.tensor.autograd.impl.*;
 
 public class Registries {
     
-    public static final GeneralRegistry<Operation> ONNX_OPERATIONS_REGISTRY = new GeneralRegistry<>();
-    public static final GeneralRegistry<Optimizer> OPTIMIZERS_REGISTRY = new GeneralRegistry<>();
-    public static final GeneralRegistry<LossFunction> LOSS_FUNCTION_REGISTRY = new GeneralRegistry<>();
-    public static final GeneralRegistry<Updater> UPDATERS_REGISTRY = new GeneralRegistry<>();
-    public static final GeneralRegistry<GradientClipper> CLIPPERS_REGISTRY = new GeneralRegistry<>();
-    public static final GeneralRegistry<Activation> ACTIVATION_REGISTRY = new GeneralRegistry<>();
-    public static final GeneralRegistry<Layer> LAYER_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<Operation, NodeProto> ONNX_OPERATIONS_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<Optimizer, Object> OPTIMIZERS_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<LossFunction, Object> LOSS_FUNCTION_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<Updater, Object> UPDATERS_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<GradientClipper, Object> CLIPPERS_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<Activation, Object> ACTIVATION_REGISTRY = new GeneralRegistry<>();
+    public static final GeneralRegistry<Layer, Object> LAYER_REGISTRY = new GeneralRegistry<>();
     
     static {
         ONNX_OPERATIONS_REGISTRY.register("Add", AddOperation.class);
@@ -43,14 +44,25 @@ public class Registries {
         ONNX_OPERATIONS_REGISTRY.register("Div", DivOperation.class);
         ONNX_OPERATIONS_REGISTRY.register("Gemm", GemmOperation.class);
         ONNX_OPERATIONS_REGISTRY.register("MatMul", MatMulOperation.class);
-        
-        ONNX_OPERATIONS_REGISTRY.register("Relu", () -> new ActivationOperation(new ReLUActivation()));
-        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", () -> new ActivationOperation(new SigmoidActivation()));
-        ONNX_OPERATIONS_REGISTRY.register("Tanh", () -> new ActivationOperation(new TanhActivation()));
-        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", () -> new ActivationOperation(new LeakyReLUActivation()));
-        ONNX_OPERATIONS_REGISTRY.register("Gelu", () -> new ActivationOperation(new GELUActivation()));
-        ONNX_OPERATIONS_REGISTRY.register("Softmax", () -> new ActivationOperation(new SoftmaxActivation()));
-        ONNX_OPERATIONS_REGISTRY.register("LayerNormalization", () -> new LayerNormOperation( 1e-5));
+
+        ONNX_OPERATIONS_REGISTRY.register("Concat", (node) -> {
+            int axis = (int) node.getAttribute(0).getI();
+            return new ConcatOperation(axis);
+        });
+        ONNX_OPERATIONS_REGISTRY.register("Concat", ConcatOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Relu", (node) -> new ActivationOperation(new ReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Relu", ActivationOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", (node) -> new ActivationOperation(new SigmoidActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", ActivationOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Tanh", (node) -> new ActivationOperation(new TanhActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Tanh", ActivationOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", (node) -> new ActivationOperation(new LeakyReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", ActivationOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Gelu", (node) -> new ActivationOperation(new GELUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Gelu", ActivationOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("Softmax", (node) -> new ActivationOperation(new SoftmaxActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Softmax", ActivationOperation.class);
+        ONNX_OPERATIONS_REGISTRY.register("LayerNormalization", (node) -> new LayerNormOperation( 1e-5));
         
         OPTIMIZERS_REGISTRY.register("adam", Adam.class);
         OPTIMIZERS_REGISTRY.register("adamw", AdamW.class);

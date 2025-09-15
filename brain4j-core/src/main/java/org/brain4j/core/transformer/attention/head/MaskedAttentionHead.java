@@ -7,8 +7,6 @@ import org.brain4j.core.activation.impl.SoftmaxActivation;
 import org.brain4j.core.clipper.GradientClipper;
 import org.brain4j.math.tensor.index.Range;
 
-import java.util.Arrays;
-
 public class MaskedAttentionHead extends AttentionHead {
 
     public MaskedAttentionHead(GradientClipper clipper, int embedDimension, int headDimension) {
@@ -46,8 +44,8 @@ public class MaskedAttentionHead extends AttentionHead {
         Range[] ranges = { Range.all(), Range.point(seqLength - 1), Range.all() };
         Tensor sliced = input.sliceGrad(ranges); // [batch, 1, embedding_dim]
 
-        Tensor prevK = cache.keys(this);
-        Tensor prevV = cache.values(this);
+        Tensor prevK = cache.get(keyWeights);
+        Tensor prevV = cache.get(valueWeights);
 
         Tensor K, V, Q;
         int triangularMaskLength = 1;
@@ -65,9 +63,9 @@ public class MaskedAttentionHead extends AttentionHead {
             V = prevV.concatGrad(newV, 1);
         }
 
-        cache.setKeys(this, K);
-        cache.setValues(this, V);
-        
+        cache.updateCache(keyWeights, K);
+        cache.updateCache(valueWeights, V);
+
         double normalizer = Math.sqrt(headDimension);
 
         // [batch, head_dim, seq_len]
@@ -79,13 +77,7 @@ public class MaskedAttentionHead extends AttentionHead {
 
         // [batch, 1 | seq_len, seq_len]
         Tensor attentionWeights = scores.addGrad(mask).activateGrad(new SoftmaxActivation());
-        Tensor attentionOutput = attentionWeights.matmulGrad(V); // [batch, 1 | seq_len, head_dim]
-
-        Tensor prev = cache.attentionOutput(this);
-        Tensor result = prev == null ? attentionOutput : prev.concatGrad(attentionOutput, 1);
-
-        cache.setAttentionOutput(this, result);
-        // [batch, seq_len, head_dim]
-        return result;
+        // [batch, 1 | seq_len, head_dim]
+        return attentionWeights.matmulGrad(V);
     }
 }

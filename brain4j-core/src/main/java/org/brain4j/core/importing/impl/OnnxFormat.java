@@ -52,7 +52,7 @@ public class OnnxFormat implements ModelFormat {
             }
             
             for (NodeProto node : graphProto.getNodeList()) {
-                Operation op = ONNX_OPERATIONS_REGISTRY.toInstance(node.getOpType());
+                Operation op = ONNX_OPERATIONS_REGISTRY.toInstance(node.getOpType(), node);
                 
                 if (op == null) throw new IllegalArgumentException("Unknown operation: " + node.getOpType());
                 

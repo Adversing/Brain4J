@@ -3,13 +3,14 @@ package org.brain4j.core.importing.format;
 import org.brain4j.math.Commons;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class GeneralRegistry<T> {
+public class GeneralRegistry<T, A> {
     
     private final Map<String, Class<? extends T>> idToClass = new HashMap<>();
     private final Map<Class<? extends T>, Set<String>> classToIds = new HashMap<>();
-    private final Map<String, Supplier<T>> idToInstance = new HashMap<>();
+    private final Map<String, Function<A, T>> idToInstance = new HashMap<>();
     
     public void clear() {
         idToClass.clear();
@@ -17,12 +18,7 @@ public class GeneralRegistry<T> {
         idToInstance.clear();
     }
     
-    public void register(String identifier, Supplier<T> supplier) {
-        T instance = supplier.get();
-        Class<? extends T> clazz = (Class<? extends T>) instance.getClass();
-        
-        idToClass.put(identifier, clazz);
-        classToIds.computeIfAbsent(clazz, k -> new HashSet<>()).add(identifier);
+    public void register(String identifier, Function<A, T> supplier) {
         idToInstance.put(identifier, supplier);
     }
     
@@ -43,12 +39,17 @@ public class GeneralRegistry<T> {
     public Class<? extends T> fromId(String identifier) {
         return idToClass.get(identifier);
     }
-    
+
     public T toInstance(String identifier) {
+        return toInstance(identifier, null);
+    }
+
+
+    public T toInstance(String identifier, A value) {
         if (idToInstance.containsKey(identifier)) {
-            return idToInstance.get(identifier).get();
+            return idToInstance.get(identifier).apply(value);
         }
-        
+
         return Commons.newInstance(fromId(identifier));
     }
 }

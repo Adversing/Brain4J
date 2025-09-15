@@ -72,9 +72,11 @@ public class MultiHeadAttention {
         Tensor[] outputs = new Tensor[heads.size()];
 
         for (int i = 0; i < heads.size(); i++) {
+            // [batch, seq_len, head_dim]
             outputs[i] = heads.get(i).attend(cache, input);
         }
 
+        // [batch, seq_len, embedding_dim]
         Tensor result = Tensors.concatGrad(List.of(outputs));
         return result.matmulGrad(outProjWeights);
     }
