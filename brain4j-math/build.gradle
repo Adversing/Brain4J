@@ -13,6 +13,5 @@ compileJava {
 
 shadowJar {
     minimize()
-    dependsOn ":brain4j-datasets:shadowJar"
     archiveFileName = "brain4j-math-${parent.version}.jar"
 }

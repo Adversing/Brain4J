@@ -20,6 +20,7 @@ dependencies {
 }
 
 shadowJar {
+    minimize()
     archiveFileName = "brain4j-datasets-${parent.version}.jar"
 }
 
