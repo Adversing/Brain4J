@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - 3.0
+      - "3.0"
 
 jobs:
   build:
@@ -28,17 +28,17 @@ jobs:
       - name: Archive build core artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-core-artifact
+          name: brain4j-core-artifact
           path: brain4j-core/build/libs/*.jar
       
-      - name: Archive build common artifact
+      - name: Archive build math artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-common-artifact
+          name: brain4j-math-artifact
           path: brain4j-common/build/libs/*.jar
       
       - name: Archive build datasets artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-datasets-artifact
+          name: brain4j-datasets-artifact
           path: brain4j-datasets/build/libs/*.jar
