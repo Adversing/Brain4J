@@ -159,8 +159,8 @@ public class ParallelConvolve extends RecursiveAction {
                 }
             }
         }
-
-        return out;
+        
+        return out.squeeze();
     }
 
     private static void normalDotPerFilter(

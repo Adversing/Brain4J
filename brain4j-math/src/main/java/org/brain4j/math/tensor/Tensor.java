@@ -5,7 +5,6 @@ import org.brain4j.math.activation.impl.ReLUActivation;
 import org.brain4j.math.activation.impl.SigmoidActivation;
 import org.brain4j.math.activation.impl.TanhActivation;
 import org.brain4j.math.gpu.device.Device;
-import org.brain4j.math.gpu.device.DeviceType;
 import org.brain4j.math.lang.DoubleToDoubleFunction;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
@@ -14,6 +13,7 @@ import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public interface Tensor extends Iterable<Float> {
@@ -77,7 +77,13 @@ public interface Tensor extends Iterable<Float> {
      * @return the current tensor modified
      */
     Tensor set(float value, int... indices);
-
+    
+    /**
+     * Sets the value at the specified indices in the tensor.
+     * @param value the value to set
+     * @param indices the indices where the value should be set
+     * @return the current tensor modified
+     */
     default Tensor set(double value, int... indices) {
         return set((float) value, indices);
     }
@@ -106,14 +112,6 @@ public interface Tensor extends Iterable<Float> {
      * @return the converted tensor
      */
     Tensor to(Device device);
-
-    /**
-     * Gets the device type where this tensor is hosted on.
-     * @return {@link DeviceType#GPU} if this is a {@link GpuTensor}, {@link DeviceType#CPU} otherwise
-     */
-    default DeviceType deviceType() {
-        return this instanceof GpuTensor ? DeviceType.GPU : DeviceType.CPU;
-    }
 
     /**
      * Moves this tensor to the GPU. This is analogous to calling to(DeviceType.GPU).
@@ -303,17 +301,17 @@ public interface Tensor extends Iterable<Float> {
      * {@code [..., m, n]} and {@code other} has shape {@code [..., n, p]}, then
      * the result will have shape {@code [..., m, p]}.
      * <p>
-     * <strong>Example:</strong>
-     * <pre>
-     * // A has shape [2, 3], B has shape [3, 4]
-     * A.matmul(B)      // returns shape [2, 4]
+     * <strong>For example:</strong>
+     * <blockquote><pre>
+     *     // A has shape [2, 3], B has shape [3, 4]
+     *     A.matmul(B)      // returns shape [2, 4]
      *
-     * // A has shape [5, 2, 3], B has shape [5, 3, 4]
-     * A.matmul(B)      // returns shape [5, 2, 4]
+     *     // A has shape [5, 2, 3], B has shape [5, 3, 4]
+     *     A.matmul(B)      // returns shape [5, 2, 4]
      *
-     * // A has shape [5, 1, 2, 3], B has shape [1, 6, 3, 4]
-     * A.matmul(B)      // returns shape [5, 6, 2, 4] (batch dims broadcasted)
-     * </pre>
+     *     // A has shape [5, 1, 2, 3], B has shape [1, 6, 3, 4]
+     *     A.matmul(B)      // returns shape [5, 6, 2, 4] (batch dims broadcasted)
+     * </pre></blockquote>
      *
      * @param other the right-hand operand
      * @return a new tensor containing the matrix product, with shape {@code [..., m, p]}
@@ -323,8 +321,23 @@ public interface Tensor extends Iterable<Float> {
     Tensor matmul(Tensor other);
 
     /**
-     * Performs a convolution between this tensor and the specified kernel tensor.
-     * Convolution is supported for multiple dimensions.
+     * Computes a convolution between this tensor and the specified kernel.
+     * <p>
+     * Convolution works through the usage of Im2Col, supports multiple dimensions and broadcasting.
+     * <p>
+     * Formally, if this tensor has shape {@code [..., channels, h, w]} and kernel has shape {@code [..., channels, h, w]}, then
+     * the result will have shape {@code [..., h_out, w_out]}.
+     * <strong>For example:</strong>
+     * <blockquote><pre>
+     *     // A has shape [3, 15, 15], B has shape [3, 4, 4]
+     *     A.convolve(B); // returns shape [12, 12]
+     *
+     *     // A has shape [16, 3, 64, 64], B has shape [3, 7, 7]
+     *     A.convolve(B); // returns shape [16, 58, 58]
+     *
+     *     // A has shape [16, 3, 64, 64], B has shape [32, 7, 7]
+     *     A.convolve(B); // returns [16, 32, 58, 58]
+     * </pre></blockquote>
      *
      * @param kernel the kernel tensor to use for convolution.
      * @return a new tensor resulting from the convolution.

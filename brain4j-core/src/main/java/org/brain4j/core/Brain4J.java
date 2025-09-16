@@ -10,6 +10,7 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,6 +66,16 @@ public class Brain4J {
         }
 
         return DeviceUtils.findDevice(devices.getFirst());
+    }
+    
+    public static List<Device> allDevices() {
+        List<Device> devices = new ArrayList<>();
+        
+        for (String device : DeviceUtils.allDeviceNames()) {
+            devices.add(DeviceUtils.findDevice(device));
+        }
+        
+        return devices;
     }
 
     public static Device findDevice(String deviceName) {

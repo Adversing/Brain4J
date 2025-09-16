@@ -1,5 +1,4 @@
 import org.brain4j.core.Brain4J;
-import org.brain4j.math.activation.Activations;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -19,6 +18,15 @@ public class TestGpu {
         Brain4J.initKernels(device);
     }
 
+    @Test
+    public void convTest() {
+        Tensor A = Tensors.random(16, 3, 64, 64);
+        Tensor B = Tensors.random(3, 7, 7);
+        
+        Tensor C = A.convolve(B);
+        System.out.println("conv shape = " + Arrays.toString(C.shape()));
+    }
+    
     @Test
     public void concatTest() {
         Device device = Brain4J.firstDevice();
@@ -41,14 +49,14 @@ public class TestGpu {
         Device device = Brain4J.firstDevice();
         Brain4J.initKernels(device);
 
-        Tensor A = Tensors.random(64, 128);
-        Tensor B = Tensors.random(128, 256);
+        Tensor A = Tensors.random(4, 8);
+        Tensor B = Tensors.random(8, 3);
         Tensor C = A.matmul(B);
 
         Tensor gpuA = A.gpu(device);
         Tensor gpuB = B.gpu(device);
         Tensor gpuC = gpuA.matmul(gpuB);
-
+        
         assertArrayEquals(C.shape(), gpuC.shape());
         assertArrayEquals(C.data(), gpuC.data(), 0.0001f);
     }

@@ -13,7 +13,6 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.jocl.*;
 
-import java.io.FileOutputStream;
 import java.lang.ref.Cleaner;
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -133,10 +132,10 @@ public class GpuTensor extends BaseTensor {
         GpuContext.register(device, "l2_clip", gradientClipProgram);
     }
 
-    private long roundUp(int groupSize, int globalSize) {
-        int r = globalSize % groupSize;
+    private long roundUp(int globalSize) {
+        int r = globalSize % 16;
         if (r == 0) return globalSize;
-        return globalSize + groupSize - r;
+        return globalSize + 16 - r;
     }
 
     private Tensor launchScalarKernel(String kernelName, float value) {
@@ -290,10 +289,11 @@ public class GpuTensor extends BaseTensor {
     public Tensor activate(Activation activation) {
         return super.activate(activation);
     }
+    
     @Override
     public Tensor matmul(Tensor other) {
         if (!(other instanceof GpuTensor B)) {
-            throw new IllegalArgumentException("Other tensor is not an instance of TensorGPU.");
+            return matmul(other.gpu(device));
         }
         
         int[] shapeA = shape();
@@ -399,8 +399,8 @@ public class GpuTensor extends BaseTensor {
         
         final int TILE_SIZE = 16;
         long[] globalWorkSize = new long[] {
-            roundUp(TILE_SIZE, M),
-            roundUp(TILE_SIZE, P),
+            roundUp(M),
+            roundUp(P),
             batchCount
         };
         long[] localWorkSize = new long[] { TILE_SIZE, TILE_SIZE, 1 };
@@ -415,9 +415,11 @@ public class GpuTensor extends BaseTensor {
         Pointer pointerB = Pointer.to(offsetsBBuf);
         Pointer pointerC = Pointer.to(offsetsCBuf);
         
-        cl_mem memoryA = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, offsetsA.length, pointerA, null);
-        cl_mem memoryB = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, offsetsB.length, pointerB, null);
-        cl_mem memoryC = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, offsetsC.length, pointerC, null);
+        long flags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
+        
+        cl_mem memoryA = clCreateBuffer(context, flags, offsetsA.length * 4L, pointerA, null);
+        cl_mem memoryB = clCreateBuffer(context, flags, offsetsB.length * 4L, pointerB, null);
+        cl_mem memoryC = clCreateBuffer(context, flags, offsetsC.length * 4L, pointerC, null);
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "matmul_batched")

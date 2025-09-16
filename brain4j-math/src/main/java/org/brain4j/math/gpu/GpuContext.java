@@ -81,14 +81,12 @@ public class GpuContext {
         if (queue == null) {
             throw new IllegalStateException("No command queue registered for device: " + device);
         }
-
+        
+        queues.get(device).remove();
         cl_command_queue commandQueue = queue.queue();
 
         if (commandQueue == null) return;
 
-        System.out.println("Closing command queue " + commandQueue);
-
-        queues.get(device).remove();
         closeQueue(commandQueue);
     }
 }

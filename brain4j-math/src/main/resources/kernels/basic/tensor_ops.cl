@@ -19,7 +19,9 @@ __kernel void matmul_batched(
     int local_row = get_local_id(0);
     int local_col = get_local_id(1);
 
-    if (batch >= batchCount || row >= M || col >= P) return;
+    if (batch >= batchCount) return;
+
+    bool valid = (row < M) && (col < P);
 
     const __global float* A_batch = A + offsetsA[batch];
     const __global float* B_batch = B + offsetsB[batch];
@@ -57,7 +59,9 @@ __kernel void matmul_batched(
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
-    C_batch[row * P + col] = sum;
+    if (valid) {
+        C_batch[row * P + col] = sum;
+    }
 }
 
 __kernel void matmul(

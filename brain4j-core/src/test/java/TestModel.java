@@ -10,6 +10,7 @@ import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.Sample;
+import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ public class TestModel {
         ListDataSource dataSource = new ListDataSource(samples, true, 4);
         Brain4J.disableLogging();
         
+        Device device = Brain4J.firstDevice();
+        
         Model model = Sequential.of(
             new InputLayer(2),
             new DenseLayer(32, Activations.RELU),
@@ -42,9 +45,15 @@ public class TestModel {
             new DenseLayer(1, Activations.SIGMOID)
         );
         model.compile(new BinaryCrossEntropy(), new AdamW(0.01));
+        model.to(device);
+        dataSource = dataSource.to(device);
         model.fit(dataSource, 500);
         
         EvaluationResult result = model.evaluate(dataSource);
+        
+        System.out.println("loss = " + result.loss());
+        System.out.println("accuracy = " + result.accuracy());
+        
         Assertions.assertTrue(result.loss() < 0.005);
     }
 }

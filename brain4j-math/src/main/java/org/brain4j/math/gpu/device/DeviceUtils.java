@@ -19,7 +19,7 @@ public class DeviceUtils {
     }
 
     public static Device findDevice(String name) {
-        int gpuMask = DeviceType.GPU.getMask();
+        int gpuMask = 1 << 2;
         int[] numPlatformsArray = new int[1];
 
         clGetPlatformIDs(0, null, numPlatformsArray);
