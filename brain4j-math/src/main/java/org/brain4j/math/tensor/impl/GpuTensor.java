@@ -108,7 +108,8 @@ public class GpuTensor extends BaseTensor {
         cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
         cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
         
-        String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
+        String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched",
+            "add", "sub", "mul", "div", "transpose", "sum_along_dim", "softmax_last_dim" };
 
         for (String kernel : tensorOpsKernels) {
             GpuContext.register(device, kernel, tensorOpsProgram);
@@ -649,24 +650,12 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor layerNorm(double epsilon) {
-        int batchSize = 1;
-        int featuresSize = shape[0];
-
-        if (shape.length == 2) {
-            batchSize = shape[0];
-            featuresSize = shape[1];
-        }
-
-        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory.create(device, "layer_norm")
-                .addMemParam(dataBuffer)
-                .addIntParam(batchSize)
-                .addIntParam(featuresSize)
-                .addFloatParam((float) epsilon)
-                .launch(queue, 1, batchSize);
-        }
-
-        return this;
+        Tensor meanA = this.mean(-1, true);
+        Tensor varianceA = this.variance(meanA, -1, true);
+        
+        Tensor denominator = varianceA.add(epsilon).pow(0.5);
+        
+        return this.minus(meanA).div(denominator);
     }
 
     @Override

@@ -206,7 +206,6 @@ __kernel void transpose(
     int srcOffset = 0;
     int tmp = dstLinearIdx;
 
-    // invece di un array idx, usiamo due variabili per le ultime due dimensioni
     int idx_second_last = 0;
     int idx_last = 0;
 
@@ -222,7 +221,7 @@ __kernel void transpose(
     tmp = dstLinearIdx;
     for (int i = 0; i < rank; i++) {
         int srcIdx;
-        int idx_i = tmp / dstStrides[i]; // o calcolato separatamente
+        int idx_i = tmp / dstStrides[i];
         tmp = tmp % dstStrides[i];
 
         if (i == rank-2) srcIdx = idx_last;
@@ -233,7 +232,6 @@ __kernel void transpose(
     }
     output[dstOffset] = input[srcOffset];
 }
-
 
 __kernel void sum_along_dim(
     __global const float* input,
@@ -255,42 +253,6 @@ __kernel void sum_along_dim(
 
     int resultIndex = gid_outer * innerSize + gid_inner;
     output[resultIndex] = sum;
-}
-
-__kernel void layer_norm(
-    __global float* data,
-    const int batchSize,
-    const int featuresSize,
-    const float epsilon
-) {
-    int batch_idx = get_global_id(0);
-
-    if (batch_idx >= batchSize) return;
-
-    int offset = batch_idx * featuresSize;
-
-    float mean = 0.0f;
-
-    for (int j = 0; j < featuresSize; j++) {
-        mean += data[offset + j];
-    }
-
-    mean /= featuresSize;
-
-    float variance = 0.0f;
-
-    for (int j = 0; j < featuresSize; j++) {
-        float diff = data[offset + j] - mean;
-        variance += diff * diff;
-    }
-
-    variance /= featuresSize;
-
-    float denom = sqrt(variance + epsilon);
-
-    for (int j = 0; j < featuresSize; j++) {
-        data[offset + j] = (data[offset + j] - mean) / denom;
-    }
 }
 
 __kernel void softmax_last_dim(

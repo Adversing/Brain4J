@@ -659,6 +659,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor mean(int dim, boolean keepDim) {
+        if (dim == -1) dim = rank() - 1;
+        
         Tensor summed = this.sum(dim, keepDim);
 
         float divisor = shape[dim];
@@ -673,7 +675,22 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         
         return result;
     }
-
+    
+    @Override
+    public Tensor variance(int dim, boolean keepDim) {
+        return variance(mean(dim, keepDim), dim, keepDim);
+    }
+    
+    @Override
+    public Tensor variance(Tensor mean, int dim, boolean keepDim) {
+        if (dim == -1) dim = rank() - 1;
+        
+        Tensor meanFirstSquare = clone().pow(2).mean(dim, keepDim);
+        Tensor meanSecondSquare = mean.clone().pow(2);
+        
+        return meanFirstSquare.sub(meanSecondSquare);
+    }
+    
     @Override
     public Tensor sign() {
         Tensor result = Tensors.zeros(shape);

@@ -461,7 +461,7 @@ public interface Tensor extends Iterable<Float> {
     /**
      * Computes the sum of elements along the specified dimension.
      *
-     * @param dim the dimension along which to sum the elements
+     * @param dim the dimension along which to sum the elements, -1 to specify the last dimension
      * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
      * @return a new tensor containing the sum along the specified dimension
      */
@@ -470,11 +470,28 @@ public interface Tensor extends Iterable<Float> {
     /**
      * Computes the mean of elements along the specified dimension.
      *
-     * @param dim the dimension along which to compute the mean
+     * @param dim the dimension along which to compute the mean, -1 to specify the last dimension
      * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
      * @return a new tensor containing the mean along the specified dimension
      */
     Tensor mean(int dim, boolean keepDim);
+    
+    /**
+     * Computes the variance of elements along the specified dimension.
+     * @param dim the dimension along which to compute the mean, -1 to specify the last dimension
+     * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
+     * @return a new tensor containing the variance along the specified dimension
+     */
+    Tensor variance(int dim, boolean keepDim);
+    
+    /**
+     * Computes the variance of elements along the specified dimension with a specified mean tensor.
+     * @param mean a tensor representing the mean of this tensor.
+     * @param dim the dimension along which to compute the mean, -1 to specify the last dimension
+     * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
+     * @return a new tensor containing the variance along the specified dimension
+     */
+    Tensor variance(Tensor mean, int dim, boolean keepDim);
 
     /**
      * Computes the sign of each element in the tensor.
