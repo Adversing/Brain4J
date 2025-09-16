@@ -7,7 +7,6 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.*;
-import org.brain4j.math.tensor.broadcast.TensorBroadcast;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelMap;
 
@@ -73,14 +72,27 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         }
 
         Range range = dim < ranges.length ? ranges[dim] : null;
-        int start = 0;
-        int end = shape[dim];
-        int step = 1;
+        int dimension = shape[dim];
 
-        if (range != null) {
-            start = range.start(shape[dim]);
-            end = range.end(shape[dim]);
-            step = range.step();
+        int start = range == null ? 0 : range.start(dimension);
+        int end = range == null ? shape[dim] : range.end(dimension);
+        int step = range == null ? 1 : range.step();
+
+        if (dim == shape.length - 1 && step == 1) {
+            int length = end - start;
+
+            srcIndices[dim] = start;
+            dstIndices[dim] = 0;
+
+            int srcOffset = Tensors.flattenIndex(srcIndices, this.strides);
+            int dstOffset = Tensors.flattenIndex(dstIndices, result.strides());
+
+            System.arraycopy(
+                this.data, srcOffset,
+                result.data(), dstOffset,
+                length
+            );
+            return;
         }
 
         for (int i = start, j = 0; i < end; i += step, j++) {
@@ -227,7 +239,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
     
     @Override
-    public int getLinearIndex(int... indices) {
+    public int linearIndex(int... indices) {
         if (indices.length != shape.length) {
             throw new IllegalArgumentException(
                 "The shape of the tensor does not match the number of indices");
@@ -246,12 +258,12 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public float get(int... indices) {
-        return data()[getLinearIndex(indices)];
+        return data()[linearIndex(indices)];
     }
 
     @Override
     public Tensor set(float value, int... indices) {
-        data[getLinearIndex(indices)] = value;
+        data[linearIndex(indices)] = value;
         return this;
     }
 

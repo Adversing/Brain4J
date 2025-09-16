@@ -597,7 +597,7 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor slice(Range... ranges) {
-        return super.slice(ranges);
+        return null;
     }
 
     @Override

@@ -54,7 +54,7 @@ public interface Tensor extends Iterable<Float> {
      * @param indices the multidimensional indices of the tensor
      * @return a linear index that represent the specified indices in 1 dimension
      */
-    int getLinearIndex(int... indices);
+    int linearIndex(int... indices);
 
     /**
      * Gets the value at the specified indices in the tensor.
@@ -499,7 +499,7 @@ public interface Tensor extends Iterable<Float> {
      * Selects a sub-tensor from this tensor, given the specified dimension
      * and index.
      *
-     * @param dim The dimension to select from.
+     * @param dim the dimension to select from
      * @param index the index in the specified dimension to select
      * @return a new tensor with the selected values
      */
@@ -508,7 +508,7 @@ public interface Tensor extends Iterable<Float> {
     /**
      * Slices the tensor according to the specified ranges for each dimension.
      *
-     * @param ranges The ranges specifying the slice for each dimension.
+     * @param ranges the ranges specifying the slice for each dimension
      * @return a new tensor containing the sliced data
      * @throws IllegalArgumentException if more ranges are specified than the number of dimensions
      */
