@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static org.brain4j.math.Tensors.ones;
+import static org.brain4j.math.Tensors.unravelIndex;
 
 public abstract class BaseTensor implements Tensor, Cloneable {
 
@@ -217,6 +218,20 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public float[] data() {
         return data;
+    }
+
+    @Override
+    public float[] toArray() {
+        if (!transposed) return data;
+
+        float[] result = new float[data.length];
+
+        for (int i = 0; i < data.length; i++) {
+            int[] srcIndices = unravelIndex(i, shape);
+            result[i] = data[linearIndex(srcIndices)];
+        }
+
+        return result;
     }
 
     @Override

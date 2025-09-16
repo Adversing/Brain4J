@@ -197,38 +197,28 @@ public class GpuTensor extends BaseTensor {
         }
 
         int[] newShape = shape.clone();
-        int[] newStrides = strides.clone();
 
         newShape[rank - 2] = shape[rank - 1];
         newShape[rank - 1] = shape[rank - 2];
 
-        newStrides[rank - 1] = strides[rank - 2];
-        newStrides[rank - 2] = strides[rank - 1];
+        GpuTensor result = Tensors.zeros(newShape).gpu(device);
 
-        GpuTensor result = Tensors.create(newShape, newStrides).gpu(device);
+        if (usesGrad()) result.setAutogradContext(autogradContext);
 
-        if (usesGrad()) {
-            result.setAutogradContext(autogradContext);
-        }
+        int[] newStrides = result.strides();
+        long flags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
 
-        int rows = shape[0];
-        int cols = shape[1];
-        int inRowStride = strides[0];
-        int inColStride = strides[1];
-        int outRowStride = result.strides[0];
-        int outColStride = result.strides[1];
+        Pointer dstStridesPtr = Pointer.to(newStrides);
+        cl_mem memoryDestStrides = clCreateBuffer(device.context(), flags, newStrides.length * 4L, dstStridesPtr, null);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "transpose")
                 .addMemParam(dataBuffer)
                 .addMemParam(result.dataBuffer)
-                .addIntParam(rows)
-                .addIntParam(cols)
-                .addIntParam(inRowStride)
-                .addIntParam(inColStride)
-                .addIntParam(outRowStride)
-                .addIntParam(outColStride)
-                .launch(queue, 2, rows, cols);
+                .addMemParam(stridesBuffer)
+                .addMemParam(memoryDestStrides)
+                .addIntParam(rank)
+                .launch(queue, 1, elements());
         }
 
         return result;
@@ -690,6 +680,11 @@ public class GpuTensor extends BaseTensor {
         clReleaseCommandQueue(queue);
 
         return buffer;
+    }
+
+    @Override
+    public float[] toArray() {
+        return data();
     }
 
     @Override

@@ -190,26 +190,46 @@ __kernel void div(
     }
 }
 
-
 __kernel void transpose(
     __global const float* input,
     __global float* output,
-    const int rows,
-    const int cols,
-    const int inRowStride,
-    const int inColStride,
-    const int outRowStride,
-    const int outColStride
+    __global const int* srcStrides,
+    __global const int* dstStrides,
+    const int rank
 ) {
-    int row = get_global_id(0);
-    int col = get_global_id(1);
+    int dstLinearIdx = get_global_id(0);
+    int dstOffset = 0;
+    int srcOffset = 0;
+    int tmp = dstLinearIdx;
 
-    if (row < rows && col < cols) {
-        int inputIndex = row * inRowStride + col * inColStride;
-        int outputIndex = col * outRowStride + row * outColStride;
-        output[outputIndex] = input[inputIndex];
+    // invece di un array idx, usiamo due variabili per le ultime due dimensioni
+    int idx_second_last = 0;
+    int idx_last = 0;
+
+    for (int i = 0; i < rank; i++) {
+        int idx_i = tmp / dstStrides[i];
+        tmp = tmp % dstStrides[i];
+        dstOffset += idx_i * dstStrides[i];
+
+        if (i == rank-2) idx_second_last = idx_i;
+        else if (i == rank-1) idx_last = idx_i;
     }
+
+    tmp = dstLinearIdx;
+    for (int i = 0; i < rank; i++) {
+        int srcIdx;
+        int idx_i = tmp / dstStrides[i]; // o calcolato separatamente
+        tmp = tmp % dstStrides[i];
+
+        if (i == rank-2) srcIdx = idx_last;
+        else if (i == rank-1) srcIdx = idx_second_last;
+        else srcIdx = idx_i;
+
+        srcOffset += srcIdx * srcStrides[i];
+    }
+    output[dstOffset] = input[srcOffset];
 }
+
 
 __kernel void sum_along_dim(
     __global const float* input,

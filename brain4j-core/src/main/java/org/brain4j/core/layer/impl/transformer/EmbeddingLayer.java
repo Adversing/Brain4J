@@ -76,12 +76,6 @@ public class EmbeddingLayer extends Layer {
 
         Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim);
 
-        if (input instanceof GpuTensor gpuTensor) {
-            output = output.to(gpuTensor.device());
-        }
-
-        output = output.withGrad();
-
         float[] outData = output.data();
         float[] weightData = weights.data();
 

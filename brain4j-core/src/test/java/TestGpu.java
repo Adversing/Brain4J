@@ -150,10 +150,7 @@ public class TestGpu {
         Tensor gpuA = A.gpu(device);
         Tensor gpuB = gpuA.transpose();
 
-        System.out.println(Arrays.toString(B.shape()));
-        System.out.println(Arrays.toString(gpuB.shape()));
-
         assertArrayEquals(B.shape(), gpuB.shape());
-        assertArrayEquals(B.data(), gpuB.data(), 0.0001f);
+        assertArrayEquals(B.toArray(), gpuB.data(), 0.0001f);
     }
 }

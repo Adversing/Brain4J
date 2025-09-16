@@ -38,6 +38,13 @@ public interface Tensor extends Iterable<Float> {
     float[] data();
 
     /**
+     * Retrieves the data of the tensor with the right order as a float array.
+     * This is useful when lazy-transposition is enabled.
+     * @return the tensor's data
+     */
+    float[] toArray();
+
+    /**
      * Retrieves the strides of the tensor as an array of integers.
      * @return the strides of the tensor
      */

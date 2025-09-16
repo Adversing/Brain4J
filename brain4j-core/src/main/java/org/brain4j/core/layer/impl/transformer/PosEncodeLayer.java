@@ -5,6 +5,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,7 +58,15 @@ public class PosEncodeLayer extends Layer {
             System.arraycopy(addData, 0, posData, index, addData.length);
         }
 
-        return new Tensor[] { input.add(positional) };
+        Tensor output = input.plus(positional);
+
+        if (input instanceof GpuTensor gpuTensor) {
+            output = output.to(gpuTensor.device());
+        }
+
+        output = output.withGrad();
+
+        return new Tensor[] { output };
     }
 
     @Override

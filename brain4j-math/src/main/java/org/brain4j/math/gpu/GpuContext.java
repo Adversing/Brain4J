@@ -53,7 +53,7 @@ public class GpuContext {
     public static GpuQueue getOrCreate(Device device) {
         GpuQueue current = queue(device);
 
-        if (current == null) {
+        if (current == null || current.queue() == null) {
             current = new GpuQueue(device.newCommandQueue(), true);
         }
 
@@ -83,6 +83,12 @@ public class GpuContext {
         }
 
         cl_command_queue commandQueue = queue.queue();
+
+        if (commandQueue == null) return;
+
+        System.out.println("Closing command queue " + commandQueue);
+
+        queues.get(device).remove();
         closeQueue(commandQueue);
     }
 }
