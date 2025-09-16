@@ -2,6 +2,7 @@ package org.brain4j.core.layer.impl.transformer;
 
 import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
@@ -57,7 +58,12 @@ public class EmbeddingLayer extends Layer {
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
-
+    
+    @Override
+    public void toDevice(Device device) {
+        // No-op
+    }
+    
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         checkInputLength(1, inputs);
@@ -91,6 +97,10 @@ public class EmbeddingLayer extends Layer {
                 }
             });
 
+        if (input instanceof GpuTensor gpuInput) {
+            output = output.gpu(gpuInput.device());
+        }
+        
         cache.rememberInput(this, inputs);
         cache.rememberOutput(this, output);
 
