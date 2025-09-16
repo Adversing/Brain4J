@@ -19,7 +19,7 @@ public class Tensors {
         return new CpuTensor(shape, data);
     }
 
-    public static Tensor create(int[] shape, int[] strides, float[] data) {
+    public static Tensor create(int[] shape, int[] strides, float... data) {
         return new CpuTensor(shape, strides, data);
     }
 

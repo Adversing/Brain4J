@@ -40,9 +40,9 @@ public class AttentionHead {
     }
 
     public void toDevice(Device device) {
-        queryWeights.to(device);
-        keyWeights.to(device);
-        valueWeights.to(device);
+        queryWeights = queryWeights.to(device);
+        keyWeights = keyWeights.to(device);
+        valueWeights = valueWeights.to(device);
     }
 
     public Tensor attend(Tensor input) {

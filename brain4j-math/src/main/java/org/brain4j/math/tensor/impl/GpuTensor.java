@@ -109,7 +109,7 @@ public class GpuTensor extends BaseTensor {
         cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
         cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
         
-        String[] tensorOpsKernels = { "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
+        String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched", "add", "sub", "mul", "div", "transpose", "sum_along_dim", "layer_norm", "softmax_last_dim" };
 
         for (String kernel : tensorOpsKernels) {
             GpuContext.register(device, kernel, tensorOpsProgram);
@@ -190,25 +190,29 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor transpose() {
-        if (rank() == 1) {
+        int rank = rank();
+
+        if (rank == 1) {
             return reshape(1, elements());
         }
 
-        if (shape.length != 2) {
-            throw new UnsupportedOperationException(
-                "transpose() is supported only for 2D tensors, not for tensors with " + shape.length + " dimensions"
-            );
-        }
+        int[] newShape = shape.clone();
+        int[] newStrides = strides.clone();
 
-        int rows = shape[0];
-        int cols = shape[1];
+        newShape[rank - 2] = shape[rank - 1];
+        newShape[rank - 1] = shape[rank - 2];
 
-        GpuTensor result = Tensors.matrix(cols, rows).gpu(device);
+        newStrides[rank - 1] = strides[rank - 2];
+        newStrides[rank - 2] = strides[rank - 1];
+
+        GpuTensor result = Tensors.create(newShape, newStrides).gpu(device);
 
         if (usesGrad()) {
             result.setAutogradContext(autogradContext);
         }
 
+        int rows = shape[0];
+        int cols = shape[1];
         int inRowStride = strides[0];
         int inColStride = strides[1];
         int outRowStride = result.strides[0];
@@ -597,7 +601,58 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor slice(Range... ranges) {
-        return null;
+        if (ranges.length > shape.length) {
+            throw new IllegalArgumentException("Too many ranges specified");
+        }
+
+        int[] newShape = new int[shape.length];
+
+        for (int i = 0; i < shape.length; i++) {
+            if (i < ranges.length && ranges[i] != null) {
+                newShape[i] = ranges[i].size(shape[i]);
+            } else {
+                newShape[i] = shape[i];
+            }
+        }
+
+        GpuTensor result = new GpuTensor(device, newShape);
+
+        int[] starts = new int[ranges.length];
+        int[] steps = new int[ranges.length];
+
+        for (int i = 0; i < ranges.length; i++) {
+            Range range = ranges[i];
+            starts[i] = range.start();
+            steps[i] = range.step();
+        }
+
+        if (usesGrad()) result.setAutogradContext(autogradContext);
+
+        Pointer destShapePtr = Pointer.to(newShape);
+        Pointer startPtr = Pointer.to(starts);
+        Pointer stepPtr = Pointer.to(steps);
+
+        cl_context context = device.context();
+        long flags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
+
+        cl_mem memoryShape = clCreateBuffer(context, flags, newShape.length * 4L, destShapePtr, null);
+        cl_mem memoryStart = clCreateBuffer(context, flags, starts.length * 4L, startPtr, null);
+        cl_mem memoryStep = clCreateBuffer(context, flags, steps.length * 4L, stepPtr, null);
+
+        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
+            KernelFactory.create(device, "slice")
+                .addMemParam(this.dataBuffer)
+                .addMemParam(result.dataBuffer)
+                .addMemParam(this.stridesBuffer)
+                .addMemParam(result.stridesBuffer)
+                .addMemParam(memoryShape)
+                .addMemParam(memoryStart)
+                .addMemParam(memoryStep)
+                .addIntParam(rank())
+                .launch(queue, 1, result.elements());
+        }
+
+        return result;
     }
 
     @Override

@@ -141,4 +141,19 @@ public class TestGpu {
 
         assertEquals(B.get(0), gpuB.get(0), 0.0001f);
     }
+
+    @Test
+    public void transposeTest() {
+        Tensor A = Tensors.random(1, 2, 3, 4);
+        Tensor B = A.transpose();
+
+        Tensor gpuA = A.gpu(device);
+        Tensor gpuB = gpuA.transpose();
+
+        System.out.println(Arrays.toString(B.shape()));
+        System.out.println(Arrays.toString(gpuB.shape()));
+
+        assertArrayEquals(B.shape(), gpuB.shape());
+        assertArrayEquals(B.data(), gpuB.data(), 0.0001f);
+    }
 }

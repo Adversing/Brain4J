@@ -7,6 +7,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
+import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
@@ -73,7 +74,13 @@ public class EmbeddingLayer extends Layer {
         int batchSize = shape[0];
         int seqLength = shape[1];
 
-        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim).withGrad();
+        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim);
+
+        if (input instanceof GpuTensor gpuTensor) {
+            output = output.to(gpuTensor.device());
+        }
+
+        output = output.withGrad();
 
         float[] outData = output.data();
         float[] weightData = weights.data();

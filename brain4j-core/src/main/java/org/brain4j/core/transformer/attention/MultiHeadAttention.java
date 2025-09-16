@@ -52,6 +52,8 @@ public class MultiHeadAttention {
         for (AttentionHead head : heads) {
             head.toDevice(device);
         }
+
+        outProjWeights = outProjWeights.to(device);
     }
 
     public void compile(Random generator, WeightInitialization weightInit) {

@@ -298,6 +298,36 @@ __kernel void softmax_last_dim(
     }
 }
 
+__kernel void slice(
+    __global const float* srcData,
+    __global float* dstData,
+    __global const int* srcStrides,
+    __global const int* dstStrides,
+    __global const int* dstShape,
+    __global const int* starts,
+    __global const int* steps,
+    const int rank
+) {
+    int dstLinearIdx = get_global_id(0);
+
+    int totalElements = 1;
+    for (int i = 0; i < rank; i++) totalElements *= dstShape[i];
+    if (dstLinearIdx >= totalElements) return;
+
+    int tmp = dstLinearIdx;
+    int srcOffset = 0;
+
+    for (int i = 0; i < rank; i++) {
+        int idx = tmp / dstStrides[i];
+        tmp = tmp % dstStrides[i];
+
+        int srcIdx = starts[i] + idx * steps[i];
+        srcOffset += srcIdx * srcStrides[i];
+    }
+
+    dstData[dstLinearIdx] = srcData[srcOffset];
+}
+
 __kernel void concat_last_dim(
     __global const float* A,
     __global const float* B,
