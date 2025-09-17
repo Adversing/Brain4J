@@ -13,14 +13,7 @@ import org.brain4j.core.training.updater.Updater;
 import java.util.function.BiConsumer;
 
 public record BackPropagation(Model model, Optimizer optimizer, Updater updater) {
-    
-    public BackPropagation(Model model, Optimizer optimizer, Updater updater) {
-        this.model = model;
-        this.optimizer = optimizer;
-        this.updater = updater;
-        updater.resetGradients();
-    }
-    
+
     public void propagatePartition(
         Pair<Tensor[], Tensor[]> batch,
         BiConsumer<Integer, Double> postBatchCallback,
