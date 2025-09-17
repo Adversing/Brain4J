@@ -46,8 +46,13 @@ public class GpuContext {
 
     public static void updateQueue(Device device, StatesCache cache) {
         cl_command_queue queue = cache.commandQueue();
+
+        if (queue == null) {
+            queue = cache.newCommandQueue();
+        }
+
         GpuQueue updated = new GpuQueue(queue, false);
-        queues.computeIfAbsent(device, d -> new ThreadLocal<>()).set(updated);
+        queues.computeIfAbsent(device, _ -> new ThreadLocal<>()).set(updated);
     }
 
     public static GpuQueue getOrCreate(Device device) {

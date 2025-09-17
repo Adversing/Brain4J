@@ -1,5 +1,37 @@
 #define TILE_SIZE 16
 
+__kernel void layer_norm(
+    __global const float* input,
+    __global float* output,
+    const int features,
+    const int batchSize,
+    const float epsilon
+) {
+    int batchIdx = get_global_id(0);
+    if (batchIdx >= batchSize) return;
+
+    int base = batchIdx * features;
+
+    float mean = 0.0f;
+    for (int j = 0; j < features; j++) {
+        mean += input[base + j];
+    }
+    mean /= features;
+
+    float var = 0.0f;
+    for (int j = 0; j < features; j++) {
+        float diff = input[base + j] - mean;
+        var += diff * diff;
+    }
+    var /= features;
+
+    float denom = sqrt(var + epsilon);
+
+    for (int j = 0; j < features; j++) {
+        output[base + j] = (input[base + j] - mean) / denom;
+    }
+}
+
 __kernel void matmul_batched(
     __global const float* A,
     __global const float* B,

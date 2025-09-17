@@ -84,12 +84,14 @@ public class EmbeddingLayer extends Layer {
 
         float[] outData = output.data();
         float[] weightData = weights.data();
+        float[] inputData = input.data();
 
         IntStream.range(0, batchSize)
             .parallel()
             .forEach(b -> {
                 for (int s = 0; s < seqLength; s++) {
-                    int tokenId = (int) input.get(b, s);
+                    int index = input.linearIndex(b, s);
+                    int tokenId = (int) inputData[index];
                     int outOffset = (b * seqLength + s) * embeddingDim;
                     int weightOffset = tokenId * embeddingDim;
 

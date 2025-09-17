@@ -78,10 +78,6 @@ public class GraphModel implements Model {
                 computed.put(outputName, output);
             }
         }
-        
-        if (!cache.training() && device != null) {
-            GpuContext.closeQueue(device);
-        }
 
         Tensor[] outputs = new Tensor[outputNames.size()];
 
