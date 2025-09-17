@@ -16,7 +16,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'openjdk'
+          distribution: 'corretto'
           java-version: '25'
 
       - name: Grant execute permission for gradlew
