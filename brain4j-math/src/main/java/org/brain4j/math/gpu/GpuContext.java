@@ -51,7 +51,7 @@ public class GpuContext {
             queue = cache.newCommandQueue();
         }
 
-        GpuQueue updated = new GpuQueue(queue, false);
+        GpuQueue updated = new GpuQueue(device, queue, false);
         queues.computeIfAbsent(device, _ -> new ThreadLocal<>()).set(updated);
     }
 
@@ -59,7 +59,8 @@ public class GpuContext {
         GpuQueue current = queue(device);
 
         if (current == null || current.queue() == null) {
-            current = new GpuQueue(device.newCommandQueue(), true);
+            current = new GpuQueue(device, device.newCommandQueue(), true);
+            queues.computeIfAbsent(device, _ -> new ThreadLocal<>()).set(current);
         }
 
         return current;
@@ -68,7 +69,7 @@ public class GpuContext {
     public static GpuQueue queue(Device device) {
         ThreadLocal<GpuQueue> localQueue = queues.get(device);
 
-        if (localQueue == null || localQueue.get() == null) {
+        if (localQueue == null) {
             return null;
         }
 
@@ -80,7 +81,7 @@ public class GpuContext {
         clReleaseCommandQueue(queue);
     }
 
-    public static void closeQueue(Device device) {
+    public static void closeQueue(Device device, StatesCache cache) {
         GpuQueue queue = queue(device);
 
         if (queue == null) {
@@ -88,6 +89,8 @@ public class GpuContext {
         }
         
         queues.get(device).remove();
+        cache.disposeCommandQueue();
+
         cl_command_queue commandQueue = queue.queue();
 
         if (commandQueue == null) return;

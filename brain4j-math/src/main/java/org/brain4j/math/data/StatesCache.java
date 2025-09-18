@@ -76,5 +76,9 @@ public class StatesCache {
     public cl_command_queue newCommandQueue() {
         return commandQueue = device.newCommandQueue();
     }
+
+    public void disposeCommandQueue() {
+        this.commandQueue = null;
+    }
 }
 

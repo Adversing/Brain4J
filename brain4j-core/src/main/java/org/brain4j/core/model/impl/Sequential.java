@@ -324,6 +324,10 @@ public class Sequential extends Layer implements Model {
             result = layer.forward(cache, result);
         }
 
+        if (device != null && !cache.training()) {
+            GpuContext.closeQueue(device, cache);
+        }
+
         return result;
     }
 

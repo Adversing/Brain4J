@@ -85,6 +85,10 @@ public class GraphModel implements Model {
             outputs[i] = computed.get(outputNames.get(i));
         }
 
+        if (device != null && !cache.training()) {
+            GpuContext.closeQueue(device, cache);
+        }
+
         return outputs;
     }
 
