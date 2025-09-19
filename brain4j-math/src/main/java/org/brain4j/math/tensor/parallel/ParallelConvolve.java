@@ -6,6 +6,9 @@ import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.convolve.ConvolveProvider;
+import org.brain4j.math.tensor.convolve.impl.NormalConvolveProvider;
+import org.brain4j.math.tensor.convolve.impl.SIMDConvolveProvider;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
@@ -31,7 +34,7 @@ public class ParallelConvolve extends RecursiveAction {
     private final Im2ColParams params;
     private final int startPatch;
     private final int endPatch;
-
+    
     private ParallelConvolve(Im2ColParams params, int startPatch, int endPatch) {
         this.params = params;
         this.startPatch = startPatch;
@@ -77,6 +80,8 @@ public class ParallelConvolve extends RecursiveAction {
     public static Tensor convolve(Tensor a, Tensor b) {
         while (a.rank() < 3) a = a.unsqueeze();
         while (b.rank() < 3) b = b.unsqueeze();
+        
+        ConvolveProvider provider = DeviceUtils.isSimdAvailable() ? new SIMDConvolveProvider() : new NormalConvolveProvider();
         
         int[] aShape = a.shape();
         int[] bShape = b.shape();
@@ -151,68 +156,11 @@ public class ParallelConvolve extends RecursiveAction {
                 int outBase = aBatch > 1
                     ? (batchIdx * numFilters + filter) * totalPatches
                     : filter * totalPatches;
-
-                if (DeviceUtils.isSimdAvailable()) {
-                    simdDotPerFilter(totalPatches, patchSize, filterData, filterOffset, patchData, outData, outBase);
-                } else {
-                    normalDotPerFilter(totalPatches, patchSize, filterData, filterOffset, patchData, outData, outBase);
-                }
+                
+                provider.dotPerFilter(totalPatches, patchSize, filterData, filterOffset, patchData, outData, outBase);
             }
         }
         
         return out.squeeze();
-    }
-
-    private static void normalDotPerFilter(
-        int totalPatches,
-        int patchSize,
-        float[] filterData,
-        int filterOffset,
-        float[] patchData,
-        float[] outData,
-        int outBase
-    ) {
-        for (int p = 0; p < totalPatches; p++) {
-            float sum = 0f;
-            int rowOffset = p * patchSize;
-
-            for (int i = 0; i < patchSize; i++) {
-                sum += filterData[filterOffset + i] * patchData[rowOffset + i];
-            }
-
-            outData[outBase + p] = sum;
-        }
-    }
-
-    private static void simdDotPerFilter(
-        int totalPatches,
-        int patchSize,
-        float[] filterData,
-        int filterOffset,
-        float[] patchData,
-        float[] outData,
-        int outBase
-    ) {
-        VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
-
-        for (int p = 0; p < totalPatches; p++) {
-            float sum = 0f;
-            int rowOffset = p * patchSize;
-
-            int i = 0;
-            int loopBound = SPECIES.loopBound(patchSize);
-
-            for (; i < loopBound; i += SPECIES.length()) {
-                var v1 = FloatVector.fromArray(SPECIES, filterData, filterOffset + i);
-                var v2 = FloatVector.fromArray(SPECIES, patchData, rowOffset + i);
-                sum += v1.mul(v2).reduceLanes(VectorOperators.ADD);
-            }
-
-            for (; i < patchSize; i++) {
-                sum += filterData[filterOffset + i] * patchData[rowOffset + i];
-            }
-
-            outData[outBase + p] = sum;
-        }
     }
 }
