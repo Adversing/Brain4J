@@ -1,8 +1,5 @@
 package org.brain4j.math.tensor.parallel;
 
-import jdk.incubator.vector.FloatVector;
-import jdk.incubator.vector.VectorOperators;
-import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.tensor.Tensor;
