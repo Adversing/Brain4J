@@ -201,7 +201,7 @@ public class GpuTensor extends BaseTensor {
         newShape[rank - 2] = shape[rank - 1];
         newShape[rank - 1] = shape[rank - 2];
 
-        GpuTensor result = Tensors.zeros(newShape).gpu(device);
+        GpuTensor result = new GpuTensor(device, newShape);
 
         if (usesGrad()) result.setAutogradContext(autogradContext);
 
