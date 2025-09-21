@@ -70,28 +70,11 @@ public class Tensors {
             throw new IllegalArgumentException("No tensors provided!");
         }
 
-        Tensor first = tensors.getFirst();
-        int dimension = first.rank();
+        Tensor result = tensors.getFirst().unsqueeze();
 
-        int[] shape = first.shape();
-        int[] newShape = new int[dimension + 1];
-
-        newShape[0] = tensors.size();
-        System.arraycopy(shape, 0, newShape, 1, dimension);
-
-        Tensor result = zeros(newShape);
-
-        for (int i = 0; i < tensors.size(); i++) {
-            Tensor current = tensors.get(i);
-
-            if (current.rank() != dimension) {
-                throw new IllegalArgumentException(
-                        "All input tensors must have the same dimension!"
-                );
-            }
-
-            int[] idx = new int[dimension];
-            copyRecursive(current, result, idx, 0, i);
+        for (int i = 1; i < tensors.size(); i++) {
+            Tensor current = tensors.get(i).unsqueeze();
+            result = result.concat(current, 0);
         }
 
         return result;

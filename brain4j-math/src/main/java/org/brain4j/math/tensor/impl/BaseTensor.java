@@ -531,7 +531,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             }
         }
         
-        Tensor result = Tensors.create(newShape, data());
+        Tensor result = reshape(newShape);
         result.setAutogradContext(autogradContext);
         
         return result;

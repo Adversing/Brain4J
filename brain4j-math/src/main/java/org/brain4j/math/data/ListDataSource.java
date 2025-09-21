@@ -294,8 +294,6 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         batchedInputs.addAll(newBatchedInputs);
         batchedLabels.addAll(newBatchedLabels);
 
-        computeBatches();
-
         return this;
     }
 
