@@ -125,7 +125,7 @@ public class TransformerEncoder extends Layer {
         normalizer2.initWeights(generator, embeddingDim, embeddingDim);
         upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
         downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
-        attention.compile(generator, weightInit);
+        attention.initWeights(generator, weightInit);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class TransformerEncoder extends Layer {
             attended = dropout.forward(cache, attended)[0];
         }
 
-        Tensor added = attended.add(input);
+        Tensor added = attended.addGrad(input);
         Tensor normalized = normalizer1.forward(cache, added)[0];
 
         Tensor upProjected = upProjection.forward(cache, normalized)[0];
@@ -164,7 +164,7 @@ public class TransformerEncoder extends Layer {
             downProjected = dropout.forward(cache, downProjected)[0];
         }
 
-        Tensor added2 = downProjected.add(normalized);
+        Tensor added2 = downProjected.addGrad(normalized);
         normalized = normalizer2.forward(cache, added2)[0];
 
         cache.rememberOutput(this, normalized);

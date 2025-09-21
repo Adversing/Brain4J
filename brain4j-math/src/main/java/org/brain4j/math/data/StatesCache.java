@@ -39,7 +39,7 @@ public class StatesCache {
             CLEANER.register(this, () -> GpuContext.closeQueue(commandQueue));
         }
     }
-    
+
     public boolean training() {
         return training;
     }

@@ -56,12 +56,12 @@ public class MultiHeadAttention {
         outProjWeights = outProjWeights.to(device);
     }
 
-    public void compile(Random generator, WeightInitialization weightInit) {
+    public void initWeights(Random generator, WeightInitialization weightInit) {
         for (AttentionHead head : heads) {
             head.initWeights(generator, weightInit);
         }
 
-        this.outProjWeights.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.outProjWeights.map(_ -> weightInit.generate(generator, embeddingDim, embeddingDim));
     }
     
     protected void initializeHeads() {

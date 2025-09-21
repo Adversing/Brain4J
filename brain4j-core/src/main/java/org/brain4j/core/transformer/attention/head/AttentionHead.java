@@ -34,9 +34,9 @@ public class AttentionHead {
     }
 
     public void initWeights(Random generator, WeightInitialization weightInit) {
-        queryWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
-        keyWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
-        valueWeights.map(x -> weightInit.generate(generator, embedDimension, headDimension));
+        queryWeights.map(_ -> weightInit.generate(generator, embedDimension, headDimension));
+        keyWeights.map(_ -> weightInit.generate(generator, embedDimension, headDimension));
+        valueWeights.map(_ -> weightInit.generate(generator, embedDimension, headDimension));
     }
 
     public void toDevice(Device device) {
