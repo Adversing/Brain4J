@@ -69,6 +69,11 @@ public class EmbeddingLayer extends Layer {
         checkInputLength(1, inputs);
 
         Tensor input = inputs[0];
+
+        if (input.rank() < 2) {
+            input = input.unsqueeze();
+        }
+
         int[] shape = input.shape();
 
         if (shape.length != 2) {
@@ -86,11 +91,12 @@ public class EmbeddingLayer extends Layer {
         float[] weightData = weights.data();
         float[] inputData = input.data();
 
+        Tensor finalInput = input;
         IntStream.range(0, batchSize)
             .parallel()
             .forEach(b -> {
                 for (int s = 0; s < seqLength; s++) {
-                    int index = input.linearIndex(b, s);
+                    int index = finalInput.linearIndex(b, s);
                     int tokenId = (int) inputData[index];
                     int outOffset = (b * seqLength + s) * embeddingDim;
                     int weightOffset = tokenId * embeddingDim;

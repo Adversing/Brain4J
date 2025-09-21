@@ -68,8 +68,8 @@ public class Adam extends Optimizer {
         first.mul(beta1);
         second.mul(beta2);
         
-        Tensor gradBeta1 = gradient.times(1 - beta1);
-        Tensor gradBeta2 = gradSquared.times(1 - beta2);
+        Tensor gradBeta1 = gradient.mul(1 - beta1);
+        Tensor gradBeta2 = gradSquared.mul(1 - beta2);
         
         first.add(gradBeta1.broadcastLike(first));
         second.add(gradBeta2.broadcastLike(second));

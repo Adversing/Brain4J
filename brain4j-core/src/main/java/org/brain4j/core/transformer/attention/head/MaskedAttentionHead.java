@@ -39,7 +39,7 @@ public class MaskedAttentionHead extends AttentionHead {
     @Override
     public Tensor attend(StatesCache cache, Tensor input) {
         // input = [batch, seq_len, embedding_dim]
-        int seqLength = input.shape()[1];
+        int seqLength = input.shape(1);
 
         Range[] ranges = { Range.all(), Range.point(seqLength - 1), Range.all() };
         Tensor sliced = input.sliceGrad(ranges); // [batch, 1, embedding_dim]

@@ -187,4 +187,14 @@ public class Commons {
     public static String getHeaderChar() {
         return "━";
     }
+
+    public static float[] int2float(int[] array) {
+        float[] result = new float[array.length];
+
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i];
+        }
+
+        return result;
+    }
 }

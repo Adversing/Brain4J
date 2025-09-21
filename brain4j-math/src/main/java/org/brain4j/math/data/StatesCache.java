@@ -36,9 +36,8 @@ public class StatesCache {
 
         if (device != null) {
             this.commandQueue = device.newCommandQueue();
+            CLEANER.register(this, () -> GpuContext.closeQueue(commandQueue));
         }
-
-        CLEANER.register(this, () -> GpuContext.closeQueue(commandQueue));
     }
     
     public boolean training() {
@@ -62,7 +61,7 @@ public class StatesCache {
     }
 
     public Tensor[] output(Object layer) {
-        return outputStates.computeIfAbsent(layer, (l) -> new Tensor[0]);
+        return outputStates.computeIfAbsent(layer, (_) -> new Tensor[0]);
     }
 
     public void rememberOutput(Object layer, Tensor... state) {
