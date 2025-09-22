@@ -49,20 +49,27 @@ public class Registries {
             int axis = (int) node.getAttribute(0).getI();
             return new ConcatOperation(axis);
         });
+        ONNX_OPERATIONS_REGISTRY.register("Squeeze", (node) -> {
+            int dimension = (int) node.getAttribute(0).getI();
+            return new SqueezeOperation(dimension);
+        });
         ONNX_OPERATIONS_REGISTRY.register("Concat", ConcatOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Relu", (node) -> new ActivationOperation(new ReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Relu", (_) -> new ActivationOperation(new ReLUActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Relu", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", (node) -> new ActivationOperation(new SigmoidActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", (_) -> new ActivationOperation(new SigmoidActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Sigmoid", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Tanh", (node) -> new ActivationOperation(new TanhActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Tanh", (_) -> new ActivationOperation(new TanhActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Tanh", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", (node) -> new ActivationOperation(new LeakyReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", (_) -> new ActivationOperation(new LeakyReLUActivation()));
         ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Gelu", (node) -> new ActivationOperation(new GELUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Gelu", (_) -> new ActivationOperation(new GELUActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Gelu", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Softmax", (node) -> new ActivationOperation(new SoftmaxActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Softmax", (_) -> new ActivationOperation(new SoftmaxActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Softmax", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("LayerNormalization", (node) -> new LayerNormOperation( 1e-5));
+        ONNX_OPERATIONS_REGISTRY.register("LayerNormalization", (node) -> {
+            float epsilon = node.getAttribute(0).getF();
+            return new LayerNormOperation( epsilon);
+        });
         
         OPTIMIZERS_REGISTRY.register("adam", Adam.class);
         OPTIMIZERS_REGISTRY.register("adamw", AdamW.class);

@@ -85,7 +85,7 @@ public class EmbeddingLayer extends Layer {
         int batchSize = shape[0];
         int seqLength = shape[1];
 
-        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim);
+        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim).withGrad();
 
         float[] outData = output.data();
         float[] weightData = weights.data();
@@ -108,7 +108,7 @@ public class EmbeddingLayer extends Layer {
         if (input instanceof GpuTensor gpuInput) {
             output = output.gpu(gpuInput.device());
         }
-        
+
         cache.rememberInput(this, inputs);
         cache.rememberOutput(this, output);
 
@@ -138,7 +138,7 @@ public class EmbeddingLayer extends Layer {
         Tensor input = cache.input(this)[0];
         Tensor output = cache.output(this)[0];
         Tensor gradOutput = output.grad();
-        
+
         int[] shape = output.shape();
 
         int batchSize = shape[0];

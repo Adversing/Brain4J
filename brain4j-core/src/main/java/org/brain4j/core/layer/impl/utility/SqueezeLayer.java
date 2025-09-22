@@ -26,7 +26,7 @@ public class SqueezeLayer extends Layer {
 
         for (int i = 0; i < results.length; i++) {
             Tensor input = inputs[i];
-            results[i] = dimension == -1 ? input.squeeze() : input.squeeze(dimension);
+            results[i] = dimension == -1 ? input.squeezeGrad() : input.squeezeGrad(dimension);
         }
 
         return results;

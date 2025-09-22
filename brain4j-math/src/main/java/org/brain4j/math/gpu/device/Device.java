@@ -53,4 +53,8 @@ public class Device {
     public cl_context context() {
         return context;
     }
+
+    public cl_mem createBuffer(long flags, float[] data) {
+        return clCreateBuffer(context, flags, data.length * 4L, Pointer.to(data), null);
+    }
 }

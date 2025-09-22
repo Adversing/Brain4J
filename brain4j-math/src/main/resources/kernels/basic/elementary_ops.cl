@@ -1,3 +1,10 @@
+__kernel void mask(__global float* data, __global float* mask, const int length) {
+    int i = get_global_id(0);
+    if (i < length) {
+        data[i] = max(0.0, data[i] - mask[i]);
+    }
+}
+
 __kernel void add_scalar(__global float* data, const float value, const int length) {
     int i = get_global_id(0);
     if (i < length) {

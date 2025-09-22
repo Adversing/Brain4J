@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.tensor.impl.CpuTensor;
+import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.Random;
 import java.util.SplittableRandom;
@@ -43,10 +45,25 @@ public class DropoutLayer extends Layer {
         }
         
         for (Tensor input : inputs) {
-            for (int i = 0; i < input.elements(); i++) {
+            float[] mask = new float[input.elements()];
+
+            for (int i = 0; i < mask.length; i++) {
                 if (random.nextDouble() > dropoutRate) continue;
-                
-                input.data()[i] = 0;
+
+                mask[i] = Float.MIN_VALUE;
+            }
+
+            switch (input) {
+                case GpuTensor x -> {
+                    x.mask(mask);
+                }
+                case CpuTensor _ -> {
+                    float[] data = input.data();
+                    for (int i = 0; i < input.elements(); i++) {
+                        data[i] = Math.max(data[i] + mask[i], 0);
+                    }
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + input);
             }
         }
         

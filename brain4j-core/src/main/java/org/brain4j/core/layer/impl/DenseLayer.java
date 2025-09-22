@@ -3,6 +3,7 @@ package org.brain4j.core.layer.impl;
 import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.activation.impl.LinearActivation;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.Layer;
@@ -92,7 +93,8 @@ public class DenseLayer extends Layer {
                 .addGrad(bias);
 
             beforeActivation[i] = output;
-            result[i] = output.activateGrad(activation);
+            result[i] = activation instanceof LinearActivation
+                ? output : output.activateGrad(activation);
         }
 
         cache.rememberOutput(this, beforeActivation);

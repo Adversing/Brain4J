@@ -158,6 +158,8 @@ public class OnnxFormat implements ModelFormat {
             NodeProto.Builder node = NodeProto.newBuilder()
                 .setName(opType + "_" + Math.abs(UUID.randomUUID().hashCode()))
                 .setOpType(opType);
+
+            // TODO: Serialize for squeezing/layernorm, etc
             
             for (Tensor in : context.inputs()) {
                 node.addInput(generateName(counter, in, tensorNames, weightsMap));

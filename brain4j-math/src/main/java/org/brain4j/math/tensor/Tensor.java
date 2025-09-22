@@ -560,6 +560,14 @@ public interface Tensor extends Iterable<Float> {
     void setSliceAlongLastDim(int offset, Tensor input);
 
     /**
+     * Applies a mask to the current tensor. The float array gets added to the underlying
+     * tensor data array, then negative numbers get clamped to 0.
+     * @param mask the mask to apply
+     * @return this tensor
+     */
+    Tensor mask(float[] mask);
+
+    /**
      * Applies a given function to each element of the tensor and returns a new tensor with the results.
      * @param function the function to apply
      * @return the current tensor
@@ -717,11 +725,24 @@ public interface Tensor extends Iterable<Float> {
     Tensor concatGrad(Tensor other, int dim);
 
     /**
-     * Delegates to {@link #forward(Operation, Tensor)} using {@link ReshapeOperation}
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link ReshapeOperation}.
      * @param newShape the new shape of this tensor
      * @return the resulting tensor with a new shape
      */
     Tensor reshapeGrad(int... newShape);
+
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link SqueezeOperation} and no parameters.
+     * @return a clone of this tensor with the squeezed shape
+     */
+    Tensor squeezeGrad();
+
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link SqueezeOperation} and no parameters.
+     * @param dimension the dimension to squeeze on
+     * @return a clone of this tensor with the squeezed shape
+     */
+    Tensor squeezeGrad(int dimension);
     
     /**
      * Flips the tensor by 180 degrees.

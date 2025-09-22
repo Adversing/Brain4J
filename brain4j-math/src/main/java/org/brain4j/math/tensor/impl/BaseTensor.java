@@ -431,6 +431,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor squeeze(int dimension) {
+        dimension %= shape.length;
+
         if (dimension >= rank()) {
             throw new IllegalArgumentException("Dimension must be less than the rank!");
         }
@@ -855,6 +857,19 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
+    public Tensor mask(float[] mask) {
+        if (mask.length != data.length) {
+            throw new IllegalArgumentException("Mask length must be as long as the data");
+        }
+
+        for (int i = 0; i < mask.length; i++) {
+            data[i] = Math.max(0, data[i] - mask[i]);
+        }
+
+        return this;
+    }
+
+    @Override
     public Tensor map(DoubleToDoubleFunction function) {
         ParallelMap.map(function, data);
         return this;
@@ -1085,7 +1100,25 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         return forward(new ReshapeOperation(newShape));
     }
-    
+
+    @Override
+    public Tensor squeezeGrad() {
+        if (!usesGrad()) {
+            throw new IllegalArgumentException("Tensor does not use backflow!");
+        }
+
+        return forward(new SqueezeOperation());
+    }
+
+    @Override
+    public Tensor squeezeGrad(int dimension) {
+        if (!usesGrad()) {
+            throw new IllegalArgumentException("Tensor does not use backflow!");
+        }
+
+        return forward(new SqueezeOperation(dimension));
+    }
+
     @Override
     public Tensor flip() {
         Tensor result = Tensors.zeros(shape);

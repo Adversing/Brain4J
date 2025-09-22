@@ -29,9 +29,9 @@ public class AutogradContext {
         if (inputs == null) return;
 
         for (Tensor input : inputs) {
-            if (input != null && input.usesGrad()) {
-                input.autogradContext().increaseContributes();
-            }
+            if (input == null || !input.usesGrad()) continue;
+
+            input.autogradContext().increaseContributes();
         }
     }
 
@@ -53,6 +53,7 @@ public class AutogradContext {
         this.grad = grad == null ? gradOutput.clone() : grad.plus(gradOutput);
 
         receivedContribs++;
+        // System.out.println("Expected contribs: " + expectedContribs + " received: " + receivedContribs);
 
         int needed = Math.max(1, expectedContribs);
 
@@ -62,11 +63,18 @@ public class AutogradContext {
 
         Tensor[] inputGrads = operation.backward(gradOutput, inputs);
 
+        // System.out.println("Backwarding for this operation: " + operation.getClass().getSimpleName() + " | " + operation.hashCode());
+
+        /*for (int i = 0; i < inputs.length; i++) {
+            System.out.println("Input " + i + " for " + operation.getClass().getSimpleName());
+        }*/
+
         for (int i = 0; i < inputs.length; i++) {
             Tensor input = inputs[i];
 
             if (input == null || !input.usesGrad()) continue;
 
+            // System.out.println("Backwarding input " + i + " for op " + operation.hashCode());
             input.backward(inputGrads[i]);
         }
     }
