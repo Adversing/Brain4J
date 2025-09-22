@@ -34,22 +34,39 @@ public class BroadcastAdd implements BroadcastOperation {
             
             return A;
         }
-        
-        if (shape.length == 3 && otherShape.length == 1 && shape[2] == otherShape[0]) {
-            int d0 = shape[0];
-            int d1 = shape[1];
-            int d2 = shape[2];
-            
+
+        if (shape.length == 3) {
+            int d0 = shape[0]; // a
+            int d1 = shape[1]; // b
+            int d2 = shape[2]; // c
+
             int total = d0 * d1 * d2;
 
-            for (int idx = 0; idx < total; idx++) {
-                int k = idx % d2;
-                aData[idx] += bData[k];
+            // [a, b, c] + [c]
+            if (otherShape.length == 1 && shape[2] == otherShape[0]) {
+                for (int idx = 0; idx < total; idx++) {
+                    int k = idx % d2;
+                    aData[idx] += bData[k];
+                }
+
+                return A;
             }
-            
-            return A;
+
+            // [a, b, c] + [b, c]
+            if (otherShape.length == 2 && shape[1] == otherShape[0] && shape[2] == otherShape[1]) {
+                int stride = d1 * d2; // size of [b, c]
+
+                for (int batch = 0; batch < d0; batch++) {
+                    int offset = batch * stride;
+                    for (int i = 0; i < stride; i++) {
+                        aData[offset + i] += bData[i];
+                    }
+                }
+
+                return A;
+            }
         }
-        
+
         return fallbackOp(A, B);
     }
 
