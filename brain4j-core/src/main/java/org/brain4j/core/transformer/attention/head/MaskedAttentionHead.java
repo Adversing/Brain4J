@@ -8,7 +8,11 @@ import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.tensor.index.Range;
 
 public class MaskedAttentionHead extends AttentionHead {
-
+    
+    protected Tensor queryWeights;
+    protected Tensor keyWeights;
+    protected Tensor valueWeights;
+    
     public MaskedAttentionHead(GradientClipper clipper, int embedDimension, int headDimension) {
         super(clipper, embedDimension, headDimension);
     }

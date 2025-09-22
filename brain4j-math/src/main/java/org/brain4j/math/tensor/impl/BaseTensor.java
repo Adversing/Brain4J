@@ -1,7 +1,10 @@
 package org.brain4j.math.tensor.impl;
 
+import jdk.incubator.vector.FloatVector;
+import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.lang.DoubleToDoubleFunction;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
@@ -9,6 +12,9 @@ import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.*;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelMap;
+import org.brain4j.math.tensor.sum.TensorReducer;
+import org.brain4j.math.tensor.sum.impl.ScalarTensorReducer;
+import org.brain4j.math.tensor.sum.impl.SimdTensorReducer;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -619,42 +625,9 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor sum(int dim, boolean keepDim) {
-        if (dim < 0 || dim >= shape.length) {
-            throw new IllegalArgumentException("Dimension " + dim + " out of bounds for tensor of shape " + Arrays.toString(shape));
-        }
-
-        int[] newShape = Tensors.computeNewShape(shape, dim, keepDim);
-        int reducedSize = shape[dim];
-
-        Tensor result = Tensors.zeros(newShape);
-        float[] resultData = result.data();
-
-        int outerSize = 1;
-
-        for (int i = 0; i < dim; i++) {
-            outerSize *= shape[i];
-        }
-
-        int innerSize = 1;
-
-        for (int i = dim + 1; i < shape.length; i++) {
-            innerSize *= shape[i];
-        }
-
-        for (int outer = 0; outer < outerSize; outer++) {
-            for (int inner = 0; inner < innerSize; inner++) {
-                float sum = 0;
-
-                for (int i = 0; i < reducedSize; i++) {
-                    int index = outer * reducedSize * innerSize + i * innerSize + inner;
-                    sum += data[index];
-                }
-
-                int resultIndex = outer * innerSize + inner;
-                resultData[resultIndex] = sum;
-            }
-        }
-
+        TensorReducer reducer = DeviceUtils.isSimdAvailable() ? new SimdTensorReducer() : new ScalarTensorReducer();
+        Tensor result = reducer.sum(this, dim, keepDim);
+        
         result.setAutogradContext(autogradContext);
         return result;
     }

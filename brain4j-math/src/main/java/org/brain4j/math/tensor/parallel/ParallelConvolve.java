@@ -154,7 +154,10 @@ public class ParallelConvolve extends RecursiveAction {
                     ? (batchIdx * numFilters + filter) * totalPatches
                     : filter * totalPatches;
                 
-                provider.dotPerFilter(totalPatches, patchSize, filterData, filterOffset, patchData, outData, outBase);
+                provider.dotPerFilter(totalPatches, patchSize,
+                    filterData, filterOffset,
+                    patchData,
+                    outData, outBase);
             }
         }
         

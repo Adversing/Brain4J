@@ -206,15 +206,10 @@ public class TransformerEncoder extends Layer {
         
         for (int i = 0; i < numHeads; i++) {
             String prefix = "attention_head." + i;
-            Tensor queryWeights = mappedWeights.get(prefix + ".query");
-            Tensor keyWeights = mappedWeights.get(prefix + ".key");
-            Tensor valueWeights = mappedWeights.get(prefix + ".value");
+            Tensor qkvWeights = mappedWeights.get(prefix + ".qkv");
             
             AttentionHead head = attention.createAttentionHead();
-            
-            head.setQueryWeights(queryWeights);
-            head.setKeyWeights(keyWeights);
-            head.setValueWeights(valueWeights);
+            head.setQkvWeights(qkvWeights);
             
             attention.heads().add(head);
         }
@@ -266,9 +261,7 @@ public class TransformerEncoder extends Layer {
         
         for (int i = 0; i < heads.size(); i++) {
             AttentionHead head = heads.get(i);
-            result.put("attention_head." + i + ".query", head.queryWeights());
-            result.put("attention_head." + i + ".key", head.keyWeights());
-            result.put("attention_head." + i + ".value", head.valueWeights());
+            result.put("attention_head." + i + ".qkv", head.qkvWeights());
         }
         
         result.put("attention.out_proj", attention.outProjWeights());

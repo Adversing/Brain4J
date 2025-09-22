@@ -3,6 +3,7 @@ package org.brain4j.core.transformer.attention.head;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.weightsinit.WeightInitialization;
 import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.clipper.GradientClipper;
@@ -15,11 +16,7 @@ import java.util.Random;
 public class AttentionHead {
 
     protected final GradientClipper clipper;
-
-    protected Tensor queryWeights;
-    protected Tensor keyWeights;
-    protected Tensor valueWeights;
-
+    protected Tensor qkvWeights;
     protected int embedDimension;
     protected int headDimension;
 
@@ -27,29 +24,24 @@ public class AttentionHead {
         this.clipper = clipper;
         this.embedDimension = embedDimension;
         this.headDimension = headDimension;
-
-        this.queryWeights = Tensors.zeros(embedDimension, headDimension).withGrad();
-        this.keyWeights = Tensors.zeros(embedDimension, headDimension).withGrad();
-        this.valueWeights = Tensors.zeros(embedDimension, headDimension).withGrad();
+        this.qkvWeights = Tensors.zeros(embedDimension, 3 * headDimension).withGrad();
     }
 
     public void initWeights(Random generator, WeightInitialization weightInit) {
-        queryWeights.map(_ -> weightInit.generate(generator, embedDimension, headDimension));
-        keyWeights.map(_ -> weightInit.generate(generator, embedDimension, headDimension));
-        valueWeights.map(_ -> weightInit.generate(generator, embedDimension, headDimension));
+        qkvWeights.map(_ -> weightInit.generate(generator, embedDimension, 3 * headDimension));
     }
 
     public void toDevice(Device device) {
-        queryWeights = queryWeights.to(device);
-        keyWeights = keyWeights.to(device);
-        valueWeights = valueWeights.to(device);
+        qkvWeights = qkvWeights.to(device);
     }
 
     public Tensor attend(Tensor input) {
-        // input = [batch_size, seq_length, embedding_dim]
-        Tensor Q = input.matmulGrad(queryWeights); // [batch_size, seq_length, head_dimension]
-        Tensor K = input.matmulGrad(keyWeights); // [batch_size, seq_length, head_dimension]
-        Tensor V = input.matmulGrad(valueWeights); // [batch_size, seq_length, head_dimension]
+        // input = [batch, seq_length, embedding_dim]
+        Tensor QKV = input.matmulGrad(qkvWeights); // [batch, seq_len, 3 * head_dim]
+        // [batch, seq_len, head_dim]
+        Tensor Q = QKV.sliceGrad(Range.all(), Range.all(), Range.interval(0, headDimension));
+        Tensor K = QKV.sliceGrad(Range.all(), Range.all(), Range.interval(headDimension, 2 * headDimension));
+        Tensor V = QKV.sliceGrad(Range.all(), Range.all(), Range.interval(2 * headDimension, 3 * headDimension));
         
         double normalizer = Math.sqrt(headDimension);
         
@@ -68,55 +60,27 @@ public class AttentionHead {
     }
 
     public void backward(Updater updater, Optimizer optimizer) {
-        Tensor queryGrad = queryWeights.grad();
-        Tensor keyGrad = keyWeights.grad();
-        Tensor valueGrad = valueWeights.grad();
-
-        Tensor optimizedQuery = optimizer.step(queryWeights, queryGrad);
-        Tensor optimizedKey = optimizer.step(keyWeights, keyGrad);
-        Tensor optimizedValue = optimizer.step(valueWeights, valueGrad);
-
-        clipper.clip(optimizedQuery);
-        clipper.clip(optimizedKey);
-        clipper.clip(optimizedValue);
-
-        updater.change(queryWeights, optimizedQuery);
-        updater.change(keyWeights, optimizedKey);
-        updater.change(valueWeights, optimizedValue);
+        Tensor qkvGrad = qkvWeights.grad();
+        Tensor optimizedQkv = optimizer.step(qkvWeights, qkvGrad);
+        
+        clipper.clip(optimizedQkv);
+        updater.change(qkvWeights, optimizedQkv);
     }
 
     public void resetGrad() {
-        keyWeights.zerograd();
-        queryWeights.zerograd();
-        valueWeights.zerograd();
+        qkvWeights.zerograd();
     }
     
     public GradientClipper clipper() {
         return clipper;
     }
     
-    public Tensor queryWeights() {
-        return queryWeights;
+    public Tensor qkvWeights() {
+        return qkvWeights;
     }
     
-    public void setQueryWeights(Tensor queryWeights) {
-        this.queryWeights = queryWeights;
-    }
-    
-    public Tensor keyWeights() {
-        return keyWeights;
-    }
-    
-    public void setKeyWeights(Tensor keyWeights) {
-        this.keyWeights = keyWeights;
-    }
-    
-    public Tensor valueWeights() {
-        return valueWeights;
-    }
-    
-    public void setValueWeights(Tensor valueWeights) {
-        this.valueWeights = valueWeights;
+    public void setQkvWeights(Tensor qkvWeights) {
+        this.qkvWeights = qkvWeights;
     }
     
     public void setEmbedDimension(int embedDimension) {
@@ -136,6 +100,6 @@ public class AttentionHead {
     }
 
     public int totalWeights() {
-        return queryWeights.elements() + keyWeights.elements() + valueWeights.elements();
+        return qkvWeights.elements();
     }
 }
