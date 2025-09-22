@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: brain4j-math-artifact
-          path: brain4j-common/build/libs/*.jar
+          path: brain4j-math/build/libs/*.jar
       
       - name: Archive build datasets artifact
         uses: actions/upload-artifact@v4
