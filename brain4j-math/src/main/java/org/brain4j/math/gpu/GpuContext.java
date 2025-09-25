@@ -75,12 +75,28 @@ public class GpuContext {
 
         return localQueue.get();
     }
-
+    
     public static void closeQueue(cl_command_queue queue) {
         clFinish(queue);
         clReleaseCommandQueue(queue);
     }
-
+    
+    public static void closeQueue(Device device) {
+        GpuQueue queue = queue(device);
+        
+        if (queue == null) {
+            throw new IllegalStateException("No command queue registered for device: " + device);
+        }
+        
+        queues.get(device).remove();
+        
+        cl_command_queue commandQueue = queue.queue();
+        
+        if (commandQueue == null) return;
+        
+        closeQueue(commandQueue);
+    }
+    
     public static void closeQueue(Device device, StatesCache cache) {
         GpuQueue queue = queue(device);
 
