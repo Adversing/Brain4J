@@ -436,14 +436,14 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public Tensor squeeze(int dimension) {
-        dimension %= shape.length;
+    public Tensor squeeze(int dim) {
+        dim %= shape.length;
 
-        if (dimension >= rank()) {
+        if (dim >= rank()) {
             throw new IllegalArgumentException("Dimension must be less than the rank!");
         }
 
-        if (shape[dimension] != 1) {
+        if (shape[dim] != 1) {
             return this;
         }
 
@@ -451,7 +451,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         int idx = 0;
 
         for (int i = 0; i < shape.length; i++) {
-            if (i != dimension) {
+            if (i != dim) {
                 newShape[idx++] = shape[i];
             }
         }
@@ -525,6 +525,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
     
     public Tensor unsqueeze(int dim) {
+        dim %= shape.length;
+
         if (dim < 0 || dim > shape.length) {
             throw new IllegalArgumentException("Invalid dimension for unsqueeze: " + dim);
         }
@@ -625,6 +627,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor sum(int dim, boolean keepDim) {
+        dim %= shape.length;
+
         TensorReducer reducer = DeviceUtils.isSimdAvailable() ? new SimdTensorReducer() : new ScalarTensorReducer();
         Tensor result = reducer.sum(this, dim, keepDim);
         
@@ -634,8 +638,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor mean(int dim, boolean keepDim) {
-        if (dim == -1) dim = rank() - 1;
-        
+        dim %= shape.length;
+
         Tensor summed = this.sum(dim, keepDim);
 
         float divisor = shape[dim];
@@ -658,8 +662,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     
     @Override
     public Tensor variance(Tensor mean, int dim, boolean keepDim) {
-        if (dim == -1) dim = rank() - 1;
-        
+        dim %= shape.length;
+
         Tensor meanFirstSquare = clone().pow(2).mean(dim, keepDim);
         Tensor meanSecondSquare = mean.clone().pow(2);
         
