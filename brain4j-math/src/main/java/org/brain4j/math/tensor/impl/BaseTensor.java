@@ -550,25 +550,31 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor transpose() {
         int rank = shape.length;
-
+        return transpose(shape(rank - 2), shape(rank - 1));
+    }
+    
+    @Override
+    public Tensor transpose(int dim1, int dim2) {
+        int rank = shape.length;
+        
         if (rank == 1) {
             return reshape(1, elements());
         }
-
+        
         int[] newShape = shape.clone();
-        newShape[rank - 2] = shape[rank - 1];
-        newShape[rank - 1] = shape[rank - 2];
-
+        newShape[dim1] = shape[dim2];
+        newShape[dim2] = shape[dim1];
+        
         int[] newStrides = strides.clone();
-        newStrides[rank - 1] = strides[rank - 2];
-        newStrides[rank - 2] = strides[rank - 1];
-
+        newStrides[dim2] = strides[dim1];
+        newStrides[dim1] = strides[dim2];
+        
         BaseTensor view = (BaseTensor) Tensors.create(newShape, newStrides, data);
         view.transposed = !transposed;
         
         return view;
     }
-
+    
     @Override
     public boolean transposed() {
         return transposed;

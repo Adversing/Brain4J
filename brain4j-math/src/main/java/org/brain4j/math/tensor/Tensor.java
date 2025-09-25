@@ -404,7 +404,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the unsqueezed tensor
      */
     Tensor unsqueeze(int dimension);
-
+    
     /**
      * Computes a lazy-transposition of this tensor.
      * This operation has complexity O(1) if the normal matrix multiplication
@@ -413,6 +413,17 @@ public interface Tensor extends Iterable<Float> {
      * @return a new transposed tensor.
      */
     Tensor transpose();
+    
+    /**
+     * Computes a lazy-transposition of this tensor.
+     * This operation has complexity O(1) if the normal matrix multiplication
+     * provider is used. When SIMD is enabled, this operation delegates to
+     * a high-performance in place transposition.
+     * @param dim1 the first dimension to transpose
+     * @param dim2 the second dimension to transpose
+     * @return a new transposed tensor.
+     */
+    Tensor transpose(int dim1, int dim2);
 
     /**
      * Gets whether the current tensor is transposed.

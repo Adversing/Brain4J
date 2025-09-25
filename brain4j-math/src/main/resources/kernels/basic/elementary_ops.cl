@@ -1,7 +1,7 @@
 __kernel void mask(__global float* data, __global float* mask, const int length) {
     int i = get_global_id(0);
     if (i < length) {
-        data[i] = max(0.0, data[i] - mask[i]);
+        data[i] = max(0.0f, data[i] - mask[i]);
     }
 }
 
