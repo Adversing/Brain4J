@@ -14,9 +14,9 @@
 
 <p align="center">
     <a href="https://brain4j.org">Website</a> •
-    <a href="https://github.com/xEcho1337/brain4j/issues/new?template=Blank+issue">Report an Issue</a> •
-    <a href="https://github.com/xEcho1337/brain4j/wiki">Documentation</a> •
-    <a href="https://github.com/xEcho1337/brain4j/blob/main/CONTRIBUTING.md">Contribute</a>
+    <a href="https://github.com/brain4j-org/brain4j/issues/new?template=Blank+issue">Report an Issue</a> •
+    <a href="https://github.com/brain4j-org/brain4j/wiki">Documentation</a> •
+    <a href="https://github.com/brain4j-org/brain4j/blob/3.0/CONTRIBUTING.md">Contribute</a>
 </p>
 
 Designed with portability and speed in mind, it's optimized for high performance and it's ideal for those looking forward
