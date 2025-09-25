@@ -17,8 +17,8 @@ import java.util.Random;
  * This layer performs a linear transformation on the input tensor,
  * followed by the application of a specified activation function.
  * </p>
- * <p>Inputs are expected to have the shape <code>[batch_size, ..., input_size]</code>,
- * outputs have the shape <code>[batch_size, ..., dimension]</code> where <code>dimension</code>
+ * <p>Inputs are expected to have the shape <code>[batch, ..., input_size]</code>,
+ * outputs have the shape <code>[batch, ..., dimension]</code> where <code>dimension</code>
  * is the amount of neurons in this layer.
  * </p>
  * Weights are represented with the following shapes:

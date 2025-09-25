@@ -714,12 +714,20 @@ public interface Tensor extends Iterable<Float> {
      * @return the resulting tensor from the operation
      */
     Tensor convolveGrad(Tensor other);
-    
+
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link TransposeOperation}
      * @return the resulting tensor from the operation
      */
     Tensor transposeGrad();
+
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link TransposeOperation}
+     * @param dim1 the first dimension to transpose
+     * @param dim2 the second dimension to transpose
+     * @return the resulting tensor from the operation
+     */
+    Tensor transposeGrad(int dim1, int dim2);
 
     /**
      * Delegates to {@link #forward(Operation, Tensor)} using {@link ActivationOperation}

@@ -183,11 +183,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         }
         
         float[] data = result.data();
-        
-        for (int outer = 0; outer < outerSize; outer++) {
-            softmax1D(data, outer * lastDim, lastDim, temperature);
-        }
-        
+
+        IntStream.range(0, outerSize)
+            .parallel()
+            .forEach(outer -> softmax1D(data, outer * lastDim, lastDim, temperature));
+
         return result;
     }
     
@@ -550,7 +550,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor transpose() {
         int rank = shape.length;
-        return transpose(shape(rank - 2), shape(rank - 1));
+        return transpose(rank - 2, rank - 1);
     }
     
     @Override
@@ -810,11 +810,9 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         int[] newShape = new int[shape.length];
 
         for (int i = 0; i < shape.length; i++) {
-            if (i < ranges.length && ranges[i] != null) {
-                newShape[i] = ranges[i].size(shape[i]);
-            } else {
-                newShape[i] = shape[i];
-            }
+            int dim = shape[i];
+            Range range = ranges[i];
+            newShape[i] = range != null ? range.size(dim) : dim;
         }
 
         Tensor result = new CpuTensor(newShape);
@@ -1053,10 +1051,20 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         if (!usesGrad()) {
             throw new IllegalArgumentException("This teensors should be used with backflow!");
         }
-        
-        return forward(new TransposeOperation());
+
+        int rank = rank();
+        return forward(new TransposeOperation(rank - 2, rank - 1));
     }
-    
+
+    @Override
+    public Tensor transposeGrad(int dim1, int dim2) {
+        if (!usesGrad()) {
+            throw new IllegalArgumentException("This teensors should be used with backflow!");
+        }
+
+        return forward(new TransposeOperation(dim1, dim2));
+    }
+
     @Override
     public Tensor activateGrad(Activation activation) {
         if (!usesGrad()) {

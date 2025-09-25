@@ -36,7 +36,7 @@ public class AttentionHead {
     }
 
     public Tensor attend(Tensor input) {
-        // input = [batch, seq_length, embedding_dim]
+        // input = [batch, seq_len, embedding_dim]
         Tensor QKV = input.matmulGrad(qkvWeights); // [batch, seq_len, 3 * head_dim]
         // [batch, seq_len, head_dim]
         Tensor Q = QKV.sliceGrad(Range.all(), Range.all(), Range.interval(0, headDimension));
@@ -45,13 +45,13 @@ public class AttentionHead {
         
         double normalizer = Math.sqrt(headDimension);
         
-        // [batch_size, head_dimension, seq_length]
+        // [batch, head_dim, seq_len]
         Tensor K_T = K.transposeGrad();
-        // [batch_size, seq_length, seq_length]
+        // [batch, seq_len, seq_len]
         Tensor scores = Q.matmulGrad(K_T).div(normalizer);
         Tensor attentionWeights = scores.activateGrad(new SoftmaxActivation());
 
-        // [batch_size, seq_length, head_dimension]
+        // [batch, seq_len, head_dim]
         return attentionWeights.matmulGrad(V);
     }
 

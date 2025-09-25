@@ -33,13 +33,13 @@ public class PosEncodeLayer extends Layer {
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         checkInputLength(1, inputs);
 
-        // [batch_size, seq_length, dimension]
+        // [batch, seq_len, dimension]
         Tensor input = inputs[0];
         int[] shape = input.shape();
 
         if (shape.length != 3) {
             throw new IllegalArgumentException(
-                "Expected input shape [batch_size, seq_length, dimension], got: " + Arrays.toString(shape)
+                "Expected input shape [batch, seq_len, dimension], got: " + Arrays.toString(shape)
             );
         }
 

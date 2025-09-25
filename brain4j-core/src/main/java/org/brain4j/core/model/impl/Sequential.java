@@ -185,7 +185,7 @@ public class Sequential extends Layer implements Model {
             }
 
             if (input.rank() < 2) {
-                // Shape: [batch_size, input_size]
+                // Shape: [batch, input_size]
                 input = input.reshape(1, input.elements());
             }
 

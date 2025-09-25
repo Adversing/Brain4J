@@ -58,56 +58,9 @@ public class CpuTensor extends BaseTensor {
         if (matmulProvider instanceof NormalMatmulProvider) {
             return super.transpose();
         }
-
+        
         int rank = shape.length;
-
-        if (rank == 1) {
-            return reshape(1, elements());
-        }
-
-        int[] newShape = shape.clone();
-
-        int rows = shape[rank - 2];
-        int cols = shape[rank - 1];
-
-        newShape[rank - 2] = cols;
-        newShape[rank - 1] = rows;
-
-        BaseTensor result = (BaseTensor) Tensors.create(newShape);
-
-        int bound = 1 << 16;
-
-        if (elements() >= bound) {
-            ParallelTranspose.transpose(this, result);
-            return result;
-        }
-
-        float[] source = this.data;
-        float[] dest = result.data;
-
-        int batch = 1;
-
-        for (int i = 0; i < rank-2; i++) batch *= shape[i];
-
-        int planeSize = rows * cols;
-
-        for (int b = 0; b < batch; b++) {
-            int srcOffset = b * planeSize;
-            int dstOffset = b * planeSize;
-
-            for (int i = 0; i < rows; i++) {
-                int rowStart = srcOffset + i * cols;
-
-                for (int j = 0; j < cols; j++) {
-                    int srcIndex = rowStart + j;
-                    int dstIndex = dstOffset + j * rows + i;
-
-                    dest[dstIndex] = source[srcIndex];
-                }
-            }
-        }
-
-        return result;
+        return transpose(rank - 2, rank - 1);
     }
     
     @Override
@@ -137,7 +90,7 @@ public class CpuTensor extends BaseTensor {
         int bound = 1 << 16;
         
         if (elements() >= bound) {
-            ParallelTranspose.transpose(this, result);
+            ParallelTranspose.transpose(this, result, dim1, dim2);
             return result;
         }
         

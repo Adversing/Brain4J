@@ -29,7 +29,7 @@ import java.util.Random;
  * residual connections, layer normalization, feed-forward projection
  * and dropout for regularization.
  *
- * <p>The expected input shape is a 3D tensor of shape {@code [batch_size, seq_len, embedding_dim]}.
+ * <p>The expected input shape is a 3D tensor of shape {@code [batch, seq_len, embedding_dim]}.
  * The output has the same shape.
  *
  * @see TransformerDecoder
@@ -144,7 +144,7 @@ public class TransformerEncoder extends Layer {
 
         if (input.rank() != 3) {
             throw new IllegalArgumentException(
-                "Expected input with shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
+                "Expected input with shape [batch, seq_len, dimension], got: " + Arrays.toString(input.shape())
             );
         }
 

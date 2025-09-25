@@ -39,10 +39,10 @@ public class GraphConvLayer extends Layer {
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         checkInputLength(2, inputs);
 
-        Tensor features = inputs[0]; // [batch_size, nodes, features]
-        Tensor adjacencyMatrix = inputs[1]; // [batch_size, nodes, nodes]
+        Tensor features = inputs[0]; // [batch, nodes, features]
+        Tensor adjacencyMatrix = inputs[1]; // [batch, nodes, nodes]
 
-        // [batch_size, nodes, dimension]
+        // [batch, nodes, dimension]
         Tensor support = features.matmulGrad(weights);
         Tensor adjNorm = normalizeAdjacency(adjacencyMatrix);
 
@@ -81,9 +81,9 @@ public class GraphConvLayer extends Layer {
 
         Tensor identity = Tensors.eye(nodes);
 
-        // [batch_size, nodes, nodes]
+        // [batch, nodes, nodes]
         Tensor Ahat = adjacent.add(identity);
-        // [batch_size, nodes]
+        // [batch, nodes]
         Tensor deg  = Ahat.sum(1, false).add(1e-12);
         Tensor degInvSqrt = deg.pow(-0.5);
 

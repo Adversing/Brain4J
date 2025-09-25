@@ -19,11 +19,11 @@ import java.util.stream.IntStream;
  * Embedding layer implementation for transformer architectures.
  * <p>
  * This layer maps integer token indices to dense embedding vectors.
- * It expects an input tensor of shape <code>[batch_size, seq_length]</code> where
+ * It expects an input tensor of shape <code>[batch, seq_len]</code> where
  * each element is a token ID located in the vocabulary.
  * </p>
  * <p>
- * The output is a tensor of shape <code>[batch_size, seq_length, embedding_dim]</code>,
+ * The output is a tensor of shape <code>[batch, seq_len, embedding_dim]</code>,
  * where each token index is replaced by its corresponding embedding vector.
  * </p>
  * @since 3.0
@@ -78,7 +78,7 @@ public class EmbeddingLayer extends Layer {
 
         if (shape.length != 2) {
             throw new IllegalStateException(
-                "Expecting shape [batch_size, seq_length] with dimension 2, got " + Arrays.toString(shape)
+                "Expecting shape [batch, seq_len] with dimension 2, got " + Arrays.toString(shape)
             );
         }
 
@@ -112,7 +112,7 @@ public class EmbeddingLayer extends Layer {
         cache.rememberInput(this, inputs);
         cache.rememberOutput(this, output);
 
-        // [batch_size, seq_length, embedding_dim]
+        // [batch, seq_len, embedding_dim]
         return new Tensor[] { output };
     }
     

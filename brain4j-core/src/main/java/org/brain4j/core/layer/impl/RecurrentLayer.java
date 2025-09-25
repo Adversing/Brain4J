@@ -65,7 +65,7 @@ public class RecurrentLayer extends Layer {
     
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        // [batch_size, timesteps, dimension]
+        // [batch, timesteps, dimension]
         Tensor input = inputs[0];
 
         if (input.rank() > 3) {
@@ -79,7 +79,7 @@ public class RecurrentLayer extends Layer {
         int batch = input.shape(0);
         int timesteps = input.shape(1);
 
-        // [batch_size, timesteps, hidden_size]
+        // [batch, timesteps, hidden_size]
         Tensor projectedInput = input.matmulGrad(inputWeights);
         Tensor hiddenState = Tensors.zeros(batch, hiddenDimension).withGrad();
 
@@ -95,7 +95,7 @@ public class RecurrentLayer extends Layer {
             allStates[t] = hiddenState.reshapeGrad(batch, 1, hiddenDimension);
         }
         
-        // [batch_size, timesteps, hidden_dim]
+        // [batch, timesteps, hidden_dim]
         Tensor sequence = Tensors.concatGrad(List.of(allStates), 1);
         Tensor output = sequence.matmulGrad(weights).addGrad(bias);
         

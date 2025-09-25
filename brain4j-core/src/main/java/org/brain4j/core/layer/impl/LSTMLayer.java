@@ -46,7 +46,7 @@ public class LSTMLayer extends Layer {
     
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        // [batch_size, timesteps, dimension]
+        // [batch, timesteps, dimension]
         Tensor input = inputs[0];
 
         if (input.rank() > 3) {
@@ -64,7 +64,7 @@ public class LSTMLayer extends Layer {
         // = [batch, timesteps, 4 * hidden_dim]
         Tensor projection = input.matmulGrad(weights);
         
-        // [batch_size, timesteps, hidden_size]
+        // [batch, timesteps, hidden_size]
         Tensor hiddenState = Tensors.zeros(batch, hiddenDimension).withGrad();
         Tensor cellState = Tensors.zeros(batch, hiddenDimension).withGrad();
         
@@ -95,7 +95,7 @@ public class LSTMLayer extends Layer {
             hiddenStates[t] = hiddenState.reshapeGrad(batch, 1, hiddenDimension);
         }
         
-        // [batch_size, timesteps, hidden_dim]
+        // [batch, timesteps, hidden_dim]
         return new Tensor[] { Tensors.concatGrad(List.of(hiddenStates), 1) };
     }
     

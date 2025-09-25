@@ -20,7 +20,7 @@ import java.util.Arrays;
  * to prevent attending to future positions during training and inference.
  * This implementation is better fitted for generative models (e.g. GPTs).
  *
- * <p>The expected input shape is a 3D tensor of shape {@code [batch_size, seq_len, embedding_dim]}.
+ * <p>The expected input shape is a 3D tensor of shape {@code [batch, seq_len, embedding_dim]}.
  * The output has the same shape.
  *
  * @see TransformerEncoder
@@ -57,7 +57,7 @@ public class TransformerDecoder extends TransformerEncoder {
 
         if (input.rank() != 3) {
             throw new IllegalArgumentException(
-                "Expected input with shape [batch_size, seq_len, dimension], got: " + Arrays.toString(input.shape())
+                "Expected input with shape [batch, seq_len, dimension], got: " + Arrays.toString(input.shape())
             );
         }
 
