@@ -111,6 +111,57 @@ public class CpuTensor extends BaseTensor {
     }
     
     @Override
+    public Tensor transpose(int dim1, int dim2) {
+        // Unfortunately, SIMD does not support non-contiguous data, therefore transposing
+        // the data in a contiguous space is required for SIMD matmul to work
+        if (matmulProvider instanceof NormalMatmulProvider) {
+            return super.transpose(dim1, dim2);
+        }
+        
+        int rank = shape.length;
+        
+        if (rank == 1) {
+            return reshape(1, elements());
+        }
+        
+        int[] newShape = shape.clone();
+        
+        int rows = shape[dim1];
+        int cols = shape[dim2];
+        
+        newShape[dim1] = cols;
+        newShape[dim2] = rows;
+        
+        BaseTensor result = (BaseTensor) Tensors.create(newShape);
+        
+        int bound = 1 << 16;
+        
+        if (elements() >= bound) {
+            ParallelTranspose.transpose(this, result);
+            return result;
+        }
+        
+        float[] source = this.data;
+        float[] dest = result.data;
+        
+        int[] newCoords = new int[rank];
+        
+        for (int idx = 0; idx < elements(); idx++) {
+            int[] coords = Tensors.unravelIndex(idx, shape);
+            System.arraycopy(coords, 0, newCoords, 0, rank);
+            
+            int tmp = newCoords[dim1];
+            newCoords[dim1] = newCoords[dim2];
+            newCoords[dim2] = tmp;
+            
+            int dstIndex = result.linearIndex(newCoords);
+            dest[dstIndex] = source[idx];
+        }
+        
+        return result;
+    }
+    
+    @Override
     public Tensor to(Device device) {
         if (device == null) {
             return this;
