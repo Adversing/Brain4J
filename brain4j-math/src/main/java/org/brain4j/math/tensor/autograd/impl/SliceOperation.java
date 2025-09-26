@@ -39,48 +39,11 @@ public record SliceOperation(Range... ranges) implements Operation {
 
         gradOutput = gradOutput.reshape(expectedYShape);
 
-        if (isContiguousSlice(inputShape, usedRanges)) {
-            copyContiguous(gradInput, gradOutput, usedRanges);
-        } else {
-            int[] srcIndices = new int[inputShape.length];
-            int[] dstIndices = new int[inputShape.length];
-            sliceBackwardCopy(gradInput, gradOutput, usedRanges, srcIndices, dstIndices, 0);
-        }
+        int[] srcIndices = new int[inputShape.length];
+        int[] dstIndices = new int[inputShape.length];
+        sliceBackwardCopy(gradInput, gradOutput, usedRanges, srcIndices, dstIndices, 0);
 
         return new Tensor[] { gradInput };
-    }
-
-    private boolean isContiguousSlice(int[] inputShape, Range[] ranges) {
-        for (int d = 0; d < inputShape.length; d++) {
-            Range r = ranges[d];
-            if (r != null && r.step() != 1) return false;
-        }
-        return true;
-    }
-
-    private void copyContiguous(Tensor gradInput, Tensor gradOutput, Range[] ranges) {
-        float[] gIn = gradInput.data();
-        float[] gOut = gradOutput.data();
-
-        int offset = 0;
-        int length = gOut.length;
-
-        int[] inShape = gradInput.shape();
-        int lastDim = inShape.length - 1;
-        Range range = ranges[lastDim];
-
-        if (range != null) {
-            int start = range.start(inShape[lastDim]);
-            int end = range.end(inShape[lastDim]);
-
-            if (!(start == 0 && end == inShape[lastDim])) {
-                offset = range.start(inShape[lastDim]);
-            }
-        }
-
-        for (int i = 0; i < length; i++) {
-            gIn[offset + i] += gOut[i];
-        }
     }
 
     private void sliceBackwardCopy(
@@ -93,23 +56,35 @@ public record SliceOperation(Range... ranges) implements Operation {
     ) {
         int dims = srcIndices.length;
         int[] gradInputShape = gradInput.shape();
+        float[] gIn  = gradInput.data();
+        float[] gOut = gradOutput.data();
 
         if (dim == dims) {
-            float vNum = gradOutput.get(dstIndices);
-            float prevNum = gradInput.get(srcIndices);
-            gradInput.set(prevNum + vNum, srcIndices);
+            int idxIn  = gradInput.linearIndex(srcIndices);
+            int idxOut = gradOutput.linearIndex(dstIndices);
+            gIn[idxIn] += gOut[idxOut];
             return;
         }
 
         Range range = ranges[dim];
-        int start = 0;
-        int end = gradInputShape[dim];
-        int step = 1;
+        int size = gradInputShape[dim];
+        int start = (range == null) ? 0 : range.start(size);
+        int end = (range == null) ? size : range.end(size);
+        int step = (range == null) ? 1 : range.step();
 
-        if (range != null) {
-            start = range.start(gradInputShape[dim]);
-            end = range.end(gradInputShape[dim]);
-            step = range.step();
+        if (dim == dims - 1 && step == 1) {
+            int blockLen = end - start;
+
+            srcIndices[dim] = start;
+            dstIndices[dim] = 0;
+
+            int offIn  = gradInput.linearIndex(srcIndices);
+            int offOut = gradOutput.linearIndex(dstIndices);
+
+            for (int k = 0; k < blockLen; k++) {
+                gIn[offIn + k] += gOut[offOut + k];
+            }
+            return;
         }
 
         for (int i = start, j = 0; i < end; i += step, j++) {

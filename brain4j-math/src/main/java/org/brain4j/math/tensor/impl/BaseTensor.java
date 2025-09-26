@@ -811,7 +811,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         for (int i = 0; i < shape.length; i++) {
             int dim = shape[i];
-            Range range = ranges[i];
+            Range range = i >= ranges.length ? null : ranges[i];
             newShape[i] = range != null ? range.size(dim) : dim;
         }
 

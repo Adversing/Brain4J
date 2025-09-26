@@ -50,7 +50,7 @@ public class AutogradContext {
     public void backward(Tensor gradOutput) {
         if (!requiresGrad) return;
         
-        this.grad = grad == null ? gradOutput.clone() : grad.plus(gradOutput);
+        this.grad = grad == null ? gradOutput.clone() : grad.plus(gradOutput.broadcastLike(grad));
 
         receivedContribs++;
 

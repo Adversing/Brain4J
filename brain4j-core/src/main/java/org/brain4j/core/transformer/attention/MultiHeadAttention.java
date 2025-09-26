@@ -13,6 +13,7 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -83,13 +84,15 @@ public class MultiHeadAttention {
         // [batch, seq_len, 3 * H * head_dim]
         Tensor QKV = input.matmulGrad(qkvWeights);
         Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension)
+            // [batch, heads, seq_len, 3, head_dim]
             .transposeGrad(1, 2);
 
         Tensor[] QKVs = new Tensor[3];
         Range all = Range.all();
 
         for (int i = 0; i < QKVs.length; i++) {
-            QKVs[i] = reshaped.sliceGrad(all, all, all, Range.point(i), all).squeezeGrad();
+            // [batch, heads, seq_len, head_dim]
+            QKVs[i] = reshaped.sliceGrad(all, all, all, Range.point(i), all).squeezeGrad(3);
         }
 
         // [batch, heads, seq_len, head_dim]
