@@ -1,7 +1,5 @@
 package org.brain4j.math.tensor.impl;
 
-import jdk.incubator.vector.FloatVector;
-import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.DeviceUtils;
@@ -343,51 +341,80 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor layerNorm(double epsilon) {
-        int rank = shape.length;
-        int featuresSize = shape[rank - 1];
+        switch (rank()) {
+            case 1 -> layerNorm1D(0, epsilon);
+            case 2 -> layerNorm2D(epsilon);
+            case 3 -> layerNorm3D(epsilon);
+            default -> layerNormND(epsilon);
+        };
         
-        int batchSize = 1;
-        
-        for (int i = 0; i < rank - 1; i++) batchSize *= shape[i];
-        
-        for (int batchIdx = 0; batchIdx < batchSize; batchIdx++) {
-            int base = 0;
-            int rem = batchIdx;
-            
-            for (int dim = rank - 2; dim >= 0; dim--) {
-                int idxDim = rem % shape[dim];
-                rem /= shape[dim];
-                base += idxDim * strides[dim];
-            }
-            
-            float mean = 0f;
-            
-            for (int j = 0; j < featuresSize; j++) {
-                mean += data[base + j * strides[rank - 1]];
-            }
-            
-            mean /= featuresSize;
-            
-            float var = 0f;
-            
-            for (int j = 0; j < featuresSize; j++) {
-                float x = data[base + j * strides[rank - 1]];
-                float diff = x - mean;
-                
-                var += diff * diff;
-            }
-            
-            var /= featuresSize;
-            
-            float denom = (float)Math.sqrt(var + epsilon);
-            
-            for (int j = 0; j < featuresSize; j++) {
-                int idx = base + j * strides[rank - 1];
-                data[idx] = (data[idx] - mean) / denom;
-            }
-        }
-
         return this;
+    }
+    
+    private void layerNorm1D(int offset, double epsilon) {
+        int features = shape[rank() - 1];
+        float mean = 0f;
+        
+        for (int j = 0; j < features; j++) {
+            mean += data[offset + j];
+        }
+        
+        mean /= features;
+        
+        float var = 0f;
+        
+        for (int j = 0; j < features; j++) {
+            float x = data[offset + j];
+            float diff = x - mean;
+            
+            var += diff * diff;
+        }
+        
+        var /= features;
+        
+        float denom = (float) Math.sqrt(var + epsilon);
+        
+        for (int j = 0; j < features; j++) {
+            int idx = offset + j;
+            data[idx] = (data[idx] - mean) / denom;
+        }
+    }
+    
+    private void layerNorm2D(double epsilon) {
+        int rows = shape[0];
+        int cols = shape[1];
+        
+        for (int r = 0; r < rows; r++) {
+            layerNorm1D(r * cols, epsilon);
+        }
+    }
+    
+    private void layerNorm3D(double epsilon) {
+        int batches = shape[0];
+        int rows = shape[1];
+        int cols = shape[2];
+        
+        int strideBR = rows * cols;
+        
+        IntStream.range(0, batches * rows).parallel().forEach(i -> {
+            int b = i / rows;
+            int r = i % rows;
+            layerNorm1D(b * strideBR + r * cols, epsilon);
+        });
+    }
+    
+    private void layerNormND(double epsilon) {
+        int rank = shape.length;
+        int lastDim = shape[rank - 1];
+        int outerSize = 1;
+        
+        for (int i = 0; i < rank - 1; i++) {
+            outerSize *= shape[i];
+        }
+        
+        IntStream.range(0, outerSize)
+            .parallel()
+            .forEach(outer -> layerNorm1D(outer * lastDim, epsilon));
     }
 
     @Override

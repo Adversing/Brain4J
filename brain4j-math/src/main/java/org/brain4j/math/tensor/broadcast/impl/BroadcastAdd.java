@@ -17,9 +17,10 @@ public class BroadcastAdd implements BroadcastOperation {
         float[] bData = B.data();
         
         if (Arrays.equals(shape, otherShape)) {
-            for (int i = 0, n = aData.length; i < n; i++) {
+            for (int i = 0; i < aData.length; i++) {
                 aData[i] += bData[i];
             }
+            
             return A;
         }
         
