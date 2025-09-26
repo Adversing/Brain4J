@@ -144,6 +144,7 @@ public class MultiHeadAttention {
             head.resetGrad();
         }
 
+        qkvWeights.zerograd();
         outProjWeights.zerograd();
     }
 
