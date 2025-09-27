@@ -7,7 +7,6 @@ plugins {
 dependencies {
     implementation project(":brain4j-math")
 
-    implementation "org.jocl:jocl:2.0.5"
     implementation "com.google.code.gson:gson:2.13.1"
     implementation "com.google.protobuf:protobuf-java:4.31.1"
 
@@ -27,11 +26,8 @@ shadowJar {
     archiveFileName = "brain4j-core-${parent.version}.jar"
 
     relocate("com.google", "org.brain4j.relocated.google")
-    relocate("ch.qos.logback", "org.brain4j.relocated.logback")
-    relocate("org.slf4j", "org.brain4j.relocated.slf4j")
 
     exclude "org/brain4j/math/**"
-    exclude "org/jocl/**"
 }
 
 tasks.withType(JavaExec).configureEach {

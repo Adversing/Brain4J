@@ -6,6 +6,7 @@ import org.brain4j.math.tensor.autograd.Operation;
 public class SqueezeOperation implements Operation {
 
     private int dim = Integer.MAX_VALUE;
+    private int[] originalShape;
 
     public SqueezeOperation() {
     }
@@ -21,15 +22,13 @@ public class SqueezeOperation implements Operation {
 
     @Override
     public Tensor compute(Tensor... inputs) {
-        Tensor result = inputs[0].clone();
-        return dim == Integer.MAX_VALUE ? result.squeeze() : result.squeeze(dim);
+        Tensor input = inputs[0];
+        this.originalShape = input.shape();
+        return dim == Integer.MAX_VALUE ? input.squeeze() : input.squeeze(dim);
     }
 
     @Override
     public Tensor[] backward(Tensor gradOutput, Tensor... inputs) {
-        return new Tensor[] { dim == Integer.MAX_VALUE
-            ? gradOutput.reshape(inputs[0].shape())
-            : gradOutput.unsqueeze(dim)
-        };
+        return new Tensor[] { gradOutput.reshape(originalShape) };
     }
 }

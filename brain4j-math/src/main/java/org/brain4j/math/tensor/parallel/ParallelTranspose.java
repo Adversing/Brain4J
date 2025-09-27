@@ -48,31 +48,8 @@ public class ParallelTranspose extends RecursiveAction {
         }
     }
 
-    public static void transpose(BaseTensor source, BaseTensor dest, int dim1, int dim2) {
-        int[] shape = source.shape();
-        int[] newShape = dest.shape();
-
-        if (shape.length != newShape.length) {
-            throw new IllegalArgumentException("Rank mismatch");
-        }
-
-        int total = source.elements();
-        TransposeParameters params = new TransposeParameters(source.data(), dest.data(), shape, newShape, dim1, dim2);
-
-        if (total < (1 << 12)) {
-            mapSection(source.data(), dest.data(), shape, newShape, dim1, dim2, 0, total);
-        } else {
-            int step = total / PARALLELISM;
-            ParallelTranspose[] tasks = new ParallelTranspose[PARALLELISM];
-
-            for (int i = 0; i < PARALLELISM; i++) {
-                int start = i * step;
-                int end = (i == PARALLELISM - 1) ? total : start + step;
-                tasks[i] = new ParallelTranspose(params, start, end);
-            }
-
-            ForkJoinTask.invokeAll(tasks);
-        }
+    public static void transpose(BaseTensor source, BaseTensor result, int dim1, int dim2) {
+        // TODO
     }
 
     private static void mapSection(float[] src, float[] dst, int[] shape, int[] newShape,
