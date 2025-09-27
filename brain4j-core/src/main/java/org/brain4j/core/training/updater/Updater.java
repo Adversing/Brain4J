@@ -38,11 +38,11 @@ public abstract class Updater {
             Tensor gradient = entry.getValue();
             
             if (gradient == null || weights == null) continue;
-            
+
             while (gradient.rank() > weights.rank()) {
                 gradient = gradient.sum(0, false);
             }
-            
+
             weights.sub(gradient.div(samples).mul(learningRate));
         }
     }

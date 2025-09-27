@@ -23,6 +23,7 @@ public class MultiHeadAttention {
     protected List<AttentionHead> heads;
     protected Tensor outProjWeights;
     protected Tensor qkvWeights;
+    protected Tensor qkvBias;
     protected int headCount;
     protected int embeddingDim;
     protected int headDimension;
@@ -45,6 +46,7 @@ public class MultiHeadAttention {
         this.heads = new ArrayList<>();
         this.outProjWeights = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
         this.qkvWeights = Tensors.matrix(embeddingDim, 3 * embeddingDim).withGrad();
+        this.qkvBias = Tensors.zeros(3 * embeddingDim).withGrad();
 
         initializeHeads();
     }
@@ -82,7 +84,7 @@ public class MultiHeadAttention {
         int seqLength = input.shape(1);
 
         // [batch, seq_len, 3 * H * head_dim]
-        Tensor QKV = input.matmulGrad(qkvWeights);
+        Tensor QKV = input.matmulGrad(qkvWeights).addGrad(qkvBias);
         Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension);
 
         // [batch, heads, seq_len, 3, head_dim]
@@ -133,14 +135,16 @@ public class MultiHeadAttention {
     }
 
     public void backward(Updater updater, Optimizer optimizer) {
-        Tensor outWeightsGrad = optimizer.step(outProjWeights, outProjWeights.grad());
-        Tensor qkvGrad = optimizer.step(qkvWeights, qkvWeights.grad());
+        optimize(updater, optimizer, outProjWeights);
+        optimize(updater, optimizer, qkvWeights);
+        optimize(updater, optimizer, qkvBias);
+    }
 
-        clipper.clip(outWeightsGrad);
-        clipper.clip(qkvGrad);
-
-        updater.change(outProjWeights, outWeightsGrad);
-        updater.change(qkvWeights, qkvGrad);
+    private void optimize(Updater updater, Optimizer optimizer, Tensor tensor) {
+        Tensor grad = tensor.grad();
+        Tensor optimized = optimizer.step(tensor, grad);
+        clipper.clip(optimized);
+        updater.change(tensor, optimized);
     }
 
     public void resetGrad() {
@@ -148,8 +152,9 @@ public class MultiHeadAttention {
             head.resetGrad();
         }
 
-        qkvWeights.zerograd();
         outProjWeights.zerograd();
+        qkvWeights.zerograd();
+        qkvBias.zerograd();
     }
 
     public GradientClipper clipper() {
