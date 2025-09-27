@@ -44,7 +44,7 @@ public class MultiHeadAttention {
         this.headDimension = embeddingDim / headCount;
         this.heads = new ArrayList<>();
         this.outProjWeights = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
-        this.qkvWeights = Tensors.matrix(embeddingDim, 3 * headCount * headDimension).withGrad();
+        this.qkvWeights = Tensors.matrix(embeddingDim, 3 * embeddingDim).withGrad();
 
         initializeHeads();
     }
@@ -58,8 +58,8 @@ public class MultiHeadAttention {
             head.toDevice(device);
         }
 
-        outProjWeights = outProjWeights.to(device);
-        qkvWeights = qkvWeights.to(device);
+        this.outProjWeights = outProjWeights.to(device);
+        this.qkvWeights = qkvWeights.to(device);
     }
 
     public void initWeights(Random generator, WeightInitialization weightInit) {
@@ -83,16 +83,19 @@ public class MultiHeadAttention {
 
         // [batch, seq_len, 3 * H * head_dim]
         Tensor QKV = input.matmulGrad(qkvWeights);
-        Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension)
-            // [batch, heads, seq_len, 3, head_dim]
-            .transposeGrad(1, 2);
+        Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension);
+
+        // [batch, heads, seq_len, 3, head_dim]
+        reshaped = reshaped.transposeGrad(1, 2);
 
         Tensor[] QKVs = new Tensor[3];
         Range all = Range.all();
 
         for (int i = 0; i < QKVs.length; i++) {
+            // [batch, heads, seq_len, 1, head_dim]
+            QKVs[i] = reshaped.sliceGrad(all, all, all, Range.point(i), all);
             // [batch, heads, seq_len, head_dim]
-            QKVs[i] = reshaped.sliceGrad(all, all, all, Range.point(i), all).squeezeGrad(3);
+            QKVs[i] = QKVs[i].squeezeGrad(3);
         }
 
         // [batch, heads, seq_len, head_dim]
@@ -114,9 +117,10 @@ public class MultiHeadAttention {
         // [batch, seq_len, heads, head_dim]
         context = context.transposeGrad(1, 2);
 
-        // [batch, seq_len, heads * head_dim]
-        Tensor output = context.reshapeGrad(batch, seqLength, headCount * headDimension);
+        // [batch, seq_len, embedding_dim]
+        Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
 
+        // [batch, seq_len, embedding_dim]
         return output.matmulGrad(outProjWeights);
     }
 
