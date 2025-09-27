@@ -22,7 +22,7 @@ public class SqueezeOperation implements Operation {
 
     @Override
     public Tensor compute(Tensor... inputs) {
-        Tensor input = inputs[0];
+        Tensor input = inputs[0].clone();
         this.originalShape = input.shape();
         return dim == Integer.MAX_VALUE ? input.squeeze() : input.squeeze(dim);
     }
