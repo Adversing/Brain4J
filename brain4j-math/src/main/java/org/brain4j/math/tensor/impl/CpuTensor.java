@@ -89,10 +89,10 @@ public class CpuTensor extends BaseTensor {
 
         int bound = 1 << 16;
 
-//        if (elements() >= bound) {
-//            ParallelTranspose.transpose(this, result, dim1, dim2);
-//            return result;
-//        }
+        if (elements() >= bound) {
+            ParallelTranspose.transpose(this, result, dim1, dim2);
+            return result;
+        }
 
         int[] srcStride = this.strides;
         int[] dstStride = result.strides;

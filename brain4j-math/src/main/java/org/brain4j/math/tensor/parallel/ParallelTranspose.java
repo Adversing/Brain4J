@@ -1,6 +1,5 @@
 package org.brain4j.math.tensor.parallel;
 
-import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.impl.BaseTensor;
 
 import java.util.concurrent.ForkJoinTask;
@@ -8,16 +7,19 @@ import java.util.concurrent.RecursiveAction;
 
 public class ParallelTranspose extends RecursiveAction {
     
-    public record TransposeParameters(float[] srcData, float[] dstData, int[] shape, int[] newShape, int dim1, int dim2) { }
+    public record TransposeParameters(
+        float[] srcData,
+        float[] dstData,
+        int[] dstShape,
+        int[] srcStride,
+        int[] dstStride,
+        int[] destToSrc
+    ) { }
     
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int PARALLEL_WORK_THRESHOLD = PARALLELISM;
     private static final int PARALLEL_COMPLEXITY_THRESHOLD = 1 << 12; // 4096
     private static final int SPLIT_COMPLEXITY_THRESHOLD = 1 << 10; // 1024
-    
-    private static boolean isOverParallelThreshold(int work) {
-        return work > PARALLEL_WORK_THRESHOLD && work > PARALLEL_COMPLEXITY_THRESHOLD;
-    }
     
     private static boolean isOverSplitThreshold(int work) {
         return work > SPLIT_COMPLEXITY_THRESHOLD;
@@ -43,36 +45,61 @@ public class ParallelTranspose extends RecursiveAction {
                 new ParallelTranspose(parameters, mid, end)
             );
         } else {
-            mapSection(parameters.srcData, parameters.dstData, parameters.shape, parameters.newShape, parameters.dim1,
-                parameters.dim2, start, end);
-        }
-    }
-
-    public static void transpose(BaseTensor source, BaseTensor result, int dim1, int dim2) {
-        // TODO
-    }
-
-    private static void mapSection(float[] src, float[] dst, int[] shape, int[] newShape,
-                                   int dim1, int dim2, int start, int end) {
-        int rank = shape.length;
-        int[] newCoords = new int[rank];
-
-        for (int lin = start; lin < end; lin++) {
-            int[] coords = Tensors.unravelIndex(lin, shape);
-
-            System.arraycopy(coords, 0, newCoords, 0, rank);
-            int t = newCoords[dim1];
-            newCoords[dim1] = newCoords[dim2];
-            newCoords[dim2] = t;
-
-            int dstIdx = 0;
-            int stride = 1;
-            for (int k = rank - 1; k >= 0; k--) {
-                dstIdx += newCoords[k] * stride;
-                stride *= newShape[k];
+            for (int i = start; i < end; i++) {
+                int sOffset = i * parameters.srcStride[parameters.destToSrc[0]];
+                int dOffset = i * parameters.dstStride[0];
+                copyRecursive(1, sOffset, dOffset);
             }
-
-            dst[dstIdx] = src[lin];
         }
+    }
+    
+    private void copyRecursive(int dim, int srcOffset, int dstOffset) {
+        var params = parameters;
+        if (dim == params.dstShape.length) {
+            params.dstData[dstOffset] = params.srcData[srcOffset];
+            return;
+        }
+        
+        int sStride = params.srcStride[params.destToSrc[dim]];
+        int dStride = params.dstStride[dim];
+        int extent = params.dstShape[dim];
+        
+        int s = srcOffset;
+        int d = dstOffset;
+        for (int i = 0; i < extent; i++) {
+            copyRecursive(dim + 1, s, d);
+            s += sStride;
+            d += dStride;
+        }
+    }
+    
+    public static void transpose(BaseTensor source, BaseTensor result, int dim1, int dim2) {
+        int rank = source.shape().length;
+        
+        int[] dstShape = result.shape();
+        int[] srcStride = source.strides();
+        int[] dstStride = result.strides();
+        
+        int[] destToSrc = new int[rank];
+        for (int d = 0; d < rank; d++) destToSrc[d] = d;
+        destToSrc[dim1] = dim2;
+        destToSrc[dim2] = dim1;
+        
+        float[] srcData = source.data();
+        float[] dstData = result.data();
+        int outer = dstShape[0];
+        
+        var params = new TransposeParameters(srcData, dstData, dstShape, srcStride, dstStride, destToSrc);
+        
+        int step = outer / PARALLELISM;
+        ParallelTranspose[] actions = new ParallelTranspose[PARALLELISM];
+        
+        for (int i = 0; i < PARALLELISM; i++) {
+            int startIndex = i * step;
+            int endIndex = Math.min(startIndex + step, outer);
+            actions[i] = new ParallelTranspose(params, startIndex, endIndex);
+        }
+        
+        ForkJoinTask.invokeAll(actions);
     }
 }
