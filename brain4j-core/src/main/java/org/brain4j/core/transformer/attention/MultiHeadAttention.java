@@ -177,7 +177,7 @@ public class MultiHeadAttention {
         }
     }
     
-    protected void backward(Updater updater, Optimizer optimizer) {
+    public void backward(Updater updater, Optimizer optimizer) {
         optimize(updater, optimizer, outProjWeights);
         optimize(updater, optimizer, qkvWeights);
         optimize(updater, optimizer, qkvBias);
