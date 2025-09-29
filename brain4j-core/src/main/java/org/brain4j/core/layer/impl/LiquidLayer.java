@@ -100,7 +100,7 @@ public class LiquidLayer extends Layer {
         }
 
 
-        return new Tensor[] { hidden };
+        return new Tensor[] { hidden, deltas };
     }
 
     @Override

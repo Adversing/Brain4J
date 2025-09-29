@@ -8,18 +8,11 @@ import org.brain4j.math.data.StatesCache;
 public class SqueezeLayer extends Layer {
     
     private int dimension;
-    private int size;
-    
+
     public SqueezeLayer(int dimension) {
         this.dimension = dimension;
     }
-    
-    @Override
-    public Layer connect(Layer previous) {
-        this.size = previous.size();
-        return this;
-    }
-    
+
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor[] results = new Tensor[inputs.length];
@@ -34,18 +27,16 @@ public class SqueezeLayer extends Layer {
     
     @Override
     public int size() {
-        return size;
+        return 0;
     }
     
     @Override
     public void serialize(JsonObject object) {
         object.addProperty("dimension", dimension);
-        object.addProperty("size", size);
     }
     
     @Override
     public void deserialize(JsonObject object) {
         this.dimension = object.get("dimension").getAsInt();
-        this.size = object.get("size").getAsInt();
     }
 }
