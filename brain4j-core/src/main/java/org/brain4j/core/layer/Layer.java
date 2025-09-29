@@ -63,6 +63,10 @@ public abstract class Layer {
      */
     public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
 
+    public Tensor forward(StatesCache cache, Tensor input) {
+        return forward(cache, new Tensor[] { input })[0];
+    }
+
     /**
      * Returns the output size of this layer, i.e. the number of neurons.
      * @return the output size

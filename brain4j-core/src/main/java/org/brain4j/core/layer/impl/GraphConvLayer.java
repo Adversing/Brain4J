@@ -1,4 +1,4 @@
-package org.brain4j.core.layer.impl.graph;
+package org.brain4j.core.layer.impl;
 
 import com.google.gson.JsonObject;
 import org.brain4j.math.activation.Activations;

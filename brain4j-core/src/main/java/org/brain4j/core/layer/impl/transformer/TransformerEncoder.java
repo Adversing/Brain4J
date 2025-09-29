@@ -151,21 +151,21 @@ public class TransformerEncoder extends Layer {
         Tensor attended = attention.attend(cache, input);
         
         if (cache.training()) {
-            attended = dropout.forward(cache, attended)[0];
+            attended = dropout.forward(cache, attended);
         }
 
         Tensor added = attended.addGrad(input);
-        Tensor normalized = normalizer1.forward(cache, added)[0];
+        Tensor normalized = normalizer1.forward(cache, added);
 
-        Tensor upProjected = upProjection.forward(cache, normalized)[0];
-        Tensor downProjected = downProjection.forward(cache, upProjected)[0];
+        Tensor upProjected = upProjection.forward(cache, normalized);
+        Tensor downProjected = downProjection.forward(cache, upProjected);
 
         if (cache.training()) {
-            downProjected = dropout.forward(cache, downProjected)[0];
+            downProjected = dropout.forward(cache, downProjected);
         }
 
         Tensor added2 = downProjected.addGrad(normalized);
-        normalized = normalizer2.forward(cache, added2)[0];
+        normalized = normalizer2.forward(cache, added2);
 
         cache.rememberOutput(this, normalized);
         

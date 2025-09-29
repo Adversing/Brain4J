@@ -234,7 +234,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
             batchedInputTensors[i] = Tensors.mergeTensors(mergedInputs.get(i)).to(device);
         }
 
-        Tensor[] batchedLabelTensors = new Tensor[inputCount];
+        Tensor[] batchedLabelTensors = new Tensor[labelCount];
 
         for (int i = 0; i < labelCount; i++) {
             batchedLabelTensors[i] = Tensors.mergeTensors(mergedLabels.get(i)).to(device);

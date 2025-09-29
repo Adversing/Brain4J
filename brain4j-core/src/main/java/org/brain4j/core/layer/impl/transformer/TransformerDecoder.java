@@ -64,11 +64,11 @@ public class TransformerDecoder extends TransformerEncoder {
         Tensor attended = attention.attend(cache, input);
 
         if (cache.training()) {
-            attended = dropout.forward(cache, attended)[0];
+            attended = dropout.forward(cache, attended);
         }
 
         Tensor added = attended.add(input);
-        Tensor normalized = normalizer1.forward(cache, added)[0];
+        Tensor normalized = normalizer1.forward(cache, added);
 
         Tensor upProjected, downProjected;
 
@@ -78,8 +78,8 @@ public class TransformerDecoder extends TransformerEncoder {
         int seqLength = input.shape(1);
 
         if (upCache.length == 0 || downCache.length == 0) {
-            upProjected = upProjection.forward(cache, normalized)[0];
-            downProjected = downProjection.forward(cache, upProjected)[0];
+            upProjected = upProjection.forward(cache, normalized);
+            downProjected = downProjection.forward(cache, upProjected);
         } else {
             Tensor cacheUp = upCache[0];
             Tensor cacheDown = downCache[0];
@@ -87,8 +87,8 @@ public class TransformerDecoder extends TransformerEncoder {
             Range[] ranges = { Range.all(), Range.point(seqLength - 1), Range.all() };
             Tensor sliced = normalized.sliceGrad(ranges);
 
-            Tensor upProj = upProjection.forward(cache, sliced)[0];
-            Tensor downProj = downProjection.forward(cache, upProj)[0];
+            Tensor upProj = upProjection.forward(cache, sliced);
+            Tensor downProj = downProjection.forward(cache, upProj);
 
             upProjected = cacheUp.concatGrad(upProj, 1);
             downProjected = cacheDown.concatGrad(downProj, 1);
@@ -98,11 +98,11 @@ public class TransformerDecoder extends TransformerEncoder {
         cache.rememberOutput(downProjection, downProjected);
 
         if (cache.training()) {
-            downProjected = dropout.forward(cache, downProjected)[0];
+            downProjected = dropout.forward(cache, downProjected);
         }
 
         Tensor added2 = downProjected.add(normalized);
-        normalized = normalizer2.forward(cache, added2)[0];
+        normalized = normalizer2.forward(cache, added2);
 
         cache.rememberOutput(this, normalized);
 

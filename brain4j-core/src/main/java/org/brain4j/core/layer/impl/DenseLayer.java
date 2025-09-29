@@ -65,7 +65,7 @@ public class DenseLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public DenseLayer connect(Layer previous) {
         // Shape: [input_size, output_size]
         this.weights = Tensors.zeros(previous.size(), dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();

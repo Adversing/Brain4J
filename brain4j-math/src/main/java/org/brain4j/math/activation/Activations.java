@@ -78,7 +78,7 @@ public enum Activations {
     TANH(new TanhActivation()),
 
     /**
-     * Mish is a non-linear activation function that is similar to GELU, but seems to give better results.
+     * Mish is a non-linear activation function that is similar to GELU.
      * It's defined as follows:
      * <blockquote><pre>
      * f(x) = x * tanh(log(1 + exp(x)))
@@ -87,13 +87,22 @@ public enum Activations {
     MISH(new MishActivation()),
 
     /**
-     * Swish is a non-linear activation function that is similar to GELU, but seems to give better results.
+     * Swish is a non-linear activation function that is similar to GELU.
      * It's defined as follows:
      * <blockquote><pre>
      * f(x) = x * sigmoid(x)
      * </pre></blockquote>
      */
-    SWISH(new SwishActivation());
+    SWISH(new SwishActivation()),
+
+    /**
+     * Softplus is a non-linear activation function that is similar to ReLU.
+     * It appears as a smooth version of the ReLU function, and it's definied as follows:
+     * <blockquote><pre>
+     * f(x) = ln(1 + e^x)
+     * </pre></blockquote>
+     */
+    SOFTPLUS(new SoftPlusActivation());
 
     private final Activation function;
 
