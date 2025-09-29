@@ -38,7 +38,6 @@ import java.util.Random;
  * @see DropoutLayer
  * @see NormLayer
  * @author xEcho1337
- * @since 3.0
  */
 public class TransformerEncoder extends Layer {
 
@@ -202,17 +201,10 @@ public class TransformerEncoder extends Layer {
         normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
         normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
         normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
-        attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
         
-        for (int i = 0; i < numHeads; i++) {
-            String prefix = "attention_head." + i;
-            Tensor qkvWeights = mappedWeights.get(prefix + ".qkv");
-            
-            AttentionHead head = attention.createAttentionHead();
-            head.setQkvWeights(qkvWeights);
-            
-            attention.heads().add(head);
-        }
+        attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
+        attention.setQkvWeights(mappedWeights.get("attention.qkv_weights"));
+        attention.setQkvBias(mappedWeights.get("attention.qkv_bias"));
     }
     
     @Override

@@ -6,6 +6,7 @@ import java.util.Random;
  * Strategies for initializing neural network weights.
  * Each weight is initialized randomly within bounds determined by the
  * chosen initialization technique and the number of input and output neurons
+ * @author xEcho1337
  */
 public interface WeightInitialization {
     /**

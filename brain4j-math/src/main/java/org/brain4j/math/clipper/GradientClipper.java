@@ -7,6 +7,7 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 /**
  * Gradient clipping is a technique used to prevent the gradients
  * from exploding or vanishing during the training process.
+ * @author xEcho1337
  */
 public interface GradientClipper {
 

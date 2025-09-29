@@ -1,8 +1,10 @@
 package org.brain4j.core.layer.impl.transformer;
 
+import com.google.gson.JsonObject;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
+import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
 import org.brain4j.core.transformer.attention.MultiHeadAttention;
@@ -10,6 +12,7 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Implements a single decoder block of the Transformer architecture,
@@ -29,7 +32,6 @@ import java.util.Arrays;
  * @see DropoutLayer
  * @see NormLayer
  * @author xEcho1337
- * @since 3.0
  */
 public class TransformerDecoder extends TransformerEncoder {
    
@@ -107,5 +109,36 @@ public class TransformerDecoder extends TransformerEncoder {
         cache.rememberOutput(this, normalized);
 
         return new Tensor[] { normalized };
+    }
+    
+    @Override
+    public void loadWeights(Map<String, Tensor> mappedWeights) {
+        // TODO: move decoder logic in a single QKV tensor
+        this.upProjection = new DenseLayer();
+        this.downProjection = new DenseLayer();
+        this.normalizer1 = new NormLayer();
+        this.normalizer2 = new NormLayer();
+        this.attention = createAttention(numHeads, embeddingDim);
+        
+        upProjection.setWeights(mappedWeights.get("up_projection.weights"));
+        upProjection.setBias(mappedWeights.get("up_projection.bias"));
+        downProjection.setWeights(mappedWeights.get("down_projection.weights"));
+        downProjection.setBias(mappedWeights.get("down_projection.bias"));
+        normalizer1.setWeights(mappedWeights.get("normalizer_1.weights"));
+        normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
+        normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
+        normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
+        
+        attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
+        
+        for (int i = 0; i < numHeads; i++) {
+            String prefix = "attention_head." + i;
+            Tensor qkvWeights = mappedWeights.get(prefix + ".qkv");
+            
+            AttentionHead head = attention.createAttentionHead();
+            head.setQkvWeights(qkvWeights);
+            
+            attention.heads().add(head);
+        }
     }
 }

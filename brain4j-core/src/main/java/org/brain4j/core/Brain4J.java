@@ -22,7 +22,6 @@ import java.util.List;
  * This class is designed to serve as the main API access point, and will be extended
  * in the future to include global configuration, logging, and other utilities.
  *
- * @since 3.0
  * @author xEcho1337
  * @author Adversing
  */

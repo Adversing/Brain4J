@@ -44,7 +44,6 @@ public class GeneralRegistry<T, A> {
         return toInstance(identifier, null);
     }
 
-
     public T toInstance(String identifier, A value) {
         if (idToInstance.containsKey(identifier)) {
             return idToInstance.get(identifier).apply(value);

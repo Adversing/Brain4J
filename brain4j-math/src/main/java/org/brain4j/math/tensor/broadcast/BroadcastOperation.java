@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 /**
  * Interface defining a broadcastable-operation
+ * @author xEcho1337
  */
 public interface BroadcastOperation {
 

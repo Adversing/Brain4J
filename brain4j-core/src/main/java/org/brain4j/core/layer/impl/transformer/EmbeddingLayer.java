@@ -26,7 +26,6 @@ import java.util.stream.IntStream;
  * The output is a tensor of shape <code>[batch, seq_len, embedding_dim]</code>,
  * where each token index is replaced by its corresponding embedding vector.
  * </p>
- * @since 3.0
  * @author xEcho1337
  */
 public class EmbeddingLayer extends Layer {

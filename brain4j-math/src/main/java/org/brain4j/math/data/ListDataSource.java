@@ -28,7 +28,6 @@ import java.util.List;
  *
  * @author xEcho1337
  * @author Adversing
- * @version 3.0
  */
 @SuppressWarnings("unchecked")
 public class ListDataSource implements Cloneable, Iterable<Sample> {

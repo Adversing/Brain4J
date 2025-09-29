@@ -8,7 +8,15 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.autograd.impl.LayerNormOperation;
 
 /**
- * Implementation of a layer normalization layer, it's used to normalize inputs and improve training.
+ * Implementation of a layer normalization layer,
+ * used to normalize inputs and improve training.
+ * <h2>Shape conventions:</h2>
+ * <ul>
+ *     <li>Input: {@code [batch, ..., input_dim]}</li>
+ *     <li>Output: {@code [batch, ..., input_dim]}</li>
+ *     <li>Weights: {@code [input_dim]}</li>
+ *     <li>Bias: {@code [input_dim]}</li>
+ * </ul>
  * @author xEcho1337
  */
 public class NormLayer extends Layer {
@@ -41,7 +49,9 @@ public class NormLayer extends Layer {
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor input = inputs[0];
-        Tensor result = input.layerNorm(epsilon).mulGrad(weights).addGrad(bias);
+        Tensor result = input.layerNorm(epsilon)
+            .mulGrad(weights)
+            .addGrad(bias);
         return new Tensor[] { result };
     }
     

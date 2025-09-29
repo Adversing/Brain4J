@@ -18,7 +18,6 @@ import java.util.Random;
  * Implementation of a recurrent layer.
  * @apiNote This implementation is not completed and doesn't support training yet.
  * @author xEcho1337
- * @since 3.0
  */
 public class RecurrentLayer extends Layer {
 

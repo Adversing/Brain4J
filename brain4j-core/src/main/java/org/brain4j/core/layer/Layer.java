@@ -63,16 +63,73 @@ public abstract class Layer {
      */
     public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
 
-    public Tensor forward(StatesCache cache, Tensor input) {
-        return forward(cache, new Tensor[] { input })[0];
+    /**
+     * Computes the loss (the gradient) with respect to the loss function and launches the autograd.
+     * This method should only be called for the last layer of the neural network.
+     *
+     * @param cache        the state cache of this inference
+     * @param labels       the label tensors
+     * @param outputs      the output tensors
+     * @param lossFunction the loss function of this model
+     */
+    public void computeLoss(
+        StatesCache cache,
+        Tensor[] labels,
+        Tensor[] outputs,
+        LossFunction lossFunction
+    ) {
+        Tensor[] preOutputs = cache.output(this);
+        
+        if (labels.length != outputs.length) {
+            throw new IllegalArgumentException("Targets amount does not equal to output amount.");
+        }
+        
+        for (int i = 0; i < outputs.length; i++) {
+            Tensor output = outputs[i];
+            Tensor target = labels[i];
+            Tensor preOutput = preOutputs[i];
+            
+            Tensor error = output.minus(target);
+            Tensor derivatives = activation.derivative(preOutput);
+            Tensor delta = lossFunction.delta(error, derivatives);
+            
+            preOutput.backward(delta);
+        }
     }
-
+    
+    /**
+     * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
+     *
+     * @param cache     the states cache of the forward pass
+     * @param updater   the updater of this model
+     * @param optimizer the optimizer of this model
+     */
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        if (weights != null && weights.grad() != null) {
+            Tensor weightsGrad = optimizer.step(weights, weights.grad());
+            
+            clipper.clip(weightsGrad);
+            updater.change(weights, weightsGrad);
+        }
+        
+        if (bias != null && bias.grad() != null) {
+            Tensor biasGrad = bias.grad().sum(0, false);
+            
+            clipper.clip(biasGrad);
+            updater.change(bias, biasGrad);
+        }
+    }
+    
     /**
      * Returns the output size of this layer, i.e. the number of neurons.
      * @return the output size
      */
     public abstract int size();
-
+    
+    public Tensor forward(StatesCache cache, Tensor input) {
+        return forward(cache, new Tensor[] { input })[0];
+    }
+    
     /**
      * Checks if the amount of inputs is greater than the maximum amount.
      * If so, throws an exception, otherwise will do nothing.
@@ -121,63 +178,6 @@ public abstract class Layer {
     }
 
     /**
-     * Computes the loss (the gradient) with respect to the loss function and launches the autograd.
-     * This method should only be called for the last layer of the neural network.
-     *
-     * @param cache the state cache of this inference
-     * @param labels the label tensors
-     * @param outputs the output tensors
-     * @param lossFunction the loss function of this model
-     */
-    public void computeLoss(
-        StatesCache cache,
-        Tensor[] labels,
-        Tensor[] outputs,
-        LossFunction lossFunction
-    ) {
-        Tensor[] preOutputs = cache.output(this);
-
-        if (labels.length != outputs.length) {
-            throw new IllegalArgumentException("Targets amount does not equal to output amount.");
-        }
-
-        for (int i = 0; i < outputs.length; i++) {
-            Tensor output = outputs[i];
-            Tensor target = labels[i];
-            Tensor preOutput = preOutputs[i];
-
-            Tensor error = output.minus(target);
-            Tensor derivatives = activation.derivative(preOutput);
-            Tensor delta = lossFunction.delta(error, derivatives);
-
-            preOutput.backward(delta);
-        }
-    }
-
-    /**
-     * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
-     *
-     * @param cache the states cache of the forward pass
-     * @param updater the updater of this model
-     * @param optimizer the optimizer of this model
-     */
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        if (weights != null && weights.grad() != null) {
-            Tensor weightsGrad = optimizer.step(weights, weights.grad());
-            
-            clipper.clip(weightsGrad);
-            updater.change(weights, weightsGrad);
-        }
-        
-        if (bias != null && bias.grad() != null) {
-            Tensor biasGrad = bias.grad().sum(0, false);
-            
-            clipper.clip(biasGrad);
-            updater.change(bias, biasGrad);
-        }
-    }
-
-    /**
      * Resets the gradients for all the weights in this layer.
      */
     public void resetGrad() {
@@ -202,83 +202,45 @@ public abstract class Layer {
         return true;
     }
 
-    /**
-     * Gets the activation function for this layer.
-     * @return the activation function
-     */
     public Activation activation() {
         return activation;
     }
-    
+
     public Layer activation(Activation activation) {
         this.activation = activation;
         return this;
     }
-    
-    /**
-     * Gets the gradient clipping function for this layer.
-     * @return the gradient clipping function
-     */
+
     public GradientClipper clipper() {
         return clipper;
     }
     
-    /**
-     * Sets the gradient clipping function for this layer.
-     * @param clipper the new gradient clipping function
-     * @return this layer
-     */
     public Layer clipper(GradientClipper clipper) {
         this.clipper = clipper;
         return this;
     }
-
-    /**
-     * Gets the weight initialization function for this layer.
-     * @return the weight initialization function
-     */
+    
     public WeightInitialization weightInit() {
         return weightInit;
     }
 
-    /**
-     * Sets the weight initialization function for this layer.
-     * @param weightInit the new weight initialization function
-     * @return this layer
-     */
     public Layer weightInit(WeightInitialization weightInit) {
         this.weightInit = weightInit;
         return this;
     }
-    
-    /**
-     * Gets the weights of this layer.
-     * @return the weights
-     */
+
     public Tensor weights() {
         return weights;
     }
     
-    /**
-     * Updates the weights of this layer.
-     * @param weights the new weights
-     */
     public void setWeights(Tensor weights) {
         this.weights = weights;
     }
 
-    /**
-     * Gets the bias of this layer.
-     * @return the bias
-     */
     public Tensor bias() {
         return bias;
     }
     
-    /**
-     * Updates the bias of this layer.
-     * @param bias the new bias
-     */
     public void setBias(Tensor bias) {
         this.bias = bias;
     }

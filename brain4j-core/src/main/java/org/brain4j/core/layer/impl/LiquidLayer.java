@@ -1,6 +1,8 @@
 package org.brain4j.core.layer.impl;
 
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.training.optimizer.Optimizer;
+import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
@@ -12,17 +14,16 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class LiquidLayer extends Layer {
-
+    
     private DenseLayer hiddenParams;
     private DenseLayer tauParams;
     private final int dimension;
     private final int mSteps;
-    private double tauMin = 0.5;
-    private double tauMax = 5.0;
-
+    private final double tauMin;
+    private final double tauMax;
+    
     public LiquidLayer(int dimension, int mSteps) {
-        this.dimension = dimension;
-        this.mSteps = mSteps;
+        this(dimension, mSteps, 0.5, 5.0);
     }
 
     public LiquidLayer(int dimension, int mSteps, double tauMin, double tauMax) {
@@ -99,12 +100,50 @@ public class LiquidLayer extends Layer {
             }
         }
 
-
         return new Tensor[] { hidden, deltas };
     }
-
+    
+    @Override
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        super.backward(cache, updater, optimizer);
+        this.hiddenParams.backward(cache, updater, optimizer);
+        this.tauParams.backward(cache, updater, optimizer);
+    }
+    
     @Override
     public int size() {
         return dimension;
+    }
+    
+    public DenseLayer hiddenParams() {
+        return hiddenParams;
+    }
+    
+    public void setHiddenParams(DenseLayer hiddenParams) {
+        this.hiddenParams = hiddenParams;
+    }
+    
+    public DenseLayer tauParams() {
+        return tauParams;
+    }
+    
+    public void setTauParams(DenseLayer tauParams) {
+        this.tauParams = tauParams;
+    }
+    
+    public int dimension() {
+        return dimension;
+    }
+    
+    public int mSteps() {
+        return mSteps;
+    }
+    
+    public double tauMin() {
+        return tauMin;
+    }
+    
+    public double tauMax() {
+        return tauMax;
     }
 }

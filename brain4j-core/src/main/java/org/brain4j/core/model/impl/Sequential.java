@@ -38,7 +38,6 @@ import static org.brain4j.math.constants.Constants.*;
  * </p>
  *
  * @author xEcho1337
- * @since 3.0
  */
 public class Sequential extends Layer implements Model {
 

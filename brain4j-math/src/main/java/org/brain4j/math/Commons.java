@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * General utilities class
+ * @author xEcho1337
  */
 public class Commons {
 

@@ -17,17 +17,16 @@ import java.util.Random;
  * This layer performs a linear transformation on the input tensor,
  * followed by the application of a specified activation function.
  * </p>
- * <p>Inputs are expected to have the shape <code>[batch, ..., input_size]</code>,
- * outputs have the shape <code>[batch, ..., dimension]</code> where <code>dimension</code>
- * is the amount of neurons in this layer.
- * </p>
- * Weights are represented with the following shapes:
+ * <h2>Shape conventions:</h2>
  * <ul>
- *   <li><code>weights</code> has shape <code>[input_size, output_size]</code></li>
- *   <li><code>bias</code> has shape <code>[output_size]</code></li>
+ *   <li>Input: {@code [batch, ..., input_dim]}</li>
+ *   <li>Output: {@code [batch, ..., output_dim]}</li>
+ *   <li>Weights: {@code [input_dim, output_dim]}</li>
+ *   <li>Bias: {@code [output_dim]}</li>
  * </ul>
+ * @implNote this layer supports multiple input tensors; assuming each one has the correct shape, each input tensor
+ * gets processed in the same way
  * @author xEcho1337
- * @since 3.0
  */
 public class DenseLayer extends Layer {
 

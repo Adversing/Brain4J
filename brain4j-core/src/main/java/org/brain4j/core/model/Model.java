@@ -15,9 +15,7 @@ import java.util.List;
 
 /**
  * Represents a generic neural network.
- *
  * @author xEcho1337
- * @since 3.0
  */
 public interface Model extends Iterable<Layer> {
     

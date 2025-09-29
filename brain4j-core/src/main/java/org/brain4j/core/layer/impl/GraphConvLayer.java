@@ -8,22 +8,66 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
 
+/**
+ * Graph Convolutional Network (GCN) layer implementation.
+ * <p>
+ * This layer applies the graph convolution operation. It combines node features with
+ * the normalized adjacency matrix to propagate information across graph neighborhoods.
+ * </p>
+ * <h2>Shape conventions:</h2>
+ * <p>Input:</p>
+ * <ul>
+ *     <li>{@code features}: {@code [batch, nodes, in_features]}</li>
+ *     <li>{@code adjacency}: {@code [batch, nodes, nodes]}</li>
+ * </ul>
+ * <p>Output:</p>
+ * <ul>
+ *     <li>{@code [batch, nodes, out_features]}</li>
+ *     <li>the adjacency matrix is returned as second output for downstream layers</li>
+ * </ul>
+ * <p>The adjacency normalization step computes:</p>
+ * <blockquote><pre>
+ * Â = D^{-1/2} (A + I) D^{-1/2}
+ * </pre></blockquote>
+ * where {@code A} is the adjacency matrix, {@code I} is the identity matrix,
+ * and {@code D} is the degree matrix of {@code A + I}.
+ * </p>
+ *
+ * @implNote this layer expects two input tensors for it to work
+ * @author xEcho1337
+ */
 public class GraphConvLayer extends Layer {
 
     private int dimension;
 
     private GraphConvLayer() {
     }
-
+    
+    /**
+     * Creates a GCN layer with the given output dimension and activation function.
+     *
+     * @param dimension the output feature dimension per node
+     * @param activation the activation function applied after convolution
+     */
     public GraphConvLayer(int dimension, Activation activation) {
         this.dimension = dimension;
         this.activation = activation;
     }
-
+    
+    /**
+     * Creates a GCN layer with the given output dimension and activation function enum.
+     *
+     * @param dimension  the output feature dimension per node
+     * @param activation the activation type (wrapped into an {@link Activation})
+     */
     public GraphConvLayer(int dimension, Activations activation) {
         this(dimension, activation.function());
     }
-
+    
+    /**
+     * Creates a GCN layer with the given output dimension using a linear activation.
+     * @param dimension the output feature dimension per node
+     */
     public GraphConvLayer(int dimension) {
         this(dimension, Activations.LINEAR);
     }
@@ -46,7 +90,7 @@ public class GraphConvLayer extends Layer {
         Tensor support = features.matmulGrad(weights);
         Tensor adjNorm = normalizeAdjacency(adjacencyMatrix);
 
-        // [B, N, N] @ [B, N, D] -> [B, N, D]
+        // [batch, nodes, dimension]
         Tensor out = adjNorm.matmulGrad(support)
             .addGrad(bias);
 
@@ -84,7 +128,7 @@ public class GraphConvLayer extends Layer {
         // [batch, nodes, nodes]
         Tensor Ahat = adjacent.add(identity);
         // [batch, nodes]
-        Tensor deg  = Ahat.sum(1, false).add(1e-12);
+        Tensor deg = Ahat.sum(1, false).add(1e-12);
         Tensor degInvSqrt = deg.pow(-0.5);
 
         Tensor DinvSqrt = Tensors.zeros(batch, nodes, nodes);
@@ -95,8 +139,7 @@ public class GraphConvLayer extends Layer {
                 DinvSqrt.set(value, b, i, i);
             }
         }
-
-
+        
         return DinvSqrt.matmulGrad(Ahat).matmulGrad(DinvSqrt);
     }
 }
