@@ -13,6 +13,11 @@ public class SelectLayer extends Layer {
     }
 
     @Override
+    public Layer connect(Layer previous) {
+        return previous;
+    }
+
+    @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         return new Tensor[] { inputs[index] };
     }
