@@ -6,6 +6,27 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
 
+/**
+ * Input layer used to define the expected shape of data entering the network.
+ * <p>
+ * This layer must always be placed as the first layer in a model.
+ * It does not perform any computation but acts as a contract,
+ * ensuring that tensors flowing into the model have the correct shape.
+ * Only the last {@code N} dimensions are strictly checked, where
+ * {@code N} is the rank of the specified input shape.
+ * This allows an optional batch
+ * dimension to be present without affecting validation.
+ * </p>
+ * <h2>Use example:</h2>
+ * <blockquote><pre>{@code
+ * Model model = Sequential.of(
+ *     // Expects input with shape [..., 3, 4]
+ *     new InputLayer(3, 4),
+ *     new DenseLayer(16),
+ *     new DenseLayer(10)
+ * );
+ * </pre></blockquote>
+ */
 public class InputLayer extends Layer {
 
     private int[] shape;
