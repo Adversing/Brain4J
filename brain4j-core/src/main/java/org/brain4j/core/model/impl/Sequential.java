@@ -410,8 +410,9 @@ public class Sequential extends Layer implements Model {
         updater.resetGradients();
         optimizer.initialize();
         
-        zeroGrad();
         connectLayers();
+        zeroGrad();
+
         return this;
     }
 

@@ -118,7 +118,14 @@ public class LiquidLayer extends Layer {
         this.hiddenParams.backward(cache, updater, optimizer);
         this.tauParams.backward(cache, updater, optimizer);
     }
-    
+
+    @Override
+    public void resetGrad() {
+        super.resetGrad();
+        this.hiddenParams.resetGrad();
+        this.tauParams.resetGrad();
+    }
+
     @Override
     public int size() {
         return dimension;
