@@ -104,11 +104,11 @@ public class LiquidLayer extends Layer {
             Tensor projInput_t = projInput.sliceGrad(ranges).squeezeGrad(1); // [batch, hidden_dim]
 
             hidden = solver.update(deltaT, tau_t, projInput_t, hidden, x -> hiddenParams.forward(cache, x));
-            hiddenStates.add(hidden);
+            hiddenStates.add(hidden.reshapeGrad(batch, 1, dimension));
         }
 
         if (returnSequences) {
-            hidden = Tensors.concatGrad(hiddenStates);
+            hidden = Tensors.concatGrad(hiddenStates, 1);
         }
 
         return new Tensor[] { hidden, deltas };
