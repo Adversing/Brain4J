@@ -245,6 +245,13 @@ public class Tensors {
     public static Tensor orthogonal(int rows, int cols) {
         Random rng = new Random();
         Tensor A = Tensors.zeros(rows, cols).map(_ -> (float) rng.nextGaussian());
+        List<Tensor> result = new ArrayList<>();
+        
+        for (int i = 0; i < cols; i++) {
+            Tensor a = A.slice(Range.all(), Range.point(i)); // [rows, 1]
+            double norm = Math.sqrt(a.clone().pow(2).sum());
+            Tensor normalized = a.divide(norm);
+        }
         
         return null; // TODO
     }
