@@ -32,8 +32,7 @@ public class Lion extends Optimizer {
             momentum = Tensors.zeros(gradient.shape());
         }
 
-        momentum.mul(beta);
-        momentum.add(signGrad.broadcastLike(momentum));
+        momentum.mul(beta).add(signGrad.broadcastLike(momentum));
         
         momentumHistory.put(weights, momentum);
         return momentum.sign();
