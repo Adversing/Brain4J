@@ -1,5 +1,6 @@
 package org.brain4j.core.layer.impl.liquid;
 
+import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.liquid.solver.NumericalSolver;
@@ -9,25 +10,26 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class LiquidLayer extends Layer {
 
-    private final int dimension;
-    private final double tauMin;
-    private final double tauMax;
-    private final boolean returnSequences;
+    private int dimension;
+    private double tauMin;
+    private double tauMax;
+    private boolean returnSequences;
 
     private DenseLayer hiddenParams;
     private DenseLayer tauParams;
     private NumericalSolver solver;
+
+    protected LiquidLayer() {
+    }
 
     public LiquidLayer(int dimension, int mSteps, boolean returnSequences) {
         this(dimension, 0.5, 5.0, returnSequences, new EulerSolver(mSteps));
@@ -120,6 +122,36 @@ public class LiquidLayer extends Layer {
     }
 
     @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("dimension", dimension);
+        object.addProperty("tau_min", tauMin);
+        object.addProperty("tau_max", tauMax);
+        object.addProperty("return_sequences", returnSequences);
+    }
+
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dimension = object.get("dimension").getAsInt();
+        this.tauMin = object.get("tau_min").getAsFloat();
+        this.tauMax = object.get("tau_max").getAsFloat();
+        this.returnSequences = object.get("return_sequences").getAsBoolean();
+    }
+
+    @Override
+    public void loadWeights(Map<String, Tensor> mappedWeights) {
+        super.loadWeights(mappedWeights);
+        this.tauParams.loadWeights(mappedWeights);
+        this.hiddenParams.loadWeights(mappedWeights);
+    }
+
+    @Override
+    public void toDevice(Device device) {
+        super.toDevice(device);
+        this.hiddenParams.toDevice(device);
+        this.tauParams.toDevice(device);
+    }
+
+    @Override
     public void resetGrad() {
         super.resetGrad();
         this.hiddenParams.resetGrad();
@@ -139,6 +171,14 @@ public class LiquidLayer extends Layer {
     @Override
     public int totalBiases() {
         return bias.elements() + hiddenParams.totalBiases() + tauParams.totalBiases();
+    }
+
+    @Override
+    public Map<String, Tensor> weightsMap() {
+        Map<String, Tensor> result = super.weightsMap();
+        result.putAll(tauParams.weightsMap());
+        result.putAll(hiddenParams.weightsMap());
+        return result;
     }
 
     public NumericalSolver solver() {
