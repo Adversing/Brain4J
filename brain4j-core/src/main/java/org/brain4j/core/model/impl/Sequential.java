@@ -114,7 +114,7 @@ public class Sequential extends Layer implements Model {
         Tensor[] inputs = batch.first();
         Tensor[] labels = batch.second();
 
-        Tensor[] outputs = predict(new StatesCache(), inputs);
+        Tensor[] outputs = predict(new StatesCache(false, device), inputs);
 
         for (Tensor input : inputs) {
             int batchSize = input.shape()[0];
@@ -153,7 +153,7 @@ public class Sequential extends Layer implements Model {
         Tensor[] inputs = batch.first();
         Tensor[] targets = batch.second();
 
-        Tensor[] outputs = predict(new StatesCache(), inputs);
+        Tensor[] outputs = predict(new StatesCache(false, device), inputs);
 
         for (int i = 0; i < outputs.length; i++) {
             Tensor output = outputs[i].cpu();
