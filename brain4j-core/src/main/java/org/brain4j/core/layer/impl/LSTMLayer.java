@@ -11,6 +11,7 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -20,13 +21,15 @@ public class LSTMLayer extends Layer {
     private Tensor hiddenWeights;
     private int dimension;
     private int hiddenDimension;
-    
-    private LSTMLayer() {
+    private boolean returnSequences;
+
+    protected LSTMLayer() {
     }
     
-    public LSTMLayer(int dimension, int hiddenDimension) {
+    public LSTMLayer(int dimension, int hiddenDimension, boolean returnSequences) {
         this.dimension = dimension;
         this.hiddenDimension = hiddenDimension;
+        this.returnSequences = returnSequences;
     }
     
     @Override
@@ -67,8 +70,8 @@ public class LSTMLayer extends Layer {
         // [batch, timesteps, hidden_size]
         Tensor hiddenState = Tensors.zeros(batch, hiddenDimension).withGrad();
         Tensor cellState = Tensors.zeros(batch, hiddenDimension).withGrad();
-        
-        Tensor[] hiddenStates = new Tensor[timesteps];
+
+        List<Tensor> hiddenStates = new ArrayList<>();
         
         Activation tanh = Activations.TANH.function();
         Activation sigmoid = Activations.SIGMOID.function();
@@ -91,12 +94,17 @@ public class LSTMLayer extends Layer {
             
             cellState = f.mulGrad(cellState).addGrad(i.mulGrad(g));
             hiddenState = out.mulGrad(cellState.activateGrad(tanh));
-            
-            hiddenStates[t] = hiddenState.reshapeGrad(batch, 1, hiddenDimension);
+
+            hiddenStates.add(hiddenState.reshapeGrad(batch, 1, hiddenDimension));
         }
         
         // [batch, timesteps, hidden_dim]
-        return new Tensor[] { Tensors.concatGrad(List.of(hiddenStates), 1) };
+        Tensor result = hiddenState;
+
+        if (returnSequences) {
+            result = Tensors.concatGrad(hiddenStates, 1);
+        }
+        return new Tensor[] { result };
     }
     
     @Override
