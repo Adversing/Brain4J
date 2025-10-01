@@ -114,8 +114,8 @@ public class TransformerDecoder extends TransformerEncoder {
     @Override
     public void loadWeights(Map<String, Tensor> mappedWeights) {
         // TODO: move decoder logic in a single QKV tensor
-        this.upProjection = new DenseLayer();
-        this.downProjection = new DenseLayer();
+        this.upProjection = new DenseLayer(0);
+        this.downProjection = new DenseLayer(0);
         this.normalizer1 = new NormLayer();
         this.normalizer2 = new NormLayer();
         this.attention = createAttention(numHeads, embeddingDim);
