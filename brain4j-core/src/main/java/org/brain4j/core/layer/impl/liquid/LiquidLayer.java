@@ -1,6 +1,9 @@
-package org.brain4j.core.layer.impl;
+package org.brain4j.core.layer.impl.liquid;
 
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.layer.impl.DenseLayer;
+import org.brain4j.core.layer.impl.liquid.solver.NumericalSolver;
+import org.brain4j.core.layer.impl.liquid.solver.impl.EulerSolver;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
@@ -10,27 +13,36 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class LiquidLayer extends Layer {
-    
-    private DenseLayer hiddenParams;
-    private DenseLayer tauParams;
+
     private final int dimension;
-    private final int mSteps;
     private final double tauMin;
     private final double tauMax;
-    
-    public LiquidLayer(int dimension, int mSteps) {
-        this(dimension, mSteps, 0.5, 5.0);
+    private final boolean returnSequences;
+
+    private DenseLayer hiddenParams;
+    private DenseLayer tauParams;
+    private NumericalSolver solver;
+
+    public LiquidLayer(int dimension, int mSteps, boolean returnSequences) {
+        this(dimension, 0.5, 5.0, returnSequences, new EulerSolver(mSteps));
     }
 
-    public LiquidLayer(int dimension, int mSteps, double tauMin, double tauMax) {
+    public LiquidLayer(int dimension, boolean returnSequences, NumericalSolver solver) {
+        this(dimension, 0.5, 5.0, returnSequences, solver);
+    }
+
+    public LiquidLayer(int dimension, double tauMin, double tauMax, boolean returnSequences, NumericalSolver solver) {
+        this.solver = solver;
         this.dimension = dimension;
-        this.mSteps = mSteps;
         this.tauMin = tauMin;
         this.tauMax = tauMax;
+        this.returnSequences = returnSequences;
     }
 
     @Override
@@ -45,8 +57,8 @@ public class LiquidLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(_ -> weightInit.generate(generator, input, output));
-        this.hiddenParams.initWeights(generator, input, output);
-        this.tauParams.initWeights(generator, input, output);
+        this.hiddenParams.initWeights(generator, dimension, dimension);
+        this.tauParams.initWeights(generator, input, dimension);
     }
 
     @Override
@@ -77,27 +89,24 @@ public class LiquidLayer extends Layer {
             hidden = hidden.to(gpu.device()).withGrad();
         }
 
+        List<Tensor> hiddenStates = new ArrayList<>();
+
+        Tensor projTau = tauParams.forward(cache, input).map(v -> Math.clamp(v, tauMin, tauMax)); // [batch, timesteps, hidden_dim]
+        Tensor projInput = input.matmulGrad(weights).addGrad(bias); // [batch, timesteps, hidden_dim]
+
         for (int t = 0; t < timesteps; t++) {
             Range[] ranges = { Range.all(), Range.point(t), Range.all() };
 
-            Tensor x_t = input.sliceGrad(ranges).squeezeGrad(1); // [B, input_dim]
-            Tensor deltaT = deltas.sliceGrad(ranges).squeezeGrad(1); // [B, 1]
+            Tensor deltaT = deltas.sliceGrad(ranges).squeezeGrad(1); // [batch, 1]
+            Tensor tau_t = projTau.sliceGrad(ranges).squeezeGrad(1); // [batch, hidden_dim]
+            Tensor projInput_t = projInput.sliceGrad(ranges).squeezeGrad(1); // [batch, hidden_dim]
 
-            Tensor tau = tauParams.forward(cache, x_t).map(v -> Math.clamp(v, tauMin, tauMax));
-            Tensor delta_t = deltaT.divide(mSteps); // [B, 1]
+            hidden = solver.update(deltaT, tau_t, projInput_t, hidden, x -> hiddenParams.forward(cache, x));
+            hiddenStates.add(hidden);
+        }
 
-            for (int i = 0; i < mSteps; i++) {
-                Tensor projInput = x_t.matmulGrad(weights).addGrad(bias);
-                Tensor projHidden = hiddenParams.forward(cache, hidden);
-
-                // z = tanh(Wx + Uh + b)
-                Tensor z = projInput.addGrad(projHidden).activateGrad(Activations.TANH.function());
-                // (Δt / τ(x))
-                Tensor alpha = delta_t.broadcastLike(tau).divGrad(tau); // [B, hidden_dim]
-
-                Tensor deltaH = z.addGrad(hidden.times(-1));
-                hidden = hidden.addGrad(alpha.times(deltaH));
-            }
+        if (returnSequences) {
+            hidden = Tensors.concatGrad(hiddenStates);
         }
 
         return new Tensor[] { hidden, deltas };
@@ -114,7 +123,26 @@ public class LiquidLayer extends Layer {
     public int size() {
         return dimension;
     }
-    
+
+    @Override
+    public int totalWeights() {
+        return weights.elements() + hiddenParams.totalWeights() + tauParams.totalWeights();
+    }
+
+    @Override
+    public int totalBiases() {
+        return bias.elements() + hiddenParams.totalBiases() + tauParams.totalBiases();
+    }
+
+    public NumericalSolver solver() {
+        return solver;
+    }
+
+    public LiquidLayer solver(NumericalSolver solver) {
+        this.solver = solver;
+        return this;
+    }
+
     public DenseLayer hiddenParams() {
         return hiddenParams;
     }
@@ -134,11 +162,7 @@ public class LiquidLayer extends Layer {
     public int dimension() {
         return dimension;
     }
-    
-    public int mSteps() {
-        return mSteps;
-    }
-    
+
     public double tauMin() {
         return tauMin;
     }
