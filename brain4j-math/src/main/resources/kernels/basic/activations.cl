@@ -232,6 +232,37 @@ __kernel void swish_backward(
     }
 }
 
+__kernel void softplus_forward(
+    __global const float* input,
+    __global float* output,
+    const int length
+) {
+    int gid = get_global_id(0);
+    if (gid < length) {
+        float x = input[gid];
+        float value = log1p(exp(x));
+        output[gid] = value;
+    }
+}
+
+__kernel void softplus_backward(
+    __global const float* input,
+    __global float* output,
+    const int length
+) {
+    int gid = get_global_id(0);
+    if (gid < length) {
+        float x = input[gid];
+        if (x >= 0) {
+            float expNeg = exp(-x);
+            output[gid] = 1.0 / (1.0 + expNeg);
+        } else {
+            float expPos = exp(x);
+            output[gid] = expPos / (1.0 + expPos);
+        }
+    }
+}
+
 __kernel void tanh_forward(
     __global const float* input,
     __global float* output,
