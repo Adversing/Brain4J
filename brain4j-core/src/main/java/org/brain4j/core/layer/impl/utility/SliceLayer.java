@@ -10,16 +10,17 @@ import org.brain4j.math.data.StatesCache;
 public class SliceLayer extends Layer {
     
     private Range[] ranges;
-    private int size;
-    
+
+    protected SliceLayer() {
+    }
+
     public SliceLayer(Range... ranges) {
         this.ranges = ranges;
     }
     
     @Override
     public Layer connect(Layer previous) {
-        this.size = previous.size();
-        return this;
+        return previous;
     }
     
     @Override
@@ -35,7 +36,7 @@ public class SliceLayer extends Layer {
     
     @Override
     public int size() {
-        return size;
+        return 0;
     }
     
     @Override
@@ -50,7 +51,6 @@ public class SliceLayer extends Layer {
             rangesArray.add(array);
         }
         
-        object.addProperty("size", size);
         object.add("ranges", rangesArray);
     }
     
@@ -58,7 +58,6 @@ public class SliceLayer extends Layer {
     public void deserialize(JsonObject object) {
         JsonArray rangesArray = object.get("ranges").getAsJsonArray();
 
-        this.size = object.get("size").getAsInt();
         this.ranges = new Range[rangesArray.size()];
         
         for (int i = 0; i < ranges.length; i++) {

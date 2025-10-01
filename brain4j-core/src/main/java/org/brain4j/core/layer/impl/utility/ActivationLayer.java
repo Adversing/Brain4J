@@ -10,8 +10,8 @@ import org.brain4j.math.data.StatesCache;
 public class ActivationLayer extends Layer {
 
     private int dimension;
-    
-    public ActivationLayer() {
+
+    protected ActivationLayer() {
     }
     
     public ActivationLayer(Activations activation) {

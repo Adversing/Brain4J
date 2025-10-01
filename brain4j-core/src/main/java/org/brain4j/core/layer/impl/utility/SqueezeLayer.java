@@ -9,8 +9,16 @@ public class SqueezeLayer extends Layer {
     
     private int dimension;
 
+    protected SqueezeLayer() {
+    }
+
     public SqueezeLayer(int dimension) {
         this.dimension = dimension;
+    }
+
+    @Override
+    public Layer connect(Layer previous) {
+        return previous;
     }
 
     @Override

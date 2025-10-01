@@ -30,8 +30,8 @@ import org.brain4j.math.data.StatesCache;
 public class InputLayer extends Layer {
 
     private int[] shape;
-    
-    public InputLayer() {
+
+    protected InputLayer() {
     }
 
     public InputLayer(int... shape) {

@@ -32,7 +32,7 @@ public class DenseLayer extends Layer {
 
     private int dimension;
     
-    public DenseLayer() {
+    protected DenseLayer() {
     }
     
     /**

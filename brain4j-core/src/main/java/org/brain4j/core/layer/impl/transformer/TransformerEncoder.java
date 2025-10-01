@@ -50,8 +50,8 @@ public class TransformerEncoder extends Layer {
 
     protected int numHeads;
     protected int embeddingDim;
-    
-    public TransformerEncoder() {
+
+    protected TransformerEncoder() {
     }
 
     /**
@@ -187,8 +187,8 @@ public class TransformerEncoder extends Layer {
     
     @Override
     public void loadWeights(Map<String, Tensor> mappedWeights) {
-        this.upProjection = new DenseLayer();
-        this.downProjection = new DenseLayer();
+        this.upProjection = new DenseLayer(0);
+        this.downProjection = new DenseLayer(0);
         this.normalizer1 = new NormLayer();
         this.normalizer2 = new NormLayer();
         this.attention = createAttention(numHeads, embeddingDim);

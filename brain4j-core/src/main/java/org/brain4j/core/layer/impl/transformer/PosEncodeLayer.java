@@ -17,7 +17,7 @@ public class PosEncodeLayer extends Layer {
     private int dimension;
     private int length = 5000;
 
-    private PosEncodeLayer() {
+    protected PosEncodeLayer() {
     }
 
     public PosEncodeLayer(int length, int dimension) {
