@@ -2,12 +2,10 @@ package org.brain4j.math;
 
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.CpuTensor;
+import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelConvolve;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.SplittableRandom;
+import java.util.*;
 
 public class Tensors {
 
@@ -243,7 +241,14 @@ public class Tensors {
 
         return newShape;
     }
-
+    
+    public static Tensor orthogonal(int rows, int cols) {
+        Random rng = new Random();
+        Tensor A = Tensors.zeros(rows, cols).map(_ -> (float) rng.nextGaussian());
+        
+        return null; // TODO
+    }
+    
     public static Tensor eye(int n) {
         Tensor result = Tensors.zeros(n, n);
 

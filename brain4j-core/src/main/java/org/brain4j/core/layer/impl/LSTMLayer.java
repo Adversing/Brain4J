@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.Layer;
@@ -11,40 +12,41 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class LSTMLayer extends Layer {
     
     private Tensor hiddenWeights;
-    private int dimension;
     private int hiddenDimension;
     private boolean returnSequences;
 
     protected LSTMLayer() {
     }
     
-    public LSTMLayer(int dimension, int hiddenDimension, boolean returnSequences) {
-        this.dimension = dimension;
+    public LSTMLayer(int hiddenDimension, boolean returnSequences) {
         this.hiddenDimension = hiddenDimension;
         this.returnSequences = returnSequences;
     }
     
     @Override
     public Layer connect(Layer previous) {
-        int size = previous == null ? dimension : previous.size();
-        this.weights = Tensors.zeros(size, 4 * hiddenDimension).withGrad();
-        this.hiddenWeights = Tensors.zeros(hiddenDimension, 4 * hiddenDimension).withGrad();
+        List<Tensor> gates = new ArrayList<>();
+        
+        // TODO: finish this
+        for (int i = 0; i < 4; i++) {
+            Tensor gateWeight = Tensors.orthogonal(hiddenDimension, hiddenDimension);
+            gates.add(gateWeight);
+        }
+        
+        this.weights = Tensors.zeros(previous.size(), 4 * hiddenDimension).withGrad();
+        this.hiddenWeights = Tensors.concat(gates, 1).withGrad();
         this.bias = Tensors.zeros(4 * hiddenDimension).withGrad();
         return this;
     }
     
     @Override
     public void initWeights(Random generator, int input, int output) {
-        this.weights.map(x -> weightInit.generate(generator, input, 4 * hiddenDimension));
-        this.hiddenWeights.map(x -> weightInit.generate(generator, hiddenDimension, 4 * hiddenDimension));
+        this.weights.map(_ -> weightInit.generate(generator, input, 4 * hiddenDimension));
     }
     
     @Override
@@ -77,7 +79,7 @@ public class LSTMLayer extends Layer {
         Activation sigmoid = Activations.SIGMOID.function();
         
         for (int t = 0; t < timesteps; t++) {
-            Tensor timestep = projection.sliceGrad(Range.all(), Range.point(t), Range.all()).squeeze(1);
+            Tensor timestep = projection.sliceGrad(Range.all(), Range.point(t), Range.all()).squeezeGrad(1);
             Tensor hiddenProj = hiddenState.matmulGrad(hiddenWeights); // [batch, 4 * hidden_dim]
             
             Tensor preActivation = timestep.addGrad(hiddenProj).addGrad(bias); // [batch, 4 * hidden_dim]
@@ -94,8 +96,10 @@ public class LSTMLayer extends Layer {
             
             cellState = f.mulGrad(cellState).addGrad(i.mulGrad(g));
             hiddenState = out.mulGrad(cellState.activateGrad(tanh));
-
-            hiddenStates.add(hiddenState.reshapeGrad(batch, 1, hiddenDimension));
+            
+            if (returnSequences) {
+                hiddenStates.add(hiddenState.reshapeGrad(batch, 1, hiddenDimension));
+            }
         }
         
         // [batch, timesteps, hidden_dim]
@@ -104,30 +108,29 @@ public class LSTMLayer extends Layer {
         if (returnSequences) {
             result = Tensors.concatGrad(hiddenStates, 1);
         }
+
         return new Tensor[] { result };
     }
     
     @Override
     public int size() {
-        return dimension;
+        return hiddenDimension;
     }
     
     @Override
     public void serialize(JsonObject object) {
-        object.addProperty("dimension", dimension);
         object.addProperty("hidden_dimension", hiddenDimension);
     }
     
     @Override
     public void deserialize(JsonObject object) {
-        this.dimension = object.get("dimension").getAsInt();
         this.hiddenDimension = object.get("hidden_dimension").getAsInt();
     }
     
     @Override
     public void loadWeights(Map<String, Tensor> mappedWeights) {
         super.loadWeights(mappedWeights);
-        this.hiddenWeights = mappedWeights.get("hidden_dimension");
+        this.hiddenWeights = mappedWeights.get("hidden_weights");
     }
     
     @Override

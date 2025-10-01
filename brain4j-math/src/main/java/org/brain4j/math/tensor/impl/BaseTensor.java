@@ -1,5 +1,6 @@
 package org.brain4j.math.tensor.impl;
 
+import org.brain4j.math.Commons;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.DeviceUtils;
@@ -464,7 +465,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor squeeze(int dim) {
-        dim %= shape.length;
+        dim = Commons.mod(dim, shape.length);
 
         if (dim >= rank()) {
             throw new IllegalArgumentException("Dimension must be less than the rank!");
@@ -552,9 +553,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
     
     public Tensor unsqueeze(int dim) {
-        dim %= shape.length;
-
-        if (dim < 0 || dim > shape.length) {
+        if (dim < 0) {
+            dim = Commons.mod(dim, shape.length);
+        }
+        
+        if (dim > shape.length) {
             throw new IllegalArgumentException("Invalid dimension for unsqueeze: " + dim);
         }
 
@@ -660,7 +663,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor sum(int dim, boolean keepDim) {
-        dim %= shape.length;
+        dim = Commons.mod(dim, shape.length);
 
         TensorReducer reducer = DeviceUtils.isSimdAvailable() ? new SimdTensorReducer() : new ScalarTensorReducer();
         Tensor result = reducer.sum(this, dim, keepDim);
@@ -671,7 +674,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor mean(int dim, boolean keepDim) {
-        dim %= shape.length;
+        dim = Commons.mod(dim, shape.length);
 
         Tensor summed = this.sum(dim, keepDim);
 
@@ -695,7 +698,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     
     @Override
     public Tensor variance(Tensor mean, int dim, boolean keepDim) {
-        dim %= shape.length;
+        dim = Commons.mod(dim, shape.length);
 
         Tensor meanFirstSquare = clone().pow(2).mean(dim, keepDim);
         Tensor meanSecondSquare = mean.clone().pow(2);

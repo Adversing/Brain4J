@@ -78,7 +78,7 @@ public record SliceOperation(Range... ranges) implements Operation {
             srcIndices[dim] = start;
             dstIndices[dim] = 0;
 
-            int offIn  = gradInput.linearIndex(srcIndices);
+            int offIn = gradInput.linearIndex(srcIndices);
             int offOut = gradOutput.linearIndex(dstIndices);
 
             for (int k = 0; k < blockLen; k++) {

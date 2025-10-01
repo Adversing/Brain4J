@@ -4,33 +4,23 @@ import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 
-public class ActivationOperation implements Operation {
-
-    private final Activation activation;
-
-    public ActivationOperation(Activation activation) {
-        this.activation = activation;
-    }
-
+public record ActivationOperation(Activation activation) implements Operation {
+    
     @Override
     public int requiredInputs() {
         return 1;
     }
-
+    
     @Override
     public Tensor compute(Tensor... inputs) {
         return activation.activate(inputs[0]);
     }
-
+    
     @Override
     public Tensor[] backward(Tensor gradOutput, Tensor... inputs) {
         Tensor derivative = activation.derivative(inputs[0]); // ∂activation/∂x
         Tensor gradInput = gradOutput.times(derivative); // Chain rule: dL/dx = dL/dy * dy/dx
-
+        
         return new Tensor[] { gradInput };
-    }
-    
-    public Activation activation() {
-        return activation;
     }
 }
