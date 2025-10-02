@@ -85,7 +85,7 @@ public class LiquidLayer extends Layer {
         int batch = input.shape(0);
         int timesteps = input.shape(1);
 
-        Tensor hidden = Tensors.zeros(batch, dimension).withGrad(); // [B, hidden_dim]
+        Tensor hidden = Tensors.zeros(batch, dimension).withGrad(); // [batch, hidden_dim]
 
         if (input instanceof GpuTensor gpu) {
             hidden = hidden.to(gpu.device()).withGrad();

@@ -58,19 +58,10 @@ public class BroadcastAdd implements BroadcastOperation {
             if (otherShape.length == 2 && shape[1] == otherShape[0] && shape[2] == otherShape[1]) {
                 int stride = d1 * d2; // size of [b, c]
                 
-                if (total > 65536) {
-                    IntStream.range(0, d0).parallel().forEach(batch -> {
-                        int offset = batch * stride;
-                        for (int i = 0; i < stride; i++) {
-                            aData[offset + i] += bData[i];
-                        }
-                    });
-                } else {
-                    for (int batch = 0; batch < d0; batch++) {
-                        int offset = batch * stride;
-                        for (int i = 0; i < stride; i++) {
-                            aData[offset + i] += bData[i];
-                        }
+                for (int batch = 0; batch < d0; batch++) {
+                    int offset = batch * stride;
+                    for (int i = 0; i < stride; i++) {
+                        aData[offset + i] += bData[i];
                     }
                 }
 

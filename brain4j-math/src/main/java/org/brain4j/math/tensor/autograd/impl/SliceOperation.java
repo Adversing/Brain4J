@@ -19,6 +19,7 @@ public record SliceOperation(Range... ranges) implements Operation {
 
     @Override
     public Tensor[] backward(Tensor gradOutput, Tensor... inputs) {
+        // TODO: make a GPU-specialized version
         Tensor input = inputs[0];
         int[] inputShape = input.shape();
 
