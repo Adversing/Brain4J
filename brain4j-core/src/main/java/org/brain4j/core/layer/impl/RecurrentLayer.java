@@ -48,7 +48,7 @@ public class RecurrentLayer extends Layer {
     public Layer connect(Layer previous) {
         int size = previous == null ? dimension : previous.size();
         this.inputWeights = Tensors.zeros(size, hiddenDimension).withGrad();
-        this.hiddenWeights = Tensors.zeros(hiddenDimension, hiddenDimension).withGrad();
+        this.hiddenWeights = Tensors.orthogonal(hiddenDimension, hiddenDimension).withGrad();
         this.hiddenBias = Tensors.zeros(hiddenDimension).withGrad();
         this.weights = Tensors.zeros(hiddenDimension, dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();
@@ -57,9 +57,8 @@ public class RecurrentLayer extends Layer {
 
     @Override
     public void initWeights(Random generator, int input, int output) {
-        this.inputWeights.map(x -> weightInit.generate(generator, input, output));
-        this.hiddenWeights.map(x -> weightInit.generate(generator, hiddenDimension, hiddenDimension));
-        this.weights.map(x -> weightInit.generate(generator, hiddenDimension, output));
+        this.inputWeights.map(_ -> weightInit.generate(generator, input, output));
+        this.weights.map(_ -> weightInit.generate(generator, hiddenDimension, output));
     }
     
     @Override

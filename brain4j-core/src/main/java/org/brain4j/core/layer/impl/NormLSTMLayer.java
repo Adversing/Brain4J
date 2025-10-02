@@ -38,10 +38,16 @@ public class NormLSTMLayer extends Layer {
     
     @Override
     public Layer connect(Layer previous) {
+        List<Tensor> gates = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            gates.add(Tensors.orthogonal(hiddenDimension, hiddenDimension));
+        }
+
         this.weights = Tensors.zeros(previous.size(), 4 * hiddenDimension).withGrad();
-        this.hiddenWeights = Tensors.zeros(hiddenDimension, 4 * hiddenDimension).withGrad();
+        this.hiddenWeights = Tensors.concat(gates, 1).withGrad();
         this.bias = Tensors.zeros(4 * hiddenDimension).withGrad();
-        
+
         this.normGateWeights = Tensors.ones(4 * hiddenDimension).withGrad();
         this.normGateBias = Tensors.zeros(4 * hiddenDimension).withGrad();
         this.normCellWeights = Tensors.ones(hiddenDimension).withGrad();
@@ -52,7 +58,10 @@ public class NormLSTMLayer extends Layer {
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(_ -> weightInit.generate(generator, input, 4 * hiddenDimension));
-        this.hiddenWeights.map(_ -> weightInit.generate(generator, hiddenDimension, 4 * hiddenDimension));
+
+        for (int i = 0; i < hiddenDimension; i++) {
+            bias.set(1, i);
+        }
     }
     
     @Override
@@ -71,10 +80,8 @@ public class NormLSTMLayer extends Layer {
         int batch = input.shape(0);
         int timesteps = input.shape(1);
         
-        // [batch, timesteps, dimension] x [dimension, 4 * hidden_dim]
-        // = [batch, timesteps, 4 * hidden_dim]
+        // [batch, timesteps, 4 * hidden_dim]
         Tensor projection = input.matmulGrad(weights);
-        
         // [batch, timesteps, hidden_size]
         Tensor hiddenState = Tensors.zeros(batch, hiddenDimension).withGrad();
         Tensor cellState = Tensors.zeros(batch, hiddenDimension).withGrad();
@@ -147,13 +154,22 @@ public class NormLSTMLayer extends Layer {
         super.backward(cache, updater, optimizer);
         
         Tensor weightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
+        Tensor optimizedGateGrad = optimizer.step(normGateWeights, normGateWeights.grad());
+        Tensor optimizedCellGrad = optimizer.step(normCellWeights, normCellWeights.grad());
+        Tensor gateBiasGrad = normGateBias.grad().sum(0, false);
+        Tensor cellBiasGrad = normCellBias.grad().sum(0, false);
+
         clipper.clip(weightsGrad);
+        clipper.clip(optimizedGateGrad);
+        clipper.clip(optimizedCellGrad);
+        clipper.clip(gateBiasGrad);
+        clipper.clip(cellBiasGrad);
+
         updater.change(hiddenWeights, weightsGrad);
-        
-        updater.change(normGateWeights, normGateWeights.grad());
-        updater.change(normGateBias, normGateBias.grad());
-        updater.change(normCellWeights, normCellWeights.grad());
-        updater.change(normCellBias, normCellBias.grad());
+        updater.change(normGateWeights, optimizedGateGrad);
+        updater.change(normCellWeights, optimizedCellGrad);
+        updater.change(normGateBias, gateBiasGrad);
+        updater.change(normCellBias, cellBiasGrad);
     }
 
     @Override

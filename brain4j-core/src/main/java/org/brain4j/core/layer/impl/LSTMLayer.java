@@ -32,21 +32,24 @@ public class LSTMLayer extends Layer {
     public Layer connect(Layer previous) {
         List<Tensor> gates = new ArrayList<>();
         
-        // TODO: finish this
         for (int i = 0; i < 4; i++) {
-            Tensor gateWeight = Tensors.orthogonal(hiddenDimension, hiddenDimension);
-            gates.add(gateWeight);
+            gates.add(Tensors.orthogonal(hiddenDimension, hiddenDimension));
         }
         
         this.weights = Tensors.zeros(previous.size(), 4 * hiddenDimension).withGrad();
         this.hiddenWeights = Tensors.concat(gates, 1).withGrad();
         this.bias = Tensors.zeros(4 * hiddenDimension).withGrad();
+
         return this;
     }
     
     @Override
     public void initWeights(Random generator, int input, int output) {
         this.weights.map(_ -> weightInit.generate(generator, input, 4 * hiddenDimension));
+
+        for (int i = 0; i < hiddenDimension; i++) {
+            bias.set(1, i);
+        }
     }
     
     @Override
@@ -65,10 +68,8 @@ public class LSTMLayer extends Layer {
         int batch = input.shape(0);
         int timesteps = input.shape(1);
         
-        // [batch, timesteps, dimension] x [dimension, 4 * hidden_dim]
-        // = [batch, timesteps, 4 * hidden_dim]
+        // [batch, timesteps, 4 * hidden_dim]
         Tensor projection = input.matmulGrad(weights);
-        
         // [batch, timesteps, hidden_size]
         Tensor hiddenState = Tensors.zeros(batch, hiddenDimension).withGrad();
         Tensor cellState = Tensors.zeros(batch, hiddenDimension).withGrad();

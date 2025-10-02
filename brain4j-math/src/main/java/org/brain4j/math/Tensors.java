@@ -241,19 +241,29 @@ public class Tensors {
 
         return newShape;
     }
-    
+
     public static Tensor orthogonal(int rows, int cols) {
         Random rng = new Random();
-        Tensor A = Tensors.zeros(rows, cols).map(_ -> (float) rng.nextGaussian());
-        List<Tensor> result = new ArrayList<>();
-        
+        Tensor A = Tensors.zeros(rows, cols).map(_ -> rng.nextGaussian());
+
+        List<Tensor> Q = new ArrayList<>();
+
         for (int i = 0; i < cols; i++) {
-            Tensor a = A.slice(Range.all(), Range.point(i)); // [rows, 1]
-            double norm = Math.sqrt(a.clone().pow(2).sum());
-            Tensor normalized = a.divide(norm);
+            Tensor ai = A.slice(Range.all(), Range.point(i));
+            Tensor ui = ai;
+
+            for (Tensor qj : Q) {
+                Tensor dot = qj.transpose().matmul(ai); // [1, 1]
+                ui = ui.minus(qj.times(dot.get(0, 0)));
+            }
+
+            double norm = Math.sqrt(ui.clone().pow(2).sum());
+            Tensor qi = ui.divide(norm);
+
+            Q.add(qi);
         }
-        
-        return null; // TODO
+
+        return Tensors.concat(Q, 1);
     }
     
     public static Tensor eye(int n) {
