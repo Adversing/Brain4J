@@ -1,7 +1,7 @@
-package org.brain4j.core.layer.impl.liquid.solver;
+package org.brain4j.math.solver;
 
-import org.brain4j.core.layer.impl.liquid.solver.impl.EulerSolver;
-import org.brain4j.core.layer.impl.liquid.solver.impl.RungeKuttaSolver;
+import org.brain4j.math.solver.impl.EulerSolver;
+import org.brain4j.math.solver.impl.RungeKuttaSolver;
 import org.brain4j.math.tensor.Tensor;
 
 import java.util.function.Function;

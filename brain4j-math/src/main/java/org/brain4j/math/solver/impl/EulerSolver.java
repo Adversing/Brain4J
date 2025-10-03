@@ -1,6 +1,6 @@
-package org.brain4j.core.layer.impl.liquid.solver.impl;
+package org.brain4j.math.solver.impl;
 
-import org.brain4j.core.layer.impl.liquid.solver.NumericalSolver;
+import org.brain4j.math.solver.NumericalSolver;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.tensor.Tensor;
 
@@ -49,9 +49,9 @@ public record EulerSolver(int mSteps) implements NumericalSolver {
             Tensor projHidden = hiddenFunction.apply(hidden);
             // z = tanh(Wx + Uh + b)
             Tensor z = projInput.addGrad(projHidden).activateGrad(Activations.TANH.function());
-            Tensor deltaH = z.addGrad(hidden.times(-1));
+            Tensor deltaH = z.addGrad(hidden.mul(-1));
 
-            hidden = hidden.addGrad(deltaTime.times(deltaH));
+            hidden = hidden.addGrad(deltaTime.mulGrad(deltaH));
         }
 
         return hidden;

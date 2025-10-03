@@ -1,14 +1,8 @@
 package org.brain4j.core;
 
-import ch.qos.logback.classic.Level;
-import org.brain4j.math.activation.Activation;
-import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
-import org.brain4j.math.activation.Activations;
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +32,10 @@ public class Brain4J {
     }
 
     public static void disableLogging() {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.OFF);
         logging = false;
     }
 
     public static void enableLogging() {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.DEBUG);
         logging = true;
     }
 

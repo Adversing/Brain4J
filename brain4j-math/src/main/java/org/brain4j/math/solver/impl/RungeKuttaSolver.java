@@ -1,6 +1,6 @@
-package org.brain4j.core.layer.impl.liquid.solver.impl;
+package org.brain4j.math.solver.impl;
 
-import org.brain4j.core.layer.impl.liquid.solver.NumericalSolver;
+import org.brain4j.math.solver.NumericalSolver;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.tensor.Tensor;
 

@@ -1,10 +1,9 @@
-package org.brain4j.core.layer.impl.liquid;
+package org.brain4j.core.layer.impl;
 
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.layer.impl.DenseLayer;
-import org.brain4j.core.layer.impl.liquid.solver.NumericalSolver;
-import org.brain4j.core.layer.impl.liquid.solver.impl.EulerSolver;
+import org.brain4j.math.solver.NumericalSolver;
+import org.brain4j.math.solver.impl.EulerSolver;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
@@ -99,7 +98,7 @@ public class LiquidLayer extends Layer {
         for (int t = 0; t < timesteps; t++) {
             Range[] ranges = { Range.all(), Range.point(t), Range.all() };
 
-            Tensor deltaT = deltas.sliceGrad(ranges).squeezeGrad(1); // [batch, 1]
+            Tensor deltaT = deltas.sliceGrad(ranges).squeezeGrad(1); // [batch, hidden_dim]
             Tensor tau_t = projTau.sliceGrad(ranges).squeezeGrad(1); // [batch, hidden_dim]
             Tensor projInput_t = projInput.sliceGrad(ranges).squeezeGrad(1); // [batch, hidden_dim]
 
