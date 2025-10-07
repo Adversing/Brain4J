@@ -26,6 +26,7 @@ import org.brain4j.math.data.StatesCache;
  *     new DenseLayer(10)
  * );
  * </pre></blockquote>
+ * @implNote this layer supports multiple input tensors. To ignore a dimension, simply put -1 there
  */
 public class InputLayer extends Layer {
 
@@ -56,8 +57,7 @@ public class InputLayer extends Layer {
             array.add(dimension);
         }
         
-        object.addProperty("shape.length", shape.length);
-        object.add("shape.data", array);
+        object.add("shape", array);
     }
     
     @Override
@@ -79,6 +79,7 @@ public class InputLayer extends Layer {
         int offset = inputShape.length - shape.length;
 
         for (int i = 0; i < shape.length; i++) {
+            if (shape[i] == -1) continue;
             if (inputShape[i + offset] != shape[i]) return false;
         }
 
