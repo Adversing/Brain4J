@@ -134,8 +134,8 @@ public class Sequential extends Layer implements Model {
                     int targetIndex = sampleLabel.argmax();
 
                     if (sampleOutput.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
-                        predIndex = sampleOutput.getFirst() > 0.5 ? 1 : 0;
-                        targetIndex = (int) sampleLabel.getFirst();
+                        predIndex = sampleOutput.get(0) > 0.5 ? 1 : 0;
+                        targetIndex = (int) sampleLabel.get(0);
                     }
 
                     double loss = lossFunction.calculate(sampleLabel, sampleOutput);

@@ -155,7 +155,7 @@ public class TestOperations {
         Tensor gpuA = A.gpu(device);
         Tensor gpuB = gpuA.matmul(gpuA.transpose()).relu().sum(0, false);
 
-        assertEquals(B.getFirst(), gpuB.getFirst(), 0.001f);
+        assertEquals(B.get(0), gpuB.get(0), 0.001f);
     }
 
     @Test

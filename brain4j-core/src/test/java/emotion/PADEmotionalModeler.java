@@ -92,7 +92,7 @@ public class PADEmotionalModeler {
         System.out.println("Predicted PAD: " + predictedPAD);
 
         PADEmotionalState predictedState = new PADEmotionalState(
-                predictedPAD.getFirst(), predictedPAD.get(1), predictedPAD.get(2)
+                predictedPAD.get(0), predictedPAD.get(1), predictedPAD.get(2)
         );
         System.out.println("Predicted Emotional State: " + predictedState);
 
