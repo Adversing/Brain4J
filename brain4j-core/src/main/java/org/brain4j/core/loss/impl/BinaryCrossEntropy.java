@@ -9,7 +9,7 @@ public class BinaryCrossEntropy implements LossFunction {
     @Override
     public double calculate(Tensor expected, Tensor predicted) {
         double loss = 0.0;
-
+        
         for (int i = 0; i < expected.elements(); i++) {
             double p = Commons.clamp(predicted.get(i), 1e-15, 1 - 1e-15);
             loss += -expected.get(i) * Math.log(p) - (1 - expected.get(i)) * Math.log(1 - p);

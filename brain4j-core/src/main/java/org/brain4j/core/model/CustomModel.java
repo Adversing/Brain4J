@@ -15,6 +15,7 @@ import org.brain4j.core.training.wrappers.EvaluationResult;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
 public abstract class CustomModel {
@@ -108,8 +109,8 @@ public abstract class CustomModel {
                     int targetIndex = sampleLabel.argmax();
 
                     if (sampleOutput.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
-                        predIndex = sampleOutput.get(0) > 0.5 ? 1 : 0;
-                        targetIndex = (int) sampleLabel.get(0);
+                        predIndex = sampleOutput.getFirst() > 0.5 ? 1 : 0;
+                        targetIndex = (int) sampleLabel.getFirst();
                     }
 
                     double loss = lossFunction.calculate(sampleLabel, sampleOutput);
@@ -149,7 +150,7 @@ public abstract class CustomModel {
             int input = inputSizes[i];
             int output = layer.size();
             
-            Random localRandom = Random.from(new SplittableRandom(seed() + i));
+            RandomGenerator localRandom = new SplittableRandom(seed() + i);
             layer.initWeights(localRandom, input, output);
         });
     }

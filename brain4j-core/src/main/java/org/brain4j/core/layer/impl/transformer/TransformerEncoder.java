@@ -19,7 +19,7 @@ import org.brain4j.math.weightsinit.UniformXavierInit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * Implements a single encoder block of the Transformer architecture,
@@ -119,7 +119,7 @@ public class TransformerEncoder extends Layer {
     }
 
     @Override
-    public void initWeights(Random generator, int input, int output) {
+    public void initWeights(RandomGenerator generator, int input, int output) {
         normalizer1.initWeights(generator, embeddingDim, embeddingDim);
         normalizer2.initWeights(generator, embeddingDim, embeddingDim);
         upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);

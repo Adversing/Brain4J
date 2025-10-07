@@ -180,8 +180,12 @@ public class Commons {
             throw new RuntimeException(e);
         }
     }
-
+    
     public static double clamp(float value, double minimum, double maximum) {
+        return Math.min(Math.max(value, minimum), maximum);
+    }
+    
+    public static double clamp(double value, double minimum, double maximum) {
         return Math.min(Math.max(value, minimum), maximum);
     }
     

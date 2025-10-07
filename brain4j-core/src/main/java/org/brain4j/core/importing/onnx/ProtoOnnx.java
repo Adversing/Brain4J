@@ -369,7 +369,7 @@ public final class ProtoOnnx {
         }
         public static com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-            return ProtoOnnx.getDescriptor().getEnumTypes().get(0);
+            return ProtoOnnx.getDescriptor().getEnumTypes().getFirst();
         }
         
         private static final Version[] VALUES = values();
@@ -1323,7 +1323,7 @@ public final class ProtoOnnx {
             }
             public static com.google.protobuf.Descriptors.EnumDescriptor
             getDescriptor() {
-                return ProtoOnnx.AttributeProto.getDescriptor().getEnumTypes().get(0);
+                return ProtoOnnx.AttributeProto.getDescriptor().getEnumTypes().getFirst();
             }
             
             private static final AttributeType[] VALUES = values();
@@ -34940,7 +34940,7 @@ public final class ProtoOnnx {
             }
             public static com.google.protobuf.Descriptors.EnumDescriptor
             getDescriptor() {
-                return org.brain4j.core.importing.onnx.ProtoOnnx.TensorProto.getDescriptor().getEnumTypes().get(0);
+                return org.brain4j.core.importing.onnx.ProtoOnnx.TensorProto.getDescriptor().getEnumTypes().getFirst();
             }
             
             private static final DataType[] VALUES = values();
@@ -54290,7 +54290,7 @@ public final class ProtoOnnx {
                 new com.google.protobuf.Descriptors.FileDescriptor[] {
                 });
         internal_static_onnx_AttributeProto_descriptor =
-            getDescriptor().getMessageTypes().get(0);
+            getDescriptor().getMessageTypes().getFirst();
         internal_static_onnx_AttributeProto_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_onnx_AttributeProto_descriptor,
@@ -54380,7 +54380,7 @@ public final class ProtoOnnx {
             internal_static_onnx_TensorProto_descriptor,
             new java.lang.String[] { "Dims", "DataType", "Segment", "FloatData", "Int32Data", "StringData", "Int64Data", "Name", "DocString", "RawData", "ExternalData", "DataLocation", "DoubleData", "Uint64Data", "MetadataProps", });
         internal_static_onnx_TensorProto_Segment_descriptor =
-            internal_static_onnx_TensorProto_descriptor.getNestedTypes().get(0);
+            internal_static_onnx_TensorProto_descriptor.getNestedTypes().getFirst();
         internal_static_onnx_TensorProto_Segment_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_onnx_TensorProto_Segment_descriptor,
@@ -54398,7 +54398,7 @@ public final class ProtoOnnx {
             internal_static_onnx_TensorShapeProto_descriptor,
             new java.lang.String[] { "Dim", });
         internal_static_onnx_TensorShapeProto_Dimension_descriptor =
-            internal_static_onnx_TensorShapeProto_descriptor.getNestedTypes().get(0);
+            internal_static_onnx_TensorShapeProto_descriptor.getNestedTypes().getFirst();
         internal_static_onnx_TensorShapeProto_Dimension_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_onnx_TensorShapeProto_Dimension_descriptor,
@@ -54410,7 +54410,7 @@ public final class ProtoOnnx {
             internal_static_onnx_TypeProto_descriptor,
             new java.lang.String[] { "TensorType", "SequenceType", "MapType", "OptionalType", "SparseTensorType", "Denotation", "Value", });
         internal_static_onnx_TypeProto_Tensor_descriptor =
-            internal_static_onnx_TypeProto_descriptor.getNestedTypes().get(0);
+            internal_static_onnx_TypeProto_descriptor.getNestedTypes().getFirst();
         internal_static_onnx_TypeProto_Tensor_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_onnx_TypeProto_Tensor_descriptor,

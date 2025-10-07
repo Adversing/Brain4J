@@ -52,7 +52,7 @@ public class GpuContext {
         }
 
         GpuQueue updated = new GpuQueue(device, queue, false);
-        queues.computeIfAbsent(device, _ -> new ThreadLocal<>()).set(updated);
+        queues.computeIfAbsent(device, d -> new ThreadLocal<>()).set(updated);
     }
 
     public static GpuQueue getOrCreate(Device device) {
@@ -60,7 +60,7 @@ public class GpuContext {
 
         if (current == null || current.queue() == null) {
             current = new GpuQueue(device, device.newCommandQueue(), true);
-            queues.computeIfAbsent(device, _ -> new ThreadLocal<>()).set(current);
+            queues.computeIfAbsent(device, d -> new ThreadLocal<>()).set(current);
         }
 
         return current;

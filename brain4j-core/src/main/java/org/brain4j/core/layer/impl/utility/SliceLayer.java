@@ -62,7 +62,7 @@ public class SliceLayer extends Layer {
         
         for (int i = 0; i < ranges.length; i++) {
             JsonArray range = rangesArray.get(i).getAsJsonArray();
-            int start = range.get(0).getAsInt();
+            int start = range.getFirst().getAsInt();
             int end = range.get(1).getAsInt();
             int step = range.get(2).getAsInt();
             this.ranges[i] = new Range(start, end, step);

@@ -143,11 +143,9 @@ public class ParallelConvolve extends RecursiveAction {
                 outHeight,
                 outWidth
             );
-
-            try (ForkJoinPool pool = ForkJoinPool.commonPool()) {
-                pool.invoke(new ParallelConvolve(params, 0, totalPatches));
-            }
-
+            
+            ForkJoinPool.commonPool().invoke(new ParallelConvolve(params, 0, totalPatches));
+            
             for (int filter = 0; filter < numFilters; filter++) {
                 int filterOffset = filter * patchSize;
                 int outBase = aBatch > 1

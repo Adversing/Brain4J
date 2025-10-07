@@ -202,7 +202,9 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor to(Device device) {
         if (device == null) {
-            return new CpuTensor(shape, data());
+            Tensor result = new CpuTensor(shape, data());
+            result.setAutogradContext(autogradContext);
+            return result;
         }
 
         return this;

@@ -6,6 +6,7 @@ import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelConvolve;
 
 import java.util.*;
+import java.util.random.RandomGenerator;
 
 public class Tensors {
 
@@ -50,13 +51,13 @@ public class Tensors {
         return result;
     }
 
-    public static Tensor random(Random generator, int... shape) {
+    public static Tensor random(RandomGenerator generator, int... shape) {
         Tensor result = Tensors.zeros(shape);
         return result.map(x -> generator.nextFloat());
     }
 
     public static Tensor random(int... shape) {
-        return random(Random.from(new SplittableRandom()), shape);
+        return random(new SplittableRandom(), shape);
     }
 
     public static Tensor convolve(Tensor input, Tensor kernel) {
@@ -244,7 +245,7 @@ public class Tensors {
 
     public static Tensor orthogonal(int rows, int cols) {
         Random rng = new Random();
-        Tensor A = Tensors.zeros(rows, cols).map(_ -> rng.nextGaussian());
+        Tensor A = Tensors.zeros(rows, cols).map(x -> rng.nextGaussian());
 
         List<Tensor> Q = new ArrayList<>();
 

@@ -11,7 +11,7 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 public class AttentionHead {
 
@@ -27,8 +27,8 @@ public class AttentionHead {
         this.qkvWeights = Tensors.zeros(embedDimension, 3 * headDimension).withGrad();
     }
 
-    public void initWeights(Random generator, WeightInitialization weightInit) {
-        qkvWeights.map(_ -> weightInit.generate(generator, embedDimension, 3 * headDimension));
+    public void initWeights(RandomGenerator generator, WeightInitialization weightInit) {
+        qkvWeights.map(x -> weightInit.generate(generator, embedDimension, 3 * headDimension));
     }
 
     public void toDevice(Device device) {

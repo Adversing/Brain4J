@@ -2,6 +2,7 @@ package org.brain4j.core.layer.impl;
 
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.math.Commons;
 import org.brain4j.math.solver.NumericalSolver;
 import org.brain4j.math.solver.impl.EulerSolver;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -15,6 +16,7 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.*;
+import java.util.random.RandomGenerator;
 
 public class LiquidLayer extends Layer {
 
@@ -56,8 +58,8 @@ public class LiquidLayer extends Layer {
     }
 
     @Override
-    public void initWeights(Random generator, int input, int output) {
-        this.weights.map(_ -> weightInit.generate(generator, input, output));
+    public void initWeights(RandomGenerator generator, int input, int output) {
+        this.weights.map(x -> weightInit.generate(generator, input, output));
         this.hiddenParams.initWeights(generator, dimension, dimension);
         this.tauParams.initWeights(generator, input, dimension);
     }
@@ -92,7 +94,7 @@ public class LiquidLayer extends Layer {
 
         List<Tensor> hiddenStates = new ArrayList<>();
 
-        Tensor projTau = tauParams.forward(cache, input).map(v -> Math.clamp(v, tauMin, tauMax)); // [batch, timesteps, hidden_dim]
+        Tensor projTau = tauParams.forward(cache, input).map(v -> Commons.clamp(v, tauMin, tauMax)); // [batch, timesteps, hidden_dim]
         Tensor projInput = input.matmulGrad(weights).addGrad(bias); // [batch, timesteps, hidden_dim]
 
         for (int t = 0; t < timesteps; t++) {

@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
 import static org.brain4j.math.constants.Constants.*;
@@ -101,7 +102,7 @@ public class Sequential extends Layer implements Model {
             int input = inputSizes[i];
             int output = layer.size();
 
-            Random localRandom = Random.from(new SplittableRandom(seed + i));
+            RandomGenerator localRandom = new SplittableRandom(seed + i);
             layer.initWeights(localRandom, input, output);
         });
     }
@@ -115,14 +116,14 @@ public class Sequential extends Layer implements Model {
         Tensor[] labels = batch.second();
 
         Tensor[] outputs = predict(new StatesCache(false, device), inputs);
-
+        
         for (Tensor input : inputs) {
-            int batchSize = input.shape()[0];
-
+            int batchSize = input.shape(0);
+            
             for (int i = 0; i < outputs.length; i++) {
                 Tensor output = outputs[i];
                 Tensor label = labels[i];
-
+                
                 for (int b = 0; b < batchSize; b++) {
                     Range range = Range.point(b);
 
@@ -133,8 +134,8 @@ public class Sequential extends Layer implements Model {
                     int targetIndex = sampleLabel.argmax();
 
                     if (sampleOutput.elements() == 1 && lossFunction instanceof BinaryCrossEntropy) {
-                        predIndex = sampleOutput.get(0) > 0.5 ? 1 : 0;
-                        targetIndex = (int) sampleLabel.get(0);
+                        predIndex = sampleOutput.getFirst() > 0.5 ? 1 : 0;
+                        targetIndex = (int) sampleLabel.getFirst();
                     }
 
                     double loss = lossFunction.calculate(sampleLabel, sampleOutput);
@@ -274,7 +275,7 @@ public class Sequential extends Layer implements Model {
 
                 while (times.size() > 20) {
                     totalForBatch.set(totalForBatch.get() - times.getFirst());
-                    times.removeFirst();
+                    times.remove(0);
                 }
 
                 double average = totalForBatch.get() / Math.min(batch, 20);
@@ -332,7 +333,7 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets) {
-        Layer last = flattened.getLast();
+        Layer last = flattened.get(flattened.size() - 1);
         last.computeLoss(cache, targets, outputs, lossFunction);
 
         for (Layer layer : flattened) {
@@ -600,7 +601,7 @@ public class Sequential extends Layer implements Model {
             int input = inputSizes[i];
             int output = layer.size();
 
-            Random localRandom = Random.from(new SplittableRandom(seed + i));
+            RandomGenerator localRandom = new SplittableRandom(seed + i);
             layer.initWeights(localRandom, input, output);
         });
 
@@ -635,6 +636,6 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public int size() {
-        return layers.getLast().size();
+        return layers.get(layers.size() - 1).size();
     }
 }

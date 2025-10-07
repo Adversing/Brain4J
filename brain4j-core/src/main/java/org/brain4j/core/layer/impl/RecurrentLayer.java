@@ -12,7 +12,7 @@ import org.brain4j.core.training.updater.Updater;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * Implementation of a recurrent layer.
@@ -56,9 +56,9 @@ public class RecurrentLayer extends Layer {
     }
 
     @Override
-    public void initWeights(Random generator, int input, int output) {
-        this.inputWeights.map(_ -> weightInit.generate(generator, input, output));
-        this.weights.map(_ -> weightInit.generate(generator, hiddenDimension, output));
+    public void initWeights(RandomGenerator generator, int input, int output) {
+        this.inputWeights.map(x -> weightInit.generate(generator, input, output));
+        this.weights.map(x -> weightInit.generate(generator, hiddenDimension, output));
     }
     
     @Override

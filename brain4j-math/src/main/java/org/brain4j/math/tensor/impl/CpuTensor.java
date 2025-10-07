@@ -9,22 +9,19 @@ import org.brain4j.math.tensor.matmul.MatmulProvider;
 import org.brain4j.math.tensor.matmul.impl.NormalMatmulProvider;
 import org.brain4j.math.tensor.matmul.impl.SimdMatmulProvider;
 import org.brain4j.math.tensor.parallel.ParallelTranspose;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 public class CpuTensor extends BaseTensor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CpuTensor.class);
     private static final MatmulProvider matmulProvider;
 
     static {
         if (DeviceUtils.isSimdAvailable()) {
             matmulProvider = new SimdMatmulProvider();
         } else {
-            LOGGER.warn("The Vector incubator API is not available. It's recommended to use for better performance.");
-            LOGGER.warn("For more information consult this guide: https://github.com/brain4j-org/brain4j/wiki/Using-SIMD");
+            System.err.println("The Vector incubator API is not available. It's recommended to use for better performance.");
+            System.err.println("For more information consult this guide: https://github.com/brain4j-org/brain4j/wiki/Using-SIMD");
 
             matmulProvider = new NormalMatmulProvider();
         }
@@ -145,7 +142,9 @@ public class CpuTensor extends BaseTensor {
             return this;
         }
 
-        return new GpuTensor(device, shape, data);
+        GpuTensor result = new GpuTensor(device, shape, data);
+        result.setAutogradContext(autogradContext);
+        return result;
     }
 
     @Override

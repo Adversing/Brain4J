@@ -7,8 +7,6 @@ import org.brain4j.math.Commons;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.transformer.tokenizers.Tokenizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -21,9 +19,6 @@ import java.util.concurrent.ForkJoinPool;
 import static org.brain4j.math.constants.Constants.*;
 
 public class BytePairTokenizer implements Tokenizer {
-
-    private static final Logger logger = LoggerFactory.getLogger(BytePairTokenizer.class);
-    private static final Logger trainLogger = LoggerFactory.getLogger("dynamic");
 
     private final ForkJoinPool threadPool = ForkJoinPool.commonPool();
 
@@ -162,11 +157,6 @@ public class BytePairTokenizer implements Tokenizer {
             }
         }
 
-        int totalSymbols = totalSymbols();
-
-        logger.debug("Total symbols: {}", totalSymbols);
-        logger.debug("Total tokens: {}", merges.size());
-
         for (int iter = 0; iter < numMerges; iter++) {
             long start = System.nanoTime();
 
@@ -249,8 +239,8 @@ public class BytePairTokenizer implements Tokenizer {
             symbols = getSymbols(symbols, best);
         }
 
-        if (!symbols.isEmpty() && symbols.getLast().equals("</w>")) {
-            symbols.removeLast();
+        if (!symbols.isEmpty() && symbols.get(symbols.size() - 1).equals("</w>")) {
+            symbols.remove(symbols.size() - 1);
         }
 
         return symbols;
@@ -306,7 +296,7 @@ public class BytePairTokenizer implements Tokenizer {
         String message = String.format(progressMsg + progressBar + percentual + time,
                 iteration, merges, percentage * 100, timeStr, remainingTimeStr);
 
-        trainLogger.info(message);
+        System.out.print(message);
 
         if (iteration % evaluateDelay == 0) {
             printEvaluation(iteration, merges);
@@ -322,7 +312,7 @@ public class BytePairTokenizer implements Tokenizer {
         String message = "[%s/%s] " + symbolsMsg + " | " + tokensMsg + "\n";
         String formatted = String.format(message, iteration, total, merges.size(), totalSymbols());
 
-        trainLogger.info(formatted);
+        System.out.print(formatted);
     }
 
     private int totalSymbols() {

@@ -12,7 +12,7 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
 /**
@@ -54,7 +54,7 @@ public class EmbeddingLayer extends Layer {
     }
     
     @Override
-    public void initWeights(Random generator, int input, int output) {
+    public void initWeights(RandomGenerator generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
     

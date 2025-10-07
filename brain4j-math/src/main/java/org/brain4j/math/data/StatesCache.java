@@ -61,7 +61,7 @@ public class StatesCache {
     }
 
     public Tensor[] output(Object layer) {
-        return outputStates.computeIfAbsent(layer, (_) -> new Tensor[0]);
+        return outputStates.computeIfAbsent(layer, (x) -> new Tensor[0]);
     }
 
     public void rememberOutput(Object layer, Tensor... state) {

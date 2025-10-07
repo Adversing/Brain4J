@@ -54,17 +54,17 @@ public class Registries {
             return new SqueezeOperation(dimension);
         });
         ONNX_OPERATIONS_REGISTRY.register("Concat", ConcatOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Relu", (_) -> new ActivationOperation(new ReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Relu", (x) -> new ActivationOperation(new ReLUActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Relu", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", (_) -> new ActivationOperation(new SigmoidActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Sigmoid", (x) -> new ActivationOperation(new SigmoidActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Sigmoid", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Tanh", (_) -> new ActivationOperation(new TanhActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Tanh", (x) -> new ActivationOperation(new TanhActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Tanh", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", (_) -> new ActivationOperation(new LeakyReLUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", (x) -> new ActivationOperation(new LeakyReLUActivation()));
         ONNX_OPERATIONS_REGISTRY.register("LeakyRelu", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Gelu", (_) -> new ActivationOperation(new GELUActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Gelu", (x) -> new ActivationOperation(new GELUActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Gelu", ActivationOperation.class);
-        ONNX_OPERATIONS_REGISTRY.register("Softmax", (_) -> new ActivationOperation(new SoftmaxActivation()));
+        ONNX_OPERATIONS_REGISTRY.register("Softmax", (x) -> new ActivationOperation(new SoftmaxActivation()));
         ONNX_OPERATIONS_REGISTRY.register("Softmax", ActivationOperation.class);
         ONNX_OPERATIONS_REGISTRY.register("LayerNormalization", (node) -> {
             float epsilon = node.getAttribute(0).getF();

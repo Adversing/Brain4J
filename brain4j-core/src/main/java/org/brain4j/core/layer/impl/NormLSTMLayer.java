@@ -9,13 +9,12 @@ import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 public class NormLSTMLayer extends Layer {
     
@@ -56,8 +55,8 @@ public class NormLSTMLayer extends Layer {
     }
     
     @Override
-    public void initWeights(Random generator, int input, int output) {
-        this.weights.map(_ -> weightInit.generate(generator, input, 4 * hiddenDimension));
+    public void initWeights(RandomGenerator generator, int input, int output) {
+        this.weights.map(x -> weightInit.generate(generator, input, 4 * hiddenDimension));
 
         for (int i = 0; i < hiddenDimension; i++) {
             bias.set(1, i);

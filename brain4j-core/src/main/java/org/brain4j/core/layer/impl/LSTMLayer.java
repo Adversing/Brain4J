@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.Layer;
@@ -13,6 +12,7 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 
 import java.util.*;
+import java.util.random.RandomGenerator;
 
 public class LSTMLayer extends Layer {
     
@@ -44,8 +44,8 @@ public class LSTMLayer extends Layer {
     }
     
     @Override
-    public void initWeights(Random generator, int input, int output) {
-        this.weights.map(_ -> weightInit.generate(generator, input, 4 * hiddenDimension));
+    public void initWeights(RandomGenerator generator, int input, int output) {
+        this.weights.map(x -> weightInit.generate(generator, input, 4 * hiddenDimension));
 
         for (int i = 0; i < hiddenDimension; i++) {
             bias.set(1, i);
@@ -109,7 +109,7 @@ public class LSTMLayer extends Layer {
         if (returnSequences) {
             result = Tensors.concatGrad(hiddenStates, 1);
         }
-
+        
         return new Tensor[] { result };
     }
     
@@ -121,11 +121,13 @@ public class LSTMLayer extends Layer {
     @Override
     public void serialize(JsonObject object) {
         object.addProperty("hidden_dimension", hiddenDimension);
+        object.addProperty("return_sequence", returnSequences);
     }
     
     @Override
     public void deserialize(JsonObject object) {
         this.hiddenDimension = object.get("hidden_dimension").getAsInt();
+        this.returnSequences = object.get("return_sequence").getAsBoolean();
     }
     
     @Override

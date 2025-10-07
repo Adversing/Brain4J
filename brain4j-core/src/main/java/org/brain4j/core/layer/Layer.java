@@ -15,7 +15,7 @@ import org.brain4j.core.training.updater.Updater;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * Abstract base class for all neural network layers.
@@ -50,7 +50,7 @@ public abstract class Layer {
      * @param input the input dimension
      * @param output the output dimension
      */
-    public void initWeights(Random generator, int input, int output) {
+    public void initWeights(RandomGenerator generator, int input, int output) {
         // No-op
     }
 

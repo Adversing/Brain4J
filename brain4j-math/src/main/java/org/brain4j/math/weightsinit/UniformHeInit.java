@@ -1,8 +1,6 @@
 package org.brain4j.math.weightsinit;
 
-import org.brain4j.math.weightsinit.WeightInitialization;
-
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 public class UniformHeInit implements WeightInitialization {
 
@@ -12,7 +10,7 @@ public class UniformHeInit implements WeightInitialization {
     }
 
     @Override
-    public double generate(Random generator, int input, int output) {
+    public double generate(RandomGenerator generator, int input, int output) {
         double bound = getBound(input, output);
         return randomBetween(generator, -bound, bound);
     }

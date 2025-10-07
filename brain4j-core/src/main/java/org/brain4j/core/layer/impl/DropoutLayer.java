@@ -9,6 +9,7 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.Random;
 import java.util.SplittableRandom;
+import java.util.random.RandomGenerator;
 
 /**
  * Implementation of a dropout layer, used to mitigate overfitting.
@@ -18,11 +19,11 @@ import java.util.SplittableRandom;
  */
 public class DropoutLayer extends Layer {
 
-    private final Random random;
+    private final RandomGenerator random;
     private double dropoutRate;
     
     public DropoutLayer() {
-        this.random = Random.from(new SplittableRandom());
+        this.random = new SplittableRandom();
     }
     
     /**
@@ -35,7 +36,7 @@ public class DropoutLayer extends Layer {
             throw new IllegalArgumentException("Dropout must be greater than 0 and less than 1!");
         }
 
-        this.random = Random.from(new SplittableRandom());
+        this.random = new SplittableRandom();
         this.dropoutRate = dropoutRate;
     }
     
@@ -54,17 +55,16 @@ public class DropoutLayer extends Layer {
                 mask[i] = Float.MIN_VALUE;
             }
 
-            switch (input) {
-                case GpuTensor x -> {
-                    x.mask(mask);
+            if (input instanceof GpuTensor gpu) {
+                gpu.mask(mask);
+            }
+            
+            if (input instanceof CpuTensor cpu) {
+                float[] data = cpu.data();
+                
+                for (int i = 0; i < input.elements(); i++) {
+                    data[i] = Math.max(data[i] + mask[i], 0);
                 }
-                case CpuTensor _ -> {
-                    float[] data = input.data();
-                    for (int i = 0; i < input.elements(); i++) {
-                        data[i] = Math.max(data[i] + mask[i], 0);
-                    }
-                }
-                default -> throw new IllegalStateException("Unexpected value: " + input);
             }
         }
         

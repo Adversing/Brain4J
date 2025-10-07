@@ -155,6 +155,10 @@ public class OnnxFormat implements ModelFormat {
             String opType = op instanceof ActivationOperation act ? extractActivation(act) :
                 ONNX_OPERATIONS_REGISTRY.fromClass(op.getClass());
             
+            if (opType == null) {
+                throw new IllegalStateException("No operation found for " + op + "!");
+            }
+            
             NodeProto.Builder node = NodeProto.newBuilder()
                 .setName(opType + "_" + Math.abs(UUID.randomUUID().hashCode()))
                 .setOpType(opType);

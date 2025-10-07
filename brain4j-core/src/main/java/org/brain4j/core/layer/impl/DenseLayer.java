@@ -9,7 +9,7 @@ import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * Implementation of a fully connected (dense) neural network layer.
@@ -73,7 +73,7 @@ public class DenseLayer extends Layer {
     }
 
     @Override
-    public void initWeights(Random generator, int input, int output) {
+    public void initWeights(RandomGenerator generator, int input, int output) {
         if (input == 0) return;
         
         this.weights.map(x -> weightInit.generate(generator, input, output));

@@ -171,7 +171,7 @@ public class BrainFormat implements ModelFormat {
                 }
                 
                 JsonArray offsetArray = info.getAsJsonArray("offset");
-                int start = offsetArray.get(0).getAsInt();
+                int start = offsetArray.getFirst().getAsInt();
                 int end = offsetArray.get(1).getAsInt();
                 int length = end - start;
                 

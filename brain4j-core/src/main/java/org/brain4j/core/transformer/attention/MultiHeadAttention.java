@@ -13,9 +13,8 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * Implements the Multi-Head Attention mechanism as used in Transformer architectures.
@@ -106,13 +105,13 @@ public class MultiHeadAttention {
      * @param generator the random number generator
      * @param weightInit the weight initialization function
      */
-    public void initWeights(Random generator, WeightInitialization weightInit) {
+    public void initWeights(RandomGenerator generator, WeightInitialization weightInit) {
         for (AttentionHead head : heads) {
             head.initWeights(generator, weightInit);
         }
 
-        this.outProjWeights.map(_ -> weightInit.generate(generator, embeddingDim, embeddingDim));
-        this.qkvWeights.map(_ -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.outProjWeights.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.qkvWeights.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
     }
     
     /**

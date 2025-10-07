@@ -8,7 +8,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 public class ConvLayer extends Layer {
 
@@ -39,7 +39,7 @@ public class ConvLayer extends Layer {
     }
     
     @Override
-    public void initWeights(Random generator, int input, int output) {
+    public void initWeights(RandomGenerator generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
 
