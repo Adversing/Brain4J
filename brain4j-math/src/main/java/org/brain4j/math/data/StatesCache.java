@@ -1,14 +1,13 @@
 package org.brain4j.math.data;
 
 import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.TempBuffer;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.jocl.cl_command_queue;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.brain4j.math.tensor.impl.GpuTensor.CLEANER;
 
 public class StatesCache {
 
@@ -36,7 +35,7 @@ public class StatesCache {
 
         if (device != null) {
             this.commandQueue = device.newCommandQueue();
-            CLEANER.register(this, () -> GpuContext.closeQueue(commandQueue));
+            TempBuffer.CLEANER.register(this, () -> GpuContext.closeQueue(commandQueue));
         }
     }
 

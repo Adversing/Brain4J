@@ -1,6 +1,7 @@
 package org.brain4j.math.gpu.kernel;
 
 import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.TempBuffer;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;
@@ -39,9 +40,14 @@ public class KernelFactory {
         arguments.add(new Argument(arguments.size(), Sizeof.cl_float, Pointer.to(new float[]{variable})));
         return this;
     }
-
+    
     public KernelFactory addMemParam(cl_mem memory) {
         arguments.add(new Argument(arguments.size(), Sizeof.cl_mem, Pointer.to(memory)));
+        return this;
+    }
+    
+    public KernelFactory addMemParam(TempBuffer memory) {
+        arguments.add(new Argument(arguments.size(), Sizeof.cl_mem, Pointer.to(memory.value())));
         return this;
     }
 

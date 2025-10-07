@@ -4,6 +4,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.TempBuffer;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.kernel.KernelFactory;
@@ -22,12 +23,11 @@ import static org.jocl.CL.*;
 public class GpuTensor extends BaseTensor {
 
     /* Garbage collector stuff */
-    public static final Cleaner CLEANER = Cleaner.create();
     
     private final Device device;
-    private final cl_mem shapeBuffer;
-    private final cl_mem stridesBuffer;
-    private final cl_mem dataBuffer;
+    private final TempBuffer shapeBuffer;
+    private final TempBuffer stridesBuffer;
+    private final TempBuffer dataBuffer;
     private final int size;
 
     public GpuTensor(Device device, int[] shape, float... data) {
@@ -43,15 +43,22 @@ public class GpuTensor extends BaseTensor {
         long dataSize  = (long) Sizeof.cl_float * this.size;
 
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-
-        this.shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        this.stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
-
-        Pointer dataPointer = data.length > 0 ? Pointer.to(data) : null;
-        long writeFlag = data.length > 0 ? CL_MEM_COPY_HOST_PTR : 1;
-
-        this.dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE | writeFlag, dataSize, dataPointer, null);
-        CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
+        
+        long flags = CL_MEM_READ_WRITE;
+        Pointer dataPointer = null;
+        
+        if (data.length > 0) {
+            flags |= CL_MEM_COPY_HOST_PTR;
+            dataPointer = Pointer.to(data);
+        }
+        
+        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
+        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
+        cl_mem dataBuffer = clCreateBuffer(context, flags, dataSize, dataPointer, null);
+        
+        this.shapeBuffer = new TempBuffer(shapeBuffer);
+        this.stridesBuffer = new TempBuffer(stridesBuffer);
+        this.dataBuffer = new TempBuffer(dataBuffer);
     }
 
     public GpuTensor(Device device, int[] shape, cl_mem otherBuffer) {
@@ -68,14 +75,16 @@ public class GpuTensor extends BaseTensor {
 
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
 
-        this.shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        this.stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
-        this.dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE, dataSize, null, null);
+        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
+        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
+        cl_mem dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE, dataSize, null, null);
         
-        CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
+        this.shapeBuffer = new TempBuffer(shapeBuffer);
+        this.stridesBuffer = new TempBuffer(stridesBuffer);
+        this.dataBuffer = new TempBuffer(dataBuffer);
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            clEnqueueCopyBuffer(queue.queue(), otherBuffer, this.dataBuffer, 0, 0, dataSize,
+            clEnqueueCopyBuffer(queue.queue(), otherBuffer, dataBuffer, 0, 0, dataSize,
                 0, null, null);
         }
     }
@@ -92,12 +101,16 @@ public class GpuTensor extends BaseTensor {
         long stridesSize = (long) Sizeof.cl_int * strides.length;
 
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-
-        this.shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        this.stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
+        
+        // make sure GC does not close this resource
+        reference.dataBuffer.retain();
+        
+        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
+        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
+        
+        this.shapeBuffer = new TempBuffer(shapeBuffer);
+        this.stridesBuffer = new TempBuffer(stridesBuffer);
         this.dataBuffer = reference.dataBuffer;
-
-        CLEANER.register(this, new CollectableState(dataBuffer, shapeBuffer, stridesBuffer));
     }
 
     public Device device() {
@@ -105,15 +118,15 @@ public class GpuTensor extends BaseTensor {
     }
 
     public cl_mem dataBuffer() {
-        return dataBuffer;
+        return dataBuffer.value();
     }
 
     public cl_mem stridesBuffer() {
-        return stridesBuffer;
+        return stridesBuffer.value();
     }
 
     public cl_mem shapeBuffer() {
-        return shapeBuffer;
+        return shapeBuffer.value();
     }
 
     public int size() {
@@ -196,7 +209,7 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor clone() {
-        return new GpuTensor(device, shape, this.dataBuffer);
+        return new GpuTensor(device, shape, dataBuffer.value());
     }
 
     @Override
@@ -718,7 +731,7 @@ public class GpuTensor extends BaseTensor {
 
         cl_command_queue queue = device.newCommandQueue();
         clEnqueueReadBuffer(
-            queue, dataBuffer, CL_TRUE, 0, (long) size * Sizeof.cl_float, Pointer.to(buffer), 0, null, null
+            queue, dataBuffer.value(), CL_TRUE, 0, (long) size * Sizeof.cl_float, Pointer.to(buffer), 0, null, null
         );
 
         clFinish(queue);
