@@ -3,6 +3,7 @@ package org.brain4j.math.tensor.autograd.impl;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
+import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
 public record SliceOperation(Range... ranges) implements Operation {
@@ -20,6 +21,10 @@ public record SliceOperation(Range... ranges) implements Operation {
     @Override
     public Tensor[] backward(Tensor gradOutput, Tensor... inputs) {
         // TODO: make a GPU-specialized version
+        if (gradOutput instanceof GpuTensor) {
+            throw new IllegalStateException("Slicing backward is not supported yet for GPU platforms.");
+        }
+
         Tensor input = inputs[0];
         int[] inputShape = input.shape();
 

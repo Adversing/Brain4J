@@ -4,17 +4,15 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.gpu.GpuContext;
-import org.brain4j.math.gpu.TempBuffer;
+import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.gpu.memory.GpuQueue;
-import org.brain4j.math.gpu.memory.CollectableState;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.jocl.*;
 
-import java.lang.ref.Cleaner;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 

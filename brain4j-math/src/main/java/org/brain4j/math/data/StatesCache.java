@@ -1,10 +1,8 @@
 package org.brain4j.math.data;
 
-import org.brain4j.math.gpu.GpuContext;
-import org.brain4j.math.gpu.TempBuffer;
+import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
-import org.jocl.cl_command_queue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +14,6 @@ public class StatesCache {
     private final Map<Object, Tensor[]> outputStates;
     private final Device device;
     private final boolean training;
-    private cl_command_queue commandQueue;
 
     public StatesCache() {
         this(false, null);
@@ -32,11 +29,6 @@ public class StatesCache {
         this.outputStates = new HashMap<>();
         this.tensorCache = new HashMap<>();
         this.device = device;
-
-        if (device != null) {
-            this.commandQueue = device.newCommandQueue();
-            TempBuffer.CLEANER.register(this, () -> GpuContext.closeQueue(commandQueue));
-        }
     }
 
     public boolean training() {
@@ -66,17 +58,9 @@ public class StatesCache {
     public void rememberOutput(Object layer, Tensor... state) {
         outputStates.put(layer, state);
     }
-    
-    public cl_command_queue commandQueue() {
-        return commandQueue;
-    }
 
-    public cl_command_queue newCommandQueue() {
-        return commandQueue = device.newCommandQueue();
-    }
-
-    public void disposeCommandQueue() {
-        this.commandQueue = null;
+    public Device device() {
+        return device;
     }
 }
 

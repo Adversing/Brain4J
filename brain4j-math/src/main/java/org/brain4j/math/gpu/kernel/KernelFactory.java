@@ -1,7 +1,7 @@
 package org.brain4j.math.gpu.kernel;
 
 import org.brain4j.math.gpu.GpuContext;
-import org.brain4j.math.gpu.TempBuffer;
+import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;

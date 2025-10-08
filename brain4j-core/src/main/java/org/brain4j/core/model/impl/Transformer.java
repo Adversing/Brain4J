@@ -44,7 +44,7 @@ public class Transformer extends Sequential {
         }
         
         if (device != null) {
-            GpuContext.updateQueue(device, cache);
+            cache.device().createQueue();
         }
 
         for (Layer layer : flattened) {
@@ -52,7 +52,7 @@ public class Transformer extends Sequential {
         }
 
         if (device != null && !cache.training()) {
-            GpuContext.closeQueue(device, cache);
+            GpuContext.finishAndRelease(device);
         }
         
         return result;

@@ -1,6 +1,5 @@
 package org.brain4j.math.gpu;
 
-import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.cl_kernel;
@@ -14,7 +13,6 @@ import static org.jocl.CL.*;
 
 public class GpuContext {
 
-    private static final Map<Device, ThreadLocal<GpuQueue>> queues = new HashMap<>();
     private static final Map<Device, Map<String, cl_kernel>> kernelCache = new HashMap<>();
 
     public static void register(Device device, String kernelName, cl_program program) {
@@ -44,73 +42,32 @@ public class GpuContext {
         return kernel;
     }
 
-    public static void updateQueue(Device device, StatesCache cache) {
-        cl_command_queue queue = cache.commandQueue();
+    public static GpuQueue getOrCreate(Device device) {
+        GpuQueue queue = device.queue();
 
         if (queue == null) {
-            queue = cache.newCommandQueue();
+            cl_command_queue clQueue = device.newCommandQueue();
+            queue = new GpuQueue(device, clQueue,true);
         }
 
-        GpuQueue updated = new GpuQueue(device, queue, false);
-        queues.computeIfAbsent(device, d -> new ThreadLocal<>()).set(updated);
+        return queue;
     }
 
-    public static GpuQueue getOrCreate(Device device) {
-        GpuQueue current = queue(device);
+    public static void finishAndRelease(GpuQueue queue) {
+        cl_command_queue clCommandQueue = queue.queue();
 
-        if (current == null || current.queue() == null) {
-            current = new GpuQueue(device, device.newCommandQueue(), true);
-            queues.computeIfAbsent(device, d -> new ThreadLocal<>()).set(current);
-        }
+        if (clCommandQueue == null) return;
 
-        return current;
+        finishAndReleaseCl(clCommandQueue);
     }
 
-    public static GpuQueue queue(Device device) {
-        ThreadLocal<GpuQueue> localQueue = queues.get(device);
-
-        if (localQueue == null) {
-            return null;
-        }
-
-        return localQueue.get();
-    }
-    
-    public static void closeQueue(cl_command_queue queue) {
+    public static void finishAndReleaseCl(cl_command_queue queue) {
         clFinish(queue);
         clReleaseCommandQueue(queue);
     }
-    
-    public static void closeQueue(Device device) {
-        GpuQueue queue = queue(device);
-        
-        if (queue == null) {
-            throw new IllegalStateException("No command queue registered for device: " + device);
-        }
-        
-        queues.get(device).remove();
-        
-        cl_command_queue commandQueue = queue.queue();
-        
-        if (commandQueue == null) return;
-        
-        closeQueue(commandQueue);
-    }
-    
-    public static void closeQueue(Device device, StatesCache cache) {
-        GpuQueue queue = queue(device);
 
-        if (queue == null) {
-            throw new IllegalStateException("No command queue registered for device: " + device);
-        }
-        
-        queues.get(device).remove();
-        cache.disposeCommandQueue();
-
-        cl_command_queue commandQueue = queue.queue();
-
-        if (commandQueue == null) return;
-
-        closeQueue(commandQueue);
+    public static void finishAndRelease(Device device) {
+        finishAndRelease(device.queue());
+        device.setQueue(null);
     }
 }

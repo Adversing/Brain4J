@@ -275,7 +275,7 @@ public class Sequential extends Layer implements Model {
 
                 while (times.size() > 20) {
                     totalForBatch.set(totalForBatch.get() - times.getFirst());
-                    times.remove(0);
+                    times.removeFirst();
                 }
 
                 double average = totalForBatch.get() / Math.min(batch, 20);
@@ -317,7 +317,7 @@ public class Sequential extends Layer implements Model {
         }
 
         if (device != null) {
-            GpuContext.updateQueue(device, cache);
+            cache.device().createQueue();
         }
 
         for (Layer layer : flattened) {
@@ -325,7 +325,7 @@ public class Sequential extends Layer implements Model {
         }
 
         if (device != null && !cache.training()) {
-            GpuContext.closeQueue(device, cache);
+            GpuContext.finishAndRelease(device);
         }
 
         return result;
@@ -333,7 +333,7 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets) {
-        Layer last = flattened.get(flattened.size() - 1);
+        Layer last = flattened.getLast();
         last.computeLoss(cache, targets, outputs, lossFunction);
 
         for (Layer layer : flattened) {
@@ -379,7 +379,11 @@ public class Sequential extends Layer implements Model {
     @Override
     public Model to(Device device) {
         this.device = device;
-        
+
+        if (updater == null || optimizer == null) {
+            throw new IllegalStateException("The model is not compiled! Make sure to call compile() first.");
+        }
+
         if (device != null) {
             Brain4J.initKernels(device);
         }
@@ -420,7 +424,7 @@ public class Sequential extends Layer implements Model {
     @Override
     public void summary() {
         if (updater == null || optimizer == null) {
-            throw new IllegalStateException("The model is not compiled! Make sure to call compile() before.");
+            throw new IllegalStateException("The model is not compiled! Make sure to call compile() first.");
         }
 
         StringBuilder stats = new StringBuilder();
@@ -636,6 +640,6 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public int size() {
-        return layers.get(layers.size() - 1).size();
+        return layers.getLast().size();
     }
 }

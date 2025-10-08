@@ -47,7 +47,7 @@ public class GraphModel implements Model {
         }
         
         if (device != null) {
-            GpuContext.updateQueue(device, cache);
+            cache.device().createQueue();
         }
 
         Map<String, Tensor> computed = new HashMap<>(initializers);
@@ -86,7 +86,7 @@ public class GraphModel implements Model {
         }
 
         if (device != null && !cache.training()) {
-            GpuContext.closeQueue(device, cache);
+            GpuContext.finishAndRelease(cache.device());
         }
 
         return outputs;

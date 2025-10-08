@@ -1,6 +1,10 @@
 package org.brain4j.math.gpu.device;
 
+import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jocl.CL.*;
 
@@ -13,6 +17,7 @@ public class Device {
     private final cl_platform_id platform;
     private final cl_device_id device;
     private final cl_context context;
+    private GpuQueue queue;
 
     public Device(cl_platform_id platform, cl_device_id device) {
         this.platform = platform;
@@ -54,7 +59,19 @@ public class Device {
         return context;
     }
 
+    public GpuQueue queue() {
+        return queue;
+    }
+
+    public void setQueue(GpuQueue queue) {
+        this.queue = queue;
+    }
+
     public cl_mem createBuffer(long flags, float[] data) {
         return clCreateBuffer(context, flags, data.length * 4L, Pointer.to(data), null);
+    }
+
+    public void createQueue() {
+        this.queue = new GpuQueue(this, newCommandQueue(), false);
     }
 }

@@ -1,4 +1,4 @@
-package org.brain4j.math.gpu;
+package org.brain4j.math.gpu.memory;
 
 import org.jocl.cl_mem;
 
