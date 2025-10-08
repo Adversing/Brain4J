@@ -2,8 +2,8 @@ package org.brain4j.math.gpu;
 
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
-import org.jocl.cl_kernel;
 import org.jocl.cl_command_queue;
+import org.jocl.cl_kernel;
 import org.jocl.cl_program;
 
 import java.util.HashMap;

@@ -1,10 +1,10 @@
 package org.brain4j.core.layer.impl.transformer;
 
 import com.google.gson.JsonObject;
-import org.brain4j.math.Tensors;
-import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.math.Tensors;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.Arrays;

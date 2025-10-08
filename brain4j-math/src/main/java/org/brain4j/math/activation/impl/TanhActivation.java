@@ -1,7 +1,7 @@
 package org.brain4j.math.activation.impl;
 
-import org.brain4j.math.weightsinit.UniformXavierInit;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.weightsinit.UniformXavierInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
 public class TanhActivation implements Activation {

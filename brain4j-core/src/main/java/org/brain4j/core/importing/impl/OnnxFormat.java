@@ -1,23 +1,24 @@
 package org.brain4j.core.importing.impl;
 
 import org.brain4j.core.Brain4J;
-import org.brain4j.math.activation.impl.*;
-import org.brain4j.core.importing.onnx.ProtoOnnx;
-import org.brain4j.core.layer.Layer;
-import org.brain4j.core.layer.impl.utility.InputLayer;
-import org.brain4j.math.Tensors;
-import org.brain4j.math.activation.Activation;
-import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.autograd.AutogradContext;
-import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
 import org.brain4j.core.importing.format.ModelFormat;
 import org.brain4j.core.importing.onnx.ProtoOnnx.*;
+import org.brain4j.core.layer.Layer;
+import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.model.Model;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.activation.Activation;
+import org.brain4j.math.activation.impl.*;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.autograd.AutogradContext;
+import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.ActivationOperation;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

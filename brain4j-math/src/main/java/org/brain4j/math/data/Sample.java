@@ -2,7 +2,6 @@ package org.brain4j.math.data;
 
 import org.brain4j.math.tensor.Tensor;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 public class Sample implements Cloneable {

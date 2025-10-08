@@ -1,6 +1,5 @@
 package org.brain4j.math.data;
 
-import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 

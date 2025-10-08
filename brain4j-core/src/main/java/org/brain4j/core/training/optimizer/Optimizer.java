@@ -1,10 +1,10 @@
 package org.brain4j.core.training.optimizer;
 
-import org.brain4j.math.tensor.Tensor;
 import org.brain4j.core.training.optimizer.impl.Adam;
 import org.brain4j.core.training.optimizer.impl.AdamW;
 import org.brain4j.core.training.optimizer.impl.GradientDescent;
 import org.brain4j.core.training.optimizer.impl.Lion;
+import org.brain4j.math.tensor.Tensor;
 
 /**
  * Base class for all gradient-based optimization algorithms.

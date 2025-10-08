@@ -1,5 +1,4 @@
 import org.brain4j.core.Brain4J;
-import org.brain4j.math.activation.Activations;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
@@ -8,6 +7,7 @@ import org.brain4j.core.model.impl.Sequential;
 import org.brain4j.core.training.optimizer.impl.AdamW;
 import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.Sample;
 import org.brain4j.math.gpu.device.Device;

@@ -13,7 +13,6 @@ import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public interface Tensor extends Iterable<Float> {

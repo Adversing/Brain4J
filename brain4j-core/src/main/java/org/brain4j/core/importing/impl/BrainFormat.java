@@ -1,15 +1,15 @@
 package org.brain4j.core.importing.impl;
 
 import com.google.gson.*;
-import org.brain4j.math.clipper.GradientClipper;
-import org.brain4j.core.layer.Layer;
 import org.brain4j.core.importing.format.ModelFormat;
+import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.tensor.Tensor;
 
 import java.io.*;

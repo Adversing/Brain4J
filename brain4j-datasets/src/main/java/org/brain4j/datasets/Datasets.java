@@ -1,7 +1,5 @@
 package org.brain4j.datasets;
 
-import ar.com.hjg.pngj.IImageLine;
-import ar.com.hjg.pngj.ImageLineByte;
 import ar.com.hjg.pngj.ImageLineInt;
 import ar.com.hjg.pngj.PngReader;
 import org.apache.parquet.example.data.Group;
@@ -19,8 +17,6 @@ import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.Sample;
 import org.brain4j.math.tensor.Tensor;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;

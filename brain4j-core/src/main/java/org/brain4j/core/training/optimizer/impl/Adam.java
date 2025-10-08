@@ -1,10 +1,10 @@
 package org.brain4j.core.training.optimizer.impl;
 
+import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.brain4j.core.training.optimizer.Optimizer;
 
 import java.util.HashMap;
 import java.util.Map;

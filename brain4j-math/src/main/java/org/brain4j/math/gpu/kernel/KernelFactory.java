@@ -1,15 +1,16 @@
 package org.brain4j.math.gpu.kernel;
 
 import org.brain4j.math.gpu.GpuContext;
-import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
+import org.brain4j.math.gpu.memory.TempBuffer;
 import org.jocl.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jocl.CL.*;
+import static org.jocl.CL.clEnqueueNDRangeKernel;
+import static org.jocl.CL.clSetKernelArg;
 
 public class KernelFactory {
 

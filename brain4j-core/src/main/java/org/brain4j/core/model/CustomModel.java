@@ -1,19 +1,21 @@
 package org.brain4j.core.model;
 
-import org.brain4j.math.Pair;
-import org.brain4j.math.Tensors;
-import org.brain4j.math.data.ListDataSource;
-import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
-import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
+import org.brain4j.math.Pair;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;

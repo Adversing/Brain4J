@@ -2,10 +2,10 @@ package org.brain4j.core.layer.impl.utility;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
 public class SliceLayer extends Layer {
     

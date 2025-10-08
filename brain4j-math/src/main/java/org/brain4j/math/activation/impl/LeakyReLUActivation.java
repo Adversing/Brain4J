@@ -1,9 +1,9 @@
 package org.brain4j.math.activation.impl;
 
-import org.brain4j.math.weightsinit.NormalHeInit;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.tensor.impl.GpuTensor;
+import org.brain4j.math.weightsinit.NormalHeInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 import org.jocl.cl_kernel;
 

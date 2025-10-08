@@ -3,9 +3,6 @@ package org.brain4j.math.gpu.device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.jocl.CL.*;
 
 public class Device {

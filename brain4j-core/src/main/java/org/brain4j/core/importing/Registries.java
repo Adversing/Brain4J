@@ -1,17 +1,15 @@
 package org.brain4j.core.importing;
 
-import org.brain4j.math.activation.impl.*;
-import org.brain4j.math.clipper.GradientClipper;
-import org.brain4j.math.clipper.impl.HardClipper;
-import org.brain4j.math.clipper.impl.L2Clipper;
-import org.brain4j.math.clipper.impl.NoClipper;
 import org.brain4j.core.importing.format.GeneralRegistry;
-import org.brain4j.core.importing.onnx.ProtoOnnx.*;
+import org.brain4j.core.importing.onnx.ProtoOnnx.NodeProto;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.*;
 import org.brain4j.core.layer.impl.convolutional.ConvLayer;
+import org.brain4j.core.layer.impl.transformer.EmbeddingLayer;
+import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
+import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
+import org.brain4j.core.layer.impl.transformer.TransformerEncoder;
 import org.brain4j.core.layer.impl.utility.*;
-import org.brain4j.core.layer.impl.transformer.*;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.*;
 import org.brain4j.core.training.optimizer.Optimizer;
@@ -23,6 +21,11 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.updater.impl.NormalUpdater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.activation.impl.*;
+import org.brain4j.math.clipper.GradientClipper;
+import org.brain4j.math.clipper.impl.HardClipper;
+import org.brain4j.math.clipper.impl.L2Clipper;
+import org.brain4j.math.clipper.impl.NoClipper;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.*;
 

@@ -10,7 +10,6 @@ import org.brain4j.datasets.download.callback.ProgressCallback;
 import org.brain4j.datasets.download.manager.DownloadManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.nio.file.Files;

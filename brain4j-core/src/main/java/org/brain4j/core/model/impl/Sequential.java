@@ -1,25 +1,25 @@
 package org.brain4j.core.model.impl;
 
-import org.brain4j.core.layer.impl.utility.InputLayer;
-import org.brain4j.core.training.updater.impl.StochasticUpdater;
-import org.brain4j.math.Commons;
-import org.brain4j.math.Pair;
-import org.brain4j.math.Tensors;
-import org.brain4j.math.data.ListDataSource;
-import org.brain4j.math.gpu.GpuContext;
-import org.brain4j.math.gpu.device.Device;
-import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.index.Range;
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.BackPropagation;
-import org.brain4j.math.data.StatesCache;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
+import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
+import org.brain4j.math.Commons;
+import org.brain4j.math.Pair;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.data.ListDataSource;
+import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
 import java.text.DecimalFormat;
 import java.util.*;

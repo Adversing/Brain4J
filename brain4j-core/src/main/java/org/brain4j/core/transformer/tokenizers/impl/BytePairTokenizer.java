@@ -3,10 +3,10 @@ package org.brain4j.core.transformer.tokenizers.impl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.brain4j.core.transformer.tokenizers.Tokenizer;
 import org.brain4j.math.Commons;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.core.transformer.tokenizers.Tokenizer;
 
 import java.io.*;
 import java.lang.reflect.Type;
