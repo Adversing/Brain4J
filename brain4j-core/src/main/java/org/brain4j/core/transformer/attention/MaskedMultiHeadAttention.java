@@ -1,5 +1,6 @@
 package org.brain4j.core.transformer.attention;
 
+import org.brain4j.core.layer.impl.transformer.MultiHeadAttention;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.core.transformer.attention.head.MaskedAttentionHead;
 import org.brain4j.math.Tensors;
@@ -21,7 +22,8 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
     }
 
     @Override
-    public Tensor attend(StatesCache cache, Tensor input) {
+    public Tensor[] forward(StatesCache cache, Tensor[] inputs) {
+        Tensor input = inputs[0];
         Tensor[] outputs = new Tensor[heads.size()];
 
         for (int i = 0; i < heads.size(); i++) {
@@ -39,6 +41,6 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         }
 
         cache.updateCache(this, projected);
-        return projected;
+        return new Tensor[] { projected };
     }
 }

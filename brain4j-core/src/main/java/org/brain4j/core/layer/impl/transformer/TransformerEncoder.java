@@ -7,7 +7,6 @@ import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.core.transformer.attention.MultiHeadAttention;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
@@ -124,7 +123,7 @@ public class TransformerEncoder extends Layer {
         normalizer2.initWeights(generator, embeddingDim, embeddingDim);
         upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
         downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
-        attention.initWeights(generator, weightInit);
+        attention.initWeights(generator, embeddingDim, embeddingDim);
     }
 
     @Override
@@ -147,7 +146,7 @@ public class TransformerEncoder extends Layer {
             );
         }
 
-        Tensor attended = attention.attend(cache, input);
+        Tensor attended = attention.forward(cache, input);
         
         if (cache.training()) {
             attended = dropout.forward(cache, attended);
@@ -177,7 +176,7 @@ public class TransformerEncoder extends Layer {
         downProjection.backward(cache, updater, optimizer);
         upProjection.backward(cache, updater, optimizer);
         normalizer1.backward(cache, updater, optimizer);
-        attention.backward(updater, optimizer);
+        attention.backward(cache, updater, optimizer);
     }
     
     @Override
@@ -197,14 +196,15 @@ public class TransformerEncoder extends Layer {
         upProjection.setBias(mappedWeights.get("up_projection.bias"));
         downProjection.setWeights(mappedWeights.get("down_projection.weights"));
         downProjection.setBias(mappedWeights.get("down_projection.bias"));
+
         normalizer1.setWeights(mappedWeights.get("normalizer_1.weights"));
         normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
         normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
         normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
         
         attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
-        attention.setQkvWeights(mappedWeights.get("attention.qkv_weights"));
-        attention.setQkvBias(mappedWeights.get("attention.qkv_bias"));
+        attention.setWeights(mappedWeights.get("attention.weights"));
+        attention.setBias(mappedWeights.get("attention.bias"));
     }
     
     @Override
@@ -244,19 +244,16 @@ public class TransformerEncoder extends Layer {
         result.put("up_projection.bias", upProjection.bias());
         result.put("down_projection.weights", downProjection.weights());
         result.put("down_projection.bias", downProjection.bias());
+
         result.put("normalizer_1.weights", normalizer1.weights());
         result.put("normalizer_1.bias", normalizer1.bias());
         result.put("normalizer_2.weights", normalizer2.weights());
         result.put("normalizer_2.bias", normalizer2.bias());
-        
-        List<AttentionHead> heads = attention.heads();
-        
-        for (int i = 0; i < heads.size(); i++) {
-            AttentionHead head = heads.get(i);
-            result.put("attention_head." + i + ".qkv", head.qkvWeights());
-        }
-        
+
+        result.put("attention.weights", attention.weights());
+        result.put("attention.bias", attention.bias());
         result.put("attention.out_proj", attention.outProjWeights());
+
         return result;
     }
     

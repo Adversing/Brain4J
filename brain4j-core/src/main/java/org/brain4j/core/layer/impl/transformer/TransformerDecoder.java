@@ -4,7 +4,6 @@ import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
-import org.brain4j.core.transformer.attention.MultiHeadAttention;
 import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
@@ -62,7 +61,7 @@ public class TransformerDecoder extends TransformerEncoder {
             );
         }
 
-        Tensor attended = attention.attend(cache, input);
+        Tensor attended = attention.forward(cache, input);
 
         if (cache.training()) {
             attended = dropout.forward(cache, attended);
