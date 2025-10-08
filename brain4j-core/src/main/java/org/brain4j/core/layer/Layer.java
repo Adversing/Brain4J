@@ -13,6 +13,7 @@ import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.random.RandomGenerator;
@@ -57,7 +58,7 @@ public abstract class Layer {
     /**
      * Performs a forward pass through this layer.
      *
-     * @param cache  the states cache for this forward pass
+     * @param cache the states cache for this forward pass
      * @param inputs the input tensors
      * @return the output tensors
      */
@@ -67,9 +68,9 @@ public abstract class Layer {
      * Computes the loss (the gradient) with respect to the loss function and launches the autograd.
      * This method should only be called for the last layer of the neural network.
      *
-     * @param cache        the state cache of this inference
-     * @param labels       the label tensors
-     * @param outputs      the output tensors
+     * @param cache the state cache of this inference
+     * @param labels the label tensors
+     * @param outputs the output tensors
      * @param lossFunction the loss function of this model
      */
     public void computeLoss(
@@ -89,6 +90,11 @@ public abstract class Layer {
             Tensor target = labels[i];
             Tensor preOutput = preOutputs[i];
             
+            if (!Arrays.equals(output.shape(), target.shape())) {
+                throw new IllegalArgumentException("Output and target shapes do not match! Output: " +
+                    Arrays.toString(output.shape()) + ", Target: " + Arrays.toString(target.shape()));
+            }
+            
             Tensor error = output.minus(target);
             Tensor derivatives = activation.derivative(preOutput);
             Tensor delta = lossFunction.delta(error, derivatives);
@@ -100,8 +106,8 @@ public abstract class Layer {
     /**
      * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
      *
-     * @param cache     the states cache of the forward pass
-     * @param updater   the updater of this model
+     * @param cache the states cache of the forward pass
+     * @param updater the updater of this model
      * @param optimizer the optimizer of this model
      */
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
