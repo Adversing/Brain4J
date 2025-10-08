@@ -60,9 +60,8 @@ Screenshots taken from the MNIST example.
 
 This project is maintained by [xEcho1337](https://github.com/xEcho1337).
 
-* Discord: `@xecho1337`
-* Telegram: `@xEcho1337`
+Message `contact@brain4j.org` for business inquiries.
 
 ## License
 
-Brain4J is licensed under [Apache License 2.0](https://github.com/xEcho1337/Brain4J/blob/main/LICENSE)
+Brain4J is licensed under the Apache License, Version 2.0.
