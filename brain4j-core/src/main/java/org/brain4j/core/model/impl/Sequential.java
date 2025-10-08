@@ -121,8 +121,8 @@ public class Sequential extends Layer implements Model {
             int batchSize = input.shape(0);
             
             for (int i = 0; i < outputs.length; i++) {
-                Tensor output = outputs[i];
-                Tensor label = labels[i];
+                Tensor output = outputs[i].cpu();
+                Tensor label = labels[i].cpu();
                 
                 for (int b = 0; b < batchSize; b++) {
                     Range range = Range.point(b);

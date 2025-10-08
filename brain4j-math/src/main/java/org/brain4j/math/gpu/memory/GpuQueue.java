@@ -9,7 +9,7 @@ public record GpuQueue(Device device, cl_command_queue queue, boolean shouldClos
     @Override
     public void close() {
         if (!shouldClose) return;
-
+        
         GpuContext.finishAndReleaseCl(queue);
     }
 }

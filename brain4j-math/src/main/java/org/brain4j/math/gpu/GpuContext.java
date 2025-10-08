@@ -47,7 +47,7 @@ public class GpuContext {
 
         if (queue == null) {
             cl_command_queue clQueue = device.newCommandQueue();
-            queue = new GpuQueue(device, clQueue,true);
+            queue = new GpuQueue(device, clQueue, true);
         }
 
         return queue;
