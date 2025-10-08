@@ -20,8 +20,6 @@ import static org.jocl.CL.*;
 
 public class GpuTensor extends BaseTensor {
 
-    /* Garbage collector stuff */
-    
     private final Device device;
     private final TempBuffer shapeBuffer;
     private final TempBuffer stridesBuffer;

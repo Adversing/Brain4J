@@ -1,0 +1,17 @@
+dependencies {
+    implementation project(":brain4j-backends:backend-api")
+    implementation files('../libs/cuda4j-1.0.0.jar')
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}

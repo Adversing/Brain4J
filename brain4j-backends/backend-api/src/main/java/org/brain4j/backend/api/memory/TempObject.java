@@ -1,4 +1,4 @@
-package org.brain4j.math.gpu.memory;
+package org.brain4j.backend.api.memory;
 
 import java.lang.ref.Cleaner;
 import java.util.concurrent.atomic.AtomicBoolean;
