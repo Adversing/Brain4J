@@ -8,6 +8,7 @@ import org.brain4j.math.tensor.Tensor;
 public class SqueezeLayer extends Layer {
     
     private int dimension;
+    private int size;
 
     protected SqueezeLayer() {
     }
@@ -18,7 +19,8 @@ public class SqueezeLayer extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        return previous;
+        this.size = previous.size();
+        return this;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class SqueezeLayer extends Layer {
     
     @Override
     public int size() {
-        return 0;
+        return size;
     }
     
     @Override

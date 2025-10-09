@@ -10,6 +10,7 @@ import org.brain4j.math.tensor.index.Range;
 public class SliceLayer extends Layer {
     
     private Range[] ranges;
+    private int size;
 
     protected SliceLayer() {
     }
@@ -20,7 +21,8 @@ public class SliceLayer extends Layer {
     
     @Override
     public Layer connect(Layer previous) {
-        return previous;
+        this.size = previous.size();
+        return this;
     }
     
     @Override
@@ -36,7 +38,7 @@ public class SliceLayer extends Layer {
     
     @Override
     public int size() {
-        return 0;
+        return size;
     }
     
     @Override
