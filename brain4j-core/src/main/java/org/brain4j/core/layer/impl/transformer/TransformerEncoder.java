@@ -114,6 +114,7 @@ public class TransformerEncoder extends Layer {
         normalizer2.connect(this);
         upProjection.connect(this);
         downProjection.connect(upProjection);
+        attention.connect(previous);
         return this;
     }
 
