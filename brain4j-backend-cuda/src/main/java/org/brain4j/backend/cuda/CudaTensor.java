@@ -13,14 +13,14 @@ import static org.cuda4j.CudaObject.INT_SIZE;
 
 public class CudaTensor implements GpuTensor<CudaPointer> {
     
-    private final CudaDeviceWrap device;
+    private final Device device;
     private final CudaMemory dataPointer;
     private final CudaMemory shapePointer;
     private final CudaMemory stridesPointer;
     private final int size;
     
-    public CudaTensor(CudaDevice device, int[] shape, float... data) throws Throwable {
-        this.device = new CudaDeviceWrap(device);
+    public CudaTensor(Device device, int[] shape, float... data) throws Throwable {
+        this.device = device;
         this.size = computeSize(shape);
         
         int[] strides = computeStrides(shape);
