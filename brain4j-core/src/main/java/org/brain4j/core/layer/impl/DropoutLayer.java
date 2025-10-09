@@ -81,10 +81,15 @@ public class DropoutLayer extends Layer {
     public int size() {
         return size;
     }
-    
+
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dropoutRate = object.get("dropout").getAsDouble();
+    }
+
     @Override
     public void serialize(JsonObject object) {
-        super.serialize(object);
+        object.addProperty("dropout", dropoutRate);
     }
     
     /**

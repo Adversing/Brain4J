@@ -49,6 +49,7 @@ public class TransformerEncoder extends Layer {
 
     protected int numHeads;
     protected int embeddingDim;
+    protected double dropoutRate;
 
     protected TransformerEncoder() {
     }
@@ -71,26 +72,29 @@ public class TransformerEncoder extends Layer {
      * @param activation the activation used in the projection
      */
     public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activations activation) {
-        this(numHeads, embeddingDim, dropout, activation.function());
+        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, activation.function());
     }
 
     /**
      * Constructs a new encoder block with the specified parameters.
      * @param numHeads the amount of heads in the attention block
      * @param embeddingDim the embedding dimension of the input
+     * @param projDim the dimension of the projected embedding
      * @param dropout the dropout used when training
      * @param activation the activation used in the projection
      */
-    public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activation activation) {
+    public TransformerEncoder(int numHeads, int embeddingDim, int projDim, double dropout, Activation activation) {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;
+        this.dropoutRate = dropout;
+        this.activation = activation;
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
 
         this.normalizer1 = new NormLayer(embeddingDim);
         this.normalizer2 = new NormLayer(embeddingDim);
-        this.upProjection = new DenseLayer(embeddingDim * 4, activation);
-        this.downProjection = new DenseLayer(embeddingDim, Activations.LINEAR);
+        this.upProjection = new DenseLayer(projDim);
+        this.downProjection = new DenseLayer(embeddingDim);
 
         this.attention = createAttention(numHeads, embeddingDim);
     }
@@ -156,7 +160,7 @@ public class TransformerEncoder extends Layer {
         Tensor added = attended.addGrad(input);
         Tensor normalized = normalizer1.forward(cache, added);
 
-        Tensor upProjected = upProjection.forward(cache, normalized);
+        Tensor upProjected = upProjection.forward(cache, normalized).activateGrad(activation);
         Tensor downProjected = downProjection.forward(cache, upProjected);
 
         if (cache.training()) {
@@ -189,10 +193,11 @@ public class TransformerEncoder extends Layer {
     public void loadWeights(Map<String, Tensor> mappedWeights) {
         this.upProjection = new DenseLayer(0);
         this.downProjection = new DenseLayer(0);
+        this.dropout = new DropoutLayer(dropoutRate);
         this.normalizer1 = new NormLayer();
         this.normalizer2 = new NormLayer();
         this.attention = createAttention(numHeads, embeddingDim);
-        
+
         upProjection.setWeights(mappedWeights.get("up_projection.weights"));
         upProjection.setBias(mappedWeights.get("up_projection.bias"));
         downProjection.setWeights(mappedWeights.get("down_projection.weights"));
@@ -202,7 +207,7 @@ public class TransformerEncoder extends Layer {
         normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
         normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
         normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
-        
+
         attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
         attention.setWeights(mappedWeights.get("attention.weights"));
         attention.setBias(mappedWeights.get("attention.bias"));
@@ -210,12 +215,14 @@ public class TransformerEncoder extends Layer {
     
     @Override
     public void serialize(JsonObject object) {
+        object.addProperty("dropout", dropoutRate);
         object.addProperty("heads", numHeads);
         object.addProperty("embedding_dim", embeddingDim);
     }
     
     @Override
     public void deserialize(JsonObject object) {
+        this.dropoutRate = object.get("dropout").getAsDouble();
         this.numHeads = object.get("heads").getAsInt();
         this.embeddingDim = object.get("embedding_dim").getAsInt();
     }

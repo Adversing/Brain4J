@@ -120,7 +120,7 @@ public class EvaluationResult {
                 }
             }
             
-            int cellWidth = Math.max(String.valueOf(maxValue).length(), 5);
+            int cellWidth = Math.max(String.valueOf(maxValue).length(), 5) + 1;
             
             matrix.append(" ".repeat(7));
             for (int i = 0; i < classes; i++) {
