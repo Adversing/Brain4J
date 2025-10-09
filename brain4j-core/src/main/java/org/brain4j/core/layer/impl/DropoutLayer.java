@@ -20,6 +20,7 @@ public class DropoutLayer extends Layer {
 
     private final RandomGenerator random;
     private double dropoutRate;
+    private int size;
     
     public DropoutLayer() {
         this.random = new SplittableRandom();
@@ -38,7 +39,13 @@ public class DropoutLayer extends Layer {
         this.random = new SplittableRandom();
         this.dropoutRate = dropoutRate;
     }
-    
+
+    @Override
+    public Layer connect(Layer previous) {
+        this.size = previous.size();
+        return this;
+    }
+
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         if (cache.training()) {
@@ -72,12 +79,17 @@ public class DropoutLayer extends Layer {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
-    
+
+    @Override
+    public void deserialize(JsonObject object) {
+        this.dropoutRate = object.get("dropout").getAsDouble();
+    }
+
     @Override
     public void serialize(JsonObject object) {
-        super.serialize(object);
+        object.addProperty("dropout", dropoutRate);
     }
     
     /**

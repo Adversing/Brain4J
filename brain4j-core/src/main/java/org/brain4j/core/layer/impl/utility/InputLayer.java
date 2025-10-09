@@ -62,7 +62,7 @@ public class InputLayer extends Layer {
     
     @Override
     public void deserialize(JsonObject object) {
-        JsonArray data = object.getAsJsonArray("shape.data");
+        JsonArray data = object.getAsJsonArray("shape");
         this.shape = new int[data.size()];
         
         for (int i = 0; i < shape.length; i++) {
