@@ -7,7 +7,6 @@ import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
@@ -16,7 +15,6 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.weightsinit.UniformXavierInit;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 

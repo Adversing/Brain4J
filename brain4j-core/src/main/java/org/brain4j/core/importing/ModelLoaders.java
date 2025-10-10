@@ -3,11 +3,9 @@ package org.brain4j.core.importing;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.importing.impl.BrainFormat;
 import org.brain4j.core.importing.impl.OnnxFormat;
-import org.brain4j.core.model.Model;
 import org.brain4j.core.model.impl.Sequential;
 
 import java.io.File;
-import java.util.function.Supplier;
 
 public class ModelLoaders {
     

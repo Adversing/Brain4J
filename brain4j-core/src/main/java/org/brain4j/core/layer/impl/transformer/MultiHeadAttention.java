@@ -12,7 +12,6 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
-import org.brain4j.math.weightsinit.WeightInitialization;
 
 import java.util.ArrayList;
 import java.util.List;

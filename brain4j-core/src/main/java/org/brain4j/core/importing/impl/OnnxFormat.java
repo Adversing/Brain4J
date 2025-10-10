@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
 import static org.brain4j.core.importing.Registries.LAYER_REGISTRY;
 import static org.brain4j.core.importing.Registries.ONNX_OPERATIONS_REGISTRY;

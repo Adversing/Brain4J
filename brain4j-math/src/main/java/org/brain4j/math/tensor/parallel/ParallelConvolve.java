@@ -8,8 +8,6 @@ import org.brain4j.math.tensor.convolve.impl.NormalConvolveProvider;
 import org.brain4j.math.tensor.convolve.impl.SIMDConvolveProvider;
 import org.brain4j.math.tensor.index.Range;
 
-import java.util.Arrays;
-
 public class ParallelConvolve {
 
     public static Tensor convolve(Tensor a, Tensor b) {

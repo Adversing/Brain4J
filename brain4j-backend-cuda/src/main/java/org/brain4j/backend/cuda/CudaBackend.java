@@ -1,10 +1,8 @@
 package org.brain4j.backend.cuda;
 
-import org.brain4j.backend.api.GpuTensor;
 import org.brain4j.backend.api.device.Device;
 import org.brain4j.backend.api.operator.BackendOperator;
 import org.cuda4j.Cuda4J;
-import org.cuda4j.buffer.CudaPointer;
 import org.cuda4j.context.CudaContext;
 import org.cuda4j.device.CudaDevice;
 

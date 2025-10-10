@@ -4,7 +4,6 @@ import org.brain4j.backend.api.GpuTensor;
 import org.brain4j.backend.api.device.Device;
 import org.cuda4j.buffer.CudaBuffer;
 import org.cuda4j.buffer.CudaPointer;
-import org.cuda4j.device.CudaDevice;
 
 import java.util.stream.IntStream;
 
