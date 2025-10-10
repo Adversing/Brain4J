@@ -70,42 +70,43 @@ public class BroadcastAdd implements BroadcastOperation {
 
         return fallbackOp(A, B);
     }
-
+    
+    
     @Override
     public Tensor fallbackOp(Tensor A, Tensor B) {
         int[] shapeA = A.shape();
         int[] shapeB = B.shape();
+        
         float[] aData = A.data();
         float[] bData = B.data();
-
-        int ndimA = shapeA.length;
-        int ndimB = shapeB.length;
-        int[] stridesB = B.strides();
-
+        
+        int[] broadcastedShape = broadcastShape(shapeA, shapeB);
+        
+        if (!Arrays.equals(shapeA, broadcastedShape)) {
+            throw new IllegalArgumentException("Broadcast result does not match shape of A! A = " +
+                Arrays.toString(shapeA) + ", B = " + Arrays.toString(shapeB));
+        }
+        
         int total = A.elements();
-        int[] indexA = new int[ndimA];
-
+        
+        int[] stridesB = B.strides();
+        int[] index = new int[shapeA.length];
+        
         for (int i = 0; i < total; i++) {
+            unravelIndex(i, shapeA, index);
+            
             int bIndex = 0;
-            int dimOffset = ndimB - ndimA;
-
-            for (int d = 0; d < ndimA; d++) {
-                int dimB = dimOffset + d;
-                if (dimB >= 0) {
-                    int sizeB = shapeB[dimB];
-                    int idx = (sizeB == 1) ? 0 : indexA[d];
-                    bIndex += idx * stridesB[dimB];
+            
+            for (int d = 0; d < shapeA.length; d++) {
+                int dimB = (shapeB.length - shapeA.length + d);
+                if (dimB >= 0 && shapeB[dimB] != 1) {
+                    bIndex += index[d] * stridesB[dimB];
                 }
             }
-
+            
             aData[i] += bData[bIndex];
-
-            for (int d = ndimA - 1; d >= 0; d--) {
-                if (++indexA[d] < shapeA[d]) break;
-                indexA[d] = 0;
-            }
         }
-
+        
         return A;
     }
 }
