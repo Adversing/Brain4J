@@ -39,7 +39,9 @@ public class MaxPooling extends PoolingProvider {
         this.yCoords = new int[outerSize * outHeight * outWidth];
 
         for (int outer = 0; outer < outerSize; outer++) {
-            pool2D(inputData, outputData, outer * inHeight * inWidth, outer * outHeight * outWidth, inHeight, inWidth);
+            int offsetIn = outer * inHeight * inWidth;
+            int offsetOut = outer * outHeight * outWidth;
+            pool2D(inputData, outputData, offsetIn, offsetOut, inHeight, inWidth);
         }
 
         int[] outShape = new int[rank];
@@ -97,9 +99,9 @@ public class MaxPooling extends PoolingProvider {
         float[] gradOut = gradOutput.data();
 
         for (int outer = 0; outer < outerSize; outer++) {
-            int offIn = outer * inHeight * inWidth;
-            int offOut = outer * outHeight * outWidth;
-            backward2D(gradIn, gradOut, offIn, offOut, inWidth);
+            int offsetIn = outer * inHeight * inWidth;
+            int offsetOut = outer * outHeight * outWidth;
+            backward2D(gradIn, gradOut, offsetIn, offsetOut, inWidth);
         }
 
         return Tensors.create(shape, gradIn);

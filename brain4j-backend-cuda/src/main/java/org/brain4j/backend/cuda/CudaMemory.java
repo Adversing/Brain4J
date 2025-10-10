@@ -1,6 +1,6 @@
 package org.brain4j.backend.cuda;
 
-import org.brain4j.backend.api.GpuMemory;
+import org.brain4j.backend.api.memory.GpuMemory;
 import org.cuda4j.buffer.CudaBuffer;
 import org.cuda4j.buffer.CudaPointer;
 
