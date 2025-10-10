@@ -3,6 +3,7 @@ package org.brain4j.math.tensor.autograd.impl;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
+import org.brain4j.math.tensor.index.Range;
 
 public class ConvolveOperation implements Operation {
 
@@ -13,16 +14,48 @@ public class ConvolveOperation implements Operation {
 
     @Override
     public Tensor[] backward(Tensor gradOutput, Tensor... inputs) {
-        // TODO: Fix gradient calculation
-        Tensor A = inputs[0];
-        Tensor B = inputs[1];
+        Tensor A = inputs[0]; // input
+        Tensor B = inputs[1]; // filter
 
-        // dL/dA = dL/dC * flip(B)
-        Tensor gradA = gradOutput.convolve(B.flip());
+        int[] aShape = A.shape();
+        int[] bShape = B.shape();
 
-        // dL/dB = flip(A) * dL/dC
-        Tensor gradB = A.flip().convolve(gradOutput);
+        int batch = aShape[0];
+        int inChannels = aShape[1];
+        int inHeight = aShape[2];
+        int inWidth = aShape[3];
 
-        return new Tensor[] { gradA, gradB };
+        int numFilters = bShape[0];
+        int filterHeight = bShape[2];
+        int filterWidth = bShape[3];
+
+        int outHeight = gradOutput.shape()[2];
+        int outWidth = gradOutput.shape()[3];
+
+        Tensor gradA = Tensors.zerosLike(A);
+        Tensor gradB = Tensors.zerosLike(B);
+
+        int batchSize = inChannels * inHeight * inWidth;
+        float[] gradAData = gradA.data();
+
+        for (int b = 0; b < batch; b++) {
+            Tensor inputBatch = A.slice(Range.point(b)).squeeze(0); // [C_in, H, W]
+            Tensor dOutBatch = gradOutput.slice(Range.point(b)); // [F, H_out, W_out]
+
+            Tensor X_col = Tensors.im2col(inputBatch, filterHeight, filterWidth);
+            Tensor W_col = B.reshape(numFilters, inChannels * filterHeight * filterWidth);
+
+            Tensor dY_col = dOutBatch.reshape(numFilters, outHeight * outWidth);
+            Tensor dW_col = dY_col.matmul(X_col.transpose());
+            gradB = gradB.add(dW_col.reshape(B.shape()));
+
+            Tensor dX_col = W_col.transpose().matmul(dY_col);
+            Tensor dInputBatch = Tensors.col2im(dX_col, inChannels, inHeight, inWidth, filterHeight, filterWidth);
+
+            float[] dInputData = dInputBatch.data();
+            System.arraycopy(dInputData, 0, gradAData, b * batchSize, batchSize);
+        }
+
+        return new Tensor[]{ gradA, gradB };
     }
 }

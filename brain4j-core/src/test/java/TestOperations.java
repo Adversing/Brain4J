@@ -3,6 +3,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,6 +18,19 @@ public class TestOperations {
     public TestOperations() {
         this.device = Brain4J.firstDevice();
         Brain4J.initKernels(device);
+    }
+
+    @Test
+    public void orthogonalTest() {
+        Tensor A = Tensors.orthogonal(3, 3);
+        Tensor T = Tensors.matrix(3, 3,
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1
+        );
+
+        Tensor R = A.transpose().matmul(A);
+        assertArrayEquals(R.data(), T.data(), 0.0001f);
     }
     
     @Test

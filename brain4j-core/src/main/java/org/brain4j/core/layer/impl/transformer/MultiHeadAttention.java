@@ -48,7 +48,10 @@ public class MultiHeadAttention extends Layer {
     protected int headCount;
     protected int embeddingDim;
     protected int headDimension;
-    
+
+    private MultiHeadAttention() {
+    }
+
     /**
      * Configures the Multi-Head attention mechanism with the specified parameters.
      * @param clipper the gradient clipper to use during training

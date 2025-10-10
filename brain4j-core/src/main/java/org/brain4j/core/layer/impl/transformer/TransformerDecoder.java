@@ -32,8 +32,9 @@ import java.util.Map;
  * @author xEcho1337
  */
 public class TransformerDecoder extends TransformerEncoder {
-   
-    public TransformerDecoder() {
+
+    private TransformerDecoder() {
+        super();
     }
     
     /**

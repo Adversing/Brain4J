@@ -31,8 +31,8 @@ import java.util.random.RandomGenerator;
 public class DenseLayer extends Layer {
 
     private int dimension;
-    
-    protected DenseLayer() {
+
+    private DenseLayer() {
     }
     
     /**

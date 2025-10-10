@@ -27,7 +27,7 @@ public class NormLSTMLayer extends Layer {
     private int hiddenDimension;
     private boolean returnSequences;
 
-    protected NormLSTMLayer() {
+    private NormLSTMLayer() {
     }
     
     public NormLSTMLayer(int hiddenDimension, boolean returnSequences) {

@@ -391,6 +391,13 @@ public interface Tensor extends Iterable<Float> {
     Tensor unsqueeze();
 
     /**
+     * Broadcasts this tensor to match another shape.
+     * @param targetShape the wanted shape
+     * @return a copy of the current tensor, with the target shape
+     */
+    Tensor broadcast(int[] targetShape);
+
+    /**
      * Broadcasts this tensor to match the shape of the other tensor.
      * @param other the other tensor
      * @return a copy of the current tensor, with the same shape as the other one
@@ -701,21 +708,30 @@ public interface Tensor extends Iterable<Float> {
     Tensor sliceGrad(Range... ranges);
 
     /**
-     * Delegates to {@link #forward(Operation, Tensor)} using {@link MatMulOperation}
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link MatMulOperation}.
      * @param other the other tensor
      * @return the resulting tensor from the operation
      */
     Tensor matmulGrad(Tensor other);
 
     /**
-     * Delegates to {@link #forward(Operation, Tensor)} using {@link ConvolveOperation}
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link ConvolveOperation}.
      * @param other the convolution kernel
      * @return the resulting tensor from the operation
      */
     Tensor convolveGrad(Tensor other);
 
     /**
-     * Delegates to {@link #forward(Operation, Tensor)} using {@link TransposeOperation}
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link MaxPoolOperation}.
+     * @param stride the stride to use on the pooling
+     * @param windowHeight the window height of the pooling
+     * @param windowWidth the window width of the pooling
+     * @return the pooling result in a new tensor
+     */
+    Tensor maxPoolGrad(int stride, int windowHeight, int windowWidth);
+
+    /**
+     * Delegates to {@link #forward(Operation, Tensor)} using {@link TransposeOperation}.
      * @return the resulting tensor from the operation
      */
     Tensor transposeGrad();

@@ -2,7 +2,7 @@ package org.brain4j.math.weightsinit;
 
 import java.util.random.RandomGenerator;
 
-import static org.brain4j.math.constants.Constants.SQRT3;
+import static org.brain4j.math.Constants.SQRT3;
 
 public class LeCunInit implements WeightInitialization {
 

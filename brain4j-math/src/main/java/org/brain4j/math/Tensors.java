@@ -1,11 +1,14 @@
 package org.brain4j.math;
 
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.convolve.Im2ColParams;
+import org.brain4j.math.tensor.convolve.Im2ColTask;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelConvolve;
 
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 import java.util.random.RandomGenerator;
 
 public class Tensors {
@@ -275,5 +278,75 @@ public class Tensors {
         }
 
         return result;
+    }
+
+    public static Tensor zerosLike(Tensor a) {
+        return Tensors.zeros(a.shape());
+    }
+
+    public static Tensor im2col(Tensor input, int filterHeight, int filterWidth) {
+        int[] shape = input.shape();
+        int channels = shape[0];
+        int inHeight = shape[1];
+        int inWidth = shape[2];
+
+        int outHeight = inHeight - filterHeight + 1;
+        int outWidth = inWidth - filterWidth + 1;
+
+        int patchSize = channels * filterHeight * filterWidth;
+        int totalPatches = outHeight * outWidth;
+
+        float[] inputData = input.data();
+        float[] resultData = new float[patchSize * totalPatches];
+
+        Im2ColParams params = new Im2ColParams(
+            inputData,
+            resultData,
+            0,
+            0,
+            channels,
+            inHeight,
+            inWidth,
+            filterHeight,
+            filterWidth,
+            outHeight,
+            outWidth
+        );
+
+        ForkJoinPool.commonPool().invoke(new Im2ColTask(params, 0, totalPatches));
+        return Tensors.create(new int[]{patchSize, totalPatches}, resultData);
+    }
+
+    public static Tensor col2im(Tensor cols, int channels, int inHeight, int inWidth,
+                                int filterHeight, int filterWidth) {
+        int[] colShape = cols.shape(); // [patchSize, totalPatches]
+        int patchSize = colShape[0];
+        int totalPatches = colShape[1];
+
+        int outWidth = inWidth - filterWidth + 1;
+
+        float[] colData = cols.data();
+        float[] imgData = new float[channels * inHeight * inWidth];
+
+        for (int patchIdx = 0; patchIdx < totalPatches; patchIdx++) {
+            int outRow = patchIdx / outWidth;
+            int outCol = patchIdx % outWidth;
+            int baseOffset = patchIdx * patchSize;
+
+            for (int c = 0; c < channels; c++) {
+                int channelOffset = c * filterHeight * filterWidth;
+                int imgChannelOffset = c * inHeight * inWidth;
+
+                for (int fh = 0; fh < filterHeight; fh++) {
+                    int srcPos = baseOffset + channelOffset + fh * filterWidth;
+                    int destPos = imgChannelOffset + (outRow + fh) * inWidth + outCol;
+                    for (int fw = 0; fw < filterWidth; fw++) {
+                        imgData[destPos + fw] += colData[srcPos + fw];
+                    }
+                }
+            }
+        }
+
+        return Tensors.create(new int[]{channels, inHeight, inWidth}, imgData);
     }
 }

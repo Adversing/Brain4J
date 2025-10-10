@@ -212,7 +212,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public int shape(int index) {
-        return shape[index];
+        return shape[Math.floorMod(index, shape.length)];
     }
 
     @Override
@@ -494,40 +494,39 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     public Tensor unsqueeze() {
         return unsqueeze(0);
     }
-    
+
     @Override
-    public Tensor broadcastLike(Tensor other) {
-        int[] targetShape = other.shape();
-        
+    public Tensor broadcast(int[] targetShape) {
+
         if (Arrays.equals(shape, targetShape)) {
             return this;
         }
-        
+
         int targetRank = targetShape.length;
         int srcRank = shape.length;
-        
+
         int[] alignedSrcShape = new int[targetRank];
         int pad = targetRank - srcRank;
-        
+
         for (int i = 0; i < pad; i++) alignedSrcShape[i] = 1;
         System.arraycopy(shape, 0, alignedSrcShape, pad, srcRank);
-        
+
         for (int d = 0; d < targetRank; d++) {
             if (alignedSrcShape[d] > targetShape[d]) {
                 throw new IllegalArgumentException("Cannot broadcast: source dimension " +
                     alignedSrcShape[d] + " > target dimension " + targetShape[d] + " at axis " + d);
             }
         }
-        
+
         Tensor out = Tensors.zeros(targetShape);
-        
+
         int total = out.elements();
         int[] srcCoords = new int[targetRank];
-        
+
         for (int i = 0; i < total; i++) {
             int[] coords = Tensors.unravelIndex(i, targetShape);
             boolean useZero = false;
-            
+
             for (int d = 0; d < targetRank; d++) {
                 int s = alignedSrcShape[d];
                 if (s == targetShape[d]) {
@@ -543,13 +542,18 @@ public abstract class BaseTensor implements Tensor, Cloneable {
                     }
                 }
             }
-            
+
             if (!useZero) {
                 out.set(get(srcCoords), coords);
             }
         }
-        
+
         return out;
+    }
+
+    @Override
+    public Tensor broadcastLike(Tensor other) {
+        return broadcast(other.shape());
     }
     
     public Tensor unsqueeze(int dim) {
@@ -1074,6 +1078,15 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         }
 
         return forward(new ConvolveOperation(), other);
+    }
+
+    @Override
+    public Tensor maxPoolGrad(int stride, int windowHeight, int windowWidth) {
+        if (!usesGrad()) {
+            throw new IllegalArgumentException("This tensor does not use backflow!");
+        }
+
+        return forward(new MaxPoolOperation(stride, windowHeight, windowWidth));
     }
 
     @Override

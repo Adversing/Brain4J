@@ -29,7 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-import static org.brain4j.math.constants.Constants.*;
+import static org.brain4j.math.Constants.*;
 
 /**
  * Represents a simple feedforward neural network model.

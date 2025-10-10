@@ -1,4 +1,4 @@
-package org.brain4j.math.constants;
+package org.brain4j.math;
 
 /*
  * All constants are calculated through default strictfp directive to avoid precision loss

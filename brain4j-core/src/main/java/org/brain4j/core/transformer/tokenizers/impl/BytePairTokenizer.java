@@ -16,7 +16,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 
-import static org.brain4j.math.constants.Constants.*;
+import static org.brain4j.math.Constants.*;
 
 public class BytePairTokenizer implements Tokenizer {
 

@@ -32,7 +32,7 @@ public class LiquidLayer extends Layer {
     private DenseLayer tauParams;
     private NumericalSolver solver;
 
-    protected LiquidLayer() {
+    private LiquidLayer() {
     }
 
     public LiquidLayer(int dimension, int mSteps, boolean returnSequences) {

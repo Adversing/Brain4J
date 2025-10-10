@@ -22,7 +22,7 @@ public class LSTMLayer extends Layer {
     private int hiddenDimension;
     private boolean returnSequences;
 
-    protected LSTMLayer() {
+    private LSTMLayer() {
     }
     
     public LSTMLayer(int hiddenDimension, boolean returnSequences) {

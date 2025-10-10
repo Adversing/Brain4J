@@ -3,6 +3,7 @@ package org.brain4j.core.layer.impl.convolutional;
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
@@ -21,9 +22,14 @@ public class ConvLayer extends Layer {
     
     public ConvLayer() {
     }
-    
-    public ConvLayer(Activations activation, int filters, int kernelWidth, int kernelHeight) {
-        this.activation = activation.function();
+
+    public ConvLayer(Activations activation, int inputChannels, int filters, int kernelWidth, int kernelHeight) {
+        this(activation.function(), inputChannels, filters, kernelWidth, kernelHeight);
+    }
+
+    public ConvLayer(Activation activation, int inputChannels, int filters, int kernelWidth, int kernelHeight) {
+        this.activation = activation;
+        this.channels = inputChannels;
         this.filters = filters;
         this.kernelWidth = kernelWidth;
         this.kernelHeight = kernelHeight;
@@ -31,7 +37,6 @@ public class ConvLayer extends Layer {
     
     @Override
     public Layer connect(Layer previous) {
-        this.channels = previous.size();
         this.bias = Tensors.zeros(filters).withGrad();
         this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth).withGrad();
         
