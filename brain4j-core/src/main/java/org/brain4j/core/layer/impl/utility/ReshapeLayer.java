@@ -10,7 +10,7 @@ public class ReshapeLayer extends Layer {
 
     private int[] shape;
     
-    public ReshapeLayer() {
+    protected ReshapeLayer() {
     }
     
     public ReshapeLayer(int... shape) {
@@ -49,12 +49,12 @@ public class ReshapeLayer extends Layer {
             array.add(dimension);
         }
         
-        object.add("shape.data", array);
+        object.add("shape", array);
     }
     
     @Override
     public void deserialize(JsonObject object) {
-        JsonArray data = object.getAsJsonArray("shape.data");
+        JsonArray data = object.getAsJsonArray("shape");
         this.shape = new int[data.size()];
         
         for (int i = 0; i < shape.length; i++) {
