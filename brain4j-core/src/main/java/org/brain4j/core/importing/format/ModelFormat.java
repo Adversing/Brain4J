@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.function.Supplier;
 
 public interface ModelFormat {
-    <T extends Model> T deserialize(File file, Supplier<T> constructor);
-    
+    Model deserialize(File file);
+
     void serialize(Model model, File file);
 }

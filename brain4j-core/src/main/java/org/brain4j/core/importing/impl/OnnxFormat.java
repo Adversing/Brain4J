@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 import static org.brain4j.core.importing.Registries.LAYER_REGISTRY;
 import static org.brain4j.core.importing.Registries.ONNX_OPERATIONS_REGISTRY;
 
-@SuppressWarnings("unchecked")
 public class OnnxFormat implements ModelFormat {
     
     private static final Map<Class<? extends Activation>, String> ACTIVATION_MAP = Map.of(
@@ -40,7 +39,7 @@ public class OnnxFormat implements ModelFormat {
     );
     
     @Override
-    public <T extends Model> T deserialize(File file, Supplier<T> constructor) {
+    public GraphModel deserialize(File file) {
         try {
             byte[] data = Files.readAllBytes(file.toPath());
             
@@ -68,7 +67,7 @@ public class OnnxFormat implements ModelFormat {
             List<String> inputs = graphProto.getInputList().stream().map(ValueInfoProto::getName).toList();
             List<String> outputs = graphProto.getOutputList().stream().map(ValueInfoProto::getName).toList();
             
-            return (T) model.inputs(inputs).outputs(outputs).compile();
+            return model.inputs(inputs).outputs(outputs).compile();
         } catch (Exception e) {
             e.printStackTrace(System.err);
             return null;

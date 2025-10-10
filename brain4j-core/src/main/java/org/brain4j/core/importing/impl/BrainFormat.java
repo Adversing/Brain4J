@@ -5,6 +5,7 @@ import org.brain4j.core.importing.format.ModelFormat;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
+import org.brain4j.core.model.impl.Sequential;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
@@ -34,8 +35,8 @@ public class BrainFormat implements ModelFormat {
     public static final int FORMAT_VERSION = 1;
 
     @Override
-    public <T extends Model> T deserialize(File file, Supplier<T> constructor) {
-        T model = constructor.get();
+    public Sequential deserialize(File file) {
+        Sequential model = Sequential.of();
         Map<String, byte[]> files = new HashMap<>();
         
         try (FileInputStream stream = new FileInputStream(file);
