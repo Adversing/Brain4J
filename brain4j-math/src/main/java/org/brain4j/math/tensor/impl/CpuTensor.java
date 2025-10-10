@@ -84,7 +84,7 @@ public class CpuTensor extends BaseTensor {
 
         BaseTensor result = (BaseTensor) Tensors.create(newShape);
 
-        int bound = 1 << 16;
+        int bound = 1 << 10;
 
         if (elements() >= bound) {
             ParallelTranspose.transpose(this, result, dim1, dim2);
