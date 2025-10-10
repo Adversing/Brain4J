@@ -13,8 +13,8 @@ import java.util.Arrays;
 public class ParallelConvolve {
 
     public static Tensor convolve(Tensor a, Tensor b) {
-        while (a.rank() < 3) a = a.unsqueeze();
-        while (b.rank() < 3) b = b.unsqueeze();
+        while (a.rank() < 4) a = a.unsqueeze();
+        while (b.rank() < 4) b = b.unsqueeze();
 
         ConvolveProvider provider = DeviceUtils.isSimdAvailable()
             ? new SIMDConvolveProvider()
