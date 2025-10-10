@@ -91,8 +91,8 @@ public class TransformerEncoder extends Layer {
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
 
-        this.normalizer1 = new NormLayer(embeddingDim);
-        this.normalizer2 = new NormLayer(embeddingDim);
+        this.normalizer1 = new NormLayer();
+        this.normalizer2 = new NormLayer();
         this.upProjection = new DenseLayer(projDim);
         this.downProjection = new DenseLayer(embeddingDim);
 
