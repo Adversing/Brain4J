@@ -196,7 +196,7 @@ public class Sequential extends Layer implements Model {
     }
 
     protected void printEvaluation(int step, int epoches, ListDataSource testSource) {
-        EvaluationResult result = evaluate(testSource.clone());
+        EvaluationResult result = evaluate(testSource);
 
         double r2 = result.loss() / result.totalDeviation();
         boolean regression = lossFunction.isRegression();

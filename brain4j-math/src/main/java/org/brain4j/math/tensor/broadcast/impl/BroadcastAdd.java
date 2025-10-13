@@ -11,28 +11,28 @@ public class BroadcastAdd implements BroadcastOperation {
     public Tensor defaultOp(Tensor A, Tensor B) {
         int[] shape = A.shape();
         int[] otherShape = B.shape();
-        
+
         float[] aData = A.data();
         float[] bData = B.data();
-        
+
         if (Arrays.equals(shape, otherShape)) {
             for (int i = 0; i < aData.length; i++) {
                 aData[i] += bData[i];
             }
-            
+
             return A;
         }
-        
+
         if (shape.length == 2 && otherShape.length == 1 && shape[1] == otherShape[0]) {
             int batch = shape[0];
             int dimension = shape[1];
-            
+
             int total = batch * dimension;
             for (int idx = 0; idx < total; idx++) {
                 int j = idx % dimension;
                 aData[idx] += bData[j];
             }
-            
+
             return A;
         }
 
@@ -56,7 +56,7 @@ public class BroadcastAdd implements BroadcastOperation {
             // [a, b, c] + [b, c]
             if (otherShape.length == 2 && shape[1] == otherShape[0] && shape[2] == otherShape[1]) {
                 int stride = d1 * d2; // size of [b, c]
-                
+
                 for (int batch = 0; batch < d0; batch++) {
                     int offset = batch * stride;
                     for (int i = 0; i < stride; i++) {
@@ -70,43 +70,42 @@ public class BroadcastAdd implements BroadcastOperation {
 
         return fallbackOp(A, B);
     }
-    
-    
+
     @Override
     public Tensor fallbackOp(Tensor A, Tensor B) {
         int[] shapeA = A.shape();
         int[] shapeB = B.shape();
-        
         float[] aData = A.data();
         float[] bData = B.data();
-        
-        int[] broadcastedShape = broadcastShape(shapeA, shapeB);
-        
-        if (!Arrays.equals(shapeA, broadcastedShape)) {
-            throw new IllegalArgumentException("Broadcast result does not match shape of A! A = " +
-                Arrays.toString(shapeA) + ", B = " + Arrays.toString(shapeB));
-        }
-        
-        int total = A.elements();
-        
+
+        int ndimA = shapeA.length;
+        int ndimB = shapeB.length;
         int[] stridesB = B.strides();
-        int[] index = new int[shapeA.length];
-        
+
+        int total = A.elements();
+        int[] indexA = new int[ndimA];
+
         for (int i = 0; i < total; i++) {
-            unravelIndex(i, shapeA, index);
-            
             int bIndex = 0;
-            
-            for (int d = 0; d < shapeA.length; d++) {
-                int dimB = (shapeB.length - shapeA.length + d);
-                if (dimB >= 0 && shapeB[dimB] != 1) {
-                    bIndex += index[d] * stridesB[dimB];
+            int dimOffset = ndimB - ndimA;
+
+            for (int d = 0; d < ndimA; d++) {
+                int dimB = dimOffset + d;
+                if (dimB >= 0) {
+                    int sizeB = shapeB[dimB];
+                    int idx = (sizeB == 1) ? 0 : indexA[d];
+                    bIndex += idx * stridesB[dimB];
                 }
             }
-            
+
             aData[i] += bData[bIndex];
+
+            for (int d = ndimA - 1; d >= 0; d--) {
+                if (++indexA[d] < shapeA[d]) break;
+                indexA[d] = 0;
+            }
         }
-        
+
         return A;
     }
 }

@@ -4,6 +4,8 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.pooling.PoolingProvider;
 import org.brain4j.math.tensor.Tensor;
 
+import java.util.stream.IntStream;
+
 public class MaxPooling extends PoolingProvider {
 
     private int[] xCoords;
@@ -37,12 +39,11 @@ public class MaxPooling extends PoolingProvider {
 
         this.xCoords = new int[outerSize * outHeight * outWidth];
         this.yCoords = new int[outerSize * outHeight * outWidth];
-
-        for (int outer = 0; outer < outerSize; outer++) {
+        IntStream.range(0, outerSize).parallel().forEach(outer -> {
             int offsetIn = outer * inHeight * inWidth;
             int offsetOut = outer * outHeight * outWidth;
-            pool2D(inputData, outputData, offsetIn, offsetOut, inHeight, inWidth);
-        }
+            pool2D(inputData, outputData, offsetIn, offsetOut, inWidth);
+        });
 
         int[] outShape = new int[rank];
         System.arraycopy(shape, 0, outShape, 0, rank - 2);
@@ -52,34 +53,35 @@ public class MaxPooling extends PoolingProvider {
         return Tensors.create(outShape, outputData);
     }
 
-    private void pool2D(float[] in, float[] out, int offsetIn, int offsetOut, int inH, int inW) {
+    private void pool2D(float[] in, float[] out, int offsetIn, int offsetOut, int inW) {
+        int outIdx = offsetOut;
+
         for (int h = 0; h < outHeight; h++) {
+            int hStart = h * stride;
             for (int w = 0; w < outWidth; w++) {
-                float maxVal = Float.NEGATIVE_INFINITY;
-                int maxY = -1;
-                int maxX = -1;
-
-                int hStart = h * stride;
                 int wStart = w * stride;
+                int inBase = offsetIn + hStart * inW + wStart;
 
-                for (int kh = 0; kh < windowHeight; kh++) {
-                    for (int kw = 0; kw < windowWidth; kw++) {
-                        int ih = hStart + kh;
-                        int iw = wStart + kw;
-                        float value = in[offsetIn + ih * inW + iw];
+                float maxValue = Float.NEGATIVE_INFINITY;
+                int maxRel = 0;
 
-                        if (value > maxVal) {
-                            maxVal = value;
-                            maxY = ih;
-                            maxX = iw;
+                for (int kh = 0, base = inBase; kh < windowHeight; kh++, base += inW) {
+                    int idx = base;
+                    for (int kw = 0; kw < windowWidth; kw++, idx++) {
+                        float value = in[idx];
+
+                        if (value > maxValue) {
+                            maxValue = value;
+                            maxRel = kh * inW + kw;
                         }
                     }
                 }
 
-                int outIndex = offsetOut + h * outWidth + w;
-                out[outIndex] = maxVal;
-                yCoords[outIndex] = maxY;
-                xCoords[outIndex] = maxX;
+                out[outIdx] = maxValue;
+                int abs = inBase + maxRel;
+                yCoords[outIdx] = (abs - offsetIn) / inW;
+                xCoords[outIdx] = (abs - offsetIn) % inW;
+                outIdx++;
             }
         }
     }

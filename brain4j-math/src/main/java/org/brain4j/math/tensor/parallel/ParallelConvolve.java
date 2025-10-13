@@ -8,6 +8,8 @@ import org.brain4j.math.tensor.convolve.impl.NormalConvolveProvider;
 import org.brain4j.math.tensor.convolve.impl.SIMDConvolveProvider;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.stream.IntStream;
+
 public class ParallelConvolve {
 
     public static Tensor convolve(Tensor a, Tensor b) {
@@ -48,14 +50,14 @@ public class ParallelConvolve {
             Tensor patchMatrix = Tensors.im2col(inputBatch.squeeze(0), filterHeight, filterWidth);
             float[] patchData = patchMatrix.data();
 
-            for (int f = 0; f < numFilters; f++) {
+            int finalBIdx = bIdx;
+            IntStream.range(0, numFilters).parallel().forEach(f -> {
                 int filterOffset = f * patchSize;
-                int outBase = (bIdx * numFilters + f) * totalPatches;
+                int outBase = (finalBIdx * numFilters + f) * totalPatches;
                 provider.dotPerFilter(totalPatches, patchSize,
                     filterData, filterOffset,
-                    patchData,
-                    outData, outBase);
-            }
+                    patchData, outData, outBase);
+            });
         }
 
         return out;
