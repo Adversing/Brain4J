@@ -34,18 +34,21 @@ public class Im2ColTask extends RecursiveAction {
         int inputBase = params.inputBaseOffset();
         int resultBase = params.resultBaseOffset();
 
+        int filterSize = params.filterHeight() * params.filterWidth();
+        int inputSize = params.inputHeight() * params.inputWidth();
+
         for (int patchIndex = startPatch; patchIndex < endPatch; patchIndex++) {
             int outRow = patchIndex / params.outputWidth();
             int outCol = patchIndex % params.outputWidth();
             int baseResultOffset = resultBase + patchIndex * patchSize;
 
             for (int c = 0; c < params.channelCount(); c++) {
-                int channelOffsetInput = inputBase + c * params.inputHeight() * params.inputWidth();
-                int channelOffsetResult = c * params.filterHeight() * params.filterWidth();
+                int channelOffsetInput = inputBase + c * inputSize + outCol;
+                int channelOffsetResult = c * filterSize + baseResultOffset;
 
                 for (int fh = 0; fh < params.filterHeight(); fh++) {
-                    int srcPos = channelOffsetInput + (outRow + fh) * params.inputWidth() + outCol;
-                    int destPos = baseResultOffset + channelOffsetResult + fh * params.filterWidth();
+                    int srcPos = (outRow + fh) * params.inputWidth() + channelOffsetInput;
+                    int destPos = channelOffsetResult + fh * params.filterWidth();
                     System.arraycopy(inputData, srcPos, resultData, destPos, params.filterWidth());
                 }
             }

@@ -46,8 +46,8 @@ public class ParallelConvolve {
         float[] outData = out.data();
 
         for (int bIdx = 0; bIdx < batch; bIdx++) {
-            Tensor inputBatch = aHasBatch ? a.slice(Range.point(bIdx)) : a;
-            Tensor patchMatrix = Tensors.im2col(inputBatch.squeeze(0), filterHeight, filterWidth);
+            Tensor inputBatch = (aHasBatch ? a.slice(Range.point(bIdx)) : a).squeeze(0);
+            Tensor patchMatrix = Tensors.im2col(inputBatch, filterHeight, filterWidth);
             float[] patchData = patchMatrix.data();
 
             int finalBIdx = bIdx;
