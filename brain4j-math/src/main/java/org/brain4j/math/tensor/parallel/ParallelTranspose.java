@@ -5,6 +5,8 @@ import org.brain4j.math.tensor.impl.BaseTensor;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
+import static org.brain4j.math.Tensors.*;
+
 public class ParallelTranspose extends RecursiveAction {
     
     public record TransposeParameters(
@@ -15,11 +17,6 @@ public class ParallelTranspose extends RecursiveAction {
         int[] dstStride,
         int[] destToSrc
     ) { }
-    
-    private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
-    private static final int PARALLEL_WORK_THRESHOLD = PARALLELISM;
-    private static final int PARALLEL_COMPLEXITY_THRESHOLD = 1 << 12; // 4096
-    private static final int SPLIT_COMPLEXITY_THRESHOLD = 1 << 10; // 1024
     
     private static boolean isOverSplitThreshold(int work) {
         return work > SPLIT_COMPLEXITY_THRESHOLD;
@@ -99,7 +96,7 @@ public class ParallelTranspose extends RecursiveAction {
             int endIndex = Math.min(startIndex + step, outer);
             actions[i] = new ParallelTranspose(params, startIndex, endIndex);
         }
-        
+
         ForkJoinTask.invokeAll(actions);
     }
 }

@@ -122,9 +122,9 @@ public class CpuTensor extends BaseTensor {
             return;
         }
 
-        final int sStride = srcStride[destToSrc[dim]];
-        final int dStride = dstStride[dim];
-        final int extent = loopShape[dim];
+        int sStride = srcStride[destToSrc[dim]];
+        int dStride = dstStride[dim];
+        int extent = loopShape[dim];
 
         int s = srcOffset;
         int d = dstOffset;

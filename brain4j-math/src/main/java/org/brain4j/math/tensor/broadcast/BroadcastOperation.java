@@ -11,6 +11,40 @@ import java.util.Arrays;
 public interface BroadcastOperation {
 
     /**
+     * Computes the strides map used to broadcast B on A.
+     * @param A the first tensor
+     * @param B the second tensor (the one to broadcast)
+     * @return a new int array which holds the strides for the broadcasting
+     */
+    default int[] makeStrideMap(Tensor A, Tensor B) {
+        int[] shapeA = A.shape();
+        int[] shapeB = B.shape();
+        int[] stridesB = B.strides();
+
+        int rankA = shapeA.length;
+        int rankB = shapeB.length;
+        int dimOffset = rankB - rankA;
+
+        int[] effStrideB = new int[rankA];
+
+        for (int d = 0; d < rankA; d++) {
+            int dimB = dimOffset + d;
+            if (dimB < 0) {
+                effStrideB[d] = 0;
+                continue;
+            }
+
+            if (shapeB[dimB] == 1) {
+                effStrideB[d] = 0;
+            } else {
+                effStrideB[d] = stridesB[dimB];
+            }
+        }
+
+        return effStrideB;
+    }
+
+    /**
      * Default method called when broadcasting two tensors.
      * @param A the first tensor
      * @param B the second tensor

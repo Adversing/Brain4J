@@ -6,12 +6,17 @@ import org.brain4j.math.tensor.convolve.Im2ColTask;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelConvolve;
+import org.brain4j.math.tensor.parallel.ParallelTranspose;
 
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.random.RandomGenerator;
 
 public class Tensors {
+
+    public static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
+    public static final int SPLIT_COMPLEXITY_THRESHOLD = 1 << 10; // 1024
 
     public static Tensor scalar(double value) {
         return new CpuTensor(new int[]{1}, (float) value);

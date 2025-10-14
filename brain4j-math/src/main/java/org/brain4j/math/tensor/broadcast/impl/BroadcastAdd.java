@@ -4,18 +4,19 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.broadcast.BroadcastOperation;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class BroadcastAdd implements BroadcastOperation {
 
     @Override
     public Tensor defaultOp(Tensor A, Tensor B) {
-        int[] shape = A.shape();
-        int[] otherShape = B.shape();
+        int[] shapeA = A.shape();
+        int[] shapeB = B.shape();
 
         float[] aData = A.data();
         float[] bData = B.data();
 
-        if (Arrays.equals(shape, otherShape)) {
+        if (Arrays.equals(shapeA, shapeB)) {
             for (int i = 0; i < aData.length; i++) {
                 aData[i] += bData[i];
             }
@@ -23,9 +24,9 @@ public class BroadcastAdd implements BroadcastOperation {
             return A;
         }
 
-        if (shape.length == 2 && otherShape.length == 1 && shape[1] == otherShape[0]) {
-            int batch = shape[0];
-            int dimension = shape[1];
+        if (shapeA.length == 2 && shapeB.length == 1 && shapeA[1] == shapeB[0]) {
+            int batch = shapeA[0];
+            int dimension = shapeA[1];
 
             int total = batch * dimension;
             for (int idx = 0; idx < total; idx++) {
@@ -36,15 +37,15 @@ public class BroadcastAdd implements BroadcastOperation {
             return A;
         }
 
-        if (shape.length == 3) {
-            int d0 = shape[0]; // a
-            int d1 = shape[1]; // b
-            int d2 = shape[2]; // c
+        if (shapeA.length == 3) {
+            int d0 = shapeA[0]; // a
+            int d1 = shapeA[1]; // b
+            int d2 = shapeA[2]; // c
 
             int total = d0 * d1 * d2;
 
             // [a, b, c] + [c]
-            if (otherShape.length == 1 && shape[2] == otherShape[0]) {
+            if (shapeB.length == 1 && shapeA[2] == shapeB[0]) {
                 for (int idx = 0; idx < total; idx++) {
                     int k = idx % d2;
                     aData[idx] += bData[k];
@@ -54,7 +55,7 @@ public class BroadcastAdd implements BroadcastOperation {
             }
 
             // [a, b, c] + [b, c]
-            if (otherShape.length == 2 && shape[1] == otherShape[0] && shape[2] == otherShape[1]) {
+            if (shapeB.length == 2 && shapeA[1] == shapeB[0] && shapeA[2] == shapeB[1]) {
                 int stride = d1 * d2; // size of [b, c]
 
                 for (int batch = 0; batch < d0; batch++) {
@@ -68,41 +69,74 @@ public class BroadcastAdd implements BroadcastOperation {
             }
         }
 
+        // optimized version for convolutions
+        if (isBiasShape(shapeA, shapeB)) {
+            addBiasInPlace(A, B);
+            return A;
+        }
+
         return fallbackOp(A, B);
+    }
+
+    private void addBiasInPlace(Tensor output, Tensor bias) {
+        int[] shape = output.shape();
+        float[] outData = output.data();
+        float[] biasData = bias.data();
+
+        int batch = shape[0];
+        int filters = shape[1];
+        int height = shape[2];
+        int width  = shape[3];
+
+        int hw = height * width;
+        int strideB = filters * hw;
+
+        for (int b = 0; b < batch; b++) {
+            int baseB = b * strideB;
+
+            for (int f = 0; f < filters; f++) {
+                int baseF = baseB + f * hw;
+                float biasVal = biasData[f];
+
+                for (int i = 0; i < hw; i++) {
+                    outData[baseF + i] += biasVal;
+                }
+            }
+        }
+    }
+
+    private boolean isBiasShape(int[] a, int[] b) {
+        if (a.length != 4) return false; // [B, F, H, W]
+        if (b.length == 1 && b[0] == a[1]) return true;
+        return b.length == 4 && b[0] == 1 && b[2] == 1 && b[3] == 1 && b[1] == a[1];
     }
 
     @Override
     public Tensor fallbackOp(Tensor A, Tensor B) {
+        int[] effStrideB = makeStrideMap(A, B);
         int[] shapeA = A.shape();
-        int[] shapeB = B.shape();
+
         float[] aData = A.data();
         float[] bData = B.data();
 
-        int ndimA = shapeA.length;
-        int ndimB = shapeB.length;
-        int[] stridesB = B.strides();
+        int rankA = shapeA.length;
+        int bIndex = 0;
+        int[] indexA = new int[rankA];
 
         int total = A.elements();
-        int[] indexA = new int[ndimA];
 
         for (int i = 0; i < total; i++) {
-            int bIndex = 0;
-            int dimOffset = ndimB - ndimA;
-
-            for (int d = 0; d < ndimA; d++) {
-                int dimB = dimOffset + d;
-                if (dimB >= 0) {
-                    int sizeB = shapeB[dimB];
-                    int idx = (sizeB == 1) ? 0 : indexA[d];
-                    bIndex += idx * stridesB[dimB];
-                }
-            }
-
             aData[i] += bData[bIndex];
 
-            for (int d = ndimA - 1; d >= 0; d--) {
-                if (++indexA[d] < shapeA[d]) break;
+            for (int d = rankA - 1; ; d--) {
+                if (++indexA[d] < shapeA[d]) {
+                    bIndex += effStrideB[d];
+                    break;
+                }
                 indexA[d] = 0;
+                bIndex -= effStrideB[d] * (shapeA[d] - 1);
+
+                if (d == 0) break;
             }
         }
 

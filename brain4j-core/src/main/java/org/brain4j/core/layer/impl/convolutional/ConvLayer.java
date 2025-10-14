@@ -5,6 +5,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
+import org.brain4j.math.activation.impl.LinearActivation;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 
@@ -22,17 +23,20 @@ public class ConvLayer extends Layer {
     
     public ConvLayer() {
     }
-
-    public ConvLayer(Activations activation, int inputChannels, int filters, int kernelWidth, int kernelHeight) {
-        this(activation.function(), inputChannels, filters, kernelWidth, kernelHeight);
+    public ConvLayer(int inputChannels, int filters, int kernelWidth, int kernelHeight) {
+        this(inputChannels, filters, kernelWidth, kernelHeight, new LinearActivation());
     }
 
-    public ConvLayer(Activation activation, int inputChannels, int filters, int kernelWidth, int kernelHeight) {
-        this.activation = activation;
+    public ConvLayer(int inputChannels, int filters, int kernelWidth, int kernelHeight, Activations activation) {
+        this(inputChannels, filters, kernelWidth, kernelHeight, activation.function());
+    }
+
+    public ConvLayer(int inputChannels, int filters, int kernelWidth, int kernelHeight, Activation activation) {
         this.channels = inputChannels;
         this.filters = filters;
         this.kernelWidth = kernelWidth;
         this.kernelHeight = kernelHeight;
+        this.activation = activation;
     }
     
     @Override
