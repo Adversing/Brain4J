@@ -26,7 +26,7 @@ shadowJar {
     archiveFileName = "brain4j-datasets-${parent.version}.jar"
 }
 
-tasks.register("cleanCache") {
+tasks.register("cleanDatasetsCache") {
     description = "Cleans the local Brain4J datasets cache"
     group = "development"
     doLast {
