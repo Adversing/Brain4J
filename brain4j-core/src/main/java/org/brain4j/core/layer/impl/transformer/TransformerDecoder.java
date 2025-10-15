@@ -119,16 +119,16 @@ public class TransformerDecoder extends TransformerEncoder {
         this.normalizer2 = new NormLayer();
         this.attention = createAttention(numHeads, embeddingDim);
         
-        upProjection.setWeights(mappedWeights.get("up_projection.weights"));
-        upProjection.setBias(mappedWeights.get("up_projection.bias"));
-        downProjection.setWeights(mappedWeights.get("down_projection.weights"));
-        downProjection.setBias(mappedWeights.get("down_projection.bias"));
-        normalizer1.setWeights(mappedWeights.get("normalizer_1.weights"));
-        normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
-        normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
-        normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
+        upProjection.setWeights(mappedWeights.get("up_proj.weights"));
+        upProjection.setBias(mappedWeights.get("up_proj.bias"));
+        downProjection.setWeights(mappedWeights.get("down_proj.weights"));
+        downProjection.setBias(mappedWeights.get("down_proj.bias"));
+        normalizer1.setWeights(mappedWeights.get("norm_1.weights"));
+        normalizer1.setBias(mappedWeights.get("norm_1.bias"));
+        normalizer2.setWeights(mappedWeights.get("norm_2.weights"));
+        normalizer2.setBias(mappedWeights.get("norm_2.bias"));
         
-        attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
+        attention.outProj(mappedWeights.get("self_attn.out_proj"));
         
         for (int i = 0; i < numHeads; i++) {
             String prefix = "attention_head." + i;

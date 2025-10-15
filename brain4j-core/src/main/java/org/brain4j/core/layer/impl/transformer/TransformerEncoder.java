@@ -5,6 +5,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
+import org.brain4j.core.layer.impl.RMSNormLayer;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.activation.Activation;
@@ -39,15 +40,18 @@ import java.util.random.RandomGenerator;
 public class TransformerEncoder extends Layer {
 
     protected DenseLayer upProjection;
+    protected DenseLayer gateProjection;
     protected DenseLayer downProjection;
-    protected NormLayer normalizer1;
-    protected NormLayer normalizer2;
+    protected Layer normalizer1;
+    protected Layer normalizer2;
     protected DropoutLayer dropout;
     protected MultiHeadAttention attention;
+    protected NormType normType;
 
     protected int numHeads;
     protected int embeddingDim;
     protected double dropoutRate;
+    protected boolean useGating;
 
     protected TransformerEncoder() {
     }
@@ -70,7 +74,7 @@ public class TransformerEncoder extends Layer {
      * @param activation the activation used in the projection
      */
     public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activations activation) {
-        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, activation.function());
+        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, false, activation.function(), NormType.LAYER_NORM);
     }
 
     /**
@@ -81,20 +85,32 @@ public class TransformerEncoder extends Layer {
      * @param dropout the dropout used when training
      * @param activation the activation used in the projection
      */
-    public TransformerEncoder(int numHeads, int embeddingDim, int projDim, double dropout, Activation activation) {
+    public TransformerEncoder(int numHeads, int embeddingDim, int projDim, double dropout, boolean useGating, Activation activation, NormType normType) {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;
         this.dropoutRate = dropout;
         this.activation = activation;
+        this.normType = normType;
+        this.useGating = useGating;
+
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
-
-        this.normalizer1 = new NormLayer();
-        this.normalizer2 = new NormLayer();
+        this.normalizer1 = createNormLayer();
+        this.normalizer2 = createNormLayer();
         this.upProjection = new DenseLayer(projDim);
         this.downProjection = new DenseLayer(embeddingDim);
-
         this.attention = createAttention(numHeads, embeddingDim);
+
+        if (useGating) {
+            this.gateProjection = new DenseLayer(projDim);
+        }
+    }
+
+    public Layer createNormLayer() {
+        return switch (normType) {
+            case LAYER_NORM -> new NormLayer();
+            case RMS_NORM -> new RMSNormLayer();
+        };
     }
 
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
@@ -106,8 +122,13 @@ public class TransformerEncoder extends Layer {
         normalizer1.resetGrad();
         normalizer2.resetGrad();
         upProjection.resetGrad();
+        gateProjection.resetGrad();
         downProjection.resetGrad();
         attention.resetGrad();
+
+        if (useGating) {
+            gateProjection.connect(this);
+        }
     }
     
     @Override
@@ -117,6 +138,11 @@ public class TransformerEncoder extends Layer {
         upProjection.connect(this);
         downProjection.connect(upProjection);
         attention.connect(previous);
+
+        if (useGating) {
+            gateProjection.connect(this);
+        }
+
         return this;
     }
 
@@ -127,6 +153,10 @@ public class TransformerEncoder extends Layer {
         upProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
         downProjection.initWeights(generator, embeddingDim * 4, embeddingDim);
         attention.initWeights(generator, embeddingDim, embeddingDim);
+
+        if (useGating) {
+            gateProjection.initWeights(generator, embeddingDim, embeddingDim * 4);
+        }
     }
 
     @Override
@@ -136,6 +166,10 @@ public class TransformerEncoder extends Layer {
         upProjection.toDevice(device);
         downProjection.toDevice(device);
         attention.toDevice(device);
+
+        if (useGating) {
+            gateProjection.toDevice(device);
+        }
     }
     
     @Override
@@ -158,8 +192,16 @@ public class TransformerEncoder extends Layer {
         Tensor added = attended.addGrad(input);
         Tensor normalized = normalizer1.forward(cache, added);
 
-        Tensor upProjected = upProjection.forward(cache, normalized).activateGrad(activation);
-        Tensor downProjected = downProjection.forward(cache, upProjected);
+        Tensor upProjected, downProjected;
+        if (gateProjection != null) {
+            Tensor gate = gateProjection.forward(cache, normalized).activateGrad(activation);
+            Tensor up = upProjection.forward(cache, normalized);
+            Tensor prod = gate.mul(up);
+            downProjected = downProjection.forward(cache, prod);
+        } else {
+            upProjected = upProjection.forward(cache, normalized).activateGrad(activation);
+            downProjected = downProjection.forward(cache, upProjected);
+        }
 
         if (cache.training()) {
             downProjected = dropout.forward(cache, downProjected);
@@ -180,6 +222,10 @@ public class TransformerEncoder extends Layer {
         upProjection.backward(cache, updater, optimizer);
         normalizer1.backward(cache, updater, optimizer);
         attention.backward(cache, updater, optimizer);
+
+        if (useGating) {
+            gateProjection.backward(cache, updater, optimizer);
+        }
     }
     
     @Override
@@ -192,27 +238,38 @@ public class TransformerEncoder extends Layer {
         this.upProjection = new DenseLayer(0);
         this.downProjection = new DenseLayer(0);
         this.dropout = new DropoutLayer(dropoutRate);
-        this.normalizer1 = new NormLayer();
-        this.normalizer2 = new NormLayer();
+        this.normalizer1 = createNormLayer();
+        this.normalizer2 = createNormLayer();
         this.attention = createAttention(numHeads, embeddingDim);
 
-        upProjection.setWeights(mappedWeights.get("up_projection.weights"));
-        upProjection.setBias(mappedWeights.get("up_projection.bias"));
-        downProjection.setWeights(mappedWeights.get("down_projection.weights"));
-        downProjection.setBias(mappedWeights.get("down_projection.bias"));
+        upProjection.setWeights(mappedWeights.get("up_proj.weights"));
+        upProjection.setBias(mappedWeights.get("up_proj.bias"));
+        downProjection.setWeights(mappedWeights.get("down_proj.weights"));
+        downProjection.setBias(mappedWeights.get("down_proj.bias"));
 
         normalizer1.setWeights(mappedWeights.get("normalizer_1.weights"));
-        normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
         normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
-        normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
 
-        attention.setOutProjWeights(mappedWeights.get("attention.out_proj"));
+        if (normType == NormType.LAYER_NORM) {
+            normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
+            normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
+        }
+
+        if (useGating) {
+            gateProjection = new DenseLayer(0);
+            gateProjection.setWeights(mappedWeights.get("gate_proj.weights"));
+            gateProjection.setBias(mappedWeights.get("gate_proj.bias"));
+        }
+
+        attention.outProj(mappedWeights.get("attention.out_proj"));
         attention.setWeights(mappedWeights.get("attention.weights"));
         attention.setBias(mappedWeights.get("attention.bias"));
     }
     
     @Override
     public void serialize(JsonObject object) {
+        object.addProperty("use_gating", useGating);
+        object.addProperty("norm_type", normType.name().toLowerCase());
         object.addProperty("dropout", dropoutRate);
         object.addProperty("heads", numHeads);
         object.addProperty("embedding_dim", embeddingDim);
@@ -220,6 +277,13 @@ public class TransformerEncoder extends Layer {
     
     @Override
     public void deserialize(JsonObject object) {
+        if (object.has("use_gating")) {
+            this.useGating = object.get("use_gating").getAsBoolean();
+        }
+
+        if (object.has("norm_type")) {
+            this.normType = NormType.valueOf(object.get("norm_type").getAsString().toUpperCase());
+        }
         this.dropoutRate = object.get("dropout").getAsDouble();
         this.numHeads = object.get("heads").getAsInt();
         this.embeddingDim = object.get("embedding_dim").getAsInt();
@@ -246,52 +310,118 @@ public class TransformerEncoder extends Layer {
     public Map<String, Tensor> weightsMap() {
         var result = super.weightsMap();
         
-        result.put("up_projection.weights", upProjection.weights());
-        result.put("up_projection.bias", upProjection.bias());
-        result.put("down_projection.weights", downProjection.weights());
-        result.put("down_projection.bias", downProjection.bias());
+        result.put("up_proj.weights", upProjection.weights());
+        result.put("up_proj.bias", upProjection.bias());
+        result.put("down_proj.weights", downProjection.weights());
+        result.put("down_proj.bias", downProjection.bias());
 
-        result.put("normalizer_1.weights", normalizer1.weights());
-        result.put("normalizer_1.bias", normalizer1.bias());
-        result.put("normalizer_2.weights", normalizer2.weights());
-        result.put("normalizer_2.bias", normalizer2.bias());
+        result.put("norm_1.weights", normalizer1.weights());
+        result.put("norm_2.weights", normalizer2.weights());
 
-        result.put("attention.weights", attention.weights());
-        result.put("attention.bias", attention.bias());
-        result.put("attention.out_proj", attention.outProjWeights());
+        if (normType == NormType.LAYER_NORM) {
+            result.put("norm_1.bias", normalizer1.bias());
+            result.put("norm_2.bias", normalizer2.bias());
+        }
+
+        if (useGating) {
+            result.put("gate_proj.weights", gateProjection.weights());
+            result.put("gate_proj.bias", gateProjection.bias());
+        }
+
+        result.put("self_attn.weights", attention.weights());
+        result.put("self_attn.bias", attention.bias());
+        result.put("self_attn.out_proj", attention.outProj());
 
         return result;
     }
-    
+
     public DenseLayer upProjection() {
         return upProjection;
     }
-    
+
+    public TransformerEncoder upProjection(DenseLayer upProjection) {
+        this.upProjection = upProjection;
+        return this;
+    }
+
     public DenseLayer downProjection() {
         return downProjection;
     }
-    
-    public NormLayer normalizer1() {
+
+    public TransformerEncoder downProjection(DenseLayer downProjection) {
+        this.downProjection = downProjection;
+        return this;
+    }
+
+    public Layer normalizer1() {
         return normalizer1;
     }
-    
-    public NormLayer normalizer2() {
+
+    public TransformerEncoder normalizer1(Layer normalizer1) {
+        this.normalizer1 = normalizer1;
+        return this;
+    }
+
+    public Layer normalizer2() {
         return normalizer2;
     }
-    
+
+    public TransformerEncoder normalizer2(Layer normalizer2) {
+        this.normalizer2 = normalizer2;
+        return this;
+    }
+
     public DropoutLayer dropout() {
         return dropout;
     }
-    
+
+    public TransformerEncoder dropout(DropoutLayer dropout) {
+        this.dropout = dropout;
+        return this;
+    }
+
     public MultiHeadAttention attention() {
         return attention;
     }
-    
+
+    public TransformerEncoder attention(MultiHeadAttention attention) {
+        this.attention = attention;
+        return this;
+    }
+
+    public NormType normType() {
+        return normType;
+    }
+
+    public TransformerEncoder normType(NormType normType) {
+        this.normType = normType;
+        return this;
+    }
+
     public int numHeads() {
         return numHeads;
     }
-    
+
+    public TransformerEncoder numHeads(int numHeads) {
+        this.numHeads = numHeads;
+        return this;
+    }
+
     public int embeddingDim() {
         return embeddingDim;
+    }
+
+    public TransformerEncoder embeddingDim(int embeddingDim) {
+        this.embeddingDim = embeddingDim;
+        return this;
+    }
+
+    public double dropoutRate() {
+        return dropoutRate;
+    }
+
+    public TransformerEncoder dropoutRate(double dropoutRate) {
+        this.dropoutRate = dropoutRate;
+        return this;
     }
 }

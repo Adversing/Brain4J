@@ -100,10 +100,12 @@ public class Registries {
         ACTIVATION_REGISTRY.register("mish", MishActivation.class);
         ACTIVATION_REGISTRY.register("relu", ReLUActivation.class);
         ACTIVATION_REGISTRY.register("sigmoid", SigmoidActivation.class);
+        ACTIVATION_REGISTRY.register("silu", SILUActivation.class);
         ACTIVATION_REGISTRY.register("softmax", SoftmaxActivation.class);
+        ACTIVATION_REGISTRY.register("softplus", SoftPlusActivation.class);
         ACTIVATION_REGISTRY.register("swish", SwishActivation.class);
         ACTIVATION_REGISTRY.register("tanh", TanhActivation.class);
-        
+
         LAYER_REGISTRY.register("input", InputLayer.class);
         LAYER_REGISTRY.register("dense", DenseLayer.class);
         LAYER_REGISTRY.register("dropout", DropoutLayer.class);

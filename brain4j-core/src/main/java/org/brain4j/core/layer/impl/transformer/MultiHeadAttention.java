@@ -41,9 +41,11 @@ import java.util.random.RandomGenerator;
  */
 public class MultiHeadAttention extends Layer {
 
-    protected GradientClipper clipper;
     protected List<AttentionHead> heads; // TODO: migrate to single tensor
-    protected Tensor outProjWeights;
+    protected Tensor keyProj;
+    protected Tensor queryProj;
+    protected Tensor valueProj;
+    protected Tensor outProj;
     protected int headCount;
     protected int embeddingDim;
     protected int headDimension;
@@ -86,8 +88,10 @@ public class MultiHeadAttention extends Layer {
 
     @Override
     public Layer connect(Layer previous) {
-        this.outProjWeights = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
-        this.weights = Tensors.zeros(embeddingDim, 3 * embeddingDim).withGrad();
+        this.keyProj = Tensors.zeros(embeddingDim, embeddingDim).withGrad();
+        this.queryProj = Tensors.zeros(embeddingDim, embeddingDim).withGrad();
+        this.valueProj = Tensors.zeros(embeddingDim, embeddingDim).withGrad();
+        this.outProj = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
         this.bias = Tensors.zeros(3 * embeddingDim).withGrad();
         return this;
     }
@@ -98,8 +102,12 @@ public class MultiHeadAttention extends Layer {
             head.initWeights(generator, weightInit);
         }
 
-        this.outProjWeights.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.keyProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.queryProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.valueProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.outProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         this.weights.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+        this.weights = Tensors.concat(keyProj, queryProj, valueProj).withGrad();
     }
 
     /**
@@ -134,9 +142,7 @@ public class MultiHeadAttention extends Layer {
         }
 
         // [batch, heads, seq_len, head_dim]
-        Tensor Q = QKVs[0];
-        Tensor K = QKVs[1];
-        Tensor V = QKVs[2];
+        Tensor Q = QKVs[0], K = QKVs[1], V = QKVs[2];
 
         double normalizer = Math.sqrt(headDimension);
 
@@ -145,27 +151,23 @@ public class MultiHeadAttention extends Layer {
         // [batch, heads, seq_len, seq_len]
         Tensor scores = Q.matmulGrad(K_T).div(normalizer);
         Tensor attentionWeights = scores.activateGrad(new SoftmaxActivation());
-
         // [batch, heads, seq_len, head_dim]
         Tensor context = attentionWeights.matmulGrad(V);
-
         // [batch, seq_len, heads, head_dim]
         context = context.transposeGrad(1, 2);
-
         // [batch, seq_len, embedding_dim]
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
-
         // [batch, seq_len, embedding_dim]
-        return new Tensor[] { output.matmulGrad(outProjWeights) };
+        return new Tensor[] { output.matmulGrad(outProj) };
     }
 
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         super.backward(cache, updater, optimizer);
-        Tensor optimized = optimizer.step(outProjWeights, outProjWeights.grad());
 
+        Tensor optimized = optimizer.step(outProj, outProj.grad());
         clipper.clip(optimized);
-        updater.change(outProjWeights, optimized);
+        updater.change(outProj, optimized);
     }
 
     @Override
@@ -174,7 +176,7 @@ public class MultiHeadAttention extends Layer {
             head.toDevice(device);
         }
 
-        this.outProjWeights = outProjWeights.to(device);
+        this.outProj = outProj.to(device);
         this.weights = weights.to(device);
         this.bias = bias.to(device);
     }
@@ -193,7 +195,7 @@ public class MultiHeadAttention extends Layer {
 
     @Override
     public int totalWeights() {
-        return weights.elements() + outProjWeights.elements();
+        return weights.elements() + outProj.elements();
     }
 
     /**
@@ -215,46 +217,47 @@ public class MultiHeadAttention extends Layer {
             head.resetGrad();
         }
 
-        outProjWeights.zerograd();
+        outProj.zerograd();
     }
 
-    public GradientClipper clipper() {
-        return clipper;
+    public MultiHeadAttention setHeads(List<AttentionHead> heads) {
+        this.heads = heads;
+        return this;
     }
-    
-    public void setClipper(GradientClipper clipper) {
-        this.clipper = clipper;
+
+    public Tensor outProj() {
+        return outProj;
     }
-    
-    public Tensor outProjWeights() {
-        return outProjWeights;
+
+    public MultiHeadAttention outProj(Tensor outProj) {
+        this.outProj = outProj;
+        return this;
     }
-    
-    public void setOutProjWeights(Tensor outProjWeights) {
-        this.outProjWeights = outProjWeights;
-    }
-    
+
     public int headCount() {
         return headCount;
     }
-    
-    public void setHeadCount(int headCount) {
+
+    public MultiHeadAttention headCount(int headCount) {
         this.headCount = headCount;
+        return this;
     }
-    
+
     public int embeddingDim() {
         return embeddingDim;
     }
-    
-    public void setEmbeddingDim(int embeddingDim) {
+
+    public MultiHeadAttention embeddingDim(int embeddingDim) {
         this.embeddingDim = embeddingDim;
+        return this;
     }
-    
+
     public int headDimension() {
         return headDimension;
     }
-    
-    public void setHeadDimension(int headDimension) {
+
+    public MultiHeadAttention headDimension(int headDimension) {
         this.headDimension = headDimension;
+        return this;
     }
 }

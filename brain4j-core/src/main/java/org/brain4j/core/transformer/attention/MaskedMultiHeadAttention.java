@@ -33,7 +33,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
 
         // [batch, 1 | seq_len, embedding_dim]
         Tensor result = Tensors.concatGrad(List.of(outputs));
-        Tensor projected = result.matmulGrad(outProjWeights);
+        Tensor projected = result.matmulGrad(outProj);
         Tensor prev = cache.get(this);
 
         if (prev != null) {

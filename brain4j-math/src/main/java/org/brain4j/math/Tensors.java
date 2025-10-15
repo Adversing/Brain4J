@@ -123,8 +123,8 @@ public class Tensors {
         return triangularMask(dimension, dimension);
     }
 
-    public static Tensor concat(List<Tensor> tensors) {
-        return concat(tensors, -1);
+    public static Tensor concat(Tensor... tensors) {
+        return concat(List.of(tensors), -1);
     }
 
     public static Tensor concat(List<Tensor> tensors, int dim) {
