@@ -1,5 +1,7 @@
 package org.brain4j.llm.core.loader;
 
+import org.brain4j.core.transformer.tokenizers.Tokenizer;
+import org.brain4j.core.transformer.tokenizers.impl.BytePairTokenizer;
 import org.brain4j.llm.api.huggingface.HuggingFaceClient;
 import org.brain4j.llm.api.ModelInfo;
 import org.brain4j.llm.api.ModelInfo.Sibling;
@@ -13,6 +15,7 @@ import org.brain4j.math.commons.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +45,32 @@ public class ModelLoader implements AutoCloseable {
     public LLM loadModel(String modelId) throws Exception {
         return loadModel(modelId, LoadConfig.defaultConfig());
     }
+    
+    public Tokenizer loadTokenizer(String tokenizerId) throws Exception {
+        return loadTokenizer(tokenizerId, LoadConfig.defaultConfig());
+    }
+    
+    public Tokenizer loadTokenizer(String tokenizerId, LoadConfig config) throws Exception {
+        log.info("Loading tokenizer: {}", tokenizerId);
+        
+        ModelInfo info = client.getModelInfo(tokenizerId).unwrap();
+        log.debug("Tokenizer info retrieved for: {} (resolved id: {})", tokenizerId, info.id());
+        
+        String fileToDownload = "tokenizer.json";
+        
+        if (info.siblings().stream().noneMatch(x -> x.rfilename().equals(fileToDownload))) {
+            throw new FileNotFoundException("File not found: " + fileToDownload);
+        }
+        
+        Result<Path, Exception> filePathResult = downloadManager.downloadFile(info.id(), fileToDownload, config.forceDownload());
+        Tokenizer tokenizer = new BytePairTokenizer();
+        
+        Path path = filePathResult.unwrap();
+        tokenizer.load(path.toFile());
 
+        return tokenizer;
+    }
+    
     public LLM loadModel(String modelId, LoadConfig config) throws Exception {
         log.info("Loading model: {}", modelId);
 
@@ -69,6 +97,7 @@ public class ModelLoader implements AutoCloseable {
         metadata.put("streaming", config.streaming());
         metadata.put("split", config.split());
 
+        
         LLM model = new LLM(info.id(), info, files, metadata);
         log.info("Successfully loaded model: {} ({} files)", info.id(), files.size());
 

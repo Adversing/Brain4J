@@ -62,7 +62,6 @@ public class LLM implements InferenceProvider {
         ModelFile tokenizerFile = optTokenizerFile.get();
         this.tokenizer = new BytePairTokenizer();
         this.tokenizer.load(tokenizerFile.path().toFile());
-        System.out.println("Everything found!");
     }
     
     @Override
