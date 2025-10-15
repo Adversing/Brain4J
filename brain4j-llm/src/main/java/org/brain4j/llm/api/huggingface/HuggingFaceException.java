@@ -1,4 +1,4 @@
-package org.brain4j.llm.api;
+package org.brain4j.llm.api.huggingface;
 
 public class HuggingFaceException extends Exception {
     public HuggingFaceException(String msg) {

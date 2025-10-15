@@ -1,8 +1,8 @@
 package org.brain4j.llm.download.manager;
 
-import org.brain4j.llm.api.FileDownloadResponse;
-import org.brain4j.llm.api.HuggingFaceClient;
-import org.brain4j.llm.api.HuggingFaceException;
+import org.brain4j.llm.api.huggingface.FileDownloadResponse;
+import org.brain4j.llm.api.huggingface.HuggingFaceClient;
+import org.brain4j.llm.api.huggingface.HuggingFaceException;
 import org.brain4j.llm.cache.manager.CacheManager;
 import org.brain4j.llm.download.callback.ProgressCallback;
 import org.brain4j.math.commons.result.Result;

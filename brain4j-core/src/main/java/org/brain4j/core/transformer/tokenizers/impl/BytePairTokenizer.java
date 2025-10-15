@@ -2,6 +2,8 @@ package org.brain4j.core.transformer.tokenizers.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.brain4j.core.transformer.tokenizers.Tokenizer;
 import org.brain4j.math.commons.Commons;
@@ -19,15 +21,21 @@ import java.util.concurrent.ForkJoinPool;
 import static org.brain4j.math.Constants.*;
 
 public class BytePairTokenizer implements Tokenizer {
-
-    private final ForkJoinPool threadPool = ForkJoinPool.commonPool();
+    
+    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private Map<String, Integer> vocab;
     private Map<String, String[]> merges;
+    private String tokenStarter;
     
     public BytePairTokenizer() {
+        this(null);
+    }
+    
+    public BytePairTokenizer(String tokenStarter) {
         this.vocab = new LinkedHashMap<>();
         this.merges = new LinkedHashMap<>();
+        this.tokenStarter = tokenStarter;
     }
 
     @Override
@@ -35,6 +43,8 @@ public class BytePairTokenizer implements Tokenizer {
         List<String> output = new ArrayList<>();
 
         for (String word : input.split("\\s+")) {
+            boolean hasCharBeforeWord = input.indexOf(word) != 0;
+            if (hasCharBeforeWord) word = tokenStarter + word;
             output.addAll(encodeWord(word));
         }
 
@@ -56,7 +66,7 @@ public class BytePairTokenizer implements Tokenizer {
     }
 
     @Override
-    public Tensor encodeTokens(List<String> tokens) {
+    public Tensor encode(List<String> tokens) {
         Tensor result = Tensors.zeros(tokens.size());
 
         for (int i = 0; i < tokens.size(); i++) {
@@ -68,82 +78,95 @@ public class BytePairTokenizer implements Tokenizer {
     }
 
     @Override
-    public void save(String filePath) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        File file = new File(filePath);
-
-        if (!file.exists()) {
-            boolean result = file.mkdir();
-
-            if (!result) {
-                throw new IllegalStateException("Failed to create directory.");
-            }
+    public void save(File file) throws IOException {
+        if (!file.exists() && !file.getParentFile().mkdirs()) {
+            throw new IOException("Cannot create directory: " + file);
         }
-
-        String vocabFile = filePath + "/vocab.json";
-        String mergesFile = filePath + "/merges.txt";
-
-        try (Writer writer = new FileWriter(vocabFile)) {
-            gson.toJson(vocab, writer);
+        
+        JsonObject root = new JsonObject();
+        root.addProperty("version", "1.0");
+        root.add("truncation", null);
+        root.add("padding", null);
+        root.add("added_tokens", GSON.toJsonTree(Collections.emptyList()));
+        root.add("normalizer", null);
+        
+        JsonObject preTokenizer = new JsonObject();
+        preTokenizer.addProperty("type", "ByteLevel");
+        preTokenizer.addProperty("add_prefix_space", false);
+        root.add("pre_tokenizer", preTokenizer);
+        
+        JsonObject postProcessor = new JsonObject();
+        postProcessor.addProperty("type", "ByteLevel");
+        postProcessor.addProperty("trim_offsets", true);
+        root.add("post_processor", postProcessor);
+        
+        JsonObject decoder = new JsonObject();
+        decoder.addProperty("type", "ByteLevel");
+        decoder.addProperty("add_prefix_space", false);
+        root.add("decoder", decoder);
+        
+        JsonObject model = new JsonObject();
+        model.addProperty("type", "BPE");
+        model.add("vocab", GSON.toJsonTree(vocab)); // Map<String, Integer>
+        
+        List<String> mergeStrings = new ArrayList<>();
+        
+        for (String[] pair : merges.values()) {
+            if (pair.length != 2) continue;
+            
+            mergeStrings.add(pair[0] + " " + pair[1]);
         }
-
-        try (Writer writer = new FileWriter(mergesFile)) {
-            StringBuilder result = new StringBuilder();
-
-            merges.forEach((key, value) -> result
-                    .append(key)
-                    .append(" ")
-                    .append(String.join("", value))
-                    .append("\n"));
-
-            writer.write(result.toString());
-            writer.flush();
+        
+        model.add("merges", GSON.toJsonTree(mergeStrings));
+        
+        model.add("dropout", null);
+        model.add("unk_token", null);
+        
+        root.add("model", model);
+        
+        try (Writer writer = new FileWriter(file)) {
+            GSON.toJson(root, writer);
         }
     }
 
     @Override
-    public void load(String path) throws IOException {
-        Gson gson = new Gson();
-        File dir = new File(path);
-
-        if (!dir.exists() || !dir.isDirectory()) {
-            throw new FileNotFoundException("Directory does not exist: " + path);
-        }
-
-        File[] files = dir.listFiles();
-
-        if (files == null) {
-            throw new IOException("Failed to list files in directory: " + path);
-        }
-
-        for (File child : files) {
-            if (child.getName().equals("vocab.json")) {
-                try (Reader reader = new FileReader(child)) {
-                    Type type = new TypeToken<LinkedHashMap<String, Integer>>() {}.getType();
-                    this.vocab = gson.fromJson(reader, type);
+    public void load(File file) throws IOException {
+        if (!file.exists()) throw new FileNotFoundException(file.getPath());
+        
+        try (Reader reader = new FileReader(file)) {
+            JsonObject root = GSON.fromJson(reader, JsonObject.class);
+            JsonObject model = root.getAsJsonObject("model");
+            JsonObject preTokenizer = root.getAsJsonObject("pre_tokenizer");
+            
+            String type = preTokenizer.get("type").getAsString();
+            
+            this.tokenStarter = switch (type) {
+                case "ByteLevel" -> "Ġ";
+                case "SentencePiece" -> "▁";
+                default -> "";
+            };
+            
+            // vocab
+            Type vocabType = new TypeToken<LinkedHashMap<String, Integer>>() {}.getType();
+            this.vocab = GSON.fromJson(model.getAsJsonObject("vocab"), vocabType);
+            
+            // merges
+            List<String> mergeStrings = GSON.fromJson(
+                model.getAsJsonArray("merges"),
+                new TypeToken<List<String>>() {}.getType()
+            );
+            
+            LinkedHashMap<String, String[]> loaded = new LinkedHashMap<>();
+            
+            for (String merge : mergeStrings) {
+                String[] pair = merge.split(" ");
+                
+                if (pair.length == 2) {
+                    loaded.put(pair[0] + pair[1], pair);
                 }
             }
-
-            if (child.getName().equals("merges.txt")) {
-                Map<String, String[]> merges = new LinkedHashMap<>();
-                List<String> lines = Files.readAllLines(child.toPath());
-
-                for (String line : lines) {
-                    line = line.trim();
-
-                    if (line.isEmpty() || line.startsWith("#")) continue;
-
-                    String[] pair = line.split("\\s+");
-
-                    if (pair.length == 2) {
-                        String key = pair[0] + pair[1];
-                        merges.put(key, pair);
-                    }
-                }
-
-                this.merges = merges;
-            }
+            
+            this.merges = loaded;
         }
     }
 
@@ -174,8 +197,8 @@ public class BytePairTokenizer implements Tokenizer {
 
                 tasks.add(task);
             }
-
-            threadPool.invokeAll(tasks);
+            
+            ForkJoinPool.commonPool().invokeAll(tasks);
 
             if (pairCounts.isEmpty()) break;
 

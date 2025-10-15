@@ -1,4 +1,4 @@
-package org.brain4j.llm.api;
+package org.brain4j.llm.api.huggingface;
 
 import org.apache.hc.core5.http.ClassicHttpResponse;
 

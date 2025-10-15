@@ -1,7 +1,6 @@
 package org.brain4j.llm.core.loader;
 
-import org.brain4j.llm.api.HuggingFaceClient;
-import org.brain4j.llm.api.HuggingFaceException;
+import org.brain4j.llm.api.huggingface.HuggingFaceClient;
 import org.brain4j.llm.api.ModelInfo;
 import org.brain4j.llm.api.ModelInfo.Sibling;
 import org.brain4j.llm.cache.manager.CacheManager;
@@ -10,8 +9,6 @@ import org.brain4j.llm.core.model.LLM;
 import org.brain4j.llm.core.model.ModelFile;
 import org.brain4j.llm.download.callback.ProgressCallback;
 import org.brain4j.llm.download.manager.DownloadManager;
-import org.brain4j.math.commons.result.Err;
-import org.brain4j.math.commons.result.Ok;
 import org.brain4j.math.commons.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
