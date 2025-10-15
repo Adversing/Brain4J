@@ -1,26 +1,26 @@
-package org.brain4j.datasets.core.dataset;
+package org.brain4j.llm.core.model;
 
-import org.brain4j.datasets.api.DatasetInfo;
+import org.brain4j.llm.api.ModelInfo;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public record Dataset(
+public record LLM(
     String id,
-    DatasetInfo info,
-    List<DatasetFile> files,
+    ModelInfo info,
+    List<ModelFile> files,
     Map<String, Object> config
 ) {
-    public Optional<DatasetFile> find(String filename) {
+    public Optional<ModelFile> find(String filename) {
         return files.stream().filter(file -> file.name().equals(filename)).findFirst();
     }
 
-    public List<DatasetFile> filesByFormat(String format) {
+    public List<ModelFile> filesByFormat(String format) {
         return files.stream().filter(file -> file.format().equalsIgnoreCase(format)).toList();
     }
 
     public long totalSize() {
-        return files.stream().mapToLong(DatasetFile::size).sum();
+        return files.stream().mapToLong(ModelFile::size).sum();
     }
 }

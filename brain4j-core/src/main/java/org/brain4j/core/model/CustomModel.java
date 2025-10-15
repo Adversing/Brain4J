@@ -6,7 +6,7 @@ import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
-import org.brain4j.math.Pair;
+import org.brain4j.math.commons.Pair;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;

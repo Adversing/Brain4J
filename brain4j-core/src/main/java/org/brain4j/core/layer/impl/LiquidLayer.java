@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.math.Commons;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;

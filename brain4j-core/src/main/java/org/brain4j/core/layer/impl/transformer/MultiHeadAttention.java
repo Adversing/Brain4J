@@ -49,6 +49,7 @@ public class MultiHeadAttention extends Layer {
     protected int headCount;
     protected int embeddingDim;
     protected int headDimension;
+    protected boolean hasBias;
 
     private MultiHeadAttention() {
     }
@@ -63,6 +64,7 @@ public class MultiHeadAttention extends Layer {
         this.clipper = clipper;
         this.headCount = headCount;
         this.embeddingDim = embeddingDim;
+        this.hasBias = true;
 
         if (embeddingDim % headCount != 0) {
             throw new IllegalArgumentException("Embedding dimension must be divisible by head count! (%s %% %s = %s)"
@@ -92,7 +94,11 @@ public class MultiHeadAttention extends Layer {
         this.queryProj = Tensors.zeros(embeddingDim, embeddingDim).withGrad();
         this.valueProj = Tensors.zeros(embeddingDim, embeddingDim).withGrad();
         this.outProj = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
-        this.bias = Tensors.zeros(3 * embeddingDim).withGrad();
+
+        if (hasBias) {
+            this.bias = Tensors.zeros(3 * embeddingDim).withGrad();
+        }
+
         return this;
     }
 
@@ -125,7 +131,12 @@ public class MultiHeadAttention extends Layer {
         int seqLength = input.shape(1);
 
         // [batch, seq_len, 3 * H * head_dim]
-        Tensor QKV = input.matmulGrad(weights).addGrad(bias);
+        Tensor QKV = input.matmulGrad(weights);
+
+        if (hasBias) {
+            QKV = QKV.addGrad(bias);
+        }
+
         Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension);
 
         // [batch, heads, seq_len, 3, head_dim]
@@ -258,6 +269,15 @@ public class MultiHeadAttention extends Layer {
 
     public MultiHeadAttention headDimension(int headDimension) {
         this.headDimension = headDimension;
+        return this;
+    }
+
+    public boolean hasBias() {
+        return hasBias;
+    }
+
+    public MultiHeadAttention hasBias(boolean hasBias) {
+        this.hasBias = hasBias;
         return this;
     }
 }

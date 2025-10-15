@@ -1,6 +1,6 @@
 package org.brain4j.core.importing.format;
 
-import org.brain4j.math.Commons;
+import org.brain4j.math.commons.Commons;
 
 import java.util.*;
 import java.util.function.Function;

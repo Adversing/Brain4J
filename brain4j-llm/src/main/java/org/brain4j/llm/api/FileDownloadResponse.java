@@ -1,4 +1,4 @@
-package org.brain4j.datasets.api;
+package org.brain4j.llm.api;
 
 import org.apache.hc.core5.http.ClassicHttpResponse;
 

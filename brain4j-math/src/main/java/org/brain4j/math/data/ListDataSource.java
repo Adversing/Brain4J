@@ -1,6 +1,6 @@
 package org.brain4j.math.data;
 
-import org.brain4j.math.Pair;
+import org.brain4j.math.commons.Pair;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;

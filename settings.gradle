@@ -4,4 +4,5 @@ include "brain4j-backend-api"
 include "brain4j-backend-cuda"
 include 'brain4j-core'
 include 'brain4j-datasets'
+include 'brain4j-llm'
 include 'brain4j-math'

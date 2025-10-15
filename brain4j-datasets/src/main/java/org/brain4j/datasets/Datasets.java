@@ -11,7 +11,7 @@ import org.brain4j.datasets.download.callback.ProgressCallback;
 import org.brain4j.datasets.format.FileFormat;
 import org.brain4j.datasets.format.RecordParser;
 import org.brain4j.datasets.format.impl.ParquetFormat;
-import org.brain4j.math.Pair;
+import org.brain4j.math.commons.Pair;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.Sample;
@@ -87,7 +87,7 @@ public final class Datasets {
         int batchSize
     ) throws IOException {
         List<Sample> samples = new ArrayList<>();
-        List<DatasetFile> dataFiles = dataset.getFilesByFormat(format.format());
+        List<DatasetFile> dataFiles = dataset.filesByFormat(format.format());
         
         for (DatasetFile file : dataFiles) {
             for (T record : format.read(file.path().toFile())) {

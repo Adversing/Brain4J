@@ -1,4 +1,4 @@
-package org.brain4j.math;
+package org.brain4j.math.commons;
 
 public class Pair<K, V> {
 

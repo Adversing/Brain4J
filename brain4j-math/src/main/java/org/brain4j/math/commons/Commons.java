@@ -1,4 +1,4 @@
-package org.brain4j.math;
+package org.brain4j.math.commons;
 
 import org.brain4j.math.tensor.Tensor;
 

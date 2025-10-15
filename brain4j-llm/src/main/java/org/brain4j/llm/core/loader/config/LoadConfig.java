@@ -1,11 +1,6 @@
-package org.brain4j.datasets.core.loader.config;
+package org.brain4j.llm.core.loader.config;
 
-public record LoadConfig(
-    String split,
-    boolean streaming,
-    boolean forceDownload,
-    int maxFiles
-) {
+public record LoadConfig(String split, boolean streaming, boolean forceDownload, int maxFiles) {
 
     public static LoadConfig defaultConfig() {
         return new LoadConfig("all", false, false, Integer.MAX_VALUE);

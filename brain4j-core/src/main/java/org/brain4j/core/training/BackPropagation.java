@@ -3,7 +3,7 @@ package org.brain4j.core.training;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.math.Pair;
+import org.brain4j.math.commons.Pair;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;

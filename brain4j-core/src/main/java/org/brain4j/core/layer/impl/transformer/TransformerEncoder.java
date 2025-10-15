@@ -52,6 +52,7 @@ public class TransformerEncoder extends Layer {
     protected int embeddingDim;
     protected double dropoutRate;
     protected boolean useGating;
+    protected boolean attnHasBias;
 
     protected TransformerEncoder() {
     }
@@ -74,7 +75,7 @@ public class TransformerEncoder extends Layer {
      * @param activation the activation used in the projection
      */
     public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activations activation) {
-        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, false, activation.function(), NormType.LAYER_NORM);
+        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, false, false, activation.function(), NormType.LAYER_NORM);
     }
 
     /**
@@ -85,13 +86,15 @@ public class TransformerEncoder extends Layer {
      * @param dropout the dropout used when training
      * @param activation the activation used in the projection
      */
-    public TransformerEncoder(int numHeads, int embeddingDim, int projDim, double dropout, boolean useGating, Activation activation, NormType normType) {
+    public TransformerEncoder(int numHeads, int embeddingDim, int projDim, double dropout, boolean useGating,
+                              boolean attnHasBias, Activation activation, NormType normType) {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;
         this.dropoutRate = dropout;
         this.activation = activation;
         this.normType = normType;
         this.useGating = useGating;
+        this.attnHasBias = attnHasBias;
 
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
@@ -114,7 +117,7 @@ public class TransformerEncoder extends Layer {
     }
 
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
-        return new MultiHeadAttention(clipper, heads, embeddingDim);
+        return new MultiHeadAttention(clipper, heads, embeddingDim).hasBias(attnHasBias);
     }
     
     @Override
@@ -263,22 +266,30 @@ public class TransformerEncoder extends Layer {
 
         attention.outProj(mappedWeights.get("attention.out_proj"));
         attention.setWeights(mappedWeights.get("attention.weights"));
-        attention.setBias(mappedWeights.get("attention.bias"));
+
+        if (attnHasBias) {
+            attention.setBias(mappedWeights.get("attention.bias"));
+        }
     }
     
     @Override
     public void serialize(JsonObject object) {
-        object.addProperty("use_gating", useGating);
         object.addProperty("norm_type", normType.name().toLowerCase());
         object.addProperty("dropout", dropoutRate);
         object.addProperty("heads", numHeads);
         object.addProperty("embedding_dim", embeddingDim);
+        object.addProperty("use_gating", useGating);
+        object.addProperty("attn_has_bias", attnHasBias);
     }
     
     @Override
     public void deserialize(JsonObject object) {
         if (object.has("use_gating")) {
             this.useGating = object.get("use_gating").getAsBoolean();
+        }
+
+        if (object.has("attn_has_bias")) {
+            this.attnHasBias = object.get("attn_has_bias").getAsBoolean();
         }
 
         if (object.has("norm_type")) {
@@ -329,8 +340,11 @@ public class TransformerEncoder extends Layer {
         }
 
         result.put("self_attn.weights", attention.weights());
-        result.put("self_attn.bias", attention.bias());
         result.put("self_attn.out_proj", attention.outProj());
+
+        if (attnHasBias) {
+            result.put("self_attn.bias", attention.bias());
+        }
 
         return result;
     }
