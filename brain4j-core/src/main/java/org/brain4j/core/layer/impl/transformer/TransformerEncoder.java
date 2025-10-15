@@ -52,7 +52,8 @@ public class TransformerEncoder extends Layer {
     protected int embeddingDim;
     protected double dropoutRate;
     protected boolean useGating;
-    protected boolean attnHasBias;
+    protected boolean attnQkvHasBias;
+    protected boolean attnOutHasBias;
 
     protected TransformerEncoder() {
     }
@@ -75,7 +76,7 @@ public class TransformerEncoder extends Layer {
      * @param activation the activation used in the projection
      */
     public TransformerEncoder(int numHeads, int embeddingDim, double dropout, Activations activation) {
-        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, false, false, activation.function(), NormType.LAYER_NORM);
+        this(numHeads, embeddingDim, 4 * embeddingDim, dropout, false, false, false, activation.function(), NormType.LAYER_NORM);
     }
 
     /**
@@ -85,16 +86,19 @@ public class TransformerEncoder extends Layer {
      * @param projDim the dimension of the projected embedding
      * @param dropout the dropout used when training
      * @param activation the activation used in the projection
+     * @param attnQkvHasBias whether the QKV projection matrix should have a bias
+     * @param attnOutHasBias whether the out projection matrix should have a bias
      */
     public TransformerEncoder(int numHeads, int embeddingDim, int projDim, double dropout, boolean useGating,
-                              boolean attnHasBias, Activation activation, NormType normType) {
+                              boolean attnQkvHasBias, boolean attnOutHasBias, Activation activation, NormType normType) {
         this.numHeads = numHeads;
         this.embeddingDim = embeddingDim;
         this.dropoutRate = dropout;
         this.activation = activation;
         this.normType = normType;
         this.useGating = useGating;
-        this.attnHasBias = attnHasBias;
+        this.attnQkvHasBias = attnQkvHasBias;
+        this.attnOutHasBias = attnOutHasBias;
 
         this.dropout = new DropoutLayer(dropout);
         this.weightInit = new UniformXavierInit();
@@ -104,9 +108,10 @@ public class TransformerEncoder extends Layer {
         this.downProjection = new DenseLayer(embeddingDim);
         this.attention = createAttention(numHeads, embeddingDim);
 
-        if (useGating) {
-            this.gateProjection = new DenseLayer(projDim);
-        }
+        if (useGating) this.gateProjection = new DenseLayer(projDim);
+
+        attention.setAttnQkvHasBias(attnQkvHasBias);
+        attention.setAttnOutHasBias(attnOutHasBias);
     }
 
     public Layer createNormLayer() {
@@ -117,7 +122,7 @@ public class TransformerEncoder extends Layer {
     }
 
     public MultiHeadAttention createAttention(int heads, int embeddingDim) {
-        return new MultiHeadAttention(clipper, heads, embeddingDim).hasBias(attnHasBias);
+        return new MultiHeadAttention(clipper, heads, embeddingDim);
     }
     
     @Override
@@ -263,13 +268,12 @@ public class TransformerEncoder extends Layer {
             gateProjection.setWeights(mappedWeights.get("gate_proj.weights"));
             gateProjection.setBias(mappedWeights.get("gate_proj.bias"));
         }
-
-        attention.outProj(mappedWeights.get("attention.out_proj"));
+        
         attention.setWeights(mappedWeights.get("attention.weights"));
-
-        if (attnHasBias) {
-            attention.setBias(mappedWeights.get("attention.bias"));
-        }
+        attention.setOutProj(mappedWeights.get("attention.out_proj"));
+        
+        if (attnQkvHasBias) attention.setBias(mappedWeights.get("attention.bias"));
+        if (attnOutHasBias) attention.setOutBias(mappedWeights.get("attention.out_bias"));
     }
     
     @Override
@@ -279,22 +283,16 @@ public class TransformerEncoder extends Layer {
         object.addProperty("heads", numHeads);
         object.addProperty("embedding_dim", embeddingDim);
         object.addProperty("use_gating", useGating);
-        object.addProperty("attn_has_bias", attnHasBias);
+        object.addProperty("attn_qkv_has_bias", attnQkvHasBias);
+        object.addProperty("attn_out_has_bias", attnOutHasBias);
     }
     
     @Override
     public void deserialize(JsonObject object) {
-        if (object.has("use_gating")) {
-            this.useGating = object.get("use_gating").getAsBoolean();
-        }
-
-        if (object.has("attn_has_bias")) {
-            this.attnHasBias = object.get("attn_has_bias").getAsBoolean();
-        }
-
-        if (object.has("norm_type")) {
-            this.normType = NormType.valueOf(object.get("norm_type").getAsString().toUpperCase());
-        }
+        this.useGating = object.get("use_gating").getAsBoolean();
+        this.attnQkvHasBias = object.get("attn_qkv_has_bias").getAsBoolean();
+        this.attnQkvHasBias = object.get("attn_out_has_bias").getAsBoolean();
+        this.normType = NormType.valueOf(object.get("norm_type").getAsString().toUpperCase());
         this.dropoutRate = object.get("dropout").getAsDouble();
         this.numHeads = object.get("heads").getAsInt();
         this.embeddingDim = object.get("embedding_dim").getAsInt();
@@ -339,12 +337,11 @@ public class TransformerEncoder extends Layer {
             result.put("gate_proj.bias", gateProjection.bias());
         }
 
-        result.put("self_attn.weights", attention.weights());
-        result.put("self_attn.out_proj", attention.outProj());
-
-        if (attnHasBias) {
-            result.put("self_attn.bias", attention.bias());
-        }
+        result.put("attention.weights", attention.weights());
+        result.put("attention.out_proj", attention.outProj());
+        
+        if (attention.attnQkvHasBias()) result.put("attention.bias", attention.bias());
+        if (attention.attnOutHasBias()) result.put("attention.out_bias", attention.outBias());
 
         return result;
     }

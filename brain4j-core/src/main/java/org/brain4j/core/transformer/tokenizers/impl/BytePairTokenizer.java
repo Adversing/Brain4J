@@ -2,7 +2,6 @@ package org.brain4j.core.transformer.tokenizers.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.brain4j.core.transformer.tokenizers.Tokenizer;
@@ -12,7 +11,6 @@ import org.brain4j.math.tensor.Tensor;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +25,8 @@ public class BytePairTokenizer implements Tokenizer {
     private Map<String, Integer> vocab;
     private Map<String, String[]> merges;
     private String tokenStarter;
+    private int bosTokenId;
+    private int eosTokenId;
     
     public BytePairTokenizer() {
         this(null);
@@ -75,6 +75,31 @@ public class BytePairTokenizer implements Tokenizer {
         }
         
         return result;
+    }
+    
+    @Override
+    public int vocabSize() {
+        return vocab.size();
+    }
+    
+    @Override
+    public int bosTokenId() {
+        return bosTokenId;
+    }
+    
+    @Override
+    public void setBosTokenId(int bosTokenId) {
+        this.bosTokenId = bosTokenId;
+    }
+    
+    @Override
+    public int eosTokenId() {
+        return eosTokenId;
+    }
+    
+    @Override
+    public void setEosTokenId(int eosTokenId) {
+        this.eosTokenId = eosTokenId;
     }
 
     @Override
@@ -289,10 +314,10 @@ public class BytePairTokenizer implements Tokenizer {
     }
 
     private void printProgressBar(
-            double tookMs,
-            int iteration,
-            int merges,
-            int evaluateDelay
+        double tookMs,
+        int iteration,
+        int merges,
+        int evaluateDelay
     ) {
         int progressBarLength = 20;
         double percentage = (double) iteration / merges;
@@ -347,11 +372,6 @@ public class BytePairTokenizer implements Tokenizer {
 
     public Map<String, Integer> vocab() {
         return Collections.unmodifiableMap(vocab);
-    }
-    
-    @Override
-    public int vocabSize() {
-        return vocab.size();
     }
     
     public Map<String, String[]> merges() {

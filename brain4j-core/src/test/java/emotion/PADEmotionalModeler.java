@@ -61,9 +61,9 @@ public class PADEmotionalModeler {
 
         Model model = Sequential.of(
                 new InputLayer(inputSize),
-                new DenseLayer(64, Activations.RELU).weightInit(new UniformXavierInit()),
-                new DenseLayer(32, Activations.RELU).weightInit(new UniformXavierInit()),
-                new DenseLayer(outputSize, Activations.TANH).weightInit(new UniformXavierInit())
+                new DenseLayer(64, Activations.RELU).setWeightInit(new UniformXavierInit()),
+                new DenseLayer(32, Activations.RELU).setWeightInit(new UniformXavierInit()),
+                new DenseLayer(outputSize, Activations.TANH).setWeightInit(new UniformXavierInit())
         );
 
         model.compile(new MeanSquaredError(), new Adam(0.001));

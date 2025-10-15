@@ -133,8 +133,8 @@ public class BrainFormat implements ModelFormat {
                 String clipperId = layerJson.get("clipper").getAsString();
                 
                 Layer layer = LAYER_REGISTRY.toInstance(type);
-                layer.activation(ACTIVATION_REGISTRY.toInstance(activationId));
-                layer.clipper(CLIPPERS_REGISTRY.toInstance(clipperId));
+                layer.setActivation(ACTIVATION_REGISTRY.toInstance(activationId));
+                layer.setClipper(CLIPPERS_REGISTRY.toInstance(clipperId));
                 
                 layer.deserialize(layerJson);
                 model.add(layer);
@@ -170,7 +170,7 @@ public class BrainFormat implements ModelFormat {
                     elements *= shape[i];
                 }
                 
-                JsonArray offsetArray = info.getAsJsonArray("offset");
+                JsonArray offsetArray = info.getAsJsonArray("offsets");
                 int start = offsetArray.get(0).getAsInt();
                 int end = offsetArray.get(1).getAsInt();
                 int length = end - start;
@@ -234,8 +234,8 @@ public class BrainFormat implements ModelFormat {
             JsonObject data = new JsonObject();
             
             Class<? extends Layer> layerClass = layer.getClass();
-            Class<? extends Activation> activationClass = layer.activation().getClass();
-            Class<? extends GradientClipper> clipperClass = layer.clipper().getClass();
+            Class<? extends Activation> activationClass = layer.setActivation().getClass();
+            Class<? extends GradientClipper> clipperClass = layer.setClipper().getClass();
             
             Map<String, Tensor> weightsMap = layer.weightsMap();
             String identifier = LAYER_REGISTRY.fromClass(layerClass);
@@ -291,7 +291,7 @@ public class BrainFormat implements ModelFormat {
             
             tensor.addProperty("dtype", "f32");
             tensor.add("shape", shape);
-            tensor.add("offset", offsets);
+            tensor.add("offsets", offsets);
             
             header.add(name, tensor);
         }

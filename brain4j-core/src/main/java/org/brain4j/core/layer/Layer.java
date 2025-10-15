@@ -208,29 +208,29 @@ public abstract class Layer {
         return true;
     }
 
-    public Activation activation() {
+    public Activation setActivation() {
         return activation;
     }
 
-    public Layer activation(Activation activation) {
+    public Layer setActivation(Activation activation) {
         this.activation = activation;
         return this;
     }
 
-    public GradientClipper clipper() {
+    public GradientClipper setClipper() {
         return clipper;
     }
     
-    public Layer clipper(GradientClipper clipper) {
+    public Layer setClipper(GradientClipper clipper) {
         this.clipper = clipper;
         return this;
     }
     
-    public WeightInitialization weightInit() {
+    public WeightInitialization setWeightInit() {
         return weightInit;
     }
 
-    public Layer weightInit(WeightInitialization weightInit) {
+    public Layer setWeightInit(WeightInitialization weightInit) {
         this.weightInit = weightInit;
         return this;
     }
@@ -239,16 +239,18 @@ public abstract class Layer {
         return weights;
     }
     
-    public void setWeights(Tensor weights) {
+    public Layer setWeights(Tensor weights) {
         this.weights = weights;
+        return this;
     }
 
     public Tensor bias() {
         return bias;
     }
     
-    public void setBias(Tensor bias) {
+    public Layer setBias(Tensor bias) {
         this.bias = bias;
+        return this;
     }
     
     /**

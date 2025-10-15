@@ -9,6 +9,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.brain4j.llm.api.ModelInfo;
+import org.brain4j.llm.exception.HuggingFaceException;
 import org.brain4j.math.commons.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

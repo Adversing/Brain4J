@@ -15,6 +15,10 @@ public interface Tokenizer {
     
     Map<String, Integer> vocab();
     int vocabSize();
+    int bosTokenId();
+    int eosTokenId();
+    void setBosTokenId(int id);
+    void setEosTokenId(int id);
     
     void save(File file) throws IOException;
     void load(File file) throws IOException;

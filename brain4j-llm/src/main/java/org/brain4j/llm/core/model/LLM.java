@@ -2,22 +2,26 @@ package org.brain4j.llm.core.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.brain4j.core.importing.SafeTensorsConverter;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.impl.Sequential;
 import org.brain4j.core.transformer.tokenizers.Tokenizer;
 import org.brain4j.core.transformer.tokenizers.impl.BytePairTokenizer;
-import org.brain4j.llm.api.InferenceProvider;
+import org.brain4j.llm.api.ModelFile;
 import org.brain4j.llm.api.ModelInfo;
-import org.brain4j.llm.api.SamplingConfig;
+import org.brain4j.llm.core.architecture.ArchitectureAdapter;
+import org.brain4j.llm.core.architecture.ArchitectureRegistry;
+import org.brain4j.math.Tensors;
+import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class LLM implements InferenceProvider {
@@ -41,27 +45,25 @@ public class LLM implements InferenceProvider {
     }
     
     public void compile() throws IOException {
-        this.model = Sequential.of();
-        
-        Optional<ModelFile> optConfigFile = find("config.json");
-        Optional<ModelFile> optWeightsFile = find("model.safetensors");
-        Optional<ModelFile> optTokenizerFile = find("tokenizer.json");
-        
-        if (optConfigFile.isEmpty()) {
-            throw new FileNotFoundException("config.json was not found!");
-        }
-        
-        if (optWeightsFile.isEmpty()) {
-            throw new FileNotFoundException("model.safetensors was not found!");
-        }
-        
-        if (optTokenizerFile.isEmpty()) {
-            throw new FileNotFoundException("tokenizer.json was not found!");
-        }
-        
-        ModelFile tokenizerFile = optTokenizerFile.get();
         this.tokenizer = new BytePairTokenizer();
-        this.tokenizer.load(tokenizerFile.path().toFile());
+        
+        ModelFile configFile = findOrThrow("config.json", "config.json was not found!");
+        ModelFile weightsFile = findOrThrow("model.safetensors", "model.safetensors was not found!");
+        ModelFile tokenizerFile = findOrThrow("tokenizer.json", "tokenizer.json was not found!");
+        
+        String configText = new String(Files.readAllBytes(configFile.path()));
+        JsonObject config = GSON.fromJson(configText, JsonObject.class);
+        String modelType = config.get("model_type").getAsString();
+        
+        tokenizer.load(tokenizerFile.path().toFile());
+        tokenizer.setBosTokenId(config.get("bos_token_id").getAsInt());
+        tokenizer.setEosTokenId(config.get("eos_token_id").getAsInt());
+        
+        byte[] modelWeights = Files.readAllBytes(weightsFile.path());
+        Map<String, Tensor> weights = SafeTensorsConverter.load(modelWeights);
+        
+        ArchitectureAdapter adapter = ArchitectureRegistry.findAdapter(modelType);
+        this.model = adapter.buildModel(config, weights);
     }
     
     @Override
@@ -71,11 +73,43 @@ public class LLM implements InferenceProvider {
     
     @Override
     public String chat(String prompt, SamplingConfig config) {
-        return "";
+        List<String> tokens = tokenizer.splitTokens(prompt);
+        Tensor input = tokenizer.encode(tokens);
+
+        StatesCache cache = new StatesCache();
+        StringBuilder response = new StringBuilder();
+        
+        int bosToken = tokenizer.bosTokenId();
+        int eosToken = tokenizer.eosTokenId();
+        int generatedTokens = 0;
+        
+        input = input.concat(Tensors.scalar(bosToken));
+        
+        while (generatedTokens < config.maxLength()) {
+            Tensor distribution = model.predict(cache, input.squeeze())[0]; // [1, seq_len, vocab]
+            int seqLen = distribution.shape(1);
+            
+            Range[] ranges = { Range.all(), Range.point(seqLen - 2), Range.all() };
+            Tensor lastToken = distribution.slice(ranges).squeeze(); // [vocab]
+            
+            int index = lastToken.argmax(); // TODO: top-p/top-k sampling
+            input = input.concat(Tensors.scalar(index));
+            response.append(tokenizer.decode(index)).append(" ");
+            
+            if (index == eosToken) break;
+            
+            generatedTokens++;
+        }
+        
+        return response.toString();
     }
     
     public Optional<ModelFile> find(String filename) {
         return files.stream().filter(file -> file.name().equals(filename)).findFirst();
+    }
+    
+    private ModelFile findOrThrow(String filename, String message) throws FileNotFoundException {
+        return find(filename).orElseThrow(() -> new FileNotFoundException(message));
     }
     
     public List<ModelFile> filesByFormat(String format) {

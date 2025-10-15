@@ -6,6 +6,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
+import org.brain4j.math.tensor.index.Range;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class PosEncodeLayer extends Layer {
 
         int seqLength = shape[1];
         int dimension = shape[2];
-
+        
         Tensor positional = Tensors.zeros(seqLength, dimension);
         float[] posData = positional.data();
 
@@ -84,6 +85,18 @@ public class PosEncodeLayer extends Layer {
     public void deserialize(JsonObject object) {
         this.dimension = object.get("dimension").getAsInt();
         this.length = object.get("length").getAsInt();
+    }
+    
+    @Override
+    public Layer setWeights(Tensor weights) {
+        this.length = weights.shape(0);
+        
+        for (int i = 0; i < length; i++) {
+            Tensor slice = weights.slice(Range.point(i), Range.all());
+            preGenerated.put(i, slice.squeeze());
+        }
+        
+        return this;
     }
     
     public Tensor generate(int position, int embeddingDim) {

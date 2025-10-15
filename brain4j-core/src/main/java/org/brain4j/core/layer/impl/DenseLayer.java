@@ -87,9 +87,9 @@ public class DenseLayer extends Layer {
         for (int i = 0; i < result.length; i++) {
             Tensor input = inputs[i];
 
-            Tensor output = input
-                .matmulGrad(weights)
-                .addGrad(bias);
+            Tensor output = input.matmulGrad(weights);
+            
+            if (bias != null) output = output.addGrad(bias);
 
             beforeActivation[i] = output;
             result[i] = activation instanceof LinearActivation

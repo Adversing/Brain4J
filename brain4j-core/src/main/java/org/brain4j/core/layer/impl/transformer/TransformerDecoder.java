@@ -61,7 +61,7 @@ public class TransformerDecoder extends TransformerEncoder {
                 "Expected input with shape [batch, seq_len, dimension], got: " + Arrays.toString(input.shape())
             );
         }
-
+        
         Tensor attended = attention.forward(cache, input);
 
         if (cache.training()) {
@@ -84,7 +84,7 @@ public class TransformerDecoder extends TransformerEncoder {
         } else {
             Tensor cacheUp = upCache[0];
             Tensor cacheDown = downCache[0];
-
+            
             Range[] ranges = { Range.all(), Range.point(seqLength - 1), Range.all() };
             Tensor sliced = normalized.sliceGrad(ranges);
 
@@ -108,36 +108,5 @@ public class TransformerDecoder extends TransformerEncoder {
         cache.rememberOutput(this, normalized);
 
         return new Tensor[] { normalized };
-    }
-    
-    @Override
-    public void loadWeights(Map<String, Tensor> mappedWeights) {
-        // TODO: move decoder logic in a single QKV tensor
-        this.upProjection = new DenseLayer(0);
-        this.downProjection = new DenseLayer(0);
-        this.normalizer1 = new NormLayer();
-        this.normalizer2 = new NormLayer();
-        this.attention = createAttention(numHeads, embeddingDim);
-        
-        upProjection.setWeights(mappedWeights.get("up_proj.weights"));
-        upProjection.setBias(mappedWeights.get("up_proj.bias"));
-        downProjection.setWeights(mappedWeights.get("down_proj.weights"));
-        downProjection.setBias(mappedWeights.get("down_proj.bias"));
-        normalizer1.setWeights(mappedWeights.get("norm_1.weights"));
-        normalizer1.setBias(mappedWeights.get("norm_1.bias"));
-        normalizer2.setWeights(mappedWeights.get("norm_2.weights"));
-        normalizer2.setBias(mappedWeights.get("norm_2.bias"));
-        
-        attention.outProj(mappedWeights.get("self_attn.out_proj"));
-        
-        for (int i = 0; i < numHeads; i++) {
-            String prefix = "attention_head." + i;
-            Tensor qkvWeights = mappedWeights.get(prefix + ".qkv");
-            
-            AttentionHead head = attention.createAttentionHead();
-            head.setQkvWeights(qkvWeights);
-            
-            attention.heads().add(head);
-        }
     }
 }

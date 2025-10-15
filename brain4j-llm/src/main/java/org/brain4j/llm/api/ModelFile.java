@@ -1,4 +1,4 @@
-package org.brain4j.llm.core.model;
+package org.brain4j.llm.api;
 
 import java.nio.file.Path;
 

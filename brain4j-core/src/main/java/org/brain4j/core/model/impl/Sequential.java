@@ -485,7 +485,7 @@ public class Sequential extends Layer implements Model {
                     ? "[" + neurons + "]"
                     : Arrays.toString(weightsTensor.shape());
 
-            builder.append(pattern.formatted(i, layerType, formatWeights, shape, layer.activation().name()));
+            builder.append(pattern.formatted(i, layerType, formatWeights, shape, layer.setActivation().name()));
 
             totalWeights.addAndGet(weights);
             totalBiases.addAndGet(neurons);

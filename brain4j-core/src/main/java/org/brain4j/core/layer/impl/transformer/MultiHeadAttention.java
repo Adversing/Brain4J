@@ -40,16 +40,17 @@ import java.util.random.RandomGenerator;
  * @author xEcho1337
  */
 public class MultiHeadAttention extends Layer {
-
-    protected List<AttentionHead> heads; // TODO: migrate to single tensor
+    
     protected Tensor keyProj;
     protected Tensor queryProj;
     protected Tensor valueProj;
     protected Tensor outProj;
+    protected Tensor outBias;
     protected int headCount;
     protected int embeddingDim;
     protected int headDimension;
-    protected boolean hasBias;
+    protected boolean attnQkvHasBias;
+    protected boolean attnOutHasBias;
 
     private MultiHeadAttention() {
     }
@@ -64,7 +65,7 @@ public class MultiHeadAttention extends Layer {
         this.clipper = clipper;
         this.headCount = headCount;
         this.embeddingDim = embeddingDim;
-        this.hasBias = true;
+        this.attnQkvHasBias = true;
 
         if (embeddingDim % headCount != 0) {
             throw new IllegalArgumentException("Embedding dimension must be divisible by head count! (%s %% %s = %s)"
@@ -72,20 +73,6 @@ public class MultiHeadAttention extends Layer {
         }
 
         this.headDimension = embeddingDim / headCount;
-        this.heads = new ArrayList<>();
-    }
-    
-    /**
-     * Creates a new attention head based on the type of attention mechanism.
-     * <p>This method will return a new {@link AttentionHead} instance if called by
-     * the default {@link MultiHeadAttention}. If the MHA instance is a {@link MaskedMultiHeadAttention},
-     * this method will return a new {@link org.brain4j.core.transformer.attention.head.MaskedAttentionHead}.
-     * @deprecated this method will be removed in future releases
-     * @return a new attention head instance
-     */
-    @Deprecated(forRemoval = true)
-    public AttentionHead createAttentionHead() {
-        return new AttentionHead(clipper, embeddingDim, headDimension);
     }
 
     @Override
@@ -95,24 +82,18 @@ public class MultiHeadAttention extends Layer {
         this.valueProj = Tensors.zeros(embeddingDim, embeddingDim).withGrad();
         this.outProj = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
 
-        if (hasBias) {
-            this.bias = Tensors.zeros(3 * embeddingDim).withGrad();
-        }
+        if (attnQkvHasBias) this.bias = Tensors.zeros(3 * embeddingDim).withGrad();
+        if (attnOutHasBias) this.outBias = Tensors.zeros(embeddingDim).withGrad();
 
         return this;
     }
 
     @Override
     public void initWeights(RandomGenerator generator, int input, int output) {
-        for (AttentionHead head : heads) {
-            head.initWeights(generator, weightInit);
-        }
-
         this.keyProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         this.queryProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         this.valueProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         this.outProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
-        this.weights.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         this.weights = Tensors.concat(keyProj, queryProj, valueProj).withGrad();
     }
 
@@ -133,9 +114,7 @@ public class MultiHeadAttention extends Layer {
         // [batch, seq_len, 3 * H * head_dim]
         Tensor QKV = input.matmulGrad(weights);
 
-        if (hasBias) {
-            QKV = QKV.addGrad(bias);
-        }
+        if (attnQkvHasBias) QKV = QKV.addGrad(bias);
 
         Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension);
 
@@ -169,7 +148,12 @@ public class MultiHeadAttention extends Layer {
         // [batch, seq_len, embedding_dim]
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
         // [batch, seq_len, embedding_dim]
-        return new Tensor[] { output.matmulGrad(outProj) };
+        
+        Tensor result = output.matmulGrad(outProj);
+        
+        if (attnOutHasBias) result = result.addGrad(outBias);
+        
+        return new Tensor[] { result };
     }
 
     @Override
@@ -179,17 +163,20 @@ public class MultiHeadAttention extends Layer {
         Tensor optimized = optimizer.step(outProj, outProj.grad());
         clipper.clip(optimized);
         updater.change(outProj, optimized);
+        
+        if (attnOutHasBias) {
+            Tensor biasGrad = outBias.grad().sum(0, false);
+            clipper.clip(biasGrad);
+            updater.change(outBias, biasGrad);
+        }
     }
 
     @Override
     public void toDevice(Device device) {
-        for (AttentionHead head : heads) {
-            head.toDevice(device);
-        }
-
-        this.outProj = outProj.to(device);
         this.weights = weights.to(device);
         this.bias = bias.to(device);
+        this.outProj = outProj.to(device);
+        if (attnOutHasBias) this.outBias = outBias.to(device);
     }
 
     @Override
@@ -197,25 +184,9 @@ public class MultiHeadAttention extends Layer {
         return embeddingDim;
     }
 
-    @Deprecated(forRemoval = true)
-    protected void initializeHeads() {
-        for (int i = 0; i < headCount; i++) {
-            heads.add(createAttentionHead());
-        }
-    }
-
     @Override
     public int totalWeights() {
         return weights.elements() + outProj.elements();
-    }
-
-    /**
-     * Returns the list of attention heads managed by this layer.
-     * @return a list of {@link AttentionHead} objects
-     */
-    @Deprecated(forRemoval = true)
-    public List<AttentionHead> heads() {
-        return heads;
     }
     
     /**
@@ -223,61 +194,97 @@ public class MultiHeadAttention extends Layer {
      */
     public void resetGrad() {
         super.resetGrad();
-
-        for (AttentionHead head : heads()) {
-            head.resetGrad();
-        }
-
         outProj.zerograd();
+        if (attnOutHasBias) outBias.zerograd();
     }
-
-    public MultiHeadAttention setHeads(List<AttentionHead> heads) {
-        this.heads = heads;
+    
+    public Tensor keyProj() {
+        return keyProj;
+    }
+    
+    public MultiHeadAttention setKeyProj(Tensor keyProj) {
+        this.keyProj = keyProj;
         return this;
     }
-
+    
+    public Tensor queryProj() {
+        return queryProj;
+    }
+    
+    public MultiHeadAttention setQueryProj(Tensor queryProj) {
+        this.queryProj = queryProj;
+        return this;
+    }
+    
+    public Tensor valueProj() {
+        return valueProj;
+    }
+    
+    public MultiHeadAttention setValueProj(Tensor valueProj) {
+        this.valueProj = valueProj;
+        return this;
+    }
+    
     public Tensor outProj() {
         return outProj;
     }
-
-    public MultiHeadAttention outProj(Tensor outProj) {
+    
+    public MultiHeadAttention setOutProj(Tensor outProj) {
         this.outProj = outProj;
         return this;
     }
-
+    
+    public Tensor outBias() {
+        return outBias;
+    }
+    
+    public MultiHeadAttention setOutBias(Tensor outBias) {
+        this.outBias = outBias;
+        return this;
+    }
+    
     public int headCount() {
         return headCount;
     }
-
-    public MultiHeadAttention headCount(int headCount) {
+    
+    public MultiHeadAttention setHeadCount(int headCount) {
         this.headCount = headCount;
         return this;
     }
-
+    
     public int embeddingDim() {
         return embeddingDim;
     }
-
-    public MultiHeadAttention embeddingDim(int embeddingDim) {
+    
+    public MultiHeadAttention setEmbeddingDim(int embeddingDim) {
         this.embeddingDim = embeddingDim;
         return this;
     }
-
+    
     public int headDimension() {
         return headDimension;
     }
-
-    public MultiHeadAttention headDimension(int headDimension) {
+    
+    public MultiHeadAttention setHeadDimension(int headDimension) {
         this.headDimension = headDimension;
         return this;
     }
-
-    public boolean hasBias() {
-        return hasBias;
+    
+    public boolean attnQkvHasBias() {
+        return attnQkvHasBias;
     }
-
-    public MultiHeadAttention hasBias(boolean hasBias) {
-        this.hasBias = hasBias;
+    
+    public MultiHeadAttention setAttnQkvHasBias(boolean attnQkvHasBias) {
+        this.attnQkvHasBias = attnQkvHasBias;
+        return this;
+    }
+    
+    public boolean attnOutHasBias() {
+        return attnOutHasBias;
+    }
+    
+    public MultiHeadAttention setAttnOutHasBias(boolean attnOutHasBias) {
+        this.attnOutHasBias = attnOutHasBias;
         return this;
     }
 }

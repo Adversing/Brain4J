@@ -8,7 +8,7 @@ import org.brain4j.llm.api.ModelInfo.Sibling;
 import org.brain4j.llm.cache.manager.CacheManager;
 import org.brain4j.llm.core.loader.config.LoadConfig;
 import org.brain4j.llm.core.model.LLM;
-import org.brain4j.llm.core.model.ModelFile;
+import org.brain4j.llm.api.ModelFile;
 import org.brain4j.llm.download.callback.ProgressCallback;
 import org.brain4j.llm.download.manager.DownloadManager;
 import org.brain4j.math.commons.result.Result;
