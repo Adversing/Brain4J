@@ -19,8 +19,8 @@ shadowJar {
     archiveFileName = "brain4j-llm-${parent.version}.jar"
 }
 
-tasks.register("cleanCache") {
-    description = "Cleans the local Brain4J datasets cache"
+tasks.register("cleanModelsCache") {
+    description = "Cleans the local Brain4J models cache"
     group = "development"
     doLast {
         def cacheDir = new File(System.getProperty("user.home"), ".cache/brain4j/models")
