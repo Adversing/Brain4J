@@ -1,7 +1,10 @@
 package org.brain4j.math.tensor.parallel;
 
 import org.brain4j.math.lang.DoubleToDoubleFunction;
+import org.brain4j.math.tensor.matmul.impl.SimdMatmulProvider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
@@ -61,16 +64,18 @@ public class ParallelMap extends RecursiveAction {
             return;
         }
 
-        int parallelism = PARALLELISM;
-        int step = work / parallelism;
 
-        MapParameters parameters = new MapParameters(function, data);
-        ParallelMap[] actions = new ParallelMap[parallelism];
-        
-        for (int i = 0; i < parallelism; i++) {
-            int startIndex = start + i * step;
-            int endIndex = Math.min(startIndex + step, end);
-            actions[i] = new ParallelMap(parameters, startIndex, endIndex);
+        int step = work / PARALLELISM;
+        var params = new MapParameters(function, data);
+        List<ParallelMap> actions = new ArrayList<>();
+
+        for (int i = 0; i < PARALLELISM; i++) {
+            int startIndex = i * step;
+            int endIndex = (i == PARALLELISM - 1) ? work : Math.min(startIndex + step, work);
+
+            if (startIndex < endIndex) {
+                actions.add(new ParallelMap(params, startIndex, endIndex));
+            }
         }
 
         ForkJoinTask.invokeAll(actions);

@@ -96,7 +96,6 @@ public class ModelLoader implements AutoCloseable {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("streaming", config.streaming());
         metadata.put("split", config.split());
-
         
         LLM model = new LLM(info.id(), info, files, metadata);
         log.info("Successfully loaded model: {} ({} files)", info.id(), files.size());

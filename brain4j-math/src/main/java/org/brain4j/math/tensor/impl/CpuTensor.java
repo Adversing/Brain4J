@@ -50,12 +50,6 @@ public class CpuTensor extends BaseTensor {
     
     @Override
     public Tensor transpose() {
-        // Unfortunately, SIMD does not support non-contiguous data, therefore transposing
-        // the data in a contiguous space is required for SIMD matmul to work
-        if (matmulProvider instanceof NormalMatmulProvider) {
-            return super.transpose();
-        }
-        
         int rank = shape.length;
         return transpose(rank - 2, rank - 1);
     }
@@ -86,6 +80,7 @@ public class CpuTensor extends BaseTensor {
 
         int bound = 1 << 10;
 
+        // TODO: fix parallel transpose?
         if (elements() >= bound) {
             ParallelTranspose.transpose(this, result, dim1, dim2);
             return result;

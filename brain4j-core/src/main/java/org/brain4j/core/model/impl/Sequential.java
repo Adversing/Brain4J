@@ -380,10 +380,6 @@ public class Sequential extends Layer implements Model {
     public Model to(Device device) {
         this.device = device;
 
-        if (updater == null || optimizer == null) {
-            throw new IllegalStateException("The model is not compiled! Make sure to call compile() first.");
-        }
-
         if (device != null) {
             Brain4J.initKernels(device);
         }

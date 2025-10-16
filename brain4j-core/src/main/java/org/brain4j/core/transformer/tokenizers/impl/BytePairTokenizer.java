@@ -58,11 +58,8 @@ public class BytePairTokenizer implements Tokenizer {
                 .filter(x -> x.getValue() == index)
                 .findFirst();
 
-        if (token.isEmpty()) {
-            return "<|unk|>";
-        }
+        return token.map(entry -> entry.getKey().replace(tokenStarter, " ")).orElse("<|unk|>");
 
-        return token.get().getKey();
     }
 
     @Override

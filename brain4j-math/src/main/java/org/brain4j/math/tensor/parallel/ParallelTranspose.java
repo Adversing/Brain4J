@@ -2,6 +2,9 @@ package org.brain4j.math.tensor.parallel;
 
 import org.brain4j.math.tensor.impl.BaseTensor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
@@ -72,29 +75,31 @@ public class ParallelTranspose extends RecursiveAction {
     
     public static void transpose(BaseTensor source, BaseTensor result, int dim1, int dim2) {
         int rank = source.shape().length;
-        
+
         int[] dstShape = result.shape();
         int[] srcStride = source.strides();
         int[] dstStride = result.strides();
-        
+
         int[] destToSrc = new int[rank];
         for (int d = 0; d < rank; d++) destToSrc[d] = d;
         destToSrc[dim1] = dim2;
         destToSrc[dim2] = dim1;
-        
+
         float[] srcData = source.data();
         float[] dstData = result.data();
-        int outer = dstShape[0];
-        
+        int work = dstShape[0];
+
+        int step = work / PARALLELISM;
         var params = new TransposeParameters(srcData, dstData, dstShape, srcStride, dstStride, destToSrc);
-        
-        int step = outer / PARALLELISM;
-        ParallelTranspose[] actions = new ParallelTranspose[PARALLELISM];
-        
+        List<ParallelTranspose> actions = new ArrayList<>();
+
         for (int i = 0; i < PARALLELISM; i++) {
             int startIndex = i * step;
-            int endIndex = Math.min(startIndex + step, outer);
-            actions[i] = new ParallelTranspose(params, startIndex, endIndex);
+            int endIndex = (i == PARALLELISM - 1) ? work : Math.min(startIndex + step, work);
+
+            if (startIndex < endIndex) {
+                actions.add(new ParallelTranspose(params, startIndex, endIndex));
+            }
         }
 
         ForkJoinTask.invokeAll(actions);

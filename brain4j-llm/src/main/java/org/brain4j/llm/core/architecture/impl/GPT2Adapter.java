@@ -11,6 +11,7 @@ import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.impl.Sequential;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
+import org.brain4j.math.activation.Activations;
 import org.brain4j.math.tensor.Tensor;
 
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
         EmbeddingLayer embeddingLayer = new EmbeddingLayer(vocabSize, embeddingDim);
         DenseLayer vocabLayer = new DenseLayer(0);
         PosEncodeLayer posEncodeLayer = new PosEncodeLayer(context, embeddingDim);
-        
+
         embeddingLayer.setWeights(embedding);
         vocabLayer.setWeights(embedding.transpose());
         posEncodeLayer.setWeights(posEncode);

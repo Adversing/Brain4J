@@ -116,12 +116,10 @@ public class SafeTensorsConverter {
             buffer.get(tensorBytes);
             
             float[] values = new float[elements];
+
             ByteBuffer tensorBuffer = ByteBuffer.wrap(tensorBytes).order(ByteOrder.LITTLE_ENDIAN);
-            
-            for (int i = 0; i < elements; i++) {
-                values[i] = tensorBuffer.getFloat();
-            }
-            
+            tensorBuffer.asFloatBuffer().get(values);
+
             Tensor tensor = Tensors.create(shape, values);
             weights.put(name, tensor);
         }

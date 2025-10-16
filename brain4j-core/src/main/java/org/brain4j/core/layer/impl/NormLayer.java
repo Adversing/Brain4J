@@ -5,6 +5,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
 /**
  * Implementation of a layer normalization layer,
@@ -49,9 +50,11 @@ public class NormLayer extends Layer {
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         checkInputLength(1, inputs);
 
-        Tensor result = inputs[0].layerNorm(epsilon)
-            .mulGrad(weights)
-            .addGrad(bias);
+        Tensor input = inputs[0];
+        Tensor cloned = input.clone();
+        cloned.setAutogradContext(input.autogradContext());
+
+        Tensor result = cloned.layerNorm(epsilon).mulGrad(weights).addGrad(bias);
         return new Tensor[] { result };
     }
     

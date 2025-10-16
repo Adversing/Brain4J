@@ -6,9 +6,12 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
 import org.brain4j.math.activation.impl.LinearActivation;
+import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
+import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 /**
@@ -74,8 +77,6 @@ public class DenseLayer extends Layer {
 
     @Override
     public void initWeights(RandomGenerator generator, int input, int output) {
-        if (input == 0) return;
-        
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
     
@@ -86,7 +87,6 @@ public class DenseLayer extends Layer {
         
         for (int i = 0; i < result.length; i++) {
             Tensor input = inputs[i];
-
             Tensor output = input.matmulGrad(weights);
             
             if (bias != null) output = output.addGrad(bias);

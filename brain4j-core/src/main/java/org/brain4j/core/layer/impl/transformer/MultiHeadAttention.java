@@ -174,8 +174,8 @@ public class MultiHeadAttention extends Layer {
     @Override
     public void toDevice(Device device) {
         this.weights = weights.to(device);
-        this.bias = bias.to(device);
         this.outProj = outProj.to(device);
+        if (attnQkvHasBias) this.bias = bias.to(device);
         if (attnOutHasBias) this.outBias = outBias.to(device);
     }
 

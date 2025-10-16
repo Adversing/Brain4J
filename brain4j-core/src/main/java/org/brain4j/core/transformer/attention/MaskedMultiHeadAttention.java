@@ -22,83 +22,49 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor input = inputs[0];
         int batch = input.shape(0);
         int seqLength = input.shape(1);
-        
-        Tensor prevK = cache.get(keyCache);
-        Tensor prevV = cache.get(valueCache);
-        
-        Tensor Q;
-        Tensor Kcat;
-        Tensor Vcat;
-        int seqQLen;
-        
-//        if (prevK != null && prevV != null) {
-//            Tensor newInput = input.sliceGrad(Range.all(), Range.point(seqLength - 1), Range.all()); // [batch, 1, embeddingDim]
-//            Tensor newQKV = newInput.matmulGrad(weights);
-//
-//            if (attnQkvHasBias) {
-//                newQKV = newQKV.addGrad(bias);
-//            }
-//
-//            int newSeqLen = 1;
-//            Tensor reshapedNew = newQKV.reshapeGrad(batch, newSeqLen, headCount, 3, headDimension).transposeGrad(1, 2);
-//
-//            Range all = Range.all();
-//            Tensor[] newQKVs = new Tensor[3];
-//
-//            for (int i = 0; i < 3; i++) {
-//                Tensor tmp = reshapedNew.sliceGrad(all, all, all, Range.point(i), all);
-//                newQKVs[i] = tmp.squeezeGrad(3); // [batch, heads, newSeqLen, head_dim]
-//            }
-//
-//            Q = newQKVs[0];
-//            Tensor Knew = newQKVs[1];
-//            Tensor Vnew = newQKVs[2];
-//
-//            Kcat = prevK.concatGrad(Knew, 2);
-//            Vcat = prevV.concatGrad(Vnew, 2);
-//
-//            seqQLen = Q.shape(2);
-//        } else {
-            Tensor QKV = input.matmulGrad(weights);
-            
-            if (attnQkvHasBias) {
-                QKV = QKV.addGrad(bias);
-            }
-            
-            Tensor reshaped = QKV.reshapeGrad(batch, seqLength, headCount, 3, headDimension).transposeGrad(1, 2);
-            
-            Range all = Range.all();
-            Tensor[] QKVs = new Tensor[3];
-            
-            for (int i = 0; i < 3; i++) {
-                Tensor tmp = reshaped.sliceGrad(all, all, all, Range.point(i), all);
-                QKVs[i] = tmp.squeezeGrad(3);
-            }
-            
-            Q = QKVs[0];
-            Kcat = QKVs[1];
-            Vcat = QKVs[2];
-            seqQLen = Q.shape(2);
-//        }
-        
-        cache.updateCache(keyCache, Kcat);
-        cache.updateCache(valueCache, Vcat);
-        
+
+        // [batch, seq_len, 3 * H * head_dim]
+        Tensor QKV = input.matmulGrad(weights);
+
+        if (attnQkvHasBias) QKV = QKV.addGrad(bias);
+
+        // [batch, heads, seq_len, 3, head_dim]
+        int D = embeddingDim;
+        int H = headCount;
+        int d = headDimension;
+
+        Range all = Range.all();
+        Tensor Q = QKV.sliceGrad(all, all, Range.interval(0, D));
+        Tensor K = QKV.sliceGrad(all, all, Range.interval(D, 2 * D));
+        Tensor V = QKV.sliceGrad(all, all, Range.interval(2 * D, 3 * D));
+
+        // [batch, heads, seq_len, head_dim]
+        Q = Q.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
+        K = K.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
+        V = V.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
+
         double normalizer = Math.sqrt(headDimension);
-        
-        Tensor K_T = Kcat.transposeGrad();
+
+        Tensor mask = Tensors.triangularMask(seqLength, seqLength);
+
+        // [batch, heads, head_dim, seq_len]
+        Tensor K_T = K.transposeGrad();
+        // [batch, heads, seq_len, seq_len]
         Tensor scores = Q.matmulGrad(K_T).div(normalizer);
-        
-        int totalSeq = Kcat.shape(2);
-        Tensor mask = Tensors.triangularMask(seqQLen, totalSeq);
-        
-        Tensor attentionWeights = scores.addGrad(mask).activateGrad(new SoftmaxActivation());
-        Tensor context = attentionWeights.matmulGrad(Vcat); // [batch, heads, seq_q, head_dim]
-        
-        context = context.transposeGrad(1, 2); // [batch, seq_q, heads, head_dim]
-        Tensor output = context.reshapeGrad(batch, seqQLen, embeddingDim); // [batch, seq_q, embedDim]
-        Tensor projected = output.matmulGrad(outProj);
-        
-        return new Tensor[] { projected };
+        Tensor attentionMap = scores.addGrad(mask);
+        Tensor probabilities = attentionMap.activateGrad(new SoftmaxActivation());
+        // [batch, heads, seq_len, head_dim]
+        Tensor context = probabilities.matmulGrad(V);
+        // [batch, seq_len, heads, head_dim]
+        context = context.transposeGrad(1, 2);
+        // [batch, seq_len, embedding_dim]
+        Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
+        // [batch, seq_len, embedding_dim]
+
+        Tensor result = output.matmulGrad(outProj);
+
+        if (attnOutHasBias) result = result.addGrad(outBias);
+
+        return new Tensor[] { result };
     }
 }

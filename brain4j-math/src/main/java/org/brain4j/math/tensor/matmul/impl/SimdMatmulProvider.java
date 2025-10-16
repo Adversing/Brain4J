@@ -7,6 +7,9 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.matmul.MatmulParameters;
 import org.brain4j.math.tensor.matmul.MatmulProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
@@ -70,16 +73,19 @@ public class SimdMatmulProvider implements MatmulProvider {
             matmulBlock(A, B, C, 0, work, m, n, p, mn, np, mp, batchA, batchB, a.transposed(), b.transposed());
             return;
         }
-        
+
         int step = work / PARALLELISM;
-        VectorAction[] actions = new VectorAction[PARALLELISM];
-        
+        List<VectorAction> actions = new ArrayList<>();
+
         for (int i = 0; i < PARALLELISM; i++) {
             int startIndex = i * step;
-            int endIndex = Math.min(startIndex + step, work);
-            actions[i] = new VectorAction(parameters, startIndex, endIndex);
+            int endIndex = (i == PARALLELISM - 1) ? work : Math.min(startIndex + step, work);
+
+            if (startIndex < endIndex) {
+                actions.add(new VectorAction(parameters, startIndex, endIndex));
+            }
         }
-        
+
         ForkJoinTask.invokeAll(actions);
     }
     

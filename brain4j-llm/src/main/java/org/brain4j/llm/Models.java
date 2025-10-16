@@ -9,7 +9,7 @@ public class Models {
 
     public static LLM loadModel(String modelId) throws Exception {
         try (ModelLoader loader = new ModelLoader()) {
-            return loader.loadModel(modelId, LoadConfig.defaultConfig());
+            return loader.loadModel(modelId, LoadConfig.defaultConfig()).compile();
         } catch (Exception e) {
             throw new Exception("Failed to load model: " + modelId, e);
         }

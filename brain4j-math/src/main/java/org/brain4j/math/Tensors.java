@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.random.RandomGenerator;
+import java.util.stream.IntStream;
 
 public class Tensors {
 
@@ -353,5 +354,14 @@ public class Tensors {
         }
 
         return Tensors.create(new int[]{channels, inHeight, inWidth}, imgData);
+    }
+
+    public static int[] topK(int topK, float[] data) {
+       return IntStream.range(0, data.length)
+            .boxed()
+            .sorted((i, j) -> Double.compare(data[j], data[i]))
+            .limit(topK)
+            .mapToInt(Integer::intValue)
+            .toArray();
     }
 }

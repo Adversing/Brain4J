@@ -511,6 +511,8 @@ public class GpuTensor extends BaseTensor {
             );
         }
 
+        System.out.println("RESHAPING");
+
         return new GpuTensor(this, newShape);
     }
 

@@ -13,7 +13,9 @@ import org.brain4j.llm.api.ModelInfo;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
 import org.brain4j.llm.core.architecture.ArchitectureRegistry;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
@@ -23,6 +25,8 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.function.Consumer;
 
 public class LLM implements InferenceProvider {
     
@@ -44,7 +48,7 @@ public class LLM implements InferenceProvider {
         this.config = config;
     }
     
-    public void compile() throws IOException {
+    public LLM compile() throws IOException {
         this.tokenizer = new BytePairTokenizer();
         
         ModelFile configFile = findOrThrow("config.json", "config.json was not found!");
@@ -64,6 +68,8 @@ public class LLM implements InferenceProvider {
         
         ArchitectureAdapter adapter = ArchitectureRegistry.findAdapter(modelType);
         this.model = adapter.buildModel(config, weights);
+
+        return this;
     }
     
     @Override
@@ -77,33 +83,98 @@ public class LLM implements InferenceProvider {
         Tensor input = tokenizer.encode(tokens);
 
         StatesCache cache = new StatesCache();
-        StringBuilder response = new StringBuilder();
+        StringBuilder response = new StringBuilder(prompt);
         
         int bosToken = tokenizer.bosTokenId();
         int eosToken = tokenizer.eosTokenId();
         int generatedTokens = 0;
-        
-        input = input.concat(Tensors.scalar(bosToken));
-        
+
+        if (bosToken != eosToken) {
+            input = input.concat(Tensors.scalar(bosToken));
+        }
+
+        Random random = config.random();
+        SoftmaxActivation activation = new SoftmaxActivation(config.temperature());
+
         while (generatedTokens < config.maxLength()) {
-            Tensor distribution = model.predict(cache, input.squeeze())[0]; // [1, seq_len, vocab]
-            int seqLen = distribution.shape(1);
-            
-            Range[] ranges = { Range.all(), Range.point(seqLen - 2), Range.all() };
-            Tensor lastToken = distribution.slice(ranges).squeeze(); // [vocab]
-            
-            int index = lastToken.argmax(); // TODO: top-p/top-k sampling
-            input = input.concat(Tensors.scalar(index));
-            response.append(tokenizer.decode(index)).append(" ");
-            
-            if (index == eosToken) break;
+            Tensor logits = model.predict(cache, input)[0];
+            int seqLen = logits.shape(1);
+
+            Range[] ranges = { Range.all(), Range.point(seqLen - 1), Range.all() };
+
+            Tensor lastToken = logits.slice(ranges).squeeze();
+            Tensor distribution = lastToken.activate(activation);
+
+            float[] data = distribution.data();
+            int[] topTokens = Tensors.topK(config.topK(), data);
+
+            int nextToken = topTokens[random.nextInt(topTokens.length)];
+            input = input.concat(Tensors.scalar(nextToken));
+            response.append(tokenizer.decode(nextToken));
+
+            if (nextToken == eosToken) break;
             
             generatedTokens++;
         }
         
         return response.toString();
     }
-    
+
+    @Override
+    public String chat(String prompt, SamplingConfig config, Consumer<String> tokenConsumer) {
+        List<String> tokens = tokenizer.splitTokens(prompt);
+        Tensor input = tokenizer.encode(tokens);
+
+        StatesCache cache = new StatesCache(model.device());
+        StringBuilder response = new StringBuilder(prompt);
+
+        int bosToken = tokenizer.bosTokenId();
+        int eosToken = tokenizer.eosTokenId();
+        int generatedTokens = 0;
+
+        if (bosToken != eosToken) input = input.concat(Tensors.scalar(bosToken));
+        if (model.device() != null) input = input.to(model.device());
+
+        Random random = config.random();
+        SoftmaxActivation activation = new SoftmaxActivation(config.temperature());
+
+        while (generatedTokens < config.maxLength()) {
+            Tensor logits = model.predict(cache, input)[0];
+            int seqLen = logits.shape(1);
+
+            Range[] ranges = { Range.all(), Range.point(seqLen - 1), Range.all() };
+
+            Tensor lastToken = logits.slice(ranges).squeeze();
+            Tensor distribution = lastToken.activate(activation);
+
+            float[] data = distribution.data();
+            int[] topTokens = Tensors.topK(config.topK(), data);
+
+            int nextToken = topTokens[random.nextInt(topTokens.length)];
+            input = input.concat(Tensors.scalar(nextToken));
+
+            String token = tokenizer.decode(nextToken);
+            tokenConsumer.accept(token);
+            response.append(token);
+
+            if (nextToken == eosToken) break;
+
+            generatedTokens++;
+        }
+
+        return response.toString();
+    }
+
+    @Override
+    public LLM to(Device device) {
+        if (model == null) throw new NullPointerException("Model has not been compiled!");
+        if (device == null) throw new NullPointerException("Device cannot be null!");
+
+        model.to(device);
+
+        return this;
+    }
+
     public Optional<ModelFile> find(String filename) {
         return files.stream().filter(file -> file.name().equals(filename)).findFirst();
     }
