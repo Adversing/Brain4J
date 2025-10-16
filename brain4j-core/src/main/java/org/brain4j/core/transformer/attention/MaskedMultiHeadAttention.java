@@ -6,6 +6,7 @@ import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.Arrays;
@@ -22,7 +23,9 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        Range[] slicingRanges = new Range[] { Range.all(), Range.point(seqLength - 1), Range.all() }; // [batch, 1, dim]
+        Range[] slicingRanges = {
+            Range.all(), Range.point(seqLength - 1), Range.all()
+        }; // [batch, 1, dim]
         Tensor cachedOutput = cache.get(outProj);
         Tensor cachedQKV = cache.get(weights);
         Tensor QKV; // [batch, seq_len, 3 * H * head_dim]
@@ -41,7 +44,6 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         int D = embeddingDim;
         int H = headCount;
         int d = headDimension;
-        int S = QKV.shape(1);
 
         Range all = Range.all();
         Tensor Q = QKV.sliceGrad(all, all, Range.interval(0, D));
@@ -49,13 +51,15 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor V = QKV.sliceGrad(all, all, Range.interval(2 * D, 3 * D));
 
         // [batch, heads, seq_len, head_dim]
-        Q = Q.reshapeGrad(batch, S, H, d).transposeGrad(1, 2);
-        K = K.reshapeGrad(batch, S, H, d).transposeGrad(1, 2);
-        V = V.reshapeGrad(batch, S, H, d).transposeGrad(1, 2);
+        Q = Q.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
+        K = K.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
+        V = V.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
 
         double normalizer = Math.sqrt(headDimension);
 
         Tensor mask = Tensors.triangularMask(seqLength, seqLength);
+
+        if (input instanceof GpuTensor gpu) mask = mask.gpu(gpu.device());
 
         // [batch, heads, head_dim, seq_len]
         Tensor K_T = K.transposeGrad();
@@ -69,7 +73,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         context = context.transposeGrad(1, 2);
         
         // [batch, seq_len, embedding_dim]
-        Tensor output = context.reshapeGrad(batch, S, embeddingDim);
+        Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
         Tensor result;
         
         if (cachedOutput != null) {
