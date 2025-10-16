@@ -61,11 +61,8 @@ public class PosEncodeLayer extends Layer {
 
         Tensor output = input.add(positional);
 
-        if (input instanceof GpuTensor gpuTensor) {
-            output = output.to(gpuTensor.device());
-        }
-
-        output = output.withGrad();
+        if (input instanceof GpuTensor gpuTensor) output = output.to(gpuTensor.device());
+        if (input.usesGrad()) output = output.withGrad();
 
         return new Tensor[] { output };
     }

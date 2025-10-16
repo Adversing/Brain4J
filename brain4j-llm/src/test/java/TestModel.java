@@ -1,20 +1,35 @@
-import org.brain4j.core.transformer.tokenizers.Tokenizer;
 import org.brain4j.llm.Models;
 import org.brain4j.llm.core.model.LLM;
 import org.brain4j.llm.core.model.SamplingConfig;
-import org.brain4j.math.commons.Commons;
-import org.brain4j.math.tensor.Tensor;
 
-import java.nio.ByteOrder;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TestModel {
 
     public static void main(String[] args) throws Exception {
-        LLM llm = Models.loadModel("gpt2-xl");
+        LLM llm = Models.loadModel("gpt2");
         llm.model().summary();
         String prompt = "Hello, my name is";
+        
+        AtomicLong lastToken = new AtomicLong(System.nanoTime());
+        AtomicReference<Double> total = new AtomicReference<>(0.0);
+        AtomicInteger generated = new AtomicInteger(0);
+        
         System.out.print(prompt);
-        String response = llm.chat(prompt, SamplingConfig.defaultConfig(), System.out::print);
+        String response = llm.chat(prompt, SamplingConfig.builder().maxLength(256).build(), token -> {
+            long now = System.nanoTime();
+            double took = (now - lastToken.get()) / 1e6;
+            System.out.print(token);
+            
+            total.updateAndGet(v -> v + took);
+            lastToken.set(now);
+            generated.incrementAndGet();
+        });
+        double average = total.get() / generated.get();
+        
+        System.out.println("Total ms spent generating = " + total.get());
+        System.out.println("Average ms/token = " + average);
     }
 }

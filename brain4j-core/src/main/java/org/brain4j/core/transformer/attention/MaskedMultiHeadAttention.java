@@ -28,20 +28,20 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor QKV; // [batch, seq_len, 3 * H * head_dim]
         
         if (cachedQKV != null) {
-            Tensor newTokens = input.sliceGrad(slicingRanges);
-            Tensor proj = newTokens.matmulGrad(weights);
-            
-            QKV = cachedQKV.concatGrad(proj, 1);
+            Tensor newTokens = input.slice(slicingRanges);
+            Tensor proj = newTokens.matmul(weights);
+
+            QKV = cachedQKV.concat(proj, 1);
         } else QKV = input.matmulGrad(weights);
         
         cache.set(weights, QKV);
 
         if (attnQkvHasBias) QKV = QKV.addGrad(bias);
 
-        // [batch, heads, seq_len, 3, head_dim]
         int D = embeddingDim;
         int H = headCount;
         int d = headDimension;
+        int S = QKV.shape(1);
 
         Range all = Range.all();
         Tensor Q = QKV.sliceGrad(all, all, Range.interval(0, D));
@@ -49,9 +49,9 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor V = QKV.sliceGrad(all, all, Range.interval(2 * D, 3 * D));
 
         // [batch, heads, seq_len, head_dim]
-        Q = Q.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
-        K = K.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
-        V = V.reshapeGrad(batch, seqLength, H, d).transposeGrad(1, 2);
+        Q = Q.reshapeGrad(batch, S, H, d).transposeGrad(1, 2);
+        K = K.reshapeGrad(batch, S, H, d).transposeGrad(1, 2);
+        V = V.reshapeGrad(batch, S, H, d).transposeGrad(1, 2);
 
         double normalizer = Math.sqrt(headDimension);
 
@@ -69,14 +69,14 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         context = context.transposeGrad(1, 2);
         
         // [batch, seq_len, embedding_dim]
-        Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
+        Tensor output = context.reshapeGrad(batch, S, embeddingDim);
         Tensor result;
         
         if (cachedOutput != null) {
-            Tensor newOutput = output.sliceGrad(slicingRanges);
-            Tensor proj = newOutput.matmulGrad(outProj);
-            
-            result = cachedOutput.concatGrad(proj, 1);
+            Tensor newOutput = output.slice(slicingRanges);
+            Tensor proj = newOutput.matmul(outProj);
+
+            result = cachedOutput.concat(proj, 1);
         } else result = output.matmulGrad(outProj);
 
         cache.set(outProj, result);

@@ -6,6 +6,8 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 
+import java.util.Arrays;
+
 /**
  * Input layer used to define the expected shape of data entering the network.
  * <p>
@@ -41,6 +43,13 @@ public class InputLayer extends Layer {
 
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+        for (Tensor input : inputs) {
+            if (validInput(input)) continue;
+            
+            throw new IllegalArgumentException(
+                "Input shape is not valid! Expecting " + Arrays.toString(shape) + " but got " + Arrays.toString(input.shape())
+            );
+        }
         return inputs;
     }
 
@@ -72,7 +81,7 @@ public class InputLayer extends Layer {
     
     @Override
     public boolean validInput(Tensor input) {
-        if (input.rank() > shape.length + 1) return false;
+        if (input == null || input.rank() > shape.length + 1) return false;
 
         int[] inputShape = input.shape();
         // Leniency, input COULD have a batch, it's not guaranteed

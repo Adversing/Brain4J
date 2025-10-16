@@ -1,6 +1,7 @@
 package org.brain4j.llm.core.architecture.impl;
 
 import com.google.gson.JsonObject;
+import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.layer.impl.transformer.EmbeddingLayer;
@@ -8,11 +9,14 @@ import org.brain4j.core.layer.impl.transformer.MultiHeadAttention;
 import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
 import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
 import org.brain4j.core.layer.impl.utility.InputLayer;
+import org.brain4j.core.layer.impl.utility.SliceLayer;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.impl.Sequential;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
 import org.brain4j.math.activation.Activations;
+import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.index.Range;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -94,6 +98,8 @@ public class GPT2Adapter implements ArchitectureAdapter {
             seq.add(decoder);
         }
         
+        TokenSelectionLayer selectionLayer = new TokenSelectionLayer();
+        
         NormLayer normLayer = new NormLayer();
         Tensor lnGamma = weights.get("ln_f.weight");
         Tensor lnBeta = weights.get("ln_f.bias");
@@ -102,9 +108,26 @@ public class GPT2Adapter implements ArchitectureAdapter {
         normLayer.setBias(lnBeta);
         
         seq.add(normLayer);
-        // output projection (shared with embedding)
+        seq.add(selectionLayer);
         seq.add(vocabLayer);
         
         return seq;
+    }
+    
+    static class TokenSelectionLayer extends Layer {
+        @Override
+        public Tensor[] forward(StatesCache cache, Tensor... inputs) {
+            if (cache.training()) return inputs;
+            
+            Tensor input = inputs[0]; // [batch, seq_len, dim]
+            int seqLength = input.shape(1);
+            
+            return new Tensor[] { input.slice(Range.all(), Range.point(seqLength - 1), Range.all()).squeeze(1) };
+        }
+        
+        @Override
+        public int size() {
+            return 0;
+        }
     }
 }

@@ -83,8 +83,10 @@ public class EmbeddingLayer extends Layer {
 
         int batchSize = shape[0];
         int seqLength = shape[1];
-
-        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim).withGrad();
+        
+        Tensor output = Tensors.zeros(batchSize, seqLength, embeddingDim);
+        
+        if (input.usesGrad()) output = output.withGrad();
 
         float[] outData = output.data();
         float[] weightData = weights.data();

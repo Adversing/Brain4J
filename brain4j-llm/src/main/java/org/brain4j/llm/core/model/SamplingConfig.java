@@ -5,7 +5,7 @@ import java.util.Random;
 public record SamplingConfig(Random random, int maxLength, int topK, double topP, double temperature) {
     
     public static SamplingConfig defaultConfig() {
-        return new SamplingConfig(new Random(), 64, 50, 0.9, 1.0);
+        return new SamplingConfig(new Random(), 32, 5, 0.9, 1.0);
     }
     
     public static SamplingConfig.Builder builder() {

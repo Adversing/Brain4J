@@ -313,7 +313,13 @@ public class Sequential extends Layer implements Model {
         Tensor[] result = new Tensor[validated.length];
 
         for (int i = 0; i < validated.length; i++) {
-            result[i] = validated[i].to(device).withGrad();
+            Tensor valid = validated[i];
+            
+            if (cache.training()) {
+                valid = valid.withGrad();
+            }
+            
+            result[i] = validated[i].to(device);
         }
 
         if (device != null) {

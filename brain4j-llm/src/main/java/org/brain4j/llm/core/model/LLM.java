@@ -22,10 +22,7 @@ import org.brain4j.math.tensor.index.Range;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class LLM implements InferenceProvider {
@@ -77,45 +74,7 @@ public class LLM implements InferenceProvider {
     
     @Override
     public String chat(String prompt, SamplingConfig config) {
-        List<String> tokens = tokenizer.splitTokens(prompt);
-        Tensor input = tokenizer.encode(tokens);
-
-        StatesCache cache = new StatesCache();
-        StringBuilder response = new StringBuilder(prompt);
-        
-        int bosToken = tokenizer.bosTokenId();
-        int eosToken = tokenizer.eosTokenId();
-        int generatedTokens = 0;
-
-        if (bosToken != eosToken) {
-            input = input.concat(Tensors.scalar(bosToken));
-        }
-
-        Random random = config.random();
-        SoftmaxActivation activation = new SoftmaxActivation(config.temperature());
-
-        while (generatedTokens < config.maxLength()) {
-            Tensor logits = model.predict(cache, input)[0];
-            int seqLen = logits.shape(1);
-
-            Range[] ranges = { Range.all(), Range.point(seqLen - 1), Range.all() };
-
-            Tensor lastToken = logits.slice(ranges).squeeze();
-            Tensor distribution = lastToken.activate(activation);
-
-            float[] data = distribution.data();
-            int[] topTokens = Tensors.topK(config.topK(), data);
-
-            int nextToken = topTokens[random.nextInt(topTokens.length)];
-            input = input.concat(Tensors.scalar(nextToken));
-            response.append(tokenizer.decode(nextToken));
-
-            if (nextToken == eosToken) break;
-            
-            generatedTokens++;
-        }
-        
-        return response.toString();
+        return chat(prompt, config, x -> {});
     }
 
     @Override
@@ -135,20 +94,16 @@ public class LLM implements InferenceProvider {
 
         Random random = config.random();
         SoftmaxActivation activation = new SoftmaxActivation(config.temperature());
-
+        
         while (generatedTokens < config.maxLength()) {
-            Tensor logits = model.predict(cache, input)[0];
-            int seqLen = logits.shape(1);
-
-            Range[] ranges = { Range.all(), Range.point(seqLen - 1), Range.all() };
-
-            Tensor lastToken = logits.slice(ranges).squeeze();
-            Tensor distribution = lastToken.activate(activation);
-
+            Tensor logits = model.predict(cache, input)[0].squeeze(); // [vocab_size]
+            Tensor distribution = logits.activate(activation);
+            
             float[] data = distribution.data();
             int[] topTokens = Tensors.topK(config.topK(), data);
-
-            int nextToken = topTokens[random.nextInt(topTokens.length)];
+            
+            int chosen = random.nextInt(topTokens.length);
+            int nextToken = topTokens[chosen];
             input = input.concat(Tensors.scalar(nextToken));
 
             String token = tokenizer.decode(nextToken);

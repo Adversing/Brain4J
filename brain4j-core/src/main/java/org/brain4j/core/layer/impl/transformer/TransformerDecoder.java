@@ -61,7 +61,7 @@ public class TransformerDecoder extends TransformerEncoder {
                 "Expected input with shape [batch, seq_len, dimension], got: " + Arrays.toString(input.shape())
             );
         }
-
+        
         Tensor norm1 = normalizer1.forward(cache, input);
         Tensor attended = attention.forward(cache, norm1);
 
@@ -73,31 +73,25 @@ public class TransformerDecoder extends TransformerEncoder {
         Tensor norm2 = normalizer2.forward(cache, added);
 
         Tensor upProjected, downProjected;
-
-        Tensor[] upCache = cache.output(upProjection);
-        Tensor[] downCache = cache.output(downProjection);
+        Tensor downCache = cache.get(downProjection);
 
         int seqLength = input.shape(1);
 
-        if (upCache.length == 0 || downCache.length == 0) {
+        if (downCache == null) {
             upProjected = upProjection.forward(cache, norm2).activateGrad(activation);
             downProjected = downProjection.forward(cache, upProjected);
         } else {
-            Tensor cacheUp = upCache[0];
-            Tensor cacheDown = downCache[0];
-
             Range[] ranges = { Range.all(), Range.point(seqLength - 1), Range.all() };
             Tensor sliced = norm2.sliceGrad(ranges);
 
-            Tensor upProj = upProjection.forward(cache, sliced).activateGrad(activation);
-            Tensor downProj = downProjection.forward(cache, upProj);
-
-            upProjected = cacheUp.concatGrad(upProj, 1);
-            downProjected = cacheDown.concatGrad(downProj, 1);
+            Tensor upProj = upProjection.forward(cache, sliced);
+            Tensor activated = upProj.activateGrad(activation);
+            Tensor downProj = downProjection.forward(cache, activated);
+            
+            downProjected = downCache.concatGrad(downProj, 1);
         }
 
-        cache.rememberOutput(upProjection, upProjected);
-        cache.rememberOutput(downProjection, downProjected);
+        cache.set(downProjection, downProjected);
 
         if (cache.training()) {
             downProjected = dropout.forward(cache, downProjected);
