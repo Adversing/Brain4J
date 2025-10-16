@@ -38,7 +38,7 @@ public class StatesCache {
         return tensorCache.get(key);
     }
 
-    public void updateCache(Object key, Tensor value) {
+    public void set(Object key, Tensor value) {
         tensorCache.put(key, value);
     }
     

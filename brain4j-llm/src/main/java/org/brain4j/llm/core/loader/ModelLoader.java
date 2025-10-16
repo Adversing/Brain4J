@@ -120,11 +120,7 @@ public class ModelLoader implements AutoCloseable {
     }
 
     private boolean isUsefulFile(String filename) {
-        if (filename.startsWith(".")) return false;
-        return !filename.equalsIgnoreCase("README.md")
-            && !filename.equalsIgnoreCase(".gitattributes")
-            && !filename.endsWith(".lock")
-            && !filename.endsWith(".txt");
+        return List.of("config.json", "tokenizer.json", "model.safetensors").contains(filename);
     }
 
     private String determineFileFormat(String filename) {

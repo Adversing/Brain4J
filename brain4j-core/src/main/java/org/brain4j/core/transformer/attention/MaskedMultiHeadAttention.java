@@ -8,10 +8,9 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.Arrays;
+
 public class MaskedMultiHeadAttention extends MultiHeadAttention {
-    
-    private final Object keyCache = new Object();
-    private final Object valueCache = new Object();
     
     public MaskedMultiHeadAttention(GradientClipper clipper, int headCount, int modelDimension) {
         super(clipper, headCount, modelDimension);
@@ -23,8 +22,19 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        // [batch, seq_len, 3 * H * head_dim]
-        Tensor QKV = input.matmulGrad(weights);
+        Range[] slicingRanges = new Range[] { Range.all(), Range.point(seqLength - 1), Range.all() }; // [batch, 1, dim]
+        Tensor cachedOutput = cache.get(outProj);
+        Tensor cachedQKV = cache.get(weights);
+        Tensor QKV; // [batch, seq_len, 3 * H * head_dim]
+        
+        if (cachedQKV != null) {
+            Tensor newTokens = input.sliceGrad(slicingRanges);
+            Tensor proj = newTokens.matmulGrad(weights);
+            
+            QKV = cachedQKV.concatGrad(proj, 1);
+        } else QKV = input.matmulGrad(weights);
+        
+        cache.set(weights, QKV);
 
         if (attnQkvHasBias) QKV = QKV.addGrad(bias);
 
@@ -57,11 +67,19 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor context = probabilities.matmulGrad(V);
         // [batch, seq_len, heads, head_dim]
         context = context.transposeGrad(1, 2);
+        
         // [batch, seq_len, embedding_dim]
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
-        // [batch, seq_len, embedding_dim]
+        Tensor result;
+        
+        if (cachedOutput != null) {
+            Tensor newOutput = output.sliceGrad(slicingRanges);
+            Tensor proj = newOutput.matmulGrad(outProj);
+            
+            result = cachedOutput.concatGrad(proj, 1);
+        } else result = output.matmulGrad(outProj);
 
-        Tensor result = output.matmulGrad(outProj);
+        cache.set(outProj, result);
 
         if (attnOutHasBias) result = result.addGrad(outBias);
 

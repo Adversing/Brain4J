@@ -63,9 +63,7 @@ public class LLM implements InferenceProvider {
         tokenizer.setBosTokenId(config.get("bos_token_id").getAsInt());
         tokenizer.setEosTokenId(config.get("eos_token_id").getAsInt());
         
-        byte[] modelWeights = Files.readAllBytes(weightsFile.path());
-        Map<String, Tensor> weights = SafeTensorsConverter.load(modelWeights);
-        
+        Map<String, Tensor> weights = SafeTensorsConverter.load(weightsFile.path());
         ArchitectureAdapter adapter = ArchitectureRegistry.findAdapter(modelType);
         this.model = adapter.buildModel(config, weights);
 
@@ -155,10 +153,10 @@ public class LLM implements InferenceProvider {
 
             String token = tokenizer.decode(nextToken);
             tokenConsumer.accept(token);
-            response.append(token);
 
             if (nextToken == eosToken) break;
-
+            
+            response.append(token);
             generatedTokens++;
         }
 

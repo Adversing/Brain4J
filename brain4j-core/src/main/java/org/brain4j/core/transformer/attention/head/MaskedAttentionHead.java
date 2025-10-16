@@ -67,8 +67,8 @@ public class MaskedAttentionHead extends AttentionHead {
             V = prevV.concatGrad(newV, 1);
         }
 
-        cache.updateCache(keyWeights, K);
-        cache.updateCache(valueWeights, V);
+        cache.set(keyWeights, K);
+        cache.set(valueWeights, V);
 
         double normalizer = Math.sqrt(headDimension);
 

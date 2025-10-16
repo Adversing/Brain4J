@@ -11,24 +11,10 @@ import java.util.List;
 public class TestModel {
 
     public static void main(String[] args) throws Exception {
-        LLM llm = Models.loadModel("gpt2");
-        llm.compile();
-        
-        String response = llm.chat("Hello how are you?", new SamplingConfig(32, 0, 0, 0));
-        System.out.println(response);
-        
-        String prompt = "When I realized that AI could write poetry, I questioned what creativity really means.";
-        
-        System.out.println("LLM ID: " + llm.id());
-        System.out.println("Total bytes: " + Commons.formatNumber(llm.totalSize() / 64));
-        
-        Tokenizer tokenizer = Models.loadTokenizer("gpt2");
-        System.out.println("Loaded BPE tokenizer from GPT2: " + tokenizer.getClass().getSimpleName());
-        
-        List<String> splitted = tokenizer.splitTokens(prompt);
-        Tensor out = tokenizer.encode(splitted);
-        System.out.println("Prompt: " + prompt);
-        System.out.println("Splitted tokens: " + splitted);
-        System.out.println("LLM Input: " + out.toString("%.0f"));
+        LLM llm = Models.loadModel("gpt2-xl");
+        llm.model().summary();
+        String prompt = "Hello, my name is";
+        System.out.print(prompt);
+        String response = llm.chat(prompt, SamplingConfig.defaultConfig(), System.out::print);
     }
 }
