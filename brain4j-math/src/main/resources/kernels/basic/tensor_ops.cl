@@ -1,4 +1,5 @@
 #define TILE_SIZE 16
+#define MAX_RANK 16
 
 __kernel void layer_norm(
     __global const float* input,
@@ -42,9 +43,81 @@ __kernel void matmul_batched(
     const int M,
     const int N,
     const int P,
-    const int batchCount
+    const int batchCount,
+    const int transA,
+    const int transB
 ) {
     int row = get_global_id(0);
+    int col = get_global_id(1);
+    int batch = get_global_id(2);
+
+    int local_row = get_local_id(0);
+    int local_col = get_local_id(1);
+
+    if (batch >= batchCount)
+        return;
+
+    bool valid = (row < M) && (col < P);
+
+    const __global float* A_batch = A + offsetsA[batch];
+    const __global float* B_batch = B + offsetsB[batch];
+    __global float* C_batch = C + offsetsC[batch];
+
+    __local float Asub[TILE_SIZE][TILE_SIZE];
+    __local float Bsub[TILE_SIZE][TILE_SIZE];
+
+    float sum = 0.0f;
+
+    // Dimensione interna dipende dalla trasposizione
+    int innerDim = (transA == 0 ? N : M);
+    int numTiles = (innerDim + TILE_SIZE - 1) / TILE_SIZE;
+
+    for (int t = 0; t < numTiles; ++t) {
+        int tiled_col_A = t * TILE_SIZE + local_col;
+        int tiled_row_B = t * TILE_SIZE + local_row;
+
+        // --- Caricamento A ---
+        if (transA == 0) {
+            // A normale: [row, k]
+            if (row < M && tiled_col_A < N)
+                Asub[local_row][local_col] = A_batch[row * N + tiled_col_A];
+            else
+                Asub[local_row][local_col] = 0.0f;
+        } else {
+            // A trasposta: [k, row]
+            if (tiled_col_A < M && row < N)
+                Asub[local_row][local_col] = A_batch[tiled_col_A * M + row];
+            else
+                Asub[local_row][local_col] = 0.0f;
+        }
+
+        // --- Caricamento B ---
+        if (transB == 0) {
+            // B normale: [k, col]
+            if (tiled_row_B < N && col < P)
+                Bsub[local_row][local_col] = B_batch[tiled_row_B * P + col];
+            else
+                Bsub[local_row][local_col] = 0.0f;
+        } else {
+            // B trasposta: [col, k]
+            if (col < N && tiled_row_B < P)
+                Bsub[local_row][local_col] = B_batch[col * N + tiled_row_B];
+            else
+                Bsub[local_row][local_col] = 0.0f;
+        }
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        // --- Calcolo tile ---
+        for (int k = 0; k < TILE_SIZE; ++k)
+            sum += Asub[local_row][k] * Bsub[k][local_col];
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+
+    if (valid)
+        C_batch[row * P + col] = sum;
+    /*int row = get_global_id(0);
     int col = get_global_id(1);
     int batch = get_global_id(2);
 
@@ -93,7 +166,7 @@ __kernel void matmul_batched(
 
     if (valid) {
         C_batch[row * P + col] = sum;
-    }
+    }*/
 }
 
 __kernel void matmul(
@@ -102,9 +175,61 @@ __kernel void matmul(
     __global float* C,
     const int M,
     const int N,
-    const int P
+    const int P,
+    const int transA,
+    const int transB
 ) {
+    int tiled_row = get_global_id(0);
+    int tiled_col = get_global_id(1);
+    int local_row = get_local_id(0);
+    int local_col = get_local_id(1);
+
     __local float Asub[TILE_SIZE][TILE_SIZE];
+    __local float Bsub[TILE_SIZE][TILE_SIZE];
+
+    float sum = 0.0f;
+
+    int numTiles = (N + TILE_SIZE - 1) / TILE_SIZE;
+    for (int t = 0; t < numTiles; ++t) {
+        int tiled_col_A = t * TILE_SIZE + local_col;
+        int tiled_row_B = t * TILE_SIZE + local_row;
+
+        if (transA == 0) {
+            if (tiled_row < M && tiled_col_A < N)
+                Asub[local_row][local_col] = A[tiled_row * N + tiled_col_A];
+            else
+                Asub[local_row][local_col] = 0.0f;
+        } else {
+            if (tiled_col_A < M && tiled_row < N)
+                Asub[local_row][local_col] = A[tiled_col_A * M + tiled_row];
+            else
+                Asub[local_row][local_col] = 0.0f;
+        }
+
+        if (transB == 0) {
+            if (tiled_row_B < N && tiled_col < P)
+                Bsub[local_row][local_col] = B[tiled_row_B * P + tiled_col];
+            else
+                Bsub[local_row][local_col] = 0.0f;
+        } else {
+            if (tiled_col < N && tiled_row_B < P)
+                Bsub[local_row][local_col] = B[tiled_col * N + tiled_row_B];
+            else
+                Bsub[local_row][local_col] = 0.0f;
+        }
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        for (int k = 0; k < TILE_SIZE; ++k)
+            sum += Asub[local_row][k] * Bsub[k][local_col];
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+
+    if (tiled_row < M && tiled_col < P)
+        C[tiled_row * P + tiled_col] = sum;
+
+    /*__local float Asub[TILE_SIZE][TILE_SIZE];
     __local float Bsub[TILE_SIZE][TILE_SIZE];
 
     int row = get_global_id(0);
@@ -139,7 +264,7 @@ __kernel void matmul(
     }
 
     if (row < M && col < P)
-        C[row * P + col] = sum;
+        C[row * P + col] = sum;*/
 }
 
 __kernel void add(
@@ -224,45 +349,6 @@ __kernel void div(
             a[gid] /= b[j];
         }
     }
-}
-
-__kernel void transpose(
-    __global const float* input,
-    __global float* output,
-    __global const int* srcStrides,
-    __global const int* dstStrides,
-    const int rank
-) {
-    int dstLinearIdx = get_global_id(0);
-    int dstOffset = 0;
-    int srcOffset = 0;
-    int tmp = dstLinearIdx;
-
-    int idx_second_last = 0;
-    int idx_last = 0;
-
-    for (int i = 0; i < rank; i++) {
-        int idx_i = tmp / dstStrides[i];
-        tmp = tmp % dstStrides[i];
-        dstOffset += idx_i * dstStrides[i];
-
-        if (i == rank-2) idx_second_last = idx_i;
-        else if (i == rank-1) idx_last = idx_i;
-    }
-
-    tmp = dstLinearIdx;
-    for (int i = 0; i < rank; i++) {
-        int srcIdx;
-        int idx_i = tmp / dstStrides[i];
-        tmp = tmp % dstStrides[i];
-
-        if (i == rank-2) srcIdx = idx_last;
-        else if (i == rank-1) srcIdx = idx_second_last;
-        else srcIdx = idx_i;
-
-        srcOffset += srcIdx * srcStrides[i];
-    }
-    output[dstOffset] = input[srcOffset];
 }
 
 __kernel void sum_along_dim(

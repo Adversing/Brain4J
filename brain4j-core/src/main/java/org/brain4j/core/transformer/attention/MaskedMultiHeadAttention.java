@@ -30,7 +30,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor cachedQKV = cache.get(weights);
         Tensor QKV; // [batch, seq_len, 3 * H * head_dim]
         
-        if (cachedQKV != null) {
+        if (cachedQKV != null && !cache.training()) {
             Tensor newTokens = input.slice(slicingRanges);
             Tensor proj = newTokens.matmul(weights);
 
@@ -76,7 +76,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
         Tensor result;
         
-        if (cachedOutput != null) {
+        if (cachedOutput != null && !cache.training()) {
             Tensor newOutput = output.slice(slicingRanges);
             Tensor proj = newOutput.matmul(outProj);
 

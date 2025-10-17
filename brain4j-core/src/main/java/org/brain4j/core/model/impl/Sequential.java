@@ -319,7 +319,7 @@ public class Sequential extends Layer implements Model {
                 valid = valid.withGrad();
             }
             
-            result[i] = validated[i].to(device);
+            result[i] = valid.to(device);
         }
 
         if (device != null) {

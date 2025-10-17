@@ -21,10 +21,10 @@ import static org.jocl.CL.*;
 public class GpuTensor extends BaseTensor {
 
     private final Device device;
-    private final TempBuffer shapeBuffer;
-    private final TempBuffer stridesBuffer;
-    private final TempBuffer dataBuffer;
+    private TempBuffer dataBuffer;
     private final int size;
+    private TempBuffer shapeBuffer;
+    private TempBuffer stridesBuffer;
 
     public GpuTensor(Device device, int[] shape, float... data) {
         this.device = device;
@@ -85,6 +85,37 @@ public class GpuTensor extends BaseTensor {
         }
     }
 
+    public GpuTensor(Device device, int[] shape, int[] strides, float... data) {
+        this.device = device;
+        this.size = data.length == 0 ? Tensors.computeSize(shape) : data.length;
+        this.shape = shape;
+        this.strides = strides;
+
+        cl_context context = device.context();
+
+        long shapeSize = (long) Sizeof.cl_int * shape.length;
+        long stridesSize = (long) Sizeof.cl_int * strides.length;
+        long dataSize  = (long) Sizeof.cl_float * this.size;
+
+        long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
+
+        long flags = CL_MEM_READ_WRITE;
+        Pointer dataPointer = null;
+
+        if (data.length > 0) {
+            flags |= CL_MEM_COPY_HOST_PTR;
+            dataPointer = Pointer.to(data);
+        }
+
+        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
+        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
+        cl_mem dataBuffer = clCreateBuffer(context, flags, dataSize, dataPointer, null);
+
+        this.shapeBuffer = new TempBuffer(shapeBuffer);
+        this.stridesBuffer = new TempBuffer(stridesBuffer);
+        this.dataBuffer = new TempBuffer(dataBuffer);
+    }
+
     public GpuTensor(GpuTensor reference, int[] newShape) {
         this.device = reference.device;
         this.size = Tensors.computeSize(newShape);
@@ -138,7 +169,7 @@ public class GpuTensor extends BaseTensor {
         cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
         
         String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched",
-            "add", "sub", "mul", "div", "transpose", "sum_along_dim", "softmax_last_dim", "layer_norm" };
+            "add", "sub", "mul", "div", "sum_along_dim", "softmax_last_dim", "layer_norm" };
 
         for (String kernel : tensorOpsKernels) {
             GpuContext.register(device, kernel, tensorOpsProgram);
@@ -220,39 +251,27 @@ public class GpuTensor extends BaseTensor {
     }
 
     @Override
-    public Tensor transpose() {
-        int rank = rank();
+    public Tensor transpose(int dim1, int dim2) {
+        int rank = shape.length;
 
         if (rank == 1) {
             return reshape(1, elements());
         }
 
         int[] newShape = shape.clone();
+        newShape[dim1] = shape[dim2];
+        newShape[dim2] = shape[dim1];
 
-        newShape[rank - 2] = shape[rank - 1];
-        newShape[rank - 1] = shape[rank - 2];
+        int[] newStrides = strides.clone();
+        newStrides[dim2] = strides[dim1];
+        newStrides[dim1] = strides[dim2];
 
-        GpuTensor result = new GpuTensor(device, newShape);
+        GpuTensor view = new GpuTensor(device, newShape, newStrides);
 
-        if (usesGrad()) result.setAutogradContext(autogradContext);
+        view.dataBuffer = dataBuffer;
+        view.transposed = !transposed;
 
-        int[] newStrides = result.strides();
-        long flags = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-
-        Pointer dstStridesPtr = Pointer.to(newStrides);
-        cl_mem memoryDestStrides = clCreateBuffer(device.context(), flags, newStrides.length * 4L, dstStridesPtr, null);
-
-        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory.create(device, "transpose")
-                .addMemParam(dataBuffer)
-                .addMemParam(result.dataBuffer)
-                .addMemParam(stridesBuffer)
-                .addMemParam(memoryDestStrides)
-                .addIntParam(rank)
-                .launch(queue, 1, elements());
-        }
-
-        return result;
+        return view;
     }
 
     @Override
@@ -465,6 +484,8 @@ public class GpuTensor extends BaseTensor {
                 .addIntParam(K)
                 .addIntParam(P)
                 .addIntParam(batchCount)
+                .addIntParam(transposed ? 1 : 0)
+                .addIntParam(other.transposed() ? 1 : 0)
                 .launch(queue, 3, globalWorkSize, localWorkSize);
         }
         
@@ -510,8 +531,6 @@ public class GpuTensor extends BaseTensor {
                 "The total new dimension (" + newSize + ") does not match the current dimension (" + data().length + ")"
             );
         }
-
-        System.out.println("RESHAPING");
 
         return new GpuTensor(this, newShape);
     }
@@ -648,8 +667,8 @@ public class GpuTensor extends BaseTensor {
 
         for (int i = 0; i < ranges.length; i++) {
             Range range = ranges[i];
-            starts[i] = range.start();
-            steps[i] = range.step();
+            starts[i] = range == null ? 0 : range.start();
+            steps[i] = range == null ? 1 : range.step();
         }
 
         if (usesGrad()) result.setAutogradContext(autogradContext);

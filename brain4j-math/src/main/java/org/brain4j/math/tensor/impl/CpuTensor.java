@@ -38,7 +38,6 @@ public class CpuTensor extends BaseTensor {
     }
 
     public CpuTensor(int[] shape, int[] strides, float... data) {
-
         if (data.length == 0) {
             data = new float[Tensors.computeSize(shape)];
         }
