@@ -96,12 +96,12 @@ public class LLM implements InferenceProvider {
         SoftmaxActivation activation = new SoftmaxActivation(config.temperature());
         
         while (generatedTokens < config.maxLength()) {
-            Tensor logits = model.predict(cache, input)[0].squeeze(); // [vocab_size]
+            Tensor logits = model.predict(cache, input)[0].squeeze().cpu(); // [vocab_size]
             Tensor distribution = logits.activate(activation);
             
             float[] data = distribution.data();
             int[] topTokens = Tensors.topK(config.topK(), data);
-            
+
             int chosen = random.nextInt(topTokens.length);
             int nextToken = topTokens[chosen];
             input = input.concat(Tensors.scalar(nextToken));
