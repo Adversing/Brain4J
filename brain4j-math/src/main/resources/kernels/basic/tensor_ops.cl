@@ -47,77 +47,89 @@ __kernel void matmul_batched(
     const int transA,
     const int transB
 ) {
-    int row = get_global_id(0);
-    int col = get_global_id(1);
-    int batch = get_global_id(2);
+    const int row = get_global_id(0);
+    const int col = get_global_id(1);
+    const int batch = get_global_id(2);
 
-    int local_row = get_local_id(0);
-    int local_col = get_local_id(1);
+    const int local_row = get_local_id(0);
+    const int local_col = get_local_id(1);
 
-    if (batch >= batchCount)
-        return;
+    if (batch >= batchCount) return;
 
-    bool valid = (row < M) && (col < P);
+    const int K = (transA == 0) ? N : M;
 
     const __global float* A_batch = A + offsetsA[batch];
     const __global float* B_batch = B + offsetsB[batch];
     __global float* C_batch = C + offsetsC[batch];
+
+    const int A_rowStride = (transA == 0) ? N : M;
+    const int A_colStride = 1;
+
+    const int B_rowStride = (transB == 0) ? P : N;
+    const int B_colStride = 1;
 
     __local float Asub[TILE_SIZE][TILE_SIZE];
     __local float Bsub[TILE_SIZE][TILE_SIZE];
 
     float sum = 0.0f;
 
-    // Dimensione interna dipende dalla trasposizione
-    int innerDim = (transA == 0 ? N : M);
-    int numTiles = (innerDim + TILE_SIZE - 1) / TILE_SIZE;
+    const int numTiles = (K + TILE_SIZE - 1) / TILE_SIZE;
 
     for (int t = 0; t < numTiles; ++t) {
-        int tiled_col_A = t * TILE_SIZE + local_col;
-        int tiled_row_B = t * TILE_SIZE + local_row;
+        const int tiled_k = t * TILE_SIZE;
 
-        // --- Caricamento A ---
-        if (transA == 0) {
-            // A normale: [row, k]
-            if (row < M && tiled_col_A < N)
-                Asub[local_row][local_col] = A_batch[row * N + tiled_col_A];
-            else
-                Asub[local_row][local_col] = 0.0f;
+        const int a_r = row;
+        const int a_c = tiled_k + local_col;
+        const int b_r = tiled_k + local_row;
+        const int b_c = col;
+
+        if (a_r < M && a_c < K) {
+            if (transA == 0) {
+                Asub[local_row][local_col] = A_batch[a_r * A_rowStride + a_c * A_colStride];
+            } else {
+                Asub[local_row][local_col] = A_batch[a_c * A_rowStride + a_r * A_colStride];
+            }
         } else {
-            // A trasposta: [k, row]
-            if (tiled_col_A < M && row < N)
-                Asub[local_row][local_col] = A_batch[tiled_col_A * M + row];
-            else
-                Asub[local_row][local_col] = 0.0f;
+            Asub[local_row][local_col] = 0.0f;
         }
 
-        // --- Caricamento B ---
-        if (transB == 0) {
-            // B normale: [k, col]
-            if (tiled_row_B < N && col < P)
-                Bsub[local_row][local_col] = B_batch[tiled_row_B * P + col];
-            else
-                Bsub[local_row][local_col] = 0.0f;
+        if (b_r < K && b_c < P) {
+            if (transB == 0) {
+                Bsub[local_row][local_col] = B_batch[b_r * B_rowStride + b_c * B_colStride];
+            } else {
+                Bsub[local_row][local_col] = B_batch[b_c * B_rowStride + b_r * B_colStride];
+            }
         } else {
-            // B trasposta: [col, k]
-            if (col < N && tiled_row_B < P)
-                Bsub[local_row][local_col] = B_batch[col * N + tiled_row_B];
-            else
-                Bsub[local_row][local_col] = 0.0f;
+            Bsub[local_row][local_col] = 0.0f;
         }
 
         barrier(CLK_LOCAL_MEM_FENCE);
 
-        // --- Calcolo tile ---
-        for (int k = 0; k < TILE_SIZE; ++k)
+        for (int k = 0; k < TILE_SIZE; ++k) {
             sum += Asub[local_row][k] * Bsub[k][local_col];
+        }
 
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
-    if (valid)
+    if (row < M && col < P) {
         C_batch[row * P + col] = sum;
-    /*int row = get_global_id(0);
+    }
+}
+
+__kernel void matmul_legacy(
+    __global const float* A,
+    __global const float* B,
+    __global float* C,
+    __global const int* offsetsA,
+    __global const int* offsetsB,
+    __global const int* offsetsC,
+    const int M,
+    const int N,
+    const int P,
+    const int batchCount
+) {
+    int row = get_global_id(0);
     int col = get_global_id(1);
     int batch = get_global_id(2);
 
@@ -166,7 +178,7 @@ __kernel void matmul_batched(
 
     if (valid) {
         C_batch[row * P + col] = sum;
-    }*/
+    }
 }
 
 __kernel void matmul(

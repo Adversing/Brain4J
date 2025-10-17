@@ -230,6 +230,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         if (!transposed) return data;
 
         float[] result = new float[data.length];
+        float[] data = data();
 
         for (int i = 0; i < data.length; i++) {
             int[] srcIndices = unravelIndex(i, shape);

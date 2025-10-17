@@ -471,7 +471,7 @@ public class GpuTensor extends BaseTensor {
         cl_mem memoryA = clCreateBuffer(context, flags, offsetsA.length * 4L, pointerA, null);
         cl_mem memoryB = clCreateBuffer(context, flags, offsetsB.length * 4L, pointerB, null);
         cl_mem memoryC = clCreateBuffer(context, flags, offsetsC.length * 4L, pointerC, null);
-        
+
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "matmul_batched")
                 .addMemParam(dataBuffer)
@@ -526,7 +526,7 @@ public class GpuTensor extends BaseTensor {
     public Tensor reshape(int... newShape) {
         int newSize = Tensors.computeSize(newShape);
 
-        if (newSize != data().length) {
+        if (newSize != size) {
             throw new IllegalArgumentException(
                 "The total new dimension (" + newSize + ") does not match the current dimension (" + data().length + ")"
             );
@@ -755,11 +755,6 @@ public class GpuTensor extends BaseTensor {
         clReleaseCommandQueue(queue);
 
         return buffer;
-    }
-
-    @Override
-    public float[] toArray() {
-        return data();
     }
 
     @Override

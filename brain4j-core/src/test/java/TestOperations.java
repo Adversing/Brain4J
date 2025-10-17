@@ -173,14 +173,16 @@ public class TestOperations {
 
     @Test
     public void transposeTest() {
-        Tensor A = Tensors.random(1, 2, 3, 4);
-        Tensor B = A.transpose();
+        Tensor A = Tensors.random(4, 8);
+        Tensor B = Tensors.random(3, 8);
+        Tensor C = A.matmul(B.transpose());
 
         Tensor gpuA = A.gpu(device);
-        Tensor gpuB = gpuA.transpose();
+        Tensor gpuB = B.gpu(device);
+        Tensor gpuC = gpuA.matmul(gpuB.transpose());
 
-        assertArrayEquals(B.shape(), gpuB.shape());
-        assertArrayEquals(B.toArray(), gpuB.data(), 0.001f);
+        assertArrayEquals(C.shape(), gpuC.shape());
+        assertArrayEquals(C.data(), gpuC.data(), 0.001f);
     }
     
     @Test
