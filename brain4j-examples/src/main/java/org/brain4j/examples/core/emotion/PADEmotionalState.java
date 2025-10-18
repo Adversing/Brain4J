@@ -1,4 +1,4 @@
-package emotion;
+package org.brain4j.examples.core.emotion;
 
 public class PADEmotionalState {
     private final double pleasure;

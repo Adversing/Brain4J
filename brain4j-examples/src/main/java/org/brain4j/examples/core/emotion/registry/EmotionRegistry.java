@@ -1,6 +1,6 @@
-package emotion.registry;
+package org.brain4j.examples.core.emotion.registry;
 
-import emotion.PADEmotionalState;
+import org.brain4j.examples.core.emotion.PADEmotionalState;
 
 import java.util.HashMap;
 import java.util.Map;

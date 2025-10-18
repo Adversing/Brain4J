@@ -1,6 +1,6 @@
-package emotion;
+package org.brain4j.examples.core.emotion;
 
-import emotion.registry.EmotionRegistry;
+import org.brain4j.examples.core.emotion.registry.EmotionRegistry;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.impl.MeanSquaredError;

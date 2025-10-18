@@ -1,3 +1,5 @@
+package org.brain4j.examples.math.tensor;
+
 import org.brain4j.core.Brain4J;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
@@ -10,11 +12,10 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestOperations {
-
+public class TensorTest {
     private final Device device;
 
-    public TestOperations() {
+    public TensorTest() {
         this.device = Brain4J.firstDevice();
         Brain4J.initKernels(device);
     }
@@ -23,25 +24,25 @@ public class TestOperations {
     public void orthogonalTest() {
         Tensor A = Tensors.orthogonal(3, 3);
         Tensor T = Tensors.matrix(3, 3,
-            1, 0, 0,
-            0, 1, 0,
-            0, 0, 1
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1
         );
 
         Tensor R = A.transpose().matmul(A);
         assertArrayEquals(R.data(), T.data(), 0.0001f);
     }
-    
+
     @Test
     public void normTest() {
         double epsilon = 1e-5;
-        
+
         Tensor A = Tensors.random(32, 16, 64);
         Tensor B = A.layerNorm(epsilon);
-        
+
         Tensor gpuA = A.to(device);
         Tensor gpuB = gpuA.layerNorm(epsilon);
-        
+
         assertArrayEquals(B.data(), gpuB.data(), 0.001f);
     }
 
@@ -49,11 +50,11 @@ public class TestOperations {
     public void convTest() {
         Tensor A = Tensors.random(16, 3, 64, 64);
         Tensor B = Tensors.random(3, 7, 7);
-        
+
         Tensor C = A.convolve(B);
         System.out.println("conv shape = " + Arrays.toString(C.shape()));
     }
-    
+
     @Test
     public void concatTest() {
         Tensor A = Tensors.random(2, 3);
@@ -77,7 +78,7 @@ public class TestOperations {
         Tensor gpuA = A.gpu(device);
         Tensor gpuB = B.gpu(device);
         Tensor gpuC = gpuA.matmul(gpuB);
-        
+
         assertArrayEquals(C.shape(), gpuC.shape());
         assertArrayEquals(C.data(), gpuC.data(), 0.001f);
     }
@@ -184,18 +185,18 @@ public class TestOperations {
         assertArrayEquals(C.shape(), gpuC.shape());
         assertArrayEquals(C.data(), gpuC.data(), 0.001f);
     }
-    
+
     @Test
     void testTranspose3D() {
         Tensor t = Tensors.create(new int[]{2, 2, 2}, 1, 2,
-            3, 4,
-            5, 6,
-            7, 8);
-        
+                3, 4,
+                5, 6,
+                7, 8);
+
         Tensor transposed = t.transpose(0, 1);
-        
+
         assertArrayEquals(new int[]{2, 2, 2}, transposed.shape());
-        
+
         assertEquals(1, transposed.get(0, 0, 0));
         assertEquals(5, transposed.get(0, 1, 0));
         assertEquals(3, transposed.get(1, 0, 0));

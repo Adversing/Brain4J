@@ -1,3 +1,5 @@
+package org.brain4j.examples.core.xor;
+
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
@@ -18,8 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestModel {
-
+public class XorTest {
     @Test
     public void xorTest() {
         List<Sample> samples = new ArrayList<>();
@@ -35,25 +36,25 @@ public class TestModel {
 
         ListDataSource dataSource = new ListDataSource(samples, true, 4);
         Brain4J.disableLogging();
-        
+
         Device device = Brain4J.firstDevice();
-        
+
         Model model = Sequential.of(
-            new InputLayer(2),
-            new DenseLayer(32, Activations.RELU),
-            new DenseLayer(32, Activations.RELU),
-            new DenseLayer(1, Activations.SIGMOID)
+                new InputLayer(2),
+                new DenseLayer(32, Activations.RELU),
+                new DenseLayer(32, Activations.RELU),
+                new DenseLayer(1, Activations.SIGMOID)
         );
         model.compile(new BinaryCrossEntropy(), new AdamW(0.01));
         model.to(device);
         dataSource = dataSource.to(device);
         model.fit(dataSource, 500);
-        
+
         EvaluationResult result = model.evaluate(dataSource);
-        
+
         System.out.println("loss = " + result.loss());
         System.out.println("accuracy = " + result.accuracy());
-        
+
         Assertions.assertTrue(result.loss() < 0.005);
     }
 }
