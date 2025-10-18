@@ -201,7 +201,7 @@ public class Sequential extends Layer implements Model {
         double r2 = result.loss() / result.totalDeviation();
         boolean regression = lossFunction.isRegression();
 
-        String lossMsg = "Loss: " + MAGENTA + "%.4f" + RESET;
+        String lossMsg = "Loss: " + MAGENTA + "%." + Brain4J.precision() + "f" + RESET;
         String firstMetric = regression
             ? " | R^2 Score: " + LIGHT_BLUE + "%.2f" + RESET
             : " | Accuracy: " + LIGHT_BLUE + "%.2f%%" + RESET;

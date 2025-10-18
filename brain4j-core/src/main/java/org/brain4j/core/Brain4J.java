@@ -22,6 +22,7 @@ import java.util.List;
 public class Brain4J {
 
     private static boolean logging = true;
+    private static int precision = 4;
 
     public static String version() {
         return "3.0";
@@ -37,6 +38,18 @@ public class Brain4J {
 
     public static void enableLogging() {
         logging = true;
+    }
+
+    public static void setLogging(boolean logging) {
+        Brain4J.logging = logging;
+    }
+
+    public static int precision() {
+        return precision;
+    }
+
+    public static void setPrecision(int precision) {
+        Brain4J.precision = precision;
     }
 
     public static String availableDevices() {

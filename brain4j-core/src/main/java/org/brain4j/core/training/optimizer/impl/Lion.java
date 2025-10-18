@@ -9,33 +9,40 @@ import java.util.Map;
 
 public class Lion extends Optimizer {
 
-    private Map<Tensor, Tensor> momentumHistory;
-    private double beta;
+    protected Map<Tensor, Tensor> momentumHistory = new HashMap<>();
+    protected double beta1 = 0.9;
+    protected double beta2 = 0.99;
     
-    private Lion() {
+    protected Lion() {
         super(0);
     }
-    
-    public Lion(double learningRate, double beta) {
+
+    public Lion(double learningRate) {
         super(learningRate);
-        this.beta = beta;
+    }
+
+    public Lion(double learningRate, double beta, double beta2) {
+        super(learningRate);
+        this.beta1 = beta;
+        this.beta2 = beta2;
     }
 
     @Override
     public Tensor step(Tensor weights, Tensor gradient) {
-        float factor = (float) (1 - beta);
+        float factor2 = (float) (1 - beta2);
+        Tensor scaledGrad2 = gradient.mul(factor2);
 
-        Tensor signGrad = gradient.sign().mul(factor);
-        Tensor momentum = momentumHistory.get(weights);
+        Tensor newMomentum = calcMomentum(weights, gradient);
+        Tensor scaledMomentum = newMomentum.times(beta2);
+        Tensor update = scaledMomentum.add(scaledGrad2).sign();
 
-        if (momentum == null) {
-            momentum = Tensors.zeros(gradient.shape());
-        }
+        momentumHistory.put(weights, newMomentum);
+        return update;
+    }
 
-        momentum.mul(beta).add(signGrad.broadcastLike(momentum));
-        
-        momentumHistory.put(weights, momentum);
-        return momentum.sign();
+    public Tensor calcMomentum(Tensor weights, Tensor gradient) {
+        Tensor momentum = momentumHistory.getOrDefault(weights, Tensors.zerosLike(gradient));
+        return momentum.mul(beta1).add(gradient.mul(1 - beta1));
     }
 
     @Override
@@ -43,11 +50,25 @@ public class Lion extends Optimizer {
         this.momentumHistory = new HashMap<>();
     }
 
-    public double beta() {
-        return beta;
+    public Map<Tensor, Tensor> momentumHistory() {
+        return momentumHistory;
     }
 
-    public void setBeta(float beta) {
-        this.beta = beta;
+    public double beta1() {
+        return beta1;
+    }
+
+    public Lion setBeta1(double beta1) {
+        this.beta1 = beta1;
+        return this;
+    }
+
+    public double beta2() {
+        return beta2;
+    }
+
+    public Lion setBeta2(double beta2) {
+        this.beta2 = beta2;
+        return this;
     }
 }

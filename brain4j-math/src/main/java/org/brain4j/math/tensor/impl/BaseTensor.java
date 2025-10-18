@@ -5,6 +5,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.lang.DoubleToDoubleFunction;
+import org.brain4j.math.pooling.impl.MaxPooling;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
@@ -1084,7 +1085,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor maxPoolGrad(int stride, int windowHeight, int windowWidth) {
         if (!usesGrad()) {
-            throw new IllegalArgumentException("This tensor does not use backflow!");
+            MaxPooling pooling = new MaxPooling(stride, windowHeight, windowWidth);
+            return pooling.pool(this);
         }
 
         return forward(new MaxPoolOperation(stride, windowHeight, windowWidth));
