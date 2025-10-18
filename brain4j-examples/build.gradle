@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.brain4j'
+version = '3.0.0-rc.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation(project(":brain4j-core"))
+    implementation(project(":brain4j-math"))
+    implementation(project(":brain4j-llm"))
+    implementation(project(":brain4j-datasets"))
+    implementation(project(":brain4j-backend-api"))
+    implementation(project(":brain4j-backend-cuda"))
+}
+
+test {
+    useJUnitPlatform()
+}
