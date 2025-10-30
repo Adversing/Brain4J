@@ -29,12 +29,11 @@ public class Lion extends Optimizer {
 
     @Override
     public Tensor step(Tensor weights, Tensor gradient) {
-        float factor2 = (float) (1 - beta2);
-        Tensor scaledGrad2 = gradient.mul(factor2);
+        Tensor scaledGrad = gradient.mul(1 - beta2);
 
         Tensor newMomentum = calcMomentum(weights, gradient);
         Tensor scaledMomentum = newMomentum.times(beta2);
-        Tensor update = scaledMomentum.add(scaledGrad2).sign();
+        Tensor update = scaledMomentum.add(scaledGrad.broadcastLike(scaledMomentum)).sign();
 
         momentumHistory.put(weights, newMomentum);
         return update;
@@ -42,7 +41,8 @@ public class Lion extends Optimizer {
 
     public Tensor calcMomentum(Tensor weights, Tensor gradient) {
         Tensor momentum = momentumHistory.getOrDefault(weights, Tensors.zerosLike(gradient));
-        return momentum.mul(beta1).add(gradient.mul(1 - beta1));
+        Tensor scaledGrad = gradient.mul(1 - beta1);
+        return momentum.mul(beta1).add(scaledGrad.broadcastLike(momentum));
     }
 
     @Override
