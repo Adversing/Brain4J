@@ -781,6 +781,8 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         int rank = rank();
 
+        dimension = Math.floorMod(dimension, rank);
+
         if (dimension < 0 || dimension >= rank) {
             throw new IllegalArgumentException("Invalid dimension: " + dimension);
         }

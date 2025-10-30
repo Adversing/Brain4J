@@ -130,12 +130,11 @@ public class TransformerEncoder extends Layer {
         normalizer1.resetGrad();
         normalizer2.resetGrad();
         upProjection.resetGrad();
-        gateProjection.resetGrad();
         downProjection.resetGrad();
         attention.resetGrad();
 
         if (useGating) {
-            gateProjection.connect(this);
+            gateProjection.resetGrad();
         }
     }
     
