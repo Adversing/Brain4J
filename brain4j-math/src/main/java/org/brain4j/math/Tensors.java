@@ -319,7 +319,10 @@ public class Tensors {
             outWidth
         );
 
-        ForkJoinPool.commonPool().invoke(new Im2ColTask(params, 0, totalPatches));
+        try (var pool = ForkJoinPool.commonPool()) {
+            pool.invoke(new Im2ColTask(params, 0, totalPatches));
+        }
+
         return Tensors.create(new int[]{patchSize, totalPatches}, resultData);
     }
 

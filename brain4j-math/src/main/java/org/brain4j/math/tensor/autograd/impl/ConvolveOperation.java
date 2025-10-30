@@ -5,6 +5,8 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.stream.IntStream;
+
 public class ConvolveOperation implements Operation {
 
     @Override
@@ -38,7 +40,7 @@ public class ConvolveOperation implements Operation {
         int batchSize = inChannels * inHeight * inWidth;
         float[] gradAData = gradA.data();
 
-        for (int b = 0; b < batch; b++) {
+        IntStream.range(0, batch).parallel().forEach(b -> {
             Tensor inputBatch = A.slice(Range.point(b)).squeeze(0); // [C_in, H, W]
             Tensor dOutBatch = gradOutput.slice(Range.point(b)); // [F, H_out, W_out]
 
@@ -47,14 +49,14 @@ public class ConvolveOperation implements Operation {
 
             Tensor dY_col = dOutBatch.reshape(numFilters, outHeight * outWidth);
             Tensor dW_col = dY_col.matmul(X_col.transpose());
-            gradB = gradB.add(dW_col.reshape(B.shape()));
+            gradB.add(dW_col.reshape(B.shape()));
 
             Tensor dX_col = W_col.transpose().matmul(dY_col);
             Tensor dInputBatch = Tensors.col2im(dX_col, inChannels, inHeight, inWidth, filterHeight, filterWidth);
 
             float[] dInputData = dInputBatch.data();
             System.arraycopy(dInputData, 0, gradAData, b * batchSize, batchSize);
-        }
+        });
 
         return new Tensor[]{ gradA, gradB };
     }
