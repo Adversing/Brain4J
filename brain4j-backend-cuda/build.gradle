@@ -1,6 +1,6 @@
 dependencies {
     implementation project(":brain4j-backend-api")
-    implementation files('../libs/cuda4j-1.0.0.jar')
+    implementation rootProject.files('libs/cuda4j-1.0.0.jar')
 }
 
 compileJava {

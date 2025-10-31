@@ -10,9 +10,9 @@ repositories {
 }
 
 dependencies {
-    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
-    testImplementation(platform('org.junit:junit-bom:6.0.0'))
-    testImplementation('org.junit.jupiter:junit-jupiter')
+    testRuntimeOnly(libs.junitPlatform)
+    testImplementation(platform(libs.junitBom))
+    testImplementation(libs.junitJupiter)
 
     implementation(project(":brain4j-core"))
     implementation(project(":brain4j-math"))

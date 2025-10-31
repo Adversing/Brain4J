@@ -1,21 +1,21 @@
 plugins {
     id "java"
-    id "com.gradleup.shadow" version "9.1.0"
-    id "com.google.protobuf" version "0.9.4"
+    alias libs.plugins.shadowJar
+    alias libs.plugins.protobuf
 }
 
 dependencies {
     implementation project(":brain4j-math")
 
-    implementation "com.google.code.gson:gson:2.13.1"
-    implementation "com.google.protobuf:protobuf-java:4.31.1"
+    implementation libs.gson
+    implementation libs.protobufJava
 
-    testImplementation "com.google.guava:guava:32.1.2-jre"
-    testImplementation "org.apache.commons:commons-csv:1.10.0"
+    testImplementation libs.guava
+    testImplementation libs.commonsCsv
 
-    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
-    testImplementation(platform('org.junit:junit-bom:6.0.0'))
-    testImplementation('org.junit.jupiter:junit-jupiter')
+    testRuntimeOnly(libs.junitPlatform)
+    testImplementation(platform(libs.junitBom))
+    testImplementation(libs.junitJupiter)
     testImplementation project(":brain4j-datasets")
 }
 
