@@ -20,8 +20,19 @@ import java.util.random.RandomGenerator;
 
 /**
  * Abstract base class for all neural network layers.
- * Each layer processes input tensors, computes forward and backward passes independently,
- * and holds its own parameters such as weights, biases, activation function and gradient clipper.
+ *
+ * <p>A Layer is the fundamental building block of neural networks in Brain4J.
+ * Each layer:
+ * <ul>
+ *   <li>Processes input tensors through forward/backward passes
+ *   <li>Manages its own parameters (weights, biases)
+ *   <li>Handles activation functions and gradient clipping
+ *   <li>Can be serialized/deserialized for model saving
+ * </ul>
+ *
+ * <p>Layers automatically handle both CPU and GPU execution through the tensor
+ * abstraction, and support automatic differentiation for training.
+ *
  * @author xEcho1337
  */
 public abstract class Layer {

@@ -14,18 +14,47 @@ import java.util.concurrent.ForkJoinTask;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
+/**
+ * Utility factory and helper methods for creating and manipulating {@link Tensor} instances.
+ *
+ * <p>This class centralizes frequently used tensor constructors (scalars, vectors, matrices,
+ * zeros/ones), random generation helpers, broadcasting logic, and a number of indexing
+ * and shape utilities used across the library.
+ *
+ * <p>The helpers are implemented for CPU-backed tensors and delegate to the underlying
+ * tensor implementations (for example {@link org.brain4j.math.tensor.impl.CpuTensor}).
+ */
 public class Tensors {
 
+    /** Number of threads suggested for parallel operations. */
     public static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
+
+    /** Complexity threshold used to decide when to split tasks for parallel algorithms. */
     public static final int SPLIT_COMPLEXITY_THRESHOLD = 1 << 10; // 1024
 
     public static Tensor scalar(double value) {
         return new CpuTensor(new int[]{1}, (float) value);
     }
 
+    /**
+     * Create a scalar {@link Tensor} containing the supplied value.
+     *
+     * @param value the scalar value
+     * @return a rank-1 tensor of length 1 containing the value
+     */
+
     public static Tensor create(int[] shape, float... data) {
         return new CpuTensor(shape, data);
     }
+
+    /**
+     * Create a {@link Tensor} with explicit strides and raw data buffer.
+     *
+     * @param shape the tensor shape
+     * @param strides explicit strides for the tensor
+     * @param data raw float data in row-major order according to given strides
+     * @return a new tensor instance
+     */
 
     public static Tensor create(int[] shape, int[] strides, float... data) {
         return new CpuTensor(shape, strides, data);
@@ -42,6 +71,13 @@ public class Tensors {
     public static Tensor zeros(int... shape) {
         return new CpuTensor(shape);
     }
+
+    /**
+     * Returns a tensor filled with zeros of the requested shape.
+     *
+     * @param shape desired shape
+     * @return a tensor initialized with zeros
+     */
 
     public static Tensor range(int start, int end) {
         int length = end - start;
@@ -124,9 +160,23 @@ public class Tensors {
         return triangularMask(dimension, dimension);
     }
 
+    /**
+     * Create a triangular mask tensor of shape (dimension, dimension) with
+     * negative infinity above the diagonal and zeros on and below it. Useful
+     * for attention masking in transformer models.
+     *
+     * @param dimension the square mask dimension
+     * @return a triangular mask tensor
+     */
+
     public static Tensor concat(Tensor... tensors) {
         return concat(List.of(tensors), -1);
     }
+
+    /**
+     * Concatenate tensors along the provided dimension. If dim is -1 the last
+     * dimension is used.
+     */
 
     public static Tensor concat(List<Tensor> tensors, int dim) {
         Tensor base = tensors.getFirst();
@@ -164,6 +214,14 @@ public class Tensors {
         }
         return result;
     }
+
+    /**
+     * Compute the broadcasted shape of two shapes according to NumPy-style broadcasting rules.
+     *
+     * @param a first shape
+     * @param b second shape
+     * @return resulting broadcast shape
+     */
 
     public static int[] broadcastIndex(int[] outIdx, int[] outShape, int[] targetShape) {
         int offset = outShape.length - targetShape.length;

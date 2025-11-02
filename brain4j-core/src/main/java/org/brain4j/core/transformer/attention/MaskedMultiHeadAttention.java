@@ -11,6 +11,25 @@ import org.brain4j.math.tensor.index.Range;
 
 import java.util.Arrays;
 
+/**
+ * A variant of multi-head attention that uses causal (triangular) masking.
+ *
+ * <p>This attention mechanism ensures that each position can only attend to
+ * previous positions in the sequence, which is essential for autoregressive
+ * models like GPT. It achieves this by adding a triangular mask with negative
+ * infinity values to the attention scores before softmax.
+ *
+ * <p>The masking pattern looks like this for a sequence of length 4:
+ * <pre>
+ *  0  -∞  -∞  -∞
+ *  0   0  -∞  -∞
+ *  0   0   0  -∞
+ *  0   0   0   0
+ * </pre>
+ *
+ * <p>This ensures that when generating text, each token can only see
+ * past tokens, not future ones.
+ */
 public class MaskedMultiHeadAttention extends MultiHeadAttention {
     
     public MaskedMultiHeadAttention(GradientClipper clipper, int headCount, int modelDimension) {

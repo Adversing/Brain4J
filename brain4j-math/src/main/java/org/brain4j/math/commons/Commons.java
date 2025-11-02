@@ -6,7 +6,19 @@ import java.lang.reflect.Constructor;
 import java.time.Duration;
 
 /**
- * General utilities class
+ * General utility methods used across the math module.
+ *
+ * <p>This class provides various helper functions including:
+ * <ul>
+ *   <li>Progress bar and formatting utilities for training output
+ *   <li>Numeric utilities (clamp, modulo, float16 conversion)
+ *   <li>Reflection helpers for instantiating classes
+ *   <li>Tensor classification helpers
+ * </ul>
+ *
+ * <p>Many methods in this class are used internally by the framework's
+ * training and evaluation components.
+ *
  * @author xEcho1337
  */
 public class Commons {
@@ -113,6 +125,19 @@ public class Commons {
                 : String.format("%dm%ds", minutes, secs);
     }
 
+    /**
+     * Parses a classification output tensor into an enum constant.
+     * <p>
+     * Takes a 1D tensor of class probabilities/logits and returns the enum constant
+     * corresponding to the highest score (argmax). Useful for classification tasks
+     * where the output classes are represented by an enum.
+     *
+     * @param outputs the model output tensor (must be 1D)
+     * @param clazz the enum class containing the possible classes
+     * @param <T> the enum type
+     * @return the predicted enum class
+     * @throws IllegalArgumentException if outputs is not 1-dimensional
+     */
     public static <T extends Enum<T>> T parse(Tensor outputs, Class<T> clazz) {
         if (outputs.rank() != 1) {
             throw new IllegalArgumentException("Output tensor must be 1-dimensional!");
@@ -121,6 +146,16 @@ public class Commons {
         return clazz.getEnumConstants()[outputs.argmax()];
     }
 
+    /**
+     * Creates a header string with centered text.
+     * <p>
+     * The text is centered between repeating characters, useful for
+     * creating section headers in console output.
+     *
+     * @param middleText the text to center
+     * @param character the character to repeat around the text
+     * @return a formatted header string
+     */
     public static String getHeader(String middleText, String character) {
         int maxLength = 70;
         int middleLength = middleText.length();

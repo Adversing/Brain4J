@@ -23,11 +23,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * High-level helpers for loading and converting datasets into framework-friendly
+ * data sources.
+ *
+ * <p>This class contains convenience methods to obtain commonly used datasets (for
+ * example MNIST) and utility methods to transform dataset files into the
+ * library's {@link org.brain4j.math.data.DataSource} implementations.
+ */
 public final class Datasets {
 
     private Datasets() {
     }
     
+    /**
+     * Convenience loader for the MNIST dataset.
+     *
+     * @param shuffle whether to shuffle the dataset
+     * @param batchSize the batch size to use in the returned data source
+     * @return a {@link ListDataSource} yielding MNIST (input, label) pairs
+     */
     public static ListDataSource mnist(boolean shuffle, int batchSize) {
         try {
             Dataset dataset = loadDataset("mnist");
@@ -106,6 +121,14 @@ public final class Datasets {
         
         return new ListDataSource(samples, shuffle, batchSize);
     }
+
+    /**
+     * Load a dataset by id using the default loader configuration.
+     *
+     * @param datasetId the dataset identifier (for example "mnist")
+     * @return a {@link Dataset} handle
+     * @throws Exception if loading fails
+     */
 
     public static Dataset loadDataset(String datasetId) throws Exception {
         try (DatasetLoader loader = new DatasetLoader()) {

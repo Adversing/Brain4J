@@ -18,6 +18,27 @@ import java.util.concurrent.ForkJoinPool;
 
 import static org.brain4j.math.Constants.*;
 
+/**
+ * Implementation of Byte Pair Encoding (BPE) tokenization algorithm.
+ *
+ * <p>BPE is a data compression technique that iteratively replaces the most frequent
+ * pairs of bytes (or characters) in a sequence with a single, unused byte. In NLP,
+ * it's used to build vocabulary by merging frequent character pairs into new tokens.
+ *
+ * <p>This tokenizer supports:
+ * <ul>
+ *   <li>Vocabulary loading/saving
+ *   <li>Token splitting with optional word prefix
+ *   <li>Special token handling (BOS/EOS)
+ * </ul>
+ *
+ * <p>Usage example:
+ * <pre>{@code
+ * BytePairTokenizer tokenizer = new BytePairTokenizer("Ġ");  // GPT-style prefix
+ * tokenizer.loadVocab("vocab.json");
+ * List<String> tokens = tokenizer.splitTokens("Hello world");
+ * }</pre>
+ */
 public class BytePairTokenizer implements Tokenizer {
     
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();

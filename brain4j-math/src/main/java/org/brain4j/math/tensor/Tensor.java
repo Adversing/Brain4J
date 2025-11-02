@@ -15,37 +15,82 @@ import org.brain4j.math.tensor.index.Range;
 
 import java.util.function.Supplier;
 
+/**
+ * A multidimensional array that supports vectorized operations.
+ *
+ * <p>The Tensor interface provides:
+ * <ul>
+ *   <li>Vectorized arithmetic operations (add, multiply, divide etc)
+ *   <li>Matrix operations (matmul, transpose, etc)
+ *   <li>Shape manipulation (reshape, squeeze, etc)
+ *   <li>Automatic differentiation support
+ *   <li>CPU and GPU backend compatibility
+ * </ul>
+ *
+ * <p>Tensors can be created via factory methods in {@link org.brain4j.math.Tensors}:
+ * <pre>{@code
+ * // Create tensors
+ * Tensor vector = Tensors.vector(1, 2, 3, 4);
+ * Tensor matrix = Tensors.matrix(2, 2, new float[]{1,2,3,4});
+ *
+ * // Perform operations
+ * Tensor result = matrix.matmul(vector);
+ * }</pre>
+ *
+ * <p>The framework automatically handles moving tensors between CPU and GPU
+ * as needed based on the operations being performed.
+ */
 public interface Tensor extends Iterable<Float> {
 
     /**
-     * Returns the size of the n-dimension.
-     * @param index the n-dimension
-     * @return the dimension size
+     * Returns the size of the specified dimension.
+     *
+     * @param index dimension index
+     * @return size of the dimension
+     * @throws IndexOutOfBoundsException if index >= rank()
      */
     int shape(int index);
 
     /**
-     * Returns the shape of the tensor as an array of integers.
-     * @return the shape of the tensor
+     * Returns the shape (dimensions) of this tensor.
+     * <p>
+     * For example, a 2x3 matrix would return [2, 3], while a
+     * 3D tensor of size 2x3x4 would return [2, 3, 4].
+     *
+     * @return array containing size of each dimension
      */
     int[] shape();
 
     /**
-     * Retrieves the data of the tensor as a float array.
-     * @return the tensor's data
+     * Returns the raw data buffer of this tensor.
+     * <p>
+     * The returned array contains the tensor elements in row-major order.
+     * Note that for efficiency this may return the internal array - do not modify
+     * the returned array unless you are certain that is safe.
+     *
+     * @return float array containing tensor data
      */
     float[] data();
 
     /**
-     * Retrieves the data of the tensor with the right order as a float array.
-     * This is useful when lazy-transposition is enabled.
-     * @return the tensor's data
+     * Returns tensor data in canonical order.
+     * <p>
+     * Unlike {@link #data()}, this method always returns the data in
+     * row-major order, even if the tensor uses a different internal layout
+     * (e.g. due to transposition).
+     *
+     * @return float array containing tensor data in canonical order
      */
     float[] toArray();
 
     /**
-     * Retrieves the strides of the tensor as an array of integers.
-     * @return the strides of the tensor
+     * Returns the stride (step size) for each dimension.
+     * <p>
+     * The stride array indicates how many elements to skip to move
+     * to the next position in each dimension. For example, in a
+     * 2x3 matrix stored in row-major order, the strides would be [3,1].
+     *
+     * @return array containing stride for each dimension
      */
     int[] strides();
     
@@ -88,49 +133,83 @@ public interface Tensor extends Iterable<Float> {
     }
 
     /**
-     * Returns the number of dimensions of the tensor.
-     * @return the number of dimensions
+     * Returns the number of dimensions (rank) of this tensor.
+     * <p>
+     * For example:
+     * <ul>
+     *   <li>A scalar has rank 0
+     *   <li>A vector has rank 1
+     *   <li>A matrix has rank 2
+     *   <li>A 3D tensor has rank 3
+     * </ul>
+     *
+     * @return number of dimensions
      */
     int rank();
 
     /**
-     * Returns the number of elements in the tensor.
-     * @return the number of elements
+     * Returns the total number of elements in this tensor.
+     * <p>
+     * This is equal to the product of all dimension sizes.
+     * For example, a 2x3x4 tensor contains 24 elements.
+     *
+     * @return total number of elements
      */
     int elements();
 
     /**
-     * Finds the index of the maximum value in the tensor.
-     * @return the index of the maximum value
+     * Returns the linear index of the maximum value in this tensor.
+     * <p>
+     * For multi-dimensional tensors, returns the index in flattened (row-major)
+     * order. For example, in a 2x3 matrix, position (1,2) would return index 5.
+     *
+     * @return linear index of maximum element
      */
     int argmax();
 
     /**
-     * Converts the tensor to the specified device type.
-     * @param device the device type convert to
-     * @return the converted tensor
+     * Moves this tensor to the specified compute device.
+     * <p>
+     * If the tensor is already on the target device, returns this tensor.
+     * Otherwise creates a new tensor on the target device with a copy of the data.
+     *
+     * @param device target device, or null for CPU
+     * @return tensor on the target device
      */
     Tensor to(Device device);
 
     /**
-     * Moves this tensor to the GPU. This is analogous to calling to(DeviceType.GPU).
-     * @return the GPU tensor
+     * Moves this tensor to the specified GPU device.
+     * <p>
+     * Convenience method equivalent to {@code to(device)} with explicit
+     * return type for GPU tensors.
+     *
+     * @param device target GPU device
+     * @return tensor on the GPU device
      */
     default GpuTensor gpu(Device device) {
         return (GpuTensor) to(device);
     }
 
     /**
-     * Moves this tensor to the CPU. This is analogous to calling to(DeviceType.CPU).
-     * @return the CPU tensor
+     * Moves this tensor to the CPU.
+     * <p>
+     * Convenience method equivalent to {@code to(null)} with explicit
+     * return type for CPU tensors.
+     *
+     * @return tensor on the CPU
      */
     default CpuTensor cpu() {
         return (CpuTensor) to(null);
     }
 
     /**
-     * Creates a clone of the tensor.
-     * @return a new tensor that is a clone of this tensor
+     * Creates a deep copy of this tensor.
+     * <p>
+     * The clone has its own copy of the data buffer and shape information.
+     * Modifying the clone will not affect the original tensor.
+     *
+     * @return new independent copy of this tensor
      */
     Tensor clone();
 

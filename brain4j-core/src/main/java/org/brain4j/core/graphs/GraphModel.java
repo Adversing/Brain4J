@@ -15,6 +15,22 @@ import org.brain4j.math.tensor.Tensor;
 
 import java.util.*;
 
+/**
+ * A neural network model represented as a directed acyclic graph (DAG).
+ *
+ * <p>Graph models allow for more complex network architectures than sequential
+ * models, supporting multiple inputs/outputs and arbitrary connections between
+ * nodes. Each node in the graph represents an operation (layer) and edges
+ * represent tensor flow between operations.
+ *
+ * <p>This implementation:
+ * <ul>
+ *   <li>Supports importing models from frameworks like ONNX
+ *   <li>Manages tensor flow between operations
+ *   <li>Handles device placement of operations and tensors
+ *   <li>Supports inference only (no training)
+ * </ul>
+ */
 public class GraphModel implements Model {
 
     private final List<GraphNode> nodes;
