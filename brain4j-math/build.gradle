@@ -1,10 +1,10 @@
 plugins {
     id "java"
-    id "com.gradleup.shadow" version "9.1.0"
+    alias libs.plugins.shadowJar
 }
 
 dependencies {
-    implementation "org.jocl:jocl:2.0.5"
+    implementation libs.jocl
     implementation project(":brain4j-backend-api")
 }
 
