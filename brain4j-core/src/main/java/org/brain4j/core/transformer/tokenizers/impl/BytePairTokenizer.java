@@ -396,7 +396,15 @@ public class BytePairTokenizer implements Tokenizer {
                 .mapToInt(x -> x.length)
                 .sum();
     }
-
+    
+    public Normalizer normalizer() {
+        return normalizer;
+    }
+    
+    public List<AddedToken> addedTokens() {
+        return addedTokens;
+    }
+    
     public Map<String, Integer> vocab() {
         return Collections.unmodifiableMap(vocab);
     }

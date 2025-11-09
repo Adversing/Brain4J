@@ -254,12 +254,12 @@ public class TransformerEncoder extends Layer {
         downProjection.setWeights(mappedWeights.get("down_proj.weights"));
         downProjection.setBias(mappedWeights.get("down_proj.bias"));
 
-        normalizer1.setWeights(mappedWeights.get("normalizer_1.weights"));
-        normalizer2.setWeights(mappedWeights.get("normalizer_2.weights"));
+        normalizer1.setWeights(mappedWeights.get("norm_1.weights"));
+        normalizer2.setWeights(mappedWeights.get("norm_2.weights"));
 
         if (normType == NormType.LAYER_NORM) {
-            normalizer1.setBias(mappedWeights.get("normalizer_1.bias"));
-            normalizer2.setBias(mappedWeights.get("normalizer_2.bias"));
+            normalizer1.setBias(mappedWeights.get("norm_1.bias"));
+            normalizer2.setBias(mappedWeights.get("norm_2.bias"));
         }
 
         if (useGating) {
@@ -273,6 +273,9 @@ public class TransformerEncoder extends Layer {
         
         if (attnQkvHasBias) attention.setBias(mappedWeights.get("attention.bias"));
         if (attnOutHasBias) attention.setOutBias(mappedWeights.get("attention.out_bias"));
+        
+        attention.setAttnOutHasBias(attnOutHasBias);
+        attention.setAttnQkvHasBias(attnQkvHasBias);
     }
     
     @Override
