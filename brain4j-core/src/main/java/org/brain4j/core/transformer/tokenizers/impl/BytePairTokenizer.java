@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.brain4j.core.transformer.tokenizers.Tokenizer;
+import org.brain4j.core.transformer.tokenizers.model.AddedToken;
+import org.brain4j.core.transformer.tokenizers.model.Normalizer;
+import org.brain4j.core.transformer.tokenizers.model.Tokenizer;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
@@ -41,26 +43,35 @@ import static org.brain4j.math.Constants.*;
  */
 public class BytePairTokenizer implements Tokenizer {
     
-    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-    private Map<String, Integer> vocab;
-    private Map<String, String[]> merges;
-    private String tokenStarter;
-    private int bosTokenId;
-    private int eosTokenId;
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    
+    protected Normalizer normalizer;
+    protected List<AddedToken> addedTokens;
+    protected Map<String, Integer> vocab;
+    protected Map<String, String[]> merges;
+    protected String tokenStarter;
+    protected String unkToken;
+    protected int bosTokenId;
+    protected int eosTokenId;
     
     public BytePairTokenizer() {
-        this(null);
+        this("Ġ");
     }
     
     public BytePairTokenizer(String tokenStarter) {
+        this.addedTokens = new ArrayList<>();
         this.vocab = new LinkedHashMap<>();
         this.merges = new LinkedHashMap<>();
         this.tokenStarter = tokenStarter;
+        this.unkToken = "[UNK]";
     }
-
+    
     @Override
     public List<String> splitTokens(String input) {
+        if (normalizer != null) {
+            if (normalizer.isLowercase()) input = input.toLowerCase();
+        }
+        
         List<String> output = new ArrayList<>();
 
         for (String word : input.split("\\s+")) {
@@ -130,8 +141,8 @@ public class BytePairTokenizer implements Tokenizer {
         root.addProperty("version", "1.0");
         root.add("truncation", null);
         root.add("padding", null);
-        root.add("added_tokens", GSON.toJsonTree(Collections.emptyList()));
-        root.add("normalizer", null);
+        root.add("added_tokens", GSON.toJsonTree(addedTokens));
+        root.add("normalizer", normalizer == null ? null : GSON.toJsonTree(normalizer));
         
         JsonObject preTokenizer = new JsonObject();
         preTokenizer.addProperty("type", "ByteLevel");
@@ -160,11 +171,9 @@ public class BytePairTokenizer implements Tokenizer {
             mergeStrings.add(pair[0] + " " + pair[1]);
         }
         
+        model.addProperty("unk_token", unkToken);
         model.add("merges", GSON.toJsonTree(mergeStrings));
-        
         model.add("dropout", null);
-        model.add("unk_token", null);
-        
         root.add("model", model);
         
         try (Writer writer = new FileWriter(file)) {
@@ -179,21 +188,19 @@ public class BytePairTokenizer implements Tokenizer {
         try (Reader reader = new FileReader(file)) {
             JsonObject root = GSON.fromJson(reader, JsonObject.class);
             JsonObject model = root.getAsJsonObject("model");
-            JsonObject preTokenizer = root.getAsJsonObject("pre_tokenizer");
             
-            String type = preTokenizer.get("type").getAsString();
+            this.unkToken = model.get("unk_token").getAsString();
             
-            this.tokenStarter = switch (type) {
-                case "ByteLevel" -> "Ġ";
-                case "SentencePiece" -> "▁";
-                default -> "";
-            };
+            if (root.has("normalizer") && root.get("normalizer").isJsonObject()) {
+                this.normalizer = GSON.fromJson(root.getAsJsonObject("normalizer"), Normalizer.class);
+            }
             
-            // vocab
+            Type tokenListType = new TypeToken<List<AddedToken>>() {}.getType();
+            this.addedTokens = GSON.fromJson(root.getAsJsonArray("added_tokens"), tokenListType);
+            
             Type vocabType = new TypeToken<LinkedHashMap<String, Integer>>() {}.getType();
             this.vocab = GSON.fromJson(model.getAsJsonObject("vocab"), vocabType);
             
-            // merges
             List<String> mergeStrings = GSON.fromJson(
                 model.getAsJsonArray("merges"),
                 new TypeToken<List<String>>() {}.getType()
@@ -241,7 +248,9 @@ public class BytePairTokenizer implements Tokenizer {
                 tasks.add(task);
             }
             
-            ForkJoinPool.commonPool().invokeAll(tasks);
+            try (ForkJoinPool pool = ForkJoinPool.commonPool()) {
+                pool.invokeAll(tasks);
+            }
 
             if (pairCounts.isEmpty()) break;
 
@@ -305,8 +314,8 @@ public class BytePairTokenizer implements Tokenizer {
             symbols = getSymbols(symbols, best);
         }
 
-        if (!symbols.isEmpty() && symbols.get(symbols.size() - 1).equals("</w>")) {
-            symbols.remove(symbols.size() - 1);
+        if (!symbols.isEmpty() && symbols.getLast().equals("</w>")) {
+            symbols.removeLast();
         }
 
         return symbols;

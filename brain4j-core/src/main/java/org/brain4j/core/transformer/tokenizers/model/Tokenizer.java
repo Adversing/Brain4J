@@ -1,4 +1,4 @@
-package org.brain4j.core.transformer.tokenizers;
+package org.brain4j.core.transformer.tokenizers.model;
 
 import org.brain4j.math.tensor.Tensor;
 

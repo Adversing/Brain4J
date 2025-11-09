@@ -377,7 +377,7 @@ public class Tensors {
             outWidth
         );
 
-        try (var pool = ForkJoinPool.commonPool()) {
+        try (ForkJoinPool pool = ForkJoinPool.commonPool()) {
             pool.invoke(new Im2ColTask(params, 0, totalPatches));
         }
 

@@ -1,6 +1,6 @@
 package org.brain4j.llm.core.loader;
 
-import org.brain4j.core.transformer.tokenizers.Tokenizer;
+import org.brain4j.core.transformer.tokenizers.model.Tokenizer;
 import org.brain4j.core.transformer.tokenizers.impl.BytePairTokenizer;
 import org.brain4j.llm.api.huggingface.HuggingFaceClient;
 import org.brain4j.llm.api.ModelInfo;

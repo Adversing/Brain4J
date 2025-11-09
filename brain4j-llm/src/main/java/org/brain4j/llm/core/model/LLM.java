@@ -5,8 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.brain4j.core.importing.SafeTensorsConverter;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.Sequential;
-import org.brain4j.core.transformer.tokenizers.Tokenizer;
+import org.brain4j.core.transformer.tokenizers.model.Tokenizer;
 import org.brain4j.core.transformer.tokenizers.impl.BytePairTokenizer;
 import org.brain4j.llm.api.ModelFile;
 import org.brain4j.llm.api.ModelInfo;
@@ -17,7 +16,6 @@ import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.index.Range;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +25,7 @@ import java.util.function.Consumer;
 
 public class LLM implements InferenceProvider {
     
-    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     
     private final String id;
     private final ModelInfo info;
