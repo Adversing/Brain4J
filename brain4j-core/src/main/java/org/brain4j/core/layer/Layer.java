@@ -185,12 +185,12 @@ public abstract class Layer {
      * @param device the device to port the weights on
      */
     public void toDevice(Device device) {
-        if (weights != null) {
-            weights = weights.to(device).withGrad();
+        if (this.weights != null) {
+            this.weights = weights.to(device);
         }
         
-        if (bias != null) {
-            bias = bias.to(device).withGrad();
+        if (this.bias != null) {
+            this.bias = bias.to(device);
         }
     }
 

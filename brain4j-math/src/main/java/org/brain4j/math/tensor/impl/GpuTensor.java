@@ -508,6 +508,7 @@ public class GpuTensor extends BaseTensor {
         for (int i = dim + 1; i < shape.length; i++) innerSize *= shape[i];
 
         GpuTensor result = new GpuTensor(device, newShape);
+        result.setAutogradContext(autogradContext);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "sum_along_dim")
@@ -564,7 +565,6 @@ public class GpuTensor extends BaseTensor {
         for (int i = 0; i < rank - 1; i++) outerSize *= shape[i];
 
         GpuTensor result = new GpuTensor(device, newShape);
-        if (usesGrad()) result.setAutogradContext(autogradContext);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "concat_last_dim")
@@ -616,7 +616,6 @@ public class GpuTensor extends BaseTensor {
         int otherDim = B.shape[dimension];
 
         GpuTensor result = new GpuTensor(device, newShape);
-        if (usesGrad()) result.setAutogradContext(autogradContext);
 
         int totalA = numBlocks * thisDim * blockSize;
         int totalB = numBlocks * otherDim * blockSize;
@@ -671,8 +670,6 @@ public class GpuTensor extends BaseTensor {
             steps[i] = range == null ? 1 : range.step();
         }
 
-        if (usesGrad()) result.setAutogradContext(autogradContext);
-
         Pointer destShapePtr = Pointer.to(newShape);
         Pointer startPtr = Pointer.to(starts);
         Pointer stepPtr = Pointer.to(steps);
@@ -722,6 +719,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor layerNorm(double epsilon) {
         GpuTensor result = new GpuTensor(device, shape);
+        result.setAutogradContext(autogradContext);
 
         int rank = shape.length;
         int featuresSize = shape[rank - 1];
@@ -775,6 +773,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor softmax(double temperature) {
         GpuTensor result = new GpuTensor(device, shape);
+        result.setAutogradContext(autogradContext);
 
         int lastDim = shape[shape.length - 1];
         int rows = size / lastDim;

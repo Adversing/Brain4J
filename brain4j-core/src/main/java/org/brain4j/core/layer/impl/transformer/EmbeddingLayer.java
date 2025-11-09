@@ -59,11 +59,6 @@ public class EmbeddingLayer extends Layer {
     }
     
     @Override
-    public void toDevice(Device device) {
-        // No-op
-    }
-    
-    @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         checkInputLength(1, inputs);
 
@@ -136,6 +131,8 @@ public class EmbeddingLayer extends Layer {
 
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        if (!weights.usesGrad()) return;
+
         Tensor input = cache.input(this)[0];
         Tensor output = cache.output(this)[0];
         Tensor gradOutput = output.grad();
