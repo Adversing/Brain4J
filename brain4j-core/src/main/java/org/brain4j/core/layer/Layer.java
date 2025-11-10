@@ -43,6 +43,7 @@ public abstract class Layer {
 
     protected Tensor weights;
     protected Tensor bias;
+    protected boolean frozen;
     
     public Layer() {
     }
@@ -155,6 +156,7 @@ public abstract class Layer {
      * Freezes all the trainable parameters in this layer.
      */
     public Layer freeze() {
+        this.frozen = true;
         if (this.weights != null) weights.noGrad();
         if (this.bias != null) bias.noGrad();
         return this;
@@ -164,6 +166,7 @@ public abstract class Layer {
      * Unfreezes all the parameters in this layer.
      */
     public Layer unfreeze() {
+        this.frozen = false;
         if (this.weights != null) weights.withGrad();
         if (this.bias != null) bias.withGrad();
         return this;
@@ -258,6 +261,14 @@ public abstract class Layer {
     
     public void setBias(Tensor bias) {
         this.bias = bias;
+    }
+    
+    public boolean frozen() {
+        return frozen;
+    }
+    
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
     }
     
     /**

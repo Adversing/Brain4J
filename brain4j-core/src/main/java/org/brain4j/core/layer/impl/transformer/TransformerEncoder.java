@@ -146,8 +146,16 @@ public class TransformerEncoder extends Layer {
         downProjection.connect(upProjection);
         attention.connect(previous);
 
-        if (useGating) {
-            gateProjection.connect(this);
+        if (useGating) gateProjection.connect(this);
+        
+        if (frozen) {
+            normalizer1.freeze();
+            normalizer2.freeze();
+            upProjection.freeze();
+            downProjection.freeze();
+            attention.freeze();
+            
+            if (useGating) gateProjection.freeze();
         }
 
         return this;

@@ -88,6 +88,7 @@ public class Sequential extends Layer implements Model {
         for (int i = 0; i < size; i++) {
             Layer layer = flattenedAt(i);
             previous = layer.connect(previous);
+            if (layer.frozen()) layer.freeze();
         }
 
         int[] inputSizes = new int[size];
@@ -589,6 +590,7 @@ public class Sequential extends Layer implements Model {
         for (int i = 0; i < size; i++) {
             Layer layer = layerAt(i);
             previous = layer.connect(previous);
+            if (layer.frozen()) layer.freeze();
         }
 
         int[] inputSizes = new int[size];

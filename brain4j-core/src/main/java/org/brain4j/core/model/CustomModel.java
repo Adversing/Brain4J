@@ -138,6 +138,7 @@ public abstract class CustomModel {
         
         for (Layer layer : layers) {
             previous = layer.connect(previous);
+            if (layer.frozen()) layer.freeze();
         }
         
         int[] inputSizes = new int[size];
