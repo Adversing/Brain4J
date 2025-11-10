@@ -191,7 +191,7 @@ public class TransformerEncoder extends Layer {
         }
 
         Tensor attended = attention.forward(cache, input);
-        
+
         if (cache.training()) {
             attended = dropout.forward(cache, attended);
         }
@@ -302,19 +302,25 @@ public class TransformerEncoder extends Layer {
     
     @Override
     public int totalBiases() {
-        return upProjection.totalBiases()
+        int total = upProjection.totalBiases()
             + downProjection.totalBiases()
             + normalizer1.totalBiases()
             + normalizer2.totalBiases();
+
+        if (useGating) total += gateProjection.totalBiases();
+        return total;
     }
     
     @Override
     public int totalWeights() {
-        return upProjection.totalWeights()
+        int total = upProjection.totalWeights()
             + downProjection.totalWeights()
             + normalizer1.totalWeights()
             + normalizer2.totalWeights()
             + attention.totalWeights();
+
+        if (useGating) total += gateProjection.totalWeights();
+        return total;
     }
     
     @Override

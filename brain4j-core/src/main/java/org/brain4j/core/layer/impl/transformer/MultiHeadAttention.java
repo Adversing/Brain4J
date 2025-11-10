@@ -188,7 +188,15 @@ public class MultiHeadAttention extends Layer {
     public int totalWeights() {
         return weights.elements() + outProj.elements();
     }
-    
+
+    @Override
+    public int totalBiases() {
+        int total = 0;
+        if (attnQkvHasBias) total += bias.elements();
+        if (attnOutHasBias) total += outBias.elements();
+        return total;
+    }
+
     /**
      * Resets the autograd state.
      */
