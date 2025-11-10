@@ -9,16 +9,13 @@ import org.brain4j.core.layer.impl.transformer.MultiHeadAttention;
 import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
 import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
 import org.brain4j.core.layer.impl.utility.InputLayer;
-import org.brain4j.core.layer.impl.utility.SliceLayer;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.impl.Sequential;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
-import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class GPT2Adapter implements ArchitectureAdapter {
@@ -87,8 +84,8 @@ public class GPT2Adapter implements ArchitectureAdapter {
             Tensor attnOutBias = weights.get(prefix + "attn.c_proj.bias");
             
             MultiHeadAttention attention = decoder.attention();
-            attention.setAttnQkvHasBias(true);
-            attention.setAttnOutHasBias(true);
+            attention.attnQkvHasBias(true);
+            attention.attnOutHasBias(true);
             
             attention.setWeights(attnWeight);
             attention.setBias(attnBias);

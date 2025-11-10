@@ -100,10 +100,38 @@ public class RecurrentLayer extends Layer {
         cache.rememberOutput(this, output);
         return new Tensor[] { output };
     }
-
+    
     @Override
-    public int size() {
-        return dimension;
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        super.backward(cache, updater, optimizer);
+        
+        Tensor inputWeightsGrad = optimizer.step(inputWeights);
+        Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights);
+        Tensor hiddenBiasGrad = hiddenBias.grad().sum(0, false);
+        
+        clipper.clip(inputWeightsGrad);
+        clipper.clip(hiddenWeightsGrad);
+        clipper.clip(hiddenBiasGrad);
+        
+        updater.change(inputWeights, inputWeightsGrad);
+        updater.change(hiddenWeights, hiddenWeightsGrad);
+        updater.change(hiddenBias, hiddenBiasGrad);
+    }
+    
+    @Override
+    public Layer freeze() {
+        inputWeights.noGrad();
+        hiddenWeights.noGrad();
+        hiddenBias.noGrad();
+        return super.freeze();
+    }
+    
+    @Override
+    public Layer unfreeze() {
+        inputWeights.withGrad();
+        hiddenWeights.withGrad();
+        hiddenBias.withGrad();
+        return super.unfreeze();
     }
     
     @Override
@@ -127,23 +155,6 @@ public class RecurrentLayer extends Layer {
     }
     
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        super.backward(cache, updater, optimizer);
-        
-        Tensor inputWeightsGrad = optimizer.step(inputWeights, inputWeights.grad());
-        Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
-        Tensor hiddenBiasGrad = hiddenBias.grad().sum(0, false);
-        
-        clipper.clip(inputWeightsGrad);
-        clipper.clip(hiddenWeightsGrad);
-        clipper.clip(hiddenBiasGrad);
-        
-        updater.change(inputWeights, inputWeightsGrad);
-        updater.change(hiddenWeights, hiddenWeightsGrad);
-        updater.change(hiddenBias, hiddenBiasGrad);
-    }
-    
-    @Override
     public boolean validInput(Tensor input) {
         return input.rank() == 3;
     }
@@ -151,9 +162,14 @@ public class RecurrentLayer extends Layer {
     @Override
     public void resetGrad() {
         super.resetGrad();
-        inputWeights.zerograd();
-        hiddenWeights.zerograd();
-        hiddenBias.zerograd();
+        inputWeights.zeroGrad();
+        hiddenWeights.zeroGrad();
+        hiddenBias.zeroGrad();
+    }
+    
+    @Override
+    public int size() {
+        return dimension;
     }
     
     @Override

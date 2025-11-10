@@ -74,7 +74,34 @@ public abstract class Layer {
      * @return the output tensors
      */
     public abstract Tensor[] forward(StatesCache cache, Tensor... inputs);
-
+    
+    public Tensor forward(StatesCache cache, Tensor input) {
+        return forward(cache, new Tensor[] { input })[0];
+    }
+    
+    /**
+     * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
+     *
+     * @param cache the states cache of the forward pass
+     * @param updater the updater of this model
+     * @param optimizer the optimizer of this model
+     */
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        if (weights != null && weights.grad() != null) {
+            Tensor weightsGrad = optimizer.step(weights);
+            
+            clipper.clip(weightsGrad);
+            updater.change(weights, weightsGrad);
+        }
+        
+        if (bias != null && bias.grad() != null) {
+            Tensor biasGrad = bias.grad().sum(0, false);
+            
+            clipper.clip(biasGrad);
+            updater.change(bias, biasGrad);
+        }
+    }
+    
     /**
      * Computes the loss (the gradient) with respect to the loss function and launches the autograd.
      * This method should only be called for the last layer of the neural network.
@@ -84,12 +111,7 @@ public abstract class Layer {
      * @param outputs the output tensors
      * @param lossFunction the loss function of this model
      */
-    public void computeLoss(
-        StatesCache cache,
-        Tensor[] labels,
-        Tensor[] outputs,
-        LossFunction lossFunction
-    ) {
+    public void computeLoss(StatesCache cache, Tensor[] labels, Tensor[] outputs, LossFunction lossFunction) {
         Tensor[] preOutputs = cache.output(this);
         
         if (labels.length != outputs.length) {
@@ -115,39 +137,6 @@ public abstract class Layer {
     }
     
     /**
-     * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
-     *
-     * @param cache the states cache of the forward pass
-     * @param updater the updater of this model
-     * @param optimizer the optimizer of this model
-     */
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        if (weights != null && weights.grad() != null) {
-            Tensor weightsGrad = optimizer.step(weights, weights.grad());
-            
-            clipper.clip(weightsGrad);
-            updater.change(weights, weightsGrad);
-        }
-        
-        if (bias != null && bias.grad() != null) {
-            Tensor biasGrad = bias.grad().sum(0, false);
-            
-            clipper.clip(biasGrad);
-            updater.change(bias, biasGrad);
-        }
-    }
-    
-    /**
-     * Returns the output size of this layer, i.e. the number of neurons.
-     * @return the output size
-     */
-    public abstract int size();
-    
-    public Tensor forward(StatesCache cache, Tensor input) {
-        return forward(cache, new Tensor[] { input })[0];
-    }
-    
-    /**
      * Checks if the amount of inputs is greater than the maximum amount.
      * If so, throws an exception, otherwise will do nothing.
      * @param length the maximum amount of accepted inputs
@@ -162,6 +151,24 @@ public abstract class Layer {
         );
     }
     
+    /**
+     * Freezes all the trainable parameters in this layer.
+     */
+    public Layer freeze() {
+        if (this.weights != null) weights.noGrad();
+        if (this.bias != null) bias.noGrad();
+        return this;
+    }
+    
+    /**
+     * Unfreezes all the parameters in this layer.
+     */
+    public Layer unfreeze() {
+        if (this.weights != null) weights.withGrad();
+        if (this.bias != null) bias.withGrad();
+        return this;
+    }
+    
     public void serialize(JsonObject object) {
         // No-op
     }
@@ -171,40 +178,31 @@ public abstract class Layer {
     }
     
     public void loadWeights(Map<String, Tensor> mappedWeights) {
-        if (mappedWeights.containsKey("weights")) {
-            this.weights = mappedWeights.get("weights");
-        }
-        
-        if (mappedWeights.containsKey("bias")) {
-            this.bias = mappedWeights.get("bias");
-        }
+        if (mappedWeights.containsKey("weights")) this.weights = mappedWeights.get("weights");
+        if (mappedWeights.containsKey("bias")) this.bias = mappedWeights.get("bias");
     }
+    
+    /**
+     * Returns the output size of this layer, i.e. the number of neurons.
+     * @return the output size
+     */
+    public abstract int size();
     
     /**
      * Ports the weights of this layer to the specified device memory.
      * @param device the device to port the weights on
      */
     public void toDevice(Device device) {
-        if (this.weights != null) {
-            this.weights = weights.to(device);
-        }
-        
-        if (this.bias != null) {
-            this.bias = bias.to(device);
-        }
+        if (this.weights != null) this.weights = weights.to(device);
+        if (this.bias != null) this.bias = bias.to(device);
     }
 
     /**
      * Resets the gradients for all the weights in this layer.
      */
     public void resetGrad() {
-        if (weights != null) {
-            weights.zerograd();
-        }
-
-        if (bias != null) {
-            bias.zerograd();
-        }
+        if (this.weights != null) weights.zeroGrad();
+        if (this.bias != null) bias.zeroGrad();
     }
 
     /**
@@ -250,18 +248,16 @@ public abstract class Layer {
         return weights;
     }
     
-    public Layer setWeights(Tensor weights) {
+    public void setWeights(Tensor weights) {
         this.weights = weights;
-        return this;
     }
 
     public Tensor bias() {
         return bias;
     }
     
-    public Layer setBias(Tensor bias) {
+    public void setBias(Tensor bias) {
         this.bias = bias;
-        return this;
     }
     
     /**
@@ -269,7 +265,7 @@ public abstract class Layer {
      * @return 0 if bias is <code>null</code>, otherwise the number of elements in the bias tensor
      */
     public int totalBiases() {
-        if (bias == null) return 0;
+        if (this.bias == null) return 0;
 
         return bias.elements();
     }
@@ -279,7 +275,7 @@ public abstract class Layer {
      * @return 0 if the weights is <code>null</code>, otherwise the number of elements in the weights tensor
      */
     public int totalWeights() {
-        if (weights == null) return 0;
+        if (this.weights == null) return 0;
 
         return weights.elements();
     }
@@ -287,8 +283,8 @@ public abstract class Layer {
     public Map<String, Tensor> weightsMap() {
         Map<String, Tensor> result = new HashMap<>();
         
-        if (weights != null) result.put("weights", weights);
-        if (bias != null) result.put("bias", bias);
+        if (this.weights != null) result.put("weights", weights);
+        if (this.bias != null) result.put("bias", bias);
         
         return result;
     }

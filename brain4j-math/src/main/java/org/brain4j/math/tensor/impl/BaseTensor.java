@@ -917,14 +917,20 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         this.autogradContext = new AutogradContext(true);
         return this;
     }
-
+    
+    @Override
+    public Tensor noGrad() {
+        this.autogradContext = null;
+        return this;
+    }
+    
     @Override
     public boolean usesGrad() {
         return autogradContext != null && autogradContext.requiresGrad();
     }
 
     @Override
-    public void zerograd() {
+    public void zeroGrad() {
         if (autogradContext != null) {
             autogradContext.zerograd();
         }

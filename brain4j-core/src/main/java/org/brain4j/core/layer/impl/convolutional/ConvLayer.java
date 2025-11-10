@@ -23,6 +23,7 @@ public class ConvLayer extends Layer {
     
     public ConvLayer() {
     }
+    
     public ConvLayer(int inputChannels, int filters, int kernelWidth, int kernelHeight) {
         this(inputChannels, filters, kernelWidth, kernelHeight, new LinearActivation());
     }
@@ -43,7 +44,6 @@ public class ConvLayer extends Layer {
     public Layer connect(Layer previous) {
         this.bias = Tensors.zeros(filters).withGrad();
         this.weights = Tensors.zeros(filters, channels, kernelHeight, kernelWidth).withGrad();
-        
         return this;
     }
     
@@ -65,11 +65,6 @@ public class ConvLayer extends Layer {
 
         return new Tensor[] { added.activateGrad(activation) };
     }
-
-    @Override
-    public int size() {
-        return filters;
-    }
     
     @Override
     public void serialize(JsonObject object) {
@@ -89,6 +84,11 @@ public class ConvLayer extends Layer {
         this.kernelHeight = object.get("kernel_height").getAsInt();
         this.stride = object.get("stride").getAsInt();
         this.padding = object.get("padding").getAsInt();
+    }
+    
+    @Override
+    public int size() {
+        return filters;
     }
     
     @Override

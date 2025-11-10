@@ -701,6 +701,12 @@ public interface Tensor extends Iterable<Float> {
      * @return the current tensor
      */
     Tensor withGrad();
+    
+    /**
+     * Disables autograd for this tensor.
+     * @return the current tensor
+     */
+    Tensor noGrad();
 
     /**
      * Returns whether this tensor uses autograd.
@@ -711,7 +717,7 @@ public interface Tensor extends Iterable<Float> {
     /**
      * Zeros the gradient for this tensor.
      */
-    void zerograd();
+    void zeroGrad();
 
     /**
      * Gets the gradient for this tensor.

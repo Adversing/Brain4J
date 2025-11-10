@@ -109,9 +109,9 @@ public class TransformerEncoder extends Layer {
         this.attention = createAttention(numHeads, embeddingDim);
 
         if (useGating) this.gateProjection = new DenseLayer(projDim);
-
-        attention.setAttnQkvHasBias(attnQkvHasBias);
-        attention.setAttnOutHasBias(attnOutHasBias);
+        
+        attention.attnQkvHasBias(attnQkvHasBias);
+        attention.attnOutHasBias(attnOutHasBias);
     }
 
     public Layer createNormLayer() {
@@ -236,11 +236,6 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public int size() {
-        return embeddingDim;
-    }
-    
-    @Override
     public void loadWeights(Map<String, Tensor> mappedWeights) {
         this.upProjection = new DenseLayer(0);
         this.downProjection = new DenseLayer(0);
@@ -274,8 +269,32 @@ public class TransformerEncoder extends Layer {
         if (attnQkvHasBias) attention.setBias(mappedWeights.get("attention.bias"));
         if (attnOutHasBias) attention.setOutBias(mappedWeights.get("attention.out_bias"));
         
-        attention.setAttnOutHasBias(attnOutHasBias);
-        attention.setAttnQkvHasBias(attnQkvHasBias);
+        attention.attnOutHasBias(attnOutHasBias);
+        attention.attnQkvHasBias(attnQkvHasBias);
+    }
+    
+    @Override
+    public Layer freeze() {
+        upProjection.freeze();
+        gateProjection.freeze();
+        gateProjection.freeze();
+        downProjection.freeze();
+        normalizer1.freeze();
+        normalizer2.freeze();
+        attention.freeze();
+        return super.freeze();
+    }
+    
+    @Override
+    public Layer unfreeze() {
+        upProjection.unfreeze();
+        gateProjection.unfreeze();
+        gateProjection.unfreeze();
+        downProjection.unfreeze();
+        normalizer1.unfreeze();
+        normalizer2.unfreeze();
+        attention.unfreeze();
+        return super.unfreeze();
     }
     
     @Override
@@ -298,6 +317,11 @@ public class TransformerEncoder extends Layer {
         this.dropoutRate = object.get("dropout").getAsDouble();
         this.numHeads = object.get("heads").getAsInt();
         this.embeddingDim = object.get("embedding_dim").getAsInt();
+    }
+    
+    @Override
+    public int size() {
+        return embeddingDim;
     }
     
     @Override

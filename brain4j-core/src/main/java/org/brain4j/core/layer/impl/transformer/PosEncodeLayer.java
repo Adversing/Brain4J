@@ -66,11 +66,6 @@ public class PosEncodeLayer extends Layer {
 
         return new Tensor[] { output };
     }
-
-    @Override
-    public int size() {
-        return dimension;
-    }
     
     @Override
     public void serialize(JsonObject object) {
@@ -85,15 +80,18 @@ public class PosEncodeLayer extends Layer {
     }
     
     @Override
-    public Layer setWeights(Tensor weights) {
+    public int size() {
+        return dimension;
+    }
+    
+    @Override
+    public void setWeights(Tensor weights) {
         this.length = weights.shape(0);
         
         for (int i = 0; i < length; i++) {
             Tensor slice = weights.slice(Range.point(i), Range.all());
             preGenerated.put(i, slice.squeeze());
         }
-        
-        return this;
     }
     
     public Tensor generate(int position, int embeddingDim) {

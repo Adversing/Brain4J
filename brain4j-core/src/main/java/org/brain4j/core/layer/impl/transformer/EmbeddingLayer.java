@@ -113,8 +113,39 @@ public class EmbeddingLayer extends Layer {
     }
     
     @Override
-    public int size() {
-        return embeddingDim;
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        if (!weights.usesGrad()) return;
+        
+        Tensor input = cache.input(this)[0];
+        Tensor output = cache.output(this)[0];
+        Tensor gradOutput = output.grad();
+        
+        int[] shape = output.shape();
+        
+        int batchSize = shape[0];
+        int seqLength = shape[1];
+        
+        Tensor weightsGrad = weights.grad();
+        
+        if (weightsGrad == null) {
+            weightsGrad = Tensors.zeros(weights.shape());
+        }
+        
+        for (int b = 0; b < batchSize; b++) {
+            for (int s = 0; s < seqLength; s++) {
+                int tokenId = (int) input.get(b, s);
+                
+                for (int d = 0; d < embeddingDim; d++) {
+                    float gradient = gradOutput.get(b, s, d);
+                    weightsGrad.set(gradient, tokenId, d);
+                }
+            }
+        }
+        
+        Tensor optimized = optimizer.step(weights, weightsGrad);
+        
+        clipper.clip(optimized);
+        updater.change(weights, optimized);
     }
     
     @Override
@@ -128,40 +159,9 @@ public class EmbeddingLayer extends Layer {
         this.vocabSize =  object.get("vocab_size").getAsInt();
         this.embeddingDim = object.get("embedding_dim").getAsInt();
     }
-
+    
     @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        if (!weights.usesGrad()) return;
-
-        Tensor input = cache.input(this)[0];
-        Tensor output = cache.output(this)[0];
-        Tensor gradOutput = output.grad();
-
-        int[] shape = output.shape();
-
-        int batchSize = shape[0];
-        int seqLength = shape[1];
-
-        Tensor weightsGrad = weights.grad();
-
-        if (weightsGrad == null) {
-            weightsGrad = Tensors.zeros(weights.shape());
-        }
-
-        for (int b = 0; b < batchSize; b++) {
-            for (int s = 0; s < seqLength; s++) {
-                int tokenId = (int) input.get(b, s);
-
-                for (int d = 0; d < embeddingDim; d++) {
-                    float gradient = gradOutput.get(b, s, d);
-                    weightsGrad.set(gradient, tokenId, d);
-                }
-            }
-        }
-
-        Tensor optimized = optimizer.step(weights, weightsGrad);
-
-        clipper.clip(optimized);
-        updater.change(weights, optimized);
+    public int size() {
+        return embeddingDim;
     }
 }

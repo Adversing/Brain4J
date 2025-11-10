@@ -22,15 +22,16 @@ import java.util.Map;
 import java.util.random.RandomGenerator;
 
 public class LiquidLayer extends Layer {
-
+    
+    private DenseLayer hiddenParams;
+    private DenseLayer tauParams;
+    private NumericalSolver solver;
+    
+    /* Hyper parameters */
     private int dimension;
     private double tauMin;
     private double tauMax;
     private boolean returnSequences;
-
-    private DenseLayer hiddenParams;
-    private DenseLayer tauParams;
-    private NumericalSolver solver;
 
     private LiquidLayer() {
     }
@@ -111,7 +112,7 @@ public class LiquidLayer extends Layer {
             hiddenStates.add(hidden.reshapeGrad(batch, 1, dimension));
         }
 
-        if (returnSequences) {
+        if (this.returnSequences) {
             hidden = Tensors.concatGrad(hiddenStates, 1);
         }
 
@@ -124,7 +125,23 @@ public class LiquidLayer extends Layer {
         this.hiddenParams.backward(cache, updater, optimizer);
         this.tauParams.backward(cache, updater, optimizer);
     }
-
+    
+    @Override
+    public Layer freeze() {
+        super.freeze();
+        this.hiddenParams.freeze();
+        this.tauParams.freeze();
+        return this;
+    }
+    
+    @Override
+    public Layer unfreeze() {
+        super.unfreeze();
+        this.hiddenParams.unfreeze();
+        this.tauParams.unfreeze();
+        return this;
+    }
+    
     @Override
     public void serialize(JsonObject object) {
         object.addProperty("dimension", dimension);
@@ -161,7 +178,7 @@ public class LiquidLayer extends Layer {
         this.hiddenParams.resetGrad();
         this.tauParams.resetGrad();
     }
-
+    
     @Override
     public int size() {
         return dimension;

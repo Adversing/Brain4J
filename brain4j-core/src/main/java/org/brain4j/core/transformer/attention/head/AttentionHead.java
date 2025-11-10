@@ -60,15 +60,14 @@ public class AttentionHead {
     }
 
     public void backward(Updater updater, Optimizer optimizer) {
-        Tensor qkvGrad = qkvWeights.grad();
-        Tensor optimizedQkv = optimizer.step(qkvWeights, qkvGrad);
+        Tensor optimizedQkv = optimizer.step(qkvWeights);
         
         clipper.clip(optimizedQkv);
         updater.change(qkvWeights, optimizedQkv);
     }
 
     public void resetGrad() {
-        qkvWeights.zerograd();
+        qkvWeights.zeroGrad();
     }
     
     public GradientClipper clipper() {

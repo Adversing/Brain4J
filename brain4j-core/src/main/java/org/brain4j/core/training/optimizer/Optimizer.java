@@ -31,6 +31,21 @@ public abstract class Optimizer {
     public Optimizer(double learningRate) {
         this.learningRate = learningRate;
     }
+    
+    /**
+     * Performs a single optimization step.
+     * <p>
+     * This method updates the provided weights based on the gradient tensor
+     * and the specific optimization algorithm implemented by the subclass.
+     *
+     * @apiNote this method delegates to {@link #step(Tensor, Tensor)} with the pre-calculated gradient
+     * @param weights the weights tensor
+     * @return the optimized weight tensor
+     */
+    public Tensor step(Tensor weights) {
+        return step(weights, weights.grad());
+    }
+    
     /**
      * Performs a single optimization step.
      * <p>

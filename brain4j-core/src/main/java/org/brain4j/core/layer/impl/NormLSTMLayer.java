@@ -128,8 +128,46 @@ public class NormLSTMLayer extends Layer {
     }
     
     @Override
-    public int size() {
-        return hiddenDimension;
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        super.backward(cache, updater, optimizer);
+        
+        Tensor weightsGrad = optimizer.step(hiddenWeights);
+        Tensor optimizedGateGrad = optimizer.step(normGateWeights);
+        Tensor optimizedCellGrad = optimizer.step(normCellWeights);
+        Tensor gateBiasGrad = normGateBias.grad().sum(0, false);
+        Tensor cellBiasGrad = normCellBias.grad().sum(0, false);
+        
+        clipper.clip(weightsGrad);
+        clipper.clip(optimizedGateGrad);
+        clipper.clip(optimizedCellGrad);
+        clipper.clip(gateBiasGrad);
+        clipper.clip(cellBiasGrad);
+        
+        updater.change(hiddenWeights, weightsGrad);
+        updater.change(normGateWeights, optimizedGateGrad);
+        updater.change(normCellWeights, optimizedCellGrad);
+        updater.change(normGateBias, gateBiasGrad);
+        updater.change(normCellBias, cellBiasGrad);
+    }
+    
+    @Override
+    public Layer freeze() {
+        hiddenWeights.noGrad();
+        normGateWeights.noGrad();
+        normGateBias.noGrad();
+        normCellWeights.noGrad();
+        normCellBias.noGrad();
+        return super.freeze();
+    }
+    
+    @Override
+    public Layer unfreeze() {
+        hiddenWeights.withGrad();
+        normGateWeights.withGrad();
+        normGateBias.withGrad();
+        normCellWeights.withGrad();
+        normCellBias.withGrad();
+        return super.unfreeze();
     }
     
     @Override
@@ -147,36 +185,18 @@ public class NormLSTMLayer extends Layer {
         super.loadWeights(mappedWeights);
         this.hiddenWeights = mappedWeights.get("hidden_weights");
     }
-    
-    @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        super.backward(cache, updater, optimizer);
-        
-        Tensor weightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
-        Tensor optimizedGateGrad = optimizer.step(normGateWeights, normGateWeights.grad());
-        Tensor optimizedCellGrad = optimizer.step(normCellWeights, normCellWeights.grad());
-        Tensor gateBiasGrad = normGateBias.grad().sum(0, false);
-        Tensor cellBiasGrad = normCellBias.grad().sum(0, false);
-
-        clipper.clip(weightsGrad);
-        clipper.clip(optimizedGateGrad);
-        clipper.clip(optimizedCellGrad);
-        clipper.clip(gateBiasGrad);
-        clipper.clip(cellBiasGrad);
-
-        updater.change(hiddenWeights, weightsGrad);
-        updater.change(normGateWeights, optimizedGateGrad);
-        updater.change(normCellWeights, optimizedCellGrad);
-        updater.change(normGateBias, gateBiasGrad);
-        updater.change(normCellBias, cellBiasGrad);
-    }
 
     @Override
     public void resetGrad() {
         super.resetGrad();
-        hiddenWeights.zerograd();
+        hiddenWeights.zeroGrad();
     }
-
+    
+    @Override
+    public int size() {
+        return hiddenDimension;
+    }
+    
     @Override
     public int totalBiases() {
         return bias.elements();

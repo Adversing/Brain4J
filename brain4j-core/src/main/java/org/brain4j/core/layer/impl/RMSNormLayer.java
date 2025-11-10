@@ -54,12 +54,7 @@ public class RMSNormLayer extends Layer {
 
         return new Tensor[] { norm };
     }
-
-    @Override
-    public int size() {
-        return weights.elements();
-    }
-
+    
     @Override
     public void serialize(JsonObject object) {
         object.addProperty("epsilon", epsilon);
@@ -68,6 +63,11 @@ public class RMSNormLayer extends Layer {
     @Override
     public void deserialize(JsonObject object) {
         this.epsilon = object.get("epsilon").getAsDouble();
+    }
+    
+    @Override
+    public int size() {
+        return weights.elements();
     }
 
     public double epsilon() {

@@ -42,7 +42,7 @@ public class NormLayer extends Layer {
     public Layer connect(Layer previous) {
         this.weights = Tensors.ones(previous.size()).withGrad();
         this.bias = Tensors.zeros(previous.size()).withGrad();
-
+        
         return this;
     }
     

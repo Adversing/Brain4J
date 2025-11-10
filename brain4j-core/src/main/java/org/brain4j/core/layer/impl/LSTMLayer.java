@@ -116,8 +116,24 @@ public class LSTMLayer extends Layer {
     }
     
     @Override
-    public int size() {
-        return hiddenDimension;
+    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
+        super.backward(cache, updater, optimizer);
+        
+        Tensor weightsGrad = optimizer.step(hiddenWeights);
+        clipper.clip(weightsGrad);
+        updater.change(hiddenWeights, weightsGrad);
+    }
+    
+    @Override
+    public Layer freeze() {
+        hiddenWeights.noGrad();
+        return super.freeze();
+    }
+    
+    @Override
+    public Layer unfreeze() {
+        hiddenWeights.withGrad();
+        return super.unfreeze();
     }
     
     @Override
@@ -137,23 +153,18 @@ public class LSTMLayer extends Layer {
         super.loadWeights(mappedWeights);
         this.hiddenWeights = mappedWeights.get("hidden_weights");
     }
-    
-    @Override
-    public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
-        super.backward(cache, updater, optimizer);
-
-        Tensor weightsGrad = optimizer.step(hiddenWeights, hiddenWeights.grad());
-        
-        clipper.clip(weightsGrad);
-        updater.change(hiddenWeights, weightsGrad);
-    }
 
     @Override
     public void resetGrad() {
         super.resetGrad();
-        hiddenWeights.zerograd();
+        hiddenWeights.zeroGrad();
     }
-
+    
+    @Override
+    public int size() {
+        return hiddenDimension;
+    }
+    
     @Override
     public int totalBiases() {
         return bias.elements();
