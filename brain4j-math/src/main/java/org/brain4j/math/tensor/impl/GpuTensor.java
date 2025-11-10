@@ -773,7 +773,6 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor softmax(double temperature) {
         GpuTensor result = new GpuTensor(device, shape);
-        result.setAutogradContext(autogradContext);
 
         int lastDim = shape[shape.length - 1];
         int rows = size / lastDim;

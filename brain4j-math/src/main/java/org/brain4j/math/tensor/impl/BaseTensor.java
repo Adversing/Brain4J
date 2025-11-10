@@ -681,19 +681,12 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public Tensor mean(int dim, boolean keepDim) {
         dim = Commons.mod(dim, shape.length);
+        float divisor = shape[dim];
 
         Tensor summed = this.sum(dim, keepDim);
+        Tensor result = summed.div(divisor);
 
-        float divisor = shape[dim];
-        float[] resultData = summed.data().clone();
-
-        for (int i = 0; i < resultData.length; i++) {
-            resultData[i] /= divisor;
-        }
-
-        Tensor result = Tensors.create(summed.shape(), resultData);
         result.setAutogradContext(autogradContext);
-        
         return result;
     }
     
