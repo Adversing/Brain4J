@@ -188,9 +188,11 @@ public class BytePairTokenizer implements Tokenizer {
         try (Reader reader = new FileReader(file)) {
             JsonObject root = GSON.fromJson(reader, JsonObject.class);
             JsonObject model = root.getAsJsonObject("model");
-            
-            this.unkToken = model.get("unk_token").getAsString();
-            
+
+            if (model.has("unk_token") && model.get("unk_token").isJsonObject()) {
+                this.unkToken = model.get("unk_token").getAsString();
+            }
+
             if (root.has("normalizer") && root.get("normalizer").isJsonObject()) {
                 this.normalizer = GSON.fromJson(root.getAsJsonObject("normalizer"), Normalizer.class);
             }

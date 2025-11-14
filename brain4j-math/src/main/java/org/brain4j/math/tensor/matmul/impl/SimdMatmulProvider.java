@@ -9,7 +9,6 @@ import org.brain4j.math.tensor.matmul.MatmulProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
@@ -17,7 +16,6 @@ public class SimdMatmulProvider implements MatmulProvider {
 
     private static final VectorSpecies<Float> FLOAT_SPECIES = FloatVector.SPECIES_PREFERRED;
     private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_PREFERRED;
-    private static final int VL = INT_SPECIES.length();
 
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int PARALLEL_COMPLEXITY_THRESHOLD = 65536;
@@ -34,8 +32,6 @@ public class SimdMatmulProvider implements MatmulProvider {
         return work > SPLIT_WORK_THRESHOLD && work * np > SPLIT_COMPLEXITY_THRESHOLD;
     }
 
-    private final int[] strideArray = new int[VL];
-    
     @Override
     public void multiply(Tensor a, Tensor b, Tensor c) {
         float[] A = a.data();
@@ -70,7 +66,7 @@ public class SimdMatmulProvider implements MatmulProvider {
         int mp = m * p;
         
         if (!isOverParallelThreshold(work, np)) {
-            matmulBlock(A, B, C, 0, work, m, n, p, mn, np, mp, batchA, batchB, a.transposed(), b.transposed());
+            matmulBlock(A, B, C, 0, work, m, n, p, mn, np, mp, batchA, batchB);
             return;
         }
 
@@ -94,8 +90,7 @@ public class SimdMatmulProvider implements MatmulProvider {
         int start, int end,
         int m, int n, int p,
         int mn, int np, int mp,
-        int batchA, int batchB,
-        boolean transposedA, boolean transposedB
+        int batchA, int batchB
     ) {
         if (batchA == 1 && batchB == 1) {
             matmulSimple(a, b, c, start, end, m, n, p, mn, np, mp);
@@ -201,8 +196,7 @@ public class SimdMatmulProvider implements MatmulProvider {
                     start, end,
                     parameters.m(), parameters.n(), parameters.p(),
                     parameters.mn(), parameters.np(), parameters.mp(),
-                    parameters.batchA(), parameters.batchB(),
-                    parameters.transposedA(), parameters.transposedB()
+                    parameters.batchA(), parameters.batchB()
                 );
             }
         }

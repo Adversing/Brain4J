@@ -12,6 +12,7 @@ import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.jocl.*;
+import org.lwjgl.opencl.CL10;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -21,10 +22,10 @@ import static org.jocl.CL.*;
 public class GpuTensor extends BaseTensor {
 
     private final Device device;
-    private TempBuffer dataBuffer;
+    private final TempBuffer shapeBuffer;
+    private final TempBuffer stridesBuffer;
     private final int size;
-    private TempBuffer shapeBuffer;
-    private TempBuffer stridesBuffer;
+    private TempBuffer dataBuffer;
 
     public GpuTensor(Device device, int[] shape, float... data) {
         this.device = device;

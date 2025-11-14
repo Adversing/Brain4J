@@ -35,12 +35,10 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
     protected List<Sample> samples;
     protected final List<Tensor[]> batchedInputs;
     protected final List<Tensor[]> batchedLabels;
-    protected int batchSize;
     protected final int batches;
-
-    protected Pair<Tensor[], Tensor> cachedDataset;
     protected Device device;
     protected int cursor;
+    protected int batchSize;
 
     /**
      * Constructs a new ListDataSource from a given list of samples.
@@ -246,7 +244,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
     public ListDataSource clone() {
         try {
             ListDataSource clone = (ListDataSource) super.clone();
-            
+
             clone.samples = new ArrayList<>();
             clone.batchSize = batchSize;
             

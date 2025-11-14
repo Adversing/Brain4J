@@ -21,6 +21,7 @@ commonsCompress = "1.28.0"
 pngj = "2.1.0"
 parquetAvro = "1.15.2"
 hadoop = "3.4.2"
+lwjgl = "3.3.6"
 
 [plugins]
 shadowJar = { id = "com.gradleup.shadow", version.ref = "shadowJar" }
@@ -56,3 +57,8 @@ junitPlatform = { group = "org.junit.platform", name = "junit-platform-launcher"
 jocl = { group = "org.jocl", name = "jocl", version.ref = "jocl" }
 typesafeConfig = { group = "com.typesafe", name = "config", version.ref = "typesafeConfig" }
 pngj = { group = "ar.com.hjg", name = "pngj", version.ref = "pngj" }
+
+# LWJGL
+lwjglBom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl"}
+lwjgl = { group = "org.lwjgl", name = "lwjgl" }
+lwjglOpenCL = { group = "org.lwjgl", name = "lwjgl-opencl" }
