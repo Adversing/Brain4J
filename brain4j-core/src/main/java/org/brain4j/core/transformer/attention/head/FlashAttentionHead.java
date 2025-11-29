@@ -14,14 +14,13 @@ public class FlashAttentionHead extends AttentionHead {
 
     @Override
     public Tensor attend(Tensor input) {
-        // Try fused path only for GPU tensors without autograd
         boolean canFuse = (input instanceof GpuTensor) && !input.usesGrad();
 
         int batch = input.shape(0);
         int seq = input.shape(1);
         int d = headDimension;
 
-        // Project to QKV (no-grad if possible)
+        // project to QKV (no-grad if possible)
         Tensor QKV = canFuse ? input.matmul(qkvWeights) : input.matmulGrad(qkvWeights);
 
         Range all = Range.all();
@@ -30,7 +29,7 @@ public class FlashAttentionHead extends AttentionHead {
         Tensor V = QKV.slice(all, all, Range.interval(2 * d, 3 * d));
 
         if (canFuse) {
-            // Shapes to [B,1,L,d]
+            // shapes to [B,1,L,d]
             Q = Q.reshape(batch, seq, d).unsqueeze(1);
             K = K.reshape(batch, seq, d).unsqueeze(1);
             V = V.reshape(batch, seq, d).unsqueeze(1);
@@ -43,7 +42,7 @@ public class FlashAttentionHead extends AttentionHead {
             // fallthrough if context null
         }
 
-        // Fallback to standard path with autograd support
+        // fallback to standard path with autograd support
         return super.attend(input);
     }
 }

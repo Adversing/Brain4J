@@ -32,20 +32,20 @@ import java.util.Arrays;
  * past tokens, not future ones.
  */
 public class MaskedMultiHeadAttention extends MultiHeadAttention {
-    
+
     public MaskedMultiHeadAttention(GradientClipper clipper, int headCount, int modelDimension) {
         super(clipper, headCount, modelDimension);
     }
-    
+
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor input = inputs[0];
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        // Fast path: fused FlashAttention (causal) for inference without cache
+        // fast path: fused FlashAttention (causal) for inference without cache
         if (useFlashAttention && input instanceof GpuTensor && !cache.training()) {
-            // Skip fast path if we are using incremental cache
+            // skip fast path if we are using incremental cache
             Tensor cachedQKV = cache.get(weights);
             if (cachedQKV == null) {
                 int H = headCount;
@@ -54,45 +54,45 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
                 Tensor QKV = input.matmul(weights);
                 if (attnQkvHasBias) QKV = QKV.add(bias);
 
-                                                                                Range all = Range.all();
+                Range all = Range.all();
                 Tensor Q = QKV.slice(all, all, Range.interval(0, embeddingDim))
-                    .reshape(batch, seqLength, H, d)
-                    .transpose(1, 2); // [B,H,L,d]
+                        .reshape(batch, seqLength, H, d)
+                        .transpose(1, 2); // [B,H,L,d]
                 Tensor K = QKV.slice(all, all, Range.interval(embeddingDim, 2 * embeddingDim))
-                    .reshape(batch, seqLength, H, d)
-                    .transpose(1, 2); // [B,H,L,d]
+                        .reshape(batch, seqLength, H, d)
+                        .transpose(1, 2); // [B,H,L,d]
                 Tensor V = QKV.slice(all, all, Range.interval(2 * embeddingDim, 3 * embeddingDim))
-                    .reshape(batch, seqLength, H, d)
-                    .transpose(1, 2); // [B,H,L,d]
+                        .reshape(batch, seqLength, H, d)
+                        .transpose(1, 2); // [B,H,L,d]
 
                 float scale = (float) (1.0 / Math.sqrt(d));
                 Tensor context = FlashAttention.forward(Q, K, V, scale, true);
 
                 if (context != null) {
                     Tensor output = context.transpose(1, 2)
-                        .reshape(batch, seqLength, embeddingDim);
+                            .reshape(batch, seqLength, embeddingDim);
                     Tensor result = output.matmul(outProj);
                     if (attnOutHasBias) result = result.add(outBias);
-                    return new Tensor[] { result };
+                    return new Tensor[]{result};
                 }
             }
             // else fall through to standard path
         }
 
         Range[] slicingRanges = {
-            Range.all(), Range.point(seqLength - 1), Range.all()
+                Range.all(), Range.point(seqLength - 1), Range.all()
         }; // [batch, 1, dim]
         Tensor cachedOutput = cache.get(outProj);
         Tensor cachedQKV = cache.get(weights);
         Tensor QKV; // [batch, seq_len, 3 * H * head_dim]
-        
+
         if (cachedQKV != null && !cache.training()) {
             Tensor newTokens = input.slice(slicingRanges);
             Tensor proj = newTokens.matmul(weights);
 
             QKV = cachedQKV.concat(proj, 1);
         } else QKV = input.matmulGrad(weights);
-        
+
         cache.set(weights, QKV);
 
         if (attnQkvHasBias) QKV = QKV.addGrad(bias);
@@ -127,11 +127,11 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor context = probabilities.matmulGrad(V);
         // [batch, seq_len, heads, head_dim]
         context = context.transposeGrad(1, 2);
-        
+
         // [batch, seq_len, embedding_dim]
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
         Tensor result;
-        
+
         if (cachedOutput != null && !cache.training()) {
             Tensor newOutput = output.slice(slicingRanges);
             Tensor proj = newOutput.matmul(outProj);
@@ -143,6 +143,6 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
 
         if (attnOutHasBias) result = result.addGrad(outBias);
 
-        return new Tensor[] { result };
+        return new Tensor[]{result};
     }
 }
