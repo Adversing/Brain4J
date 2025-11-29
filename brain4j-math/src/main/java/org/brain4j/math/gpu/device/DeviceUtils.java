@@ -19,51 +19,34 @@ import static org.jocl.CL.*;
 public class DeviceUtils {
 
     public static Device findDevice(String name) {
-//        int gpuMask = 1 << 2;
-//        int[] numPlatformsArray = new int[1];
-//
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            IntBuffer buffer = stack.mallocInt(1);
-//            CL10.clGetPlatformIDs(null, buffer);
-//
-//            int platformCount = buffer.get(0);
-//
-//            if (platformCount == 0) {
-//                throw new RuntimeException("No OpenCL platforms found.");
-//            }
-//
-//            PointerBuffer platforms = stack.mallocPointer(platformCount);
-//            CL10.clGetPlatformIDs(platforms, (IntBuffer) null);
-//
-//            for (int i = 0; i < platforms.capacity(); i++) {
-//                long platform = platforms.get(i);
-//                int result = CL10.clGetDeviceIDs(platform, CL10.CL_DEVICE_TYPE_GPU, null, buffer);
-//
-//                if (result != CL10.CL_SUCCESS) return null;
-//
-//                int devicesCount = buffer.get(0);
-//
-//                PointerBuffer devices = stack.mallocPointer(devicesCount);
-//                CL10.clGetDeviceIDs(platform, CL10.CL_DEVICE_TYPE_GPU, devices, (IntBuffer)null);
-//
-//                if (name == null) {
-//                    return new Device(platform, devices[0]);
-//                }
-//
-//                for (int d = 0; d < devices.capacity(); d++) {
-//                    long device = devices.get(d);
-//
-//                    if (!deviceName(device).contains(name)) continue;
-//
-//                    return new Device(platform, dev);
-//                }
-//                for (long dev : devices) {
-//                    if (deviceName(dev).contains(name)) {
-//                        return new Device(platform, dev);
-//                    }
-//                }
-//            }
-//        }
+        int[] numPlatformsArray = new int[1];
+        clGetPlatformIDs(0, null, numPlatformsArray);
+        int numPlatforms = numPlatformsArray[0];
+
+        if (numPlatforms == 0) return null;
+
+        cl_platform_id[] platforms = new cl_platform_id[numPlatforms];
+        clGetPlatformIDs(numPlatforms, platforms, null);
+
+        for (cl_platform_id platform : platforms) {
+            int[] numDevicesArray = new int[1];
+            int result = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 0, null, numDevicesArray);
+            if (result != CL_SUCCESS || numDevicesArray[0] == 0) continue;
+
+            int numDevices = numDevicesArray[0];
+            cl_device_id[] devices = new cl_device_id[numDevices];
+            clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, numDevices, devices, null);
+
+            if (name == null) {
+                return new Device(platform, devices[0]);
+            }
+
+            for (cl_device_id dev : devices) {
+                if (deviceName(dev).contains(name)) {
+                    return new Device(platform, dev);
+                }
+            }
+        }
 
         return null;
     }

@@ -5,9 +5,10 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.gpu.ops.FlashAttention;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
+import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.Arrays;
 
@@ -41,6 +42,42 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor input = inputs[0];
         int batch = input.shape(0);
         int seqLength = input.shape(1);
+
+        // Fast path: fused FlashAttention (causal) for inference without cache
+        if (useFlashAttention && input instanceof GpuTensor && !cache.training()) {
+            // Skip fast path if we are using incremental cache
+            Tensor cachedQKV = cache.get(weights);
+            if (cachedQKV == null) {
+                int H = headCount;
+                int d = headDimension;
+
+                Tensor QKV = input.matmul(weights);
+                if (attnQkvHasBias) QKV = QKV.add(bias);
+
+                                                                                Range all = Range.all();
+                Tensor Q = QKV.slice(all, all, Range.interval(0, embeddingDim))
+                    .reshape(batch, seqLength, H, d)
+                    .transpose(1, 2); // [B,H,L,d]
+                Tensor K = QKV.slice(all, all, Range.interval(embeddingDim, 2 * embeddingDim))
+                    .reshape(batch, seqLength, H, d)
+                    .transpose(1, 2); // [B,H,L,d]
+                Tensor V = QKV.slice(all, all, Range.interval(2 * embeddingDim, 3 * embeddingDim))
+                    .reshape(batch, seqLength, H, d)
+                    .transpose(1, 2); // [B,H,L,d]
+
+                float scale = (float) (1.0 / Math.sqrt(d));
+                Tensor context = FlashAttention.forward(Q, K, V, scale, true);
+
+                if (context != null) {
+                    Tensor output = context.transpose(1, 2)
+                        .reshape(batch, seqLength, embeddingDim);
+                    Tensor result = output.matmul(outProj);
+                    if (attnOutHasBias) result = result.add(outBias);
+                    return new Tensor[] { result };
+                }
+            }
+            // else fall through to standard path
+        }
 
         Range[] slicingRanges = {
             Range.all(), Range.point(seqLength - 1), Range.all()

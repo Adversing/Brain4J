@@ -168,6 +168,7 @@ public class GpuTensor extends BaseTensor {
         cl_program elementaryOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/elementary_ops.cl");
         cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
         cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
+        cl_program attentionProgram = DeviceUtils.createBuildProgram(context, "/kernels/attention/flash_attention.cl");
         
         String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched",
             "add", "sub", "mul", "div", "sum_along_dim", "softmax_last_dim", "layer_norm" };
@@ -192,6 +193,7 @@ public class GpuTensor extends BaseTensor {
         
         GpuContext.register(device, "hard_clip", gradientClipProgram);
         GpuContext.register(device, "l2_clip", gradientClipProgram);
+        GpuContext.register(device, "flash_attention_forward", attentionProgram);
     }
 
     private long roundUp(int globalSize) {

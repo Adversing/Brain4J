@@ -9,12 +9,15 @@ import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.gpu.ops.FlashAttention;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
+import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.random.RandomGenerator;
 
 // TODO: add standalone weights saving/loading
+
 /**
  * Implements the Multi-Head Attention mechanism as used in Transformer architectures.
  * <p>
@@ -31,14 +34,14 @@ import java.util.random.RandomGenerator;
  *   <li>Output: {@code [batch, seq_len, embedding_dim]}</li>
  * </ul>
  *
+ * @author xEcho1337
  * @see AttentionHead
  * @see Tensor
  * @see Optimizer
  * @see Updater
- * @author xEcho1337
  */
 public class MultiHeadAttention extends Layer {
-    
+
     protected Tensor outProj;
     protected Tensor outBias;
     protected int headCount;
@@ -46,14 +49,16 @@ public class MultiHeadAttention extends Layer {
     protected int headDimension;
     protected boolean attnQkvHasBias;
     protected boolean attnOutHasBias;
+    protected boolean useFlashAttention;
 
     private MultiHeadAttention() {
     }
 
     /**
      * Configures the Multi-Head attention mechanism with the specified parameters.
-     * @param clipper the gradient clipper to use during training
-     * @param headCount the amount of heads in the MHA; MUST be a multiple of the embedding dimension
+     *
+     * @param clipper      the gradient clipper to use during training
+     * @param headCount    the amount of heads in the MHA; MUST be a multiple of the embedding dimension
      * @param embeddingDim the embedding dimension of the transformer
      */
     public MultiHeadAttention(GradientClipper clipper, int headCount, int embeddingDim) {
@@ -83,12 +88,12 @@ public class MultiHeadAttention extends Layer {
     @Override
     public void initWeights(RandomGenerator generator, int input, int output) {
         Tensor keyProj = Tensors.zeros(embeddingDim, embeddingDim)
-            .map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+                .map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         Tensor queryProj = Tensors.zeros(embeddingDim, embeddingDim)
-            .map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+                .map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         Tensor valueProj = Tensors.zeros(embeddingDim, embeddingDim)
-            .map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
-        
+                .map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
+
         this.outProj.map(x -> weightInit.generate(generator, embeddingDim, embeddingDim));
         this.weights = Tensors.concat(keyProj, queryProj, valueProj).withGrad();
     }
@@ -97,7 +102,8 @@ public class MultiHeadAttention extends Layer {
      * Computes the forward pass of the multi-head attention mechanism for a given input tensor.
      * <p>This implementation follows the original architecture defined
      * by the <a href="https://arxiv.org/abs/1706.03762">original paper</a>.
-     * @param cache cache used to store intermediate results
+     *
+     * @param cache  cache used to store intermediate results
      * @param inputs the input tensors, first tensor must have shape {@code [batch, seq_len, embedding_dim]}
      * @return the output tensor of shape {@code [batch, seq_len, embedding_dim]}
      */
@@ -106,6 +112,36 @@ public class MultiHeadAttention extends Layer {
         Tensor input = inputs[0];
         int batch = input.shape(0);
         int seqLength = input.shape(1);
+
+        if ((useFlashAttention && input instanceof GpuTensor) && !input.usesGrad()) {
+            int H = headCount;
+            int d = headDimension;
+
+            Tensor QKV = input.matmul(weights);
+            if (attnQkvHasBias) QKV = QKV.add(bias);
+
+            Tensor reshaped = QKV
+                    .reshape(batch, seqLength, H, 3, d)
+                    .transpose(1, 2); // [B,H,L,3,d]
+
+            Range all = Range.all();
+            Tensor Q = reshaped.slice(all, all, all, Range.point(0), all).squeeze(3);
+            Tensor K = reshaped.slice(all, all, all, Range.point(1), all).squeeze(3);
+            Tensor V = reshaped.slice(all, all, all, Range.point(2), all).squeeze(3);
+
+            float scale = (float) (1.0 / Math.sqrt(d));
+            Tensor context = FlashAttention.forward(Q, K, V, scale, false);
+
+            if (context != null) {
+                // [B,H,L,d] -> [B,L,H,d] -> [B,L,embed]
+                Tensor output = context.transpose(1, 2)
+                        .reshape(batch, seqLength, embeddingDim);
+                Tensor result = output.matmul(outProj);
+                if (attnOutHasBias) result = result.add(outBias);
+                return new Tensor[]{result};
+            }
+            // else fall through to standard path
+        }
 
         // [batch, seq_len, 3 * H * head_dim]
         Tensor QKV = input.matmulGrad(weights);
@@ -144,12 +180,12 @@ public class MultiHeadAttention extends Layer {
         // [batch, seq_len, embedding_dim]
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
         // [batch, seq_len, embedding_dim]
-        
+
         Tensor result = output.matmulGrad(outProj);
-        
+
         if (attnOutHasBias) result = result.addGrad(outBias);
-        
-        return new Tensor[] { result };
+
+        return new Tensor[]{result};
     }
 
     @Override
@@ -159,7 +195,7 @@ public class MultiHeadAttention extends Layer {
         Tensor optimized = optimizer.step(outProj);
         clipper.clip(optimized);
         updater.change(outProj, optimized);
-        
+
         if (attnOutHasBias) {
             Tensor biasGrad = outBias.grad().sum(0, false);
             clipper.clip(biasGrad);
@@ -174,21 +210,21 @@ public class MultiHeadAttention extends Layer {
         if (attnQkvHasBias) this.bias = bias.to(device);
         if (attnOutHasBias) this.outBias = outBias.to(device);
     }
-    
+
     @Override
     public Layer freeze() {
         outProj.noGrad();
         if (this.outBias != null) outBias.noGrad();
         return super.freeze();
     }
-    
+
     @Override
     public Layer unfreeze() {
         outProj.withGrad();
         if (this.outBias != null) outBias.withGrad();
         return super.unfreeze();
     }
-    
+
     @Override
     public int size() {
         return embeddingDim;
@@ -215,63 +251,72 @@ public class MultiHeadAttention extends Layer {
         outProj.zeroGrad();
         if (attnOutHasBias) outBias.zeroGrad();
     }
-    
+
     public Tensor outProj() {
         return outProj;
     }
-    
+
     public void setOutProj(Tensor outProj) {
         this.outProj = outProj;
     }
-    
+
     public Tensor outBias() {
         return outBias;
     }
-    
+
     public void setOutBias(Tensor outBias) {
         this.outBias = outBias;
     }
-    
+
     public int headCount() {
         return headCount;
     }
-    
+
     public MultiHeadAttention headCount(int headCount) {
         this.headCount = headCount;
         return this;
     }
-    
+
     public int embeddingDim() {
         return embeddingDim;
     }
-    
+
     public MultiHeadAttention embeddingDim(int embeddingDim) {
         this.embeddingDim = embeddingDim;
         return this;
     }
-    
+
     public int headDimension() {
         return headDimension;
     }
-    
+
     public MultiHeadAttention setHeadDimension(int headDimension) {
         this.headDimension = headDimension;
         return this;
     }
-    
+
+    public boolean useFlashAttention() {
+        return useFlashAttention;
+    }
+
+    public MultiHeadAttention useFlashAttention(boolean enabled) {
+        this.useFlashAttention = enabled;
+        return this;
+    }
+
     public boolean attnQkvHasBias() {
         return attnQkvHasBias;
     }
-    
+
     public MultiHeadAttention attnQkvHasBias(boolean attnQkvHasBias) {
         this.attnQkvHasBias = attnQkvHasBias;
         return this;
     }
-    
+
     public boolean attnOutHasBias() {
         return attnOutHasBias;
     }
-    
+
     public MultiHeadAttention attnOutHasBias(boolean attnOutHasBias) {
         this.attnOutHasBias = attnOutHasBias;
         return this;
