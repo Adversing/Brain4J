@@ -2,10 +2,14 @@ package org.brain4j.math.gpu.device;
 
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.jocl.*;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.opencl.CL10;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,30 +18,24 @@ import static org.jocl.CL.*;
 
 public class DeviceUtils {
 
-    static {
-        CL.setExceptionsEnabled(true);
-    }
-
     public static Device findDevice(String name) {
-        int gpuMask = 1 << 2;
         int[] numPlatformsArray = new int[1];
-
         clGetPlatformIDs(0, null, numPlatformsArray);
         int numPlatforms = numPlatformsArray[0];
 
+        if (numPlatforms == 0) return null;
+
         cl_platform_id[] platforms = new cl_platform_id[numPlatforms];
-        clGetPlatformIDs(platforms.length, platforms, null);
+        clGetPlatformIDs(numPlatforms, platforms, null);
 
         for (cl_platform_id platform : platforms) {
             int[] numDevicesArray = new int[1];
-            int result = clGetDeviceIDs(platform, gpuMask, 0, null, numDevicesArray);
-
-            if (result != CL_SUCCESS) return null;
+            int result = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 0, null, numDevicesArray);
+            if (result != CL_SUCCESS || numDevicesArray[0] == 0) continue;
 
             int numDevices = numDevicesArray[0];
-
             cl_device_id[] devices = new cl_device_id[numDevices];
-            clGetDeviceIDs(platform, gpuMask, numDevices, devices, null);
+            clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, numDevices, devices, null);
 
             if (name == null) {
                 return new Device(platform, devices[0]);
@@ -55,7 +53,8 @@ public class DeviceUtils {
 
     public static String deviceName(cl_device_id device) {
         long[] size = new long[1];
-        clGetDeviceInfo(device, CL_DEVICE_NAME, 0, null, size);
+        // CL10.clGetDeviceInfo(device, CL10.CL_DEVICE_NAME, null, null);
+        clGetDeviceInfo(device, CL10.CL_DEVICE_NAME, 0, null, size);
 
         byte[] buffer = new byte[(int) size[0]];
         clGetDeviceInfo(device, CL_DEVICE_NAME, buffer.length, Pointer.to(buffer), null);

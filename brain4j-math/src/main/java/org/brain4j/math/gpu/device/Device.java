@@ -7,10 +7,6 @@ import static org.jocl.CL.*;
 
 public class Device {
 
-    static {
-        CL.setExceptionsEnabled(true);
-    }
-
     private final cl_platform_id platform;
     private final cl_device_id device;
     private final cl_context context;

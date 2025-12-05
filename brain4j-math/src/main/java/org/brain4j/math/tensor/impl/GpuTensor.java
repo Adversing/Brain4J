@@ -12,6 +12,7 @@ import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.jocl.*;
+import org.lwjgl.opencl.CL10;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -21,10 +22,10 @@ import static org.jocl.CL.*;
 public class GpuTensor extends BaseTensor {
 
     private final Device device;
-    private TempBuffer dataBuffer;
+    private final TempBuffer shapeBuffer;
+    private final TempBuffer stridesBuffer;
     private final int size;
-    private TempBuffer shapeBuffer;
-    private TempBuffer stridesBuffer;
+    private TempBuffer dataBuffer;
 
     public GpuTensor(Device device, int[] shape, float... data) {
         this.device = device;
@@ -167,6 +168,7 @@ public class GpuTensor extends BaseTensor {
         cl_program elementaryOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/elementary_ops.cl");
         cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
         cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
+        cl_program attentionProgram = DeviceUtils.createBuildProgram(context, "/kernels/attention/flash_attention.cl");
         
         String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched",
             "add", "sub", "mul", "div", "sum_along_dim", "softmax_last_dim", "layer_norm" };
@@ -191,6 +193,7 @@ public class GpuTensor extends BaseTensor {
         
         GpuContext.register(device, "hard_clip", gradientClipProgram);
         GpuContext.register(device, "l2_clip", gradientClipProgram);
+        GpuContext.register(device, "flash_attention_forward", attentionProgram);
     }
 
     private long roundUp(int globalSize) {
