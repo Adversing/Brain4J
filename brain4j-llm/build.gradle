@@ -19,6 +19,10 @@ shadowJar {
     archiveFileName = "brain4j-llm-${parent.version}.jar"
 }
 
+tasks.named("compileJava") {
+    dependsOn(":brain4j-core:shadowJar")
+}
+
 tasks.register("cleanModelsCache") {
     description = "Cleans the local Brain4J models cache"
     group = "development"
