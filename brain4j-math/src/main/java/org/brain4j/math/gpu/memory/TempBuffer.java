@@ -1,6 +1,6 @@
 package org.brain4j.math.gpu.memory;
 
-import org.brain4j.backend.api.memory.TempObject;
+import org.brain4j.math.gpu.TempObject;
 import org.jocl.cl_mem;
 
 import static org.jocl.CL.clReleaseMemObject;

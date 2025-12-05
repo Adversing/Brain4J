@@ -33,9 +33,7 @@ dependencies {
     implementation libs.lwjglOpenCL
 
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-
     implementation libs.jocl
-    implementation project(":brain4j-backend-api")
 }
 
 compileJava {
