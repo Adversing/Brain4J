@@ -139,7 +139,7 @@ public class GpuTensor extends BaseTensor {
         long elementaryOpsProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/elementary_ops.cl");
         long activationsProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/activations.cl");
         long gradientClipProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/gradient_clippers.cl");
-        cl_program attentionProgram = DeviceUtils.createBuildProgram(context, "/kernels/attention/flash_attention.cl");
+        long attentionProgram = DeviceUtils.createBuildProgram(device, "/kernels/attention/flash_attention.cl");
         
         String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched",
             "add", "sub", "mul", "div", "sum_along_dim", "softmax_last_dim", "layer_norm" };
