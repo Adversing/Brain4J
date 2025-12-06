@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -67,15 +69,13 @@ public class HuggingFaceClient implements AutoCloseable {
     public FileDownloadResponse downloadFile(String modelId, String filename) throws HuggingFaceException {
         validateId(modelId);
         validateFilename(filename);
-
-        String encodedId = URLEncoder.encode(modelId, StandardCharsets.UTF_8);
-        String encodedFile = URLEncoder.encode(filename, StandardCharsets.UTF_8);
-        String url = BASE_URL + "/" + encodedId + "/resolve/main/" + encodedFile;
+        
+        String url = BASE_URL + "/" + modelId + "/resolve/main/" + filename;
 
         try {
-            HttpGet req = new HttpGet(URI.create(url));
+            HttpGet req = new HttpGet(url);
             req.setHeader("User-Agent", userAgent);
-
+            
             CloseableHttpResponse response = httpClient.execute(req);
 
             if (response.getCode() != 200) {

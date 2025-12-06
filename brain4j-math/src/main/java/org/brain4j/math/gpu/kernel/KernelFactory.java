@@ -2,9 +2,9 @@ package org.brain4j.math.gpu.kernel;
 
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.memory.TempBuffer;
-import org.jocl.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.opencl.CL10;
 import org.lwjgl.system.MemoryStack;
@@ -58,11 +58,11 @@ public class KernelFactory {
     }
 
     public void launch(GpuQueue queue, int workDim, long... globalWorkSize) {
-        launch(queue.queue(), workDim, globalWorkSize);
+        launch(queue.pointer(), workDim, globalWorkSize);
     }
 
     public void launch(GpuQueue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
-        launch(queue.queue(), workDim, globalWorkSize, localWorkSize);
+        launch(queue.pointer(), workDim, globalWorkSize, localWorkSize);
     }
 
     public void launch(long queue, int workDim, long... globalWorkSize) {
@@ -71,8 +71,9 @@ public class KernelFactory {
             for (long g : globalWorkSize) globalWorkBuf.put(g);
             globalWorkBuf.flip();
 
-            CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf, null,
-                null, null);
+            int err = CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf,
+                null, null, null);
+            DeviceUtils.checkError("launch_kernel", err);
         }
     }
 
@@ -85,9 +86,10 @@ public class KernelFactory {
             PointerBuffer localWorkBuf = stack.mallocPointer(workDim);
             for (long g : localWorkSize) localWorkBuf.put(g);
             localWorkBuf.flip();
-
-            CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf, localWorkBuf,
+            
+            int err = CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf, localWorkBuf,
                 null, null);
+            DeviceUtils.checkError("launch_kernel", err);
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.brain4j.math.gpu.device;
 
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.jocl.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.opencl.CL10;
 import org.lwjgl.system.MemoryStack;
@@ -15,10 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jocl.CL.*;
-
 public class DeviceUtils {
-
+    
     public static Device findDevice(String name) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer buffer = stack.mallocInt(1);
@@ -79,16 +76,6 @@ public class DeviceUtils {
         return StandardCharsets.UTF_8.decode(nameBuffer).toString().trim();
     }
 
-    public static String deviceName(cl_device_id device) {
-        long[] size = new long[1];
-        clGetDeviceInfo(device, CL10.CL_DEVICE_NAME, 0, null, size);
-
-        byte[] buffer = new byte[(int) size[0]];
-        clGetDeviceInfo(device, CL_DEVICE_NAME, buffer.length, Pointer.to(buffer), null);
-
-        return new String(buffer, 0, buffer.length - 1).trim();
-    }
-
     public static List<String> allDeviceNames() {
         List<String> deviceNames = new ArrayList<>();
 
@@ -140,6 +127,7 @@ public class DeviceUtils {
         long  context = device.context();
 
         long program = CL10.clCreateProgramWithSource(context, source, null);
+        
         if (program == 0L) {
             throw new RuntimeException("clCreateProgramWithSource returned NULL");
         }
@@ -230,7 +218,7 @@ public class DeviceUtils {
         if (err == 0) return;
 
         String errorCode = getErrorCode(err);
-        String error = String.format("Exception caught with OpenCL(%s): %s", profiler, errorCode);
+        String error = String.format("OpenCL(%s) - %s", profiler, errorCode);
 
         throw new RuntimeException(error);
     }

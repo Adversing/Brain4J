@@ -18,7 +18,8 @@ public class TestModel {
         AtomicInteger generated = new AtomicInteger(0);
 
         System.out.print(prompt);
-        String response = llm.chat(prompt, SamplingConfig.builder().maxLength(256).build(), token -> {
+        SamplingConfig config = SamplingConfig.builder().maxLength(256).build();
+        String response = llm.chat(prompt, config, token -> {
             long now = System.nanoTime();
             double took = (now - lastToken.get()) / 1e6;
             System.out.print(token);

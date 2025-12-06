@@ -1,7 +1,6 @@
 package org.brain4j.math.tensor.parallel;
 
 import org.brain4j.math.lang.DoubleToDoubleFunction;
-import org.brain4j.math.tensor.matmul.impl.SimdMatmulProvider;
 
 import java.util.ArrayList;
 import java.util.List;

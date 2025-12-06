@@ -5,7 +5,6 @@ import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.weightsinit.NormalHeInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
-import org.jocl.cl_kernel;
 
 public class ELUActivation implements Activation {
 

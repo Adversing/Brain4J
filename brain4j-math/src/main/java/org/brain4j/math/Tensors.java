@@ -6,11 +6,9 @@ import org.brain4j.math.tensor.convolve.Im2ColTask;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelConvolve;
-import org.brain4j.math.tensor.parallel.ParallelTranspose;
 
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 

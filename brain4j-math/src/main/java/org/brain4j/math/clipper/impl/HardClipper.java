@@ -1,14 +1,13 @@
 package org.brain4j.math.clipper.impl;
 
-import org.brain4j.math.commons.Commons;
 import org.brain4j.math.clipper.GradientClipper;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.jocl.cl_kernel;
 
 public class HardClipper implements GradientClipper {
 

@@ -8,7 +8,6 @@ import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.weightsinit.WeightInitialization;
-import org.jocl.cl_kernel;
 
 import java.util.stream.IntStream;
 

@@ -11,10 +11,8 @@ import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
-import org.jocl.*;
 import org.lwjgl.opencl.CL10;
 
-import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import static org.jocl.CL.*;
@@ -55,7 +53,7 @@ public class GpuTensor extends BaseTensor {
         this.shape = shape;
         this.strides = Tensors.computeStrides(shape);
 
-        long dataSize  = (long) Sizeof.cl_float * this.size;
+        long dataSize = (long) Float.BYTES * this.size;
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
 
         long shapeBuffer = device.createBuffer(readFlag, shape);
@@ -67,7 +65,7 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = new TempBuffer(dataBuffer);
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            CL10.clEnqueueCopyBuffer(queue.queue(), otherBuffer, dataBuffer, 0, 0, dataSize,
+            CL10.clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer, 0, 0, dataSize,
                 null, null);
         }
     }
@@ -78,7 +76,7 @@ public class GpuTensor extends BaseTensor {
         this.shape = shape;
         this.strides = strides;
 
-        long dataSize  = (long) Sizeof.cl_float * this.size;
+        long dataSize  = (long) Float.BYTES * this.size;
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
         long flags = CL_MEM_READ_WRITE;
 
@@ -469,10 +467,10 @@ public class GpuTensor extends BaseTensor {
 
         int innerSize = 1;
         for (int i = dim + 1; i < shape.length; i++) innerSize *= shape[i];
-
+        
         GpuTensor result = new GpuTensor(device, newShape);
         result.setAutogradContext(autogradContext);
-
+        
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "sum_along_dim")
                 .addMemParam(dataBuffer)

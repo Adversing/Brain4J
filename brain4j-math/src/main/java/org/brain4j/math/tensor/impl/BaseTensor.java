@@ -1,8 +1,8 @@
 package org.brain4j.math.tensor.impl;
 
-import org.brain4j.math.commons.Commons;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.lang.DoubleToDoubleFunction;
 import org.brain4j.math.pooling.impl.MaxPooling;

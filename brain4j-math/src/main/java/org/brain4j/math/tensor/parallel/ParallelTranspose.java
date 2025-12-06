@@ -4,11 +4,11 @@ import org.brain4j.math.tensor.impl.BaseTensor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
-import static org.brain4j.math.Tensors.*;
+import static org.brain4j.math.Tensors.PARALLELISM;
+import static org.brain4j.math.Tensors.SPLIT_COMPLEXITY_THRESHOLD;
 
 public class ParallelTranspose extends RecursiveAction {
     
