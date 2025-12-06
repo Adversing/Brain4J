@@ -10,6 +10,7 @@ import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 public record BackPropagation(Model model, Optimizer optimizer, Updater updater) {
@@ -26,10 +27,10 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         
         Tensor[] inputs = batch.first();
         Tensor[] labels = batch.second();
-        
+
         Tensor[] output = model.predict(cache, inputs);
         model.backpropagate(cache, output, labels);
-        
+
         int elements = 0;
         
         for (Tensor input : inputs) {

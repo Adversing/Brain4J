@@ -151,31 +151,7 @@ public class Sequential extends Layer implements Model {
         }
     }
 
-    protected void predictBatch(Pair<Tensor[], Tensor[]> batch, AtomicReference<Double> totalError) {
-        Tensor[] inputs = batch.first();
-        Tensor[] targets = batch.second();
-
-        Tensor[] outputs = predict(new StatesCache(false, device), inputs);
-
-        for (int i = 0; i < outputs.length; i++) {
-            Tensor output = outputs[i].cpu();
-            Tensor label = targets[i].cpu();
-
-            int batchSize = output.shape()[0];
-
-            for (int b = 0; b < batchSize; b++) {
-                Range range = new Range(b, b + 1);
-
-                Tensor sampleOutput = output.slice(range).flatten();
-                Tensor sampleLabel = label.slice(range).flatten();
-
-                double loss = lossFunction.calculate(sampleLabel, sampleOutput);
-                totalError.updateAndGet(v -> v + loss);
-            }
-        }
-    }
-
-    protected Tensor[] validateInputs(Tensor... inputs) {
+    protected Tensor[] preprocessInputs(Tensor... inputs) {
         Tensor[] result = new Tensor[inputs.length];
 
         for (int i = 0; i < result.length; i++) {
@@ -248,6 +224,34 @@ public class Sequential extends Layer implements Model {
         System.out.print("\r" + message);
     }
 
+    private void append(
+        String pattern,
+        StringBuilder builder,
+        DecimalFormat format,
+        AtomicLong totalWeights,
+        AtomicLong totalBiases
+    ) {
+        for (int i = 0; i < flattened.size(); i++) {
+            Layer layer = flattenedAt(i);
+            String layerType = layer.getClass().getSimpleName();
+
+            int neurons = layer.size();
+            int weights = layer.totalWeights() + layer.totalBiases();
+
+            Tensor weightsTensor = layer.weights();
+
+            String formatWeights = weights == 0 ? "-" : format.format(weights);
+            String shape = weightsTensor == null
+                ? "[" + neurons + "]"
+                : Arrays.toString(weightsTensor.shape());
+
+            builder.append(pattern.formatted(i, layerType, formatWeights, shape, layer.setActivation().name()));
+
+            totalWeights.addAndGet(weights);
+            totalBiases.addAndGet(neurons);
+        }
+    }
+
     @Override
     public Model add(Layer layer) {
         layers.add(layer);
@@ -310,7 +314,7 @@ public class Sequential extends Layer implements Model {
             throw new IllegalArgumentException("First layer must be an InputLayer!");
         }
 
-        Tensor[] validated = validateInputs(inputs);
+        Tensor[] validated = preprocessInputs(inputs);
         Tensor[] result = new Tensor[validated.length];
 
         for (int i = 0; i < validated.length; i++) {
@@ -371,16 +375,7 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public double loss(ListDataSource dataSource) {
-        AtomicReference<Double> totalError = new AtomicReference<>(0.0);
-
-        dataSource.reset();
-
-        while (dataSource.hasNext()) {
-            Pair<Tensor[], Tensor[]> batch = dataSource.nextBatch();
-            predictBatch(batch, totalError);
-        }
-
-        return totalError.get() / dataSource.size();
+        return evaluate(dataSource).loss();
     }
     
     @Override
@@ -463,34 +458,6 @@ public class Sequential extends Layer implements Model {
         Arrays.stream(stats.toString().split("\n")).forEach(System.out::println);
     }
 
-    private void append(
-        String pattern,
-        StringBuilder builder,
-        DecimalFormat format,
-        AtomicLong totalWeights,
-        AtomicLong totalBiases
-    ) {
-        for (int i = 0; i < flattened.size(); i++) {
-            Layer layer = flattenedAt(i);
-            String layerType = layer.getClass().getSimpleName();
-
-            int neurons = layer.size();
-            int weights = layer.totalWeights() + layer.totalBiases();
-
-            Tensor weightsTensor = layer.weights();
-
-            String formatWeights = weights == 0 ? "-" : format.format(weights);
-            String shape = weightsTensor == null
-                    ? "[" + neurons + "]"
-                    : Arrays.toString(weightsTensor.shape());
-
-            builder.append(pattern.formatted(i, layerType, formatWeights, shape, layer.setActivation().name()));
-
-            totalWeights.addAndGet(weights);
-            totalBiases.addAndGet(neurons);
-        }
-    }
-
     @Override
     public Layer layerAt(int index) {
         return layers.get(index);
@@ -546,24 +513,6 @@ public class Sequential extends Layer implements Model {
     @Override
     public void setLossFunction(LossFunction lossFunction) {
         this.lossFunction = lossFunction;
-    }
-    
-    /**
-     * Returns the seed value used to initialize the random number generator.
-     * @return the seed value
-     */
-    public long seed() {
-        return seed;
-    }
-
-    /**
-     * Updates the seed value used to initialize the random number generator.
-     * @param seed the new seed value
-     * @return the model instance
-     */
-    public Sequential seed(long seed) {
-        this.seed = seed;
-        return this;
     }
 
     @Override
@@ -641,5 +590,37 @@ public class Sequential extends Layer implements Model {
     @Override
     public int size() {
         return layers.getLast().size();
+    }
+
+    @Override
+    public Layer freeze() {
+        for (Layer layer : layers) {
+            layer.freeze();
+        }
+        return this;
+    }
+
+    @Override
+    public Layer unfreeze() {
+        for  (Layer layer : layers) {
+            layer.unfreeze();
+        }
+        return this;
+    }
+
+    /**
+     * Returns the seed value used to initialize the random number generator.
+     * @return the seed value
+     */
+    public long seed() {
+        return seed;
+    }
+
+    /**
+     * Updates the seed value used to initialize the random number generator.
+     * @param seed the new seed value
+     */
+    public void seed(long seed) {
+        this.seed = seed;
     }
 }

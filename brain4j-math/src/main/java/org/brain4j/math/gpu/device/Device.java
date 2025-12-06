@@ -2,53 +2,66 @@ package org.brain4j.math.gpu.device;
 
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.jocl.*;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.opencl.CL10;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.IntBuffer;
+import java.time.LocalDate;
 
 import static org.jocl.CL.*;
 
 public class Device {
 
-    private final cl_platform_id platform;
-    private final cl_device_id device;
-    private final cl_context context;
+    private final long platform;
+    private final long device;
+    private final long context;
     private GpuQueue queue;
 
-    public Device(cl_platform_id platform, cl_device_id device) {
-        this.platform = platform;
-        this.device = device;
+    public Device(long platformAddr, long deviceAddr) {
+        this.platform = platformAddr;
+        this.device = deviceAddr;
         this.context = newContext();
     }
 
-    public cl_context newContext() {
-        cl_context_properties contextProperties = new cl_context_properties();
-        contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform);
-
-        cl_device_id[] devices = new cl_device_id[] { device };
-        return clCreateContext(contextProperties, 1, devices, null, null, null);
+    @Override
+    public String toString() {
+        return "Device{" +
+            "platform=" + platform +
+            ", device=" + device +
+            ", context=" + context +
+            ", queue=" + queue +
+            '}';
     }
 
-    public cl_command_queue newCommandQueue() {
-        cl_command_queue commandQueue = clCreateCommandQueue(context, device, 0, null);
+    public long newContext() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
 
-        if (commandQueue == null) {
-            throw new RuntimeException("Failed to create command queue");
+            PointerBuffer properties = stack.mallocPointer(3);
+
+            properties.put(CL10.CL_CONTEXT_PLATFORM).put(platform).put(0);
+            properties.flip();
+            return CL10.clCreateContext(properties, device, null, 0, null);
         }
+    }
 
-        return commandQueue;
+    public long newCommandQueue() {
+        return CL10.clCreateCommandQueue(context, device, 0, (IntBuffer) null);
     }
 
     public String name() {
         return DeviceUtils.deviceName(device);
     }
 
-    public cl_platform_id platform() {
+    public long platform() {
         return platform;
     }
 
-    public cl_device_id device() {
+    public long device() {
         return device;
     }
 
-    public cl_context context() {
+    public long context() {
         return context;
     }
 
@@ -60,8 +73,28 @@ public class Device {
         this.queue = queue;
     }
 
-    public cl_mem createBuffer(long flags, float[] data) {
-        return clCreateBuffer(context, flags, data.length * 4L, Pointer.to(data), null);
+    public long createBuffer(long flags, float[] data) {
+        int[] err = new int[1];
+
+        long buffer = CL10.clCreateBuffer(context, flags, data, err);
+        DeviceUtils.checkError("create_buffer", err[0]);
+
+        return buffer;
+    }
+
+    public long createBuffer(long flags, long dataSize) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer err = stack.mallocInt(1);
+
+            long buffer = CL10.clCreateBuffer(context, flags, dataSize, err);
+            DeviceUtils.checkError("create_buffer", err.get(0));
+
+            return buffer;
+        }
+    }
+
+    public long createBuffer(long flags, int[] data) {
+        return CL10.clCreateBuffer(context, flags, data, null);
     }
 
     public void createQueue() {

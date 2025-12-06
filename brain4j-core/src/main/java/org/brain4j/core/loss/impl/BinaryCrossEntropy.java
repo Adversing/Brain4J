@@ -32,11 +32,13 @@ public class BinaryCrossEntropy implements LossFunction {
             loss -= w * (y * Math.log(p + 1e-15) + (1 - y) * Math.log(1 - p + 1e-15));
         }
 
-        return loss / actual.elements();
+        return loss / actual.shape(0);
     }
 
     @Override
-    public Tensor delta(Tensor error, Tensor derivative) {
+    public Tensor delta(Tensor output, Tensor target, Tensor derivative) {
+        Tensor error = output.minus(target);
+
         if (classWeights == null)
             return error;
 

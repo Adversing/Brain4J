@@ -83,7 +83,6 @@ public class Registries {
         UPDATERS_REGISTRY.register("normal", NormalUpdater.class);
         
         LOSS_FUNCTION_REGISTRY.register("binary_cross_entropy", BinaryCrossEntropy.class);
-        LOSS_FUNCTION_REGISTRY.register("cosine_embedding", CosineEmbedding.class);
         LOSS_FUNCTION_REGISTRY.register("cross_entropy", CrossEntropy.class);
         LOSS_FUNCTION_REGISTRY.register("huber_loss", HuberLoss.class);
         LOSS_FUNCTION_REGISTRY.register("mean_absolute_error", MeanAbsoluteError.class);

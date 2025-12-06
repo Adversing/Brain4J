@@ -32,26 +32,14 @@ public class CrossEntropy implements LossFunction {
             loss -= w * y * Math.log(p + 1e-15);
         }
 
-        return loss / actual.elements();
+        return loss / actual.shape(0);
     }
 
     @Override
-    public Tensor delta(Tensor error, Tensor derivative) {
-        if (classWeights == null) return error;
+    public Tensor delta(Tensor output, Tensor target, Tensor derivative) {
+        Tensor error = output.minus(target);
 
-        Tensor weighted = error.clone();
-
-        int numClasses = classWeights.shape(0);
-        float[] weights = classWeights.data();
-
-        float[] data = weighted.data();
-
-        for (int i = 0; i < data.length; i++) {
-            int cls = i % numClasses;
-            data[i] *= weights[cls];
-        }
-
-        return weighted;
+        return classWeights == null ? error : error.mul(classWeights);
     }
 
     @Override

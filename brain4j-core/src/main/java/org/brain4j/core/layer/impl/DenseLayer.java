@@ -96,6 +96,7 @@ public class DenseLayer extends Layer {
                 ? output : output.activateGrad(activation);
         }
 
+
         cache.rememberOutput(this, beforeActivation);
         return result;
     }

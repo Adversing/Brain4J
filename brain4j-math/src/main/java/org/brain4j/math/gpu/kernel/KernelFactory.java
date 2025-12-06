@@ -5,26 +5,23 @@ import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.memory.TempBuffer;
 import org.jocl.*;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.opencl.CL10;
+import org.lwjgl.system.MemoryStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.jocl.CL.clEnqueueNDRangeKernel;
-import static org.jocl.CL.clSetKernelArg;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class KernelFactory {
 
-    public record Argument(int index, int size, Pointer pointer) { }
+    private final long kernel;
+    private int arguments;
 
-    private final cl_kernel kernel;
-    private final List<Argument> arguments;
-
-    protected KernelFactory(cl_kernel kernel) {
+    protected KernelFactory(long kernel) {
         this.kernel = kernel;
-        this.arguments = new ArrayList<>();
     }
 
-    public static KernelFactory create(cl_kernel kernel) {
+    public static KernelFactory create(long kernel) {
         return new KernelFactory(kernel);
     }
 
@@ -33,23 +30,31 @@ public class KernelFactory {
     }
 
     public KernelFactory addIntParam(int variable) {
-        arguments.add(new Argument(arguments.size(), Sizeof.cl_int, Pointer.to(new int[]{variable})));
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buf = stack.ints(variable);
+            CL10.clSetKernelArg(kernel, arguments++, buf);
+        }
         return this;
     }
 
     public KernelFactory addFloatParam(float variable) {
-        arguments.add(new Argument(arguments.size(), Sizeof.cl_float, Pointer.to(new float[]{variable})));
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buf = stack.floats(variable);
+            CL10.clSetKernelArg(kernel, arguments++, buf);
+        }
         return this;
     }
-    
-    public KernelFactory addMemParam(cl_mem memory) {
-        arguments.add(new Argument(arguments.size(), Sizeof.cl_mem, Pointer.to(memory)));
+
+    public KernelFactory addMemParam(long memory) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer buf = stack.pointers(memory);
+            CL10.clSetKernelArg(kernel, arguments++, buf);
+        }
         return this;
     }
-    
+
     public KernelFactory addMemParam(TempBuffer memory) {
-        arguments.add(new Argument(arguments.size(), Sizeof.cl_mem, Pointer.to(memory.value())));
-        return this;
+        return addMemParam(memory.value());
     }
 
     public void launch(GpuQueue queue, int workDim, long... globalWorkSize) {
@@ -60,21 +65,29 @@ public class KernelFactory {
         launch(queue.queue(), workDim, globalWorkSize, localWorkSize);
     }
 
-    public void launch(cl_command_queue queue, int workDim, long... globalWorkSize) {
-        for (Argument argument : arguments) {
-            clSetKernelArg(kernel, argument.index, argument.size, argument.pointer);
-        }
+    public void launch(long queue, int workDim, long... globalWorkSize) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer globalWorkBuf = stack.mallocPointer(workDim);
+            for (long g : globalWorkSize) globalWorkBuf.put(g);
+            globalWorkBuf.flip();
 
-        clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkSize, null,
-            0, null, null);
+            CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf, null,
+                null, null);
+        }
     }
 
-    public void launch(cl_command_queue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
-        for (Argument argument : arguments) {
-            clSetKernelArg(kernel, argument.index, argument.size, argument.pointer);
-        }
+    public void launch(long queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer globalWorkBuf = stack.mallocPointer(workDim);
+            for (long g : globalWorkSize) globalWorkBuf.put(g);
+            globalWorkBuf.flip();
 
-        clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkSize, localWorkSize,
-            0, null, null);
+            PointerBuffer localWorkBuf = stack.mallocPointer(workDim);
+            for (long g : localWorkSize) localWorkBuf.put(g);
+            localWorkBuf.flip();
+
+            CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf, localWorkBuf,
+                null, null);
+        }
     }
 }

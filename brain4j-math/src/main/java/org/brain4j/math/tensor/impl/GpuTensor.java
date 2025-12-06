@@ -29,60 +29,46 @@ public class GpuTensor extends BaseTensor {
 
     public GpuTensor(Device device, int[] shape, float... data) {
         this.device = device;
-        this.size = data.length == 0 ? Tensors.computeSize(shape) : data.length;
+        this.size = Tensors.computeSize(shape);
         this.shape = shape;
         this.strides = Tensors.computeStrides(shape);
 
-        cl_context context = device.context();
-
-        long shapeSize = (long) Sizeof.cl_int * shape.length;
-        long stridesSize = (long) Sizeof.cl_int * strides.length;
-        long dataSize  = (long) Sizeof.cl_float * this.size;
-
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-        
-        long flags = CL_MEM_READ_WRITE;
-        Pointer dataPointer = null;
-        
-        if (data.length > 0) {
-            flags |= CL_MEM_COPY_HOST_PTR;
-            dataPointer = Pointer.to(data);
+        long flags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
+
+        if (data.length == 0) {
+            data = new float[size];
         }
-        
-        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
-        cl_mem dataBuffer = clCreateBuffer(context, flags, dataSize, dataPointer, null);
-        
+
+        long shapeBuffer = device.createBuffer(readFlag, shape);
+        long stridesBuffer = device.createBuffer(readFlag, strides);
+        long dataBuffer = device.createBuffer(flags, data);
+
         this.shapeBuffer = new TempBuffer(shapeBuffer);
         this.stridesBuffer = new TempBuffer(stridesBuffer);
         this.dataBuffer = new TempBuffer(dataBuffer);
     }
 
-    public GpuTensor(Device device, int[] shape, cl_mem otherBuffer) {
+    public GpuTensor(Device device, int[] shape, long otherBuffer) {
         this.device = device;
         this.size = Tensors.computeSize(shape);
         this.shape = shape;
         this.strides = Tensors.computeStrides(shape);
 
-        cl_context context = device.context();
-
-        long shapeSize = (long) Sizeof.cl_int * shape.length;
-        long stridesSize = (long) Sizeof.cl_int * strides.length;
         long dataSize  = (long) Sizeof.cl_float * this.size;
-
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
 
-        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
-        cl_mem dataBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE, dataSize, null, null);
-        
+        long shapeBuffer = device.createBuffer(readFlag, shape);
+        long stridesBuffer = device.createBuffer(readFlag, strides);
+        long dataBuffer = device.createBuffer(CL_MEM_READ_WRITE, dataSize);
+
         this.shapeBuffer = new TempBuffer(shapeBuffer);
         this.stridesBuffer = new TempBuffer(stridesBuffer);
         this.dataBuffer = new TempBuffer(dataBuffer);
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            clEnqueueCopyBuffer(queue.queue(), otherBuffer, dataBuffer, 0, 0, dataSize,
-                0, null, null);
+            CL10.clEnqueueCopyBuffer(queue.queue(), otherBuffer, dataBuffer, 0, 0, dataSize,
+                null, null);
         }
     }
 
@@ -92,25 +78,17 @@ public class GpuTensor extends BaseTensor {
         this.shape = shape;
         this.strides = strides;
 
-        cl_context context = device.context();
-
-        long shapeSize = (long) Sizeof.cl_int * shape.length;
-        long stridesSize = (long) Sizeof.cl_int * strides.length;
         long dataSize  = (long) Sizeof.cl_float * this.size;
-
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-
         long flags = CL_MEM_READ_WRITE;
-        Pointer dataPointer = null;
 
         if (data.length > 0) {
             flags |= CL_MEM_COPY_HOST_PTR;
-            dataPointer = Pointer.to(data);
         }
 
-        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
-        cl_mem dataBuffer = clCreateBuffer(context, flags, dataSize, dataPointer, null);
+        long shapeBuffer = device.createBuffer(readFlag, shape);
+        long stridesBuffer = device.createBuffer(readFlag, strides);
+        long dataBuffer = data.length == 0 ? device.createBuffer(flags, dataSize) : device.createBuffer(flags, data);
 
         this.shapeBuffer = new TempBuffer(shapeBuffer);
         this.stridesBuffer = new TempBuffer(stridesBuffer);
@@ -123,18 +101,13 @@ public class GpuTensor extends BaseTensor {
         this.shape = newShape;
         this.strides = Tensors.computeStrides(newShape);
 
-        cl_context context = device.context();
-
-        long shapeSize = (long) Sizeof.cl_int * shape.length;
-        long stridesSize = (long) Sizeof.cl_int * strides.length;
-
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
         
         // make sure GC does not close this resource
         reference.dataBuffer.retain();
-        
-        cl_mem shapeBuffer = clCreateBuffer(context, readFlag, shapeSize, Pointer.to(shape), null);
-        cl_mem stridesBuffer = clCreateBuffer(context, readFlag, stridesSize, Pointer.to(strides), null);
+
+        long shapeBuffer = device.createBuffer(readFlag, shape);
+        long stridesBuffer = device.createBuffer(readFlag, strides);
         
         this.shapeBuffer = new TempBuffer(shapeBuffer);
         this.stridesBuffer = new TempBuffer(stridesBuffer);
@@ -145,15 +118,15 @@ public class GpuTensor extends BaseTensor {
         return device;
     }
 
-    public cl_mem dataBuffer() {
+    public long dataBuffer() {
         return dataBuffer.value();
     }
 
-    public cl_mem stridesBuffer() {
+    public long stridesBuffer() {
         return stridesBuffer.value();
     }
 
-    public cl_mem shapeBuffer() {
+    public long shapeBuffer() {
         return shapeBuffer.value();
     }
 
@@ -162,12 +135,10 @@ public class GpuTensor extends BaseTensor {
     }
 
     public static void initKernels(Device device) {
-        cl_context context = device.context();
-        
-        cl_program tensorOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/tensor_ops.cl");
-        cl_program elementaryOpsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/elementary_ops.cl");
-        cl_program activationsProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/activations.cl");
-        cl_program gradientClipProgram = DeviceUtils.createBuildProgram(context, "/kernels/basic/gradient_clippers.cl");
+        long tensorOpsProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/tensor_ops.cl");
+        long elementaryOpsProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/elementary_ops.cl");
+        long activationsProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/activations.cl");
+        long gradientClipProgram = DeviceUtils.createBuildProgram(device, "/kernels/basic/gradient_clippers.cl");
         cl_program attentionProgram = DeviceUtils.createBuildProgram(context, "/kernels/attention/flash_attention.cl");
         
         String[] tensorOpsKernels = { "slice", "concat_last_dim", "concat_copy_a", "concat_copy_b", "matmul_batched",
@@ -458,22 +429,11 @@ public class GpuTensor extends BaseTensor {
             batchCount
         };
         long[] localWorkSize = new long[] { TILE_SIZE, TILE_SIZE, 1 };
-        
-        IntBuffer offsetsABuf = IntBuffer.wrap(offsetsA);
-        IntBuffer offsetsBBuf = IntBuffer.wrap(offsetsB);
-        IntBuffer offsetsCBuf = IntBuffer.wrap(offsetsC);
-        
-        cl_context context = device.context();
-        
-        Pointer pointerA = Pointer.to(offsetsABuf);
-        Pointer pointerB = Pointer.to(offsetsBBuf);
-        Pointer pointerC = Pointer.to(offsetsCBuf);
-        
         long flags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
-        
-        cl_mem memoryA = clCreateBuffer(context, flags, offsetsA.length * 4L, pointerA, null);
-        cl_mem memoryB = clCreateBuffer(context, flags, offsetsB.length * 4L, pointerB, null);
-        cl_mem memoryC = clCreateBuffer(context, flags, offsetsC.length * 4L, pointerC, null);
+
+        long memoryA = device.createBuffer(flags, offsetsA);
+        long memoryB = device.createBuffer(flags, offsetsB);
+        long memoryC = device.createBuffer(flags, offsetsC);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "matmul_batched")
@@ -673,16 +633,11 @@ public class GpuTensor extends BaseTensor {
             steps[i] = range == null ? 1 : range.step();
         }
 
-        Pointer destShapePtr = Pointer.to(newShape);
-        Pointer startPtr = Pointer.to(starts);
-        Pointer stepPtr = Pointer.to(steps);
-
-        cl_context context = device.context();
         long flags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
 
-        cl_mem memoryShape = clCreateBuffer(context, flags, newShape.length * 4L, destShapePtr, null);
-        cl_mem memoryStart = clCreateBuffer(context, flags, starts.length * 4L, startPtr, null);
-        cl_mem memoryStep = clCreateBuffer(context, flags, steps.length * 4L, stepPtr, null);
+        long memoryShape = device.createBuffer(flags, newShape);
+        long memoryStart = device.createBuffer(flags, starts);
+        long memoryStep = device.createBuffer(flags, steps);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "slice")
@@ -706,7 +661,7 @@ public class GpuTensor extends BaseTensor {
             throw new IllegalArgumentException("Mask length must be as long as the data");
         }
 
-        cl_mem gpuMask = device.createBuffer(CL_MEM_COPY_HOST_PTR, mask);
+        long gpuMask = device.createBuffer(CL_MEM_COPY_HOST_PTR, mask);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "mask")
@@ -746,14 +701,11 @@ public class GpuTensor extends BaseTensor {
     @Override
     public float[] data() {
         float[] buffer = new float[size];
+        long queue = device.newCommandQueue();
 
-        cl_command_queue queue = device.newCommandQueue();
-        clEnqueueReadBuffer(
-            queue, dataBuffer.value(), CL_TRUE, 0, (long) size * Sizeof.cl_float, Pointer.to(buffer), 0, null, null
-        );
-
-        clFinish(queue);
-        clReleaseCommandQueue(queue);
+        CL10.clEnqueueReadBuffer(queue, dataBuffer.value(), CL_TRUE, 0, buffer, null, null);
+        CL10.clFinish(queue);
+        CL10.clReleaseCommandQueue(queue);
 
         return buffer;
     }

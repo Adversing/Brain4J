@@ -1,11 +1,18 @@
 package org.brain4j.core.loss;
 
+import org.brain4j.core.loss.impl.*;
 import org.brain4j.math.tensor.Tensor;
 
 /**
  * Loss functions (also called cost functions) are used during training
- * and to measure the performance of a network.
+ * for backpropagation and to measure the performance of a network.
+ *
  * @author xEcho1337
+ * @see CrossEntropy
+ * @see BinaryCrossEntropy
+ * @see HuberLoss
+ * @see MeanAbsoluteError
+ * @see MeanSquaredError
  */
 public interface LossFunction {
     /**
@@ -18,11 +25,12 @@ public interface LossFunction {
 
     /**
      * Calculates the delta for the last org.brain4j.core.layer of the network.
-     * @param error usually calculated as <code>expected - predicted</code>
+     * @param output the output produced by the model
+     * @param target the expected output
      * @param derivative the derivative of the activation function
      * @return the delta tensor
      */
-    Tensor delta(Tensor error, Tensor derivative);
+    Tensor delta(Tensor output, Tensor target, Tensor derivative);
 
     /**
      * Gets whether this loss function is typically used for regression.

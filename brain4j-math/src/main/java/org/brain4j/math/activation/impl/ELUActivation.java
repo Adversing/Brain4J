@@ -40,7 +40,7 @@ public class ELUActivation implements Activation {
     }
 
     @Override
-    public KernelFactory createKernel(cl_kernel kernel, GpuTensor current, GpuTensor other) {
+    public KernelFactory createKernel(long kernel, GpuTensor current, GpuTensor other) {
         return KernelFactory.create(kernel)
             .addMemParam(current.dataBuffer())
             .addMemParam(other.dataBuffer())

@@ -90,7 +90,7 @@ public abstract class Layer {
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         if (weights != null && weights.grad() != null) {
             Tensor weightsGrad = optimizer.step(weights);
-            
+
             clipper.clip(weightsGrad);
             updater.change(weights, weightsGrad);
         }
@@ -128,11 +128,10 @@ public abstract class Layer {
                 throw new IllegalArgumentException("Output and target shapes do not match! Output: " +
                     Arrays.toString(output.shape()) + ", Target: " + Arrays.toString(target.shape()));
             }
-            
-            Tensor error = output.minus(target);
+
             Tensor derivatives = activation.derivative(preOutput);
-            Tensor delta = lossFunction.delta(error, derivatives);
-            
+            Tensor delta = lossFunction.delta(output, target, derivatives);
+
             preOutput.backward(delta);
         }
     }

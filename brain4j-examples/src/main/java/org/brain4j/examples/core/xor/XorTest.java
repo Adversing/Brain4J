@@ -35,7 +35,7 @@ public class XorTest {
         }
 
         ListDataSource dataSource = new ListDataSource(samples, true, 4);
-        Brain4J.disableLogging();
+        Brain4J.setLogging(false);
 
         Device device = Brain4J.firstDevice();
 

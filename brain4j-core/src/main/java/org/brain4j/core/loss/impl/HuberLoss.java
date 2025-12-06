@@ -36,7 +36,8 @@ public class HuberLoss implements LossFunction {
     }
 
     @Override
-    public Tensor delta(Tensor error, Tensor derivative) {
+    public Tensor delta(Tensor output, Tensor target, Tensor derivative) {
+        Tensor error = output.minus(target);
         float[] errorData = error.data();
         float[] grad = new float[errorData.length];
 

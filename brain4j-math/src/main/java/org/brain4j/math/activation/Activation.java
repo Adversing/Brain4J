@@ -53,7 +53,7 @@ public interface Activation {
      * @param other the resulting tensor
      * @return a kernel factory ready to be launched
      */
-    default KernelFactory createKernel(cl_kernel kernel, GpuTensor current, GpuTensor other) {
+    default KernelFactory createKernel(long kernel, GpuTensor current, GpuTensor other) {
         return KernelFactory
             .create(kernel)
             .addMemParam(current.dataBuffer())
@@ -73,7 +73,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-                cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
+                long kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());
@@ -109,7 +109,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-                cl_kernel kernel = GpuContext.kernel(device, kernelPrefix() + "_backward");
+                long kernel = GpuContext.kernel(device, kernelPrefix() + "_backward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());

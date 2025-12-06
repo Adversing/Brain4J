@@ -13,11 +13,12 @@ public class MeanAbsoluteError implements LossFunction {
             loss += Math.abs(actual.get(i) - predicted.get(i));
         }
 
-        return loss / actual.elements();
+        return loss / actual.shape(0);
     }
 
     @Override
-    public Tensor delta(Tensor error, Tensor derivative) {
+    public Tensor delta(Tensor output, Tensor target, Tensor derivative) {
+        Tensor error = output.minus(target);
         return error.map(Math::signum);
     }
 

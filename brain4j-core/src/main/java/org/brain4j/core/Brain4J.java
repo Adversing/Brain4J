@@ -29,7 +29,7 @@ import java.util.List;
 public class Brain4J {
 
     private static boolean logging = true;
-    private static int precision = 4;
+    private static int decimalDigits = 4;
 
     /**
      * Returns the current version of the Brain4J framework.
@@ -51,23 +51,13 @@ public class Brain4J {
     }
 
     /**
-     * Disables console logging for all training sessions.
+     * Sets whether logging should be enabled or disabled during training sessions.
      * <p>
-     * This can improve performance slightly in cases where
-     * logging output is not needed.
+     * When enabled, Brain4J will print progress information such as epoch, current batch and performance evaluations.
+     * @param logging {@code true} to enable logging, {@code false} to disable it
      */
-    public static void disableLogging() {
-        logging = false;
-    }
-
-    /**
-     * Enables console logging for all training sessions.
-     * <p>
-     * When enabled, Brain4J will print progress information
-     * such as epoch, batch index, and loss values.
-     */
-    public static void enableLogging() {
-        logging = true;
+    public static void setLogging(boolean logging) {
+        Brain4J.logging = logging;
     }
 
     /**
@@ -77,7 +67,7 @@ public class Brain4J {
      * @return the number of decimal digits displayed (default: 4)
      */
     public static int precision() {
-        return precision;
+        return decimalDigits;
     }
 
     /**
@@ -86,10 +76,10 @@ public class Brain4J {
      * This affects how many decimal digits are shown in logs
      * and formatted console outputs.
      *
-     * @param precision the number of digits to display after the decimal point
+     * @param decimalDigits the number of digits to display after the decimal point
      */
-    public static void setPrecision(int precision) {
-        Brain4J.precision = precision;
+    public static void setDecimalDigits(int decimalDigits) {
+        Brain4J.decimalDigits = decimalDigits;
     }
 
     /**

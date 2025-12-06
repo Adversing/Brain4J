@@ -1,13 +1,11 @@
 package org.brain4j.math.gpu.memory;
 
 import org.brain4j.math.gpu.TempObject;
-import org.jocl.cl_mem;
+import org.lwjgl.opencl.CL10;
 
-import static org.jocl.CL.clReleaseMemObject;
-
-public class TempBuffer extends TempObject<cl_mem> {
+public class TempBuffer extends TempObject<Long> {
     
-    public TempBuffer(cl_mem value) {
-        super(value, () -> clReleaseMemObject(value));
+    public TempBuffer(long value) {
+        super(value, () -> CL10.clReleaseMemObject(value));
     }
 }
