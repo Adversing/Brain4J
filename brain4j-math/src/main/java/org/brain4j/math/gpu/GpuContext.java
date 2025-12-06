@@ -1,17 +1,15 @@
 package org.brain4j.math.gpu;
 
 import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.memory.GpuQueue;
-import org.jocl.cl_command_queue;
-import org.jocl.cl_kernel;
-import org.jocl.cl_program;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opencl.CL10;
 
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.jocl.CL.*;
 
 public class GpuContext {
 
@@ -24,7 +22,11 @@ public class GpuContext {
                     throw new IllegalArgumentException("Kernel " + name + " already initialized for device " + device);
                 }
 
-                return CL10.clCreateKernel(program, name, (IntBuffer) null);
+                int[] err = new int[1];
+                long result = CL10.clCreateKernel(program, name, err);
+                
+                DeviceUtils.checkError("create_kernel", err[0]);
+                return result;
             });
     }
 
@@ -46,30 +48,27 @@ public class GpuContext {
 
     public static GpuQueue getOrCreate(Device device) {
         GpuQueue queue = device.queue();
-
+        
         if (queue == null) {
             long clQueue = device.newCommandQueue();
-            queue = new GpuQueue(device, clQueue, true);
+            queue = new GpuQueue(clQueue, true);
         }
 
         return queue;
     }
 
-    public static void finishAndRelease(GpuQueue queue) {
-        long clCommandQueue = queue.queue();
-
-        if (clCommandQueue == 0) return;
-
-        finishAndReleaseCl(clCommandQueue);
-    }
-
-    public static void finishAndReleaseCl(long commandQueue) {
-        CL10.clFinish(commandQueue);
-        CL10.clReleaseCommandQueue(commandQueue);
+    public static void finishAndRelease(long commandQueue) {
+        DeviceUtils.checkError("finish", CL10.clFinish(commandQueue));
+        DeviceUtils.checkError("release_command_queue", CL10.clReleaseCommandQueue(commandQueue));
     }
 
     public static void finishAndRelease(Device device) {
-        finishAndRelease(device.queue());
+        GpuQueue queue = device.queue();
+        
+        if (queue != null && queue.pointer() != 0) {
+            finishAndRelease(queue.pointer());
+        }
+        
         device.setQueue(null);
     }
 }

@@ -1,7 +1,6 @@
 package org.brain4j.math.gpu.ops;
 
 import org.brain4j.math.gpu.GpuContext;
-import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.tensor.Tensor;

@@ -82,10 +82,10 @@ public class Sequential extends Layer implements Model {
     public void connectLayers() {
         if (layers.isEmpty()) return;
 
-        Layer previous = null;
+        Layer previous = flattenedAt(0);
         int size = flattened.size();
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 1; i < size; i++) {
             Layer layer = flattenedAt(i);
             previous = layer.connect(previous);
             if (layer.frozen()) layer.freeze();
@@ -97,7 +97,7 @@ public class Sequential extends Layer implements Model {
             inputSizes[i] = flattenedAt(i - 1).size();
         }
 
-        IntStream.range(0, size).parallel().forEach(i -> {
+        IntStream.range(1, size).parallel().forEach(i -> {
             Layer layer = flattenedAt(i);
 
             int input = inputSizes[i];
@@ -534,31 +534,7 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public Layer connect(Layer previous) {
-        int size = layers.size();
-
-        for (int i = 0; i < size; i++) {
-            Layer layer = layerAt(i);
-            previous = layer.connect(previous);
-            if (layer.frozen()) layer.freeze();
-        }
-
-        int[] inputSizes = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            inputSizes[i] = (i == 0) ? 0 : layerAt(i - 1).size();
-        }
-
-        IntStream.range(0, size).parallel().forEach(i -> {
-            Layer layer = layerAt(i);
-
-            int input = inputSizes[i];
-            int output = layer.size();
-
-            RandomGenerator localRandom = new SplittableRandom(seed + i);
-            layer.initWeights(localRandom, input, output);
-        });
-
-        return previous;
+        throw new UnsupportedOperationException("Not supported by this class.");
     }
     
     @Override
@@ -620,7 +596,7 @@ public class Sequential extends Layer implements Model {
      * Updates the seed value used to initialize the random number generator.
      * @param seed the new seed value
      */
-    public void seed(long seed) {
+    public void setSeed(long seed) {
         this.seed = seed;
     }
 }

@@ -1,8 +1,5 @@
 package org.brain4j.math.commons.result;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 /**
  * A type that represents either success (Ok) or failure (Err).
  *

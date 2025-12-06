@@ -19,10 +19,6 @@ import java.util.List;
  */
 public interface Model extends Iterable<Layer> {
     
-    static Model of(Layer... layers) {
-        throw new UnsupportedOperationException("Static factory method must be implemented in a concrete class.");
-    }
-    
     /**
      * Adds a layer at the end of the network.
      * @param layer the layer to add

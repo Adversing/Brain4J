@@ -1,5 +1,3 @@
-package org.brain4j.examples.math.tensor;
-
 import org.brain4j.core.Brain4J;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
