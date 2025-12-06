@@ -3,6 +3,7 @@ package org.brain4j.math.solver;
 import org.brain4j.math.solver.impl.BogackiShampineSolver;
 import org.brain4j.math.solver.impl.EulerSolver;
 import org.brain4j.math.solver.impl.RungeKuttaSolver;
+import org.brain4j.math.solver.utils.StepResult;
 import org.brain4j.math.tensor.Tensor;
 
 import java.util.function.Function;
@@ -26,6 +27,31 @@ public interface NumericalSolver {
      * @return the next hidden state
      */
     Tensor update(Tensor deltaT, Tensor tauT, Tensor projInput, Tensor hidden, Function<Tensor, Tensor> hiddenFunction);
+
+    /**
+     * Performs a single adaptive solver step with error estimation and step size control.
+     * <p>
+     * This method uses an embedded lower-order method to estimate the local truncation error
+     * and adjusts the timestep accordingly. If the error exceeds the tolerance, the step
+     * is rejected and should be retried with the returned reduced timestep.
+     * <p>
+     * The default implementation delegates to {@link #update} without adaptation.
+     *
+     * @param deltaT the timestep delta, shape [batch, 1]
+     * @param tauT the projected time constant τ, shape [batch, hidden_dim]
+     * @param projInput the projected input (Wx + b) for this timestep, shape [batch, hidden_dim]
+     * @param hidden the current hidden state
+     * @param hiddenFunction function to project the hidden state (e.g. Uh)
+     * @param tolerance the error tolerance for step acceptance
+     * @return a {@link StepResult} containing the next state, recommended timestep, and acceptance status
+     */
+    default StepResult updateAdaptive(Tensor deltaT, Tensor tauT, Tensor projInput,
+                                      Tensor hidden, Function<Tensor, Tensor> hiddenFunction,
+                                      float tolerance) {
+        // default: non-adaptive behavior, always accept
+        Tensor nextHidden = update(deltaT, tauT, projInput, hidden, hiddenFunction);
+        return StepResult.accepted(nextHidden, deltaT);
+    }
 
     /**
      * Resets any internal state or cache maintained by the solver.
