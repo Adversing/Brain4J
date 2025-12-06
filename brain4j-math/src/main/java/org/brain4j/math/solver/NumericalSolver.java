@@ -1,5 +1,6 @@
 package org.brain4j.math.solver;
 
+import org.brain4j.math.solver.impl.BogackiShampineSolver;
 import org.brain4j.math.solver.impl.EulerSolver;
 import org.brain4j.math.solver.impl.RungeKuttaSolver;
 import org.brain4j.math.tensor.Tensor;
@@ -11,7 +12,7 @@ import java.util.function.Function;
  * used to advance the hidden state of liquid neural networks through time.
  * <p>
  * Implementations provide different trade-offs between speed and accuracy,
- * such as {@link EulerSolver} and {@link RungeKuttaSolver}.
+ * such as {@link EulerSolver}, {@link RungeKuttaSolver}, and {@link BogackiShampineSolver}.
  * @author xEcho1337
  */
 public interface NumericalSolver {
@@ -25,4 +26,18 @@ public interface NumericalSolver {
      * @return the next hidden state
      */
     Tensor update(Tensor deltaT, Tensor tauT, Tensor projInput, Tensor hidden, Function<Tensor, Tensor> hiddenFunction);
+
+    /**
+     * Resets any internal state or cache maintained by the solver.
+     * <p>
+     * Some solvers (e.g., {@link BogackiShampineSolver}) cache intermediate values
+     * between steps for optimization purposes (such as the FSAL property). This method
+     * should be called when starting a new sequence or when the batch size changes
+     * to ensure the solver starts with a clean state.
+     * <p>
+     * The default implementation does nothing, as most solvers are stateless.
+     */
+    default void resetCache() {
+        // no-op by default; stateless solvers don't need to reset anything
+    }
 }
