@@ -10,7 +10,6 @@ import org.brain4j.math.tensor.Tensor;
  * @author xEcho1337
  * @see CrossEntropy
  * @see BinaryCrossEntropy
- * @see HuberLoss
  * @see MeanAbsoluteError
  * @see MeanSquaredError
  */

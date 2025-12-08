@@ -39,8 +39,7 @@ public class BinaryCrossEntropy implements LossFunction {
     public Tensor delta(Tensor output, Tensor target, Tensor derivative) {
         Tensor error = output.minus(target);
 
-        if (classWeights == null)
-            return error;
+        if (classWeights == null) return error;
 
         Tensor weighted = error.clone();
         int numClasses = classWeights.shape(0);

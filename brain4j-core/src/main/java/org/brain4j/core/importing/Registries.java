@@ -84,7 +84,6 @@ public class Registries {
         
         LOSS_FUNCTION_REGISTRY.register("binary_cross_entropy", BinaryCrossEntropy.class);
         LOSS_FUNCTION_REGISTRY.register("cross_entropy", CrossEntropy.class);
-        LOSS_FUNCTION_REGISTRY.register("huber_loss", HuberLoss.class);
         LOSS_FUNCTION_REGISTRY.register("mean_absolute_error", MeanAbsoluteError.class);
         LOSS_FUNCTION_REGISTRY.register("mean_squared_error", MeanSquaredError.class);
         
