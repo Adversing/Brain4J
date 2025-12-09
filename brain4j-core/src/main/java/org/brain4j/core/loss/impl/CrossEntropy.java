@@ -47,12 +47,11 @@ public class CrossEntropy implements LossFunction {
         return false;
     }
 
-    public CrossEntropy classWeights(Tensor weights) {
-        this.classWeights = weights;
-        return this;
+    public Tensor getClassWeights() {
+        return classWeights;
     }
 
-    public Tensor classWeights() {
-        return classWeights;
+    public void setClassWeights(Tensor classWeights) {
+        this.classWeights = classWeights;
     }
 }

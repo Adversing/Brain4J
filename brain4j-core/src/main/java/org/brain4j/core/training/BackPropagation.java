@@ -3,30 +3,25 @@ package org.brain4j.core.training;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.math.commons.Pair;
+import org.brain4j.math.commons.Batch;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 
-import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 public record BackPropagation(Model model, Optimizer optimizer, Updater updater) {
 
-    public void propagatePartition(
-        Pair<Tensor[], Tensor[]> batch,
-        BiConsumer<Integer, Double> postBatchCallback,
-        int index
-    ) {
-        Device device = model.device();
+    public void propagatePartition(Batch batch, BiConsumer<Integer, Double> postBatchCallback, int index) {
+        Device device = model.getDevice();
         StatesCache cache = new StatesCache(true, device);
         
         long start = System.nanoTime();
         
-        Tensor[] inputs = batch.first();
-        Tensor[] labels = batch.second();
+        Tensor[] inputs = batch.getFirst();
+        Tensor[] labels = batch.getSecond();
 
         Tensor[] output = model.predict(cache, inputs);
         model.backpropagate(cache, output, labels);
@@ -38,7 +33,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         }
         
         optimizer.postBatch();
-        updater.postBatch(optimizer.learningRate(), elements);
+        updater.postBatch(optimizer.getLearningRate(), elements);
         model.zeroGrad();
         
         if (device != null) {
@@ -53,19 +48,19 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         dataSource.reset();
         
         while (dataSource.hasNext()) {
-            Pair<Tensor[], Tensor[]> batch = hostTo(dataSource.nextBatch());
-            propagatePartition(batch, postBatchCallback, dataSource.cursor());
+            Batch batch = hostTo(dataSource.nextBatch());
+            propagatePartition(batch, postBatchCallback, dataSource.getCursor());
         }
         
-        updater.postFit(optimizer.learningRate(), dataSource.size());
+        updater.postFit(optimizer.getLearningRate(), dataSource.getSize());
         model.zeroGrad();
     }
     
-    private Pair<Tensor[], Tensor[]> hostTo(Pair<Tensor[], Tensor[]> partition) {
-        Device device = model.device();
+    private Batch hostTo(Batch partition) {
+        Device device = model.getDevice();
         
-        Tensor[] inputs = partition.first();
-        Tensor[] labels = partition.second();
+        Tensor[] inputs = partition.getFirst();
+        Tensor[] labels = partition.getSecond();
         
         for (int i = 0; i < inputs.length; i++) {
             Tensor input = inputs[i];
@@ -77,6 +72,6 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
             labels[i] = label.to(device);
         }
         
-        return new Pair<>(inputs, labels);
+        return new Batch(inputs, labels);
     }
 }

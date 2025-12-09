@@ -58,14 +58,6 @@ public abstract class Optimizer {
      */
     public abstract Tensor step(Tensor weights, Tensor gradient);
     
-    public double learningRate() {
-        return learningRate;
-    }
-    
-    public void setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
-    }
-    
     /**
      * Optional initialization hook for optimizers that require internal state.
      * <p>Default implementation does nothing.
@@ -80,5 +72,13 @@ public abstract class Optimizer {
      */
     public void postBatch() {
         // Optional hook
+    }
+
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+    public void setLearningRate(double learningRate) {
+        this.learningRate = learningRate;
     }
 }

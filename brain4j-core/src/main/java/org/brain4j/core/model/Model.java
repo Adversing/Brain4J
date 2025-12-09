@@ -40,7 +40,7 @@ public interface Model extends Iterable<Layer> {
      * @return the first output tensor
      */
     default Tensor predict(Tensor input) {
-        return predict(new StatesCache(false, device()), input)[0];
+        return predict(new StatesCache(false, getDevice()), input)[0];
     }
 
     /**
@@ -64,7 +64,7 @@ public interface Model extends Iterable<Layer> {
      * @param params the training parameters
      */
     default void fit(TrainingParams params) {
-        fit(params.train(), params.validation(), params.epochs(), params.evaluateEvery());
+        fit(params.trainSet(), params.validationSet(), params.epochs(), params.evaluateEvery());
     }
 
     /**
@@ -166,7 +166,7 @@ public interface Model extends Iterable<Layer> {
      * Gets the device the model is stored on.
      * @return the device type of this model
      */
-    Device device();
+    Device getDevice();
     
     /**
      * Prints a formatted summary of the model architecture to the console,
@@ -185,33 +185,33 @@ public interface Model extends Iterable<Layer> {
      * Returns an immutable list of layers composing the model.
      * @return the list of layers
      */
-    List<Layer> layers();
+    List<Layer> getLayers();
 
     /**
      * Returns an immutable list of all the layers in the model, including nested layers.
      * @return the list of layers
      */
-    List<Layer> flattened();
+    List<Layer> getFlattened();
 
     /**
      * Returns the layer at the specified index.
      * @param index the index
      * @return the layer in that index
      */
-    Layer layerAt(int index);
+    Layer getLayerAt(int index);
 
     /**
      * Returns the flattened layer at the specified index.
      * @param index the index
      * @return the layer in that index
      */
-    Layer flattenedAt(int index);
+    Layer getFlattenedAt(int index);
 
     /**
      * Returns the optimizer currently used by the model.
      * @return the optimizer instance
      */
-    Optimizer optimizer();
+    Optimizer getOptimizer();
     
     /**
      * Sets the optimizer used for this model.
@@ -223,7 +223,7 @@ public interface Model extends Iterable<Layer> {
      * Returns the updater currently used by the model.
      * @return the updater instance
      */
-    Updater updater();
+    Updater getUpdater();
     
     /**
      * Sets the updater used for this model.
@@ -235,7 +235,7 @@ public interface Model extends Iterable<Layer> {
      * Returns the loss function currently set in the model.
      * @return the loss function instance
      */
-    LossFunction lossFunction();
+    LossFunction getLossFunction();
     
     /**
      * Sets the loss function used for this model.

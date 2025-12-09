@@ -10,7 +10,7 @@ public class Pair<K, V> {
         this.second = second;
     }
 
-    public K first() {
+    public K getFirst() {
         return first;
     }
 
@@ -18,7 +18,7 @@ public class Pair<K, V> {
         this.first = first;
     }
 
-    public V second() {
+    public V getSecond() {
         return second;
     }
 

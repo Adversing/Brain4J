@@ -83,7 +83,7 @@ public class OnnxFormat implements ModelFormat {
         
         addInitializers(model, graphBuilder, weightsMap);
         
-        Layer inputLayer = model.layers().getFirst();
+        Layer inputLayer = model.getLayers().getFirst();
         
         if (!(inputLayer instanceof InputLayer wrapped)) {
             throw new IllegalArgumentException("First layer is not an input layer!");
@@ -121,7 +121,7 @@ public class OnnxFormat implements ModelFormat {
     }
     
     private void addInitializers(Model model, GraphProto.Builder graphBuilder, Map<Tensor, String> weightsMap) {
-        List<Layer> layers = model.flattened();
+        List<Layer> layers = model.getFlattened();
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);

@@ -104,11 +104,25 @@ public class DropoutLayer extends Layer {
         return inputs;
     }
 
-    /**
-     * Gets the dropout rate
-     * @return the dropout rate
-     */
-    public double dropoutRate() {
+    public RandomGenerator getRandom() {
+        return random;
+    }
+
+    public double getDropoutRate() {
         return dropoutRate;
+    }
+
+    public DropoutLayer setDropoutRate(double dropoutRate) {
+        this.dropoutRate = dropoutRate;
+        return this;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public DropoutLayer setSize(int size) {
+        this.size = size;
+        return this;
     }
 }

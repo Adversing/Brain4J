@@ -165,32 +165,32 @@ public class GraphModel implements Model {
     }
 
     @Override
-    public Device device() {
+    public Device getDevice() {
         return device;
     }
 
     @Override
-    public List<Layer> layers() {
+    public List<Layer> getLayers() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Layer> flattened() {
+    public List<Layer> getFlattened() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Layer layerAt(int index) {
+    public Layer getLayerAt(int index) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Layer flattenedAt(int index) {
+    public Layer getFlattenedAt(int index) {
         throw new UnsupportedOperationException();
     }
     
     @Override
-    public Optimizer optimizer() {
+    public Optimizer getOptimizer() {
         throw new UnsupportedOperationException();
     }
     
@@ -200,7 +200,7 @@ public class GraphModel implements Model {
     }
     
     @Override
-    public Updater updater() {
+    public Updater getUpdater() {
         throw new UnsupportedOperationException();
     }
     
@@ -210,7 +210,7 @@ public class GraphModel implements Model {
     }
     
     @Override
-    public LossFunction lossFunction() {
+    public LossFunction getLossFunction() {
         throw new UnsupportedOperationException();
     }
     

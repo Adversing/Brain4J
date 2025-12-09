@@ -37,7 +37,7 @@ public class DenseLayer extends Layer {
 
     private DenseLayer() {
     }
-    
+
     /**
      * Constructs a new instance of a dense layer with a linear activation.
      * @param dimension the dimension of the output
@@ -79,16 +79,16 @@ public class DenseLayer extends Layer {
     public void initWeights(RandomGenerator generator, int input, int output) {
         this.weights.map(x -> weightInit.generate(generator, input, output));
     }
-    
+
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor[] result = new Tensor[inputs.length];
         Tensor[] beforeActivation = new Tensor[inputs.length];
-        
+
         for (int i = 0; i < result.length; i++) {
             Tensor input = inputs[i];
             Tensor output = input.matmulGrad(weights);
-            
+
             if (bias != null) output = output.addGrad(bias);
 
             beforeActivation[i] = output;
@@ -100,27 +100,36 @@ public class DenseLayer extends Layer {
         cache.rememberOutput(this, beforeActivation);
         return result;
     }
-    
+
     @Override
     public int size() {
         return dimension;
     }
-    
+
     @Override
     public void serialize(JsonObject object) {
         object.addProperty("dimension", dimension);
     }
-    
+
     @Override
     public void deserialize(JsonObject object) {
         this.dimension = object.get("dimension").getAsInt();
     }
-    
+
     @Override
     public boolean validInput(Tensor input) {
         int[] shape = input.shape();
         int[] weightsShape = weights.shape();
 
         return shape[shape.length - 1] == weightsShape[0];
+    }
+
+    public int getDimension() {
+        return dimension;
+    }
+
+    public DenseLayer setDimension(int dimension) {
+        this.dimension = dimension;
+        return this;
     }
 }

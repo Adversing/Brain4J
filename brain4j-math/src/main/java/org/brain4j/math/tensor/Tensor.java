@@ -5,7 +5,7 @@ import org.brain4j.math.activation.impl.ReLUActivation;
 import org.brain4j.math.activation.impl.SigmoidActivation;
 import org.brain4j.math.activation.impl.TanhActivation;
 import org.brain4j.math.gpu.device.Device;
-import org.brain4j.math.lang.DoubleToDoubleFunction;
+import org.brain4j.math.commons.D2DFunction;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.*;
@@ -668,7 +668,7 @@ public interface Tensor extends Iterable<Float> {
      * @param function the function to apply
      * @return the current tensor
      */
-    Tensor map(DoubleToDoubleFunction function);
+    Tensor map(D2DFunction function);
 
     /**
      * Sets all elements of this tensor to the given value.

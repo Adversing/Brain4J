@@ -11,8 +11,8 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
+import org.brain4j.math.commons.Batch;
 import org.brain4j.math.commons.Commons;
-import org.brain4j.math.commons.Pair;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
@@ -71,7 +71,7 @@ public class Sequential extends Layer implements Model {
 
         for (Layer layer : layers) {
             if (layer instanceof Model subModel) {
-                flattened.addAll(subModel.flattened());
+                flattened.addAll(subModel.getFlattened());
                 continue;
             }
 
@@ -79,26 +79,26 @@ public class Sequential extends Layer implements Model {
         }
     }
 
-    public void connectLayers() {
+    protected void connectLayers() {
         if (layers.isEmpty()) return;
 
-        Layer previous = flattenedAt(0);
+        Layer previous = getFlattenedAt(0);
         int size = flattened.size();
 
         for (int i = 1; i < size; i++) {
-            Layer layer = flattenedAt(i);
+            Layer layer = getFlattenedAt(i);
             previous = layer.connect(previous);
-            if (layer.frozen()) layer.freeze();
+            if (layer.isFrozen()) layer.freeze();
         }
 
         int[] inputSizes = new int[size];
 
         for (int i = 1; i < inputSizes.length; i++) {
-            inputSizes[i] = flattenedAt(i - 1).size();
+            inputSizes[i] = getFlattenedAt(i - 1).size();
         }
 
         IntStream.range(1, size).parallel().forEach(i -> {
-            Layer layer = flattenedAt(i);
+            Layer layer = getFlattenedAt(i);
 
             int input = inputSizes[i];
             int output = layer.size();
@@ -109,12 +109,12 @@ public class Sequential extends Layer implements Model {
     }
 
     protected void makeEvaluation(
-        Pair<Tensor[], Tensor[]> batch,
+        Batch batch,
         Map<Integer, Tensor> classifications,
         AtomicReference<Double> totalLoss
     ) {
-        Tensor[] inputs = batch.first();
-        Tensor[] labels = batch.second();
+        Tensor[] inputs = batch.getFirst();
+        Tensor[] labels = batch.getSecond();
 
         Tensor[] outputs = predict(new StatesCache(false, device), inputs);
         
@@ -200,7 +200,7 @@ public class Sequential extends Layer implements Model {
         String barChar = Commons.getHeaderChar();
 
         int progressBarLength = 25;
-        int total = source.batches();
+        int total = source.getBatches();
 
         double percentage = (double) batch / total;
         double tookInSeconds = tookMs / 1000;
@@ -224,7 +224,7 @@ public class Sequential extends Layer implements Model {
         System.out.print("\r" + message);
     }
 
-    private void append(
+    protected void append(
         String pattern,
         StringBuilder builder,
         DecimalFormat format,
@@ -232,20 +232,20 @@ public class Sequential extends Layer implements Model {
         AtomicLong totalBiases
     ) {
         for (int i = 0; i < flattened.size(); i++) {
-            Layer layer = flattenedAt(i);
+            Layer layer = getFlattenedAt(i);
             String layerType = layer.getClass().getSimpleName();
 
             int neurons = layer.size();
             int weights = layer.totalWeights() + layer.totalBiases();
 
-            Tensor weightsTensor = layer.weights();
+            Tensor weightsTensor = layer.getWeights();
 
             String formatWeights = weights == 0 ? "-" : format.format(weights);
             String shape = weightsTensor == null
                 ? "[" + neurons + "]"
                 : Arrays.toString(weightsTensor.shape());
 
-            builder.append(pattern.formatted(i, layerType, formatWeights, shape, layer.setActivation().name()));
+            builder.append(pattern.formatted(i, layerType, formatWeights, shape, layer.getActivation().name()));
 
             totalWeights.addAndGet(weights);
             totalBiases.addAndGet(neurons);
@@ -354,7 +354,7 @@ public class Sequential extends Layer implements Model {
 
     @Override
     public EvaluationResult evaluate(ListDataSource dataSource) {
-        int classes = Math.max(2, dataSource.samples().getFirst().label().elements());
+        int classes = Math.max(2, dataSource.getSamples().getFirst().label().elements());
         Map<Integer, Tensor> classifications = new HashMap<>();
 
         for (int i = 0; i < classes; i++) {
@@ -366,11 +366,11 @@ public class Sequential extends Layer implements Model {
         dataSource.reset();
         
         while (dataSource.hasNext()) {
-            Pair<Tensor[], Tensor[]> batch = dataSource.nextBatch();
+            Batch batch = dataSource.nextBatch();
             makeEvaluation(batch, classifications, totalLoss);
         }
 
-        return new EvaluationResult(totalLoss.get() / dataSource.size(), classes, classifications);
+        return new EvaluationResult(totalLoss.get() / dataSource.getSize(), classes, classifications);
     }
 
     @Override
@@ -394,7 +394,7 @@ public class Sequential extends Layer implements Model {
     }
 
     @Override
-    public Device device() {
+    public Device getDevice() {
         return device;
     }
     
@@ -459,12 +459,12 @@ public class Sequential extends Layer implements Model {
     }
 
     @Override
-    public Layer layerAt(int index) {
+    public Layer getLayerAt(int index) {
         return layers.get(index);
     }
 
     @Override
-    public Layer flattenedAt(int index) {
+    public Layer getFlattenedAt(int index) {
         return flattened.get(index);
     }
 
@@ -476,17 +476,17 @@ public class Sequential extends Layer implements Model {
     }
 
     @Override
-    public List<Layer> layers() {
+    public List<Layer> getLayers() {
         return new ArrayList<>(layers);
     }
 
     @Override
-    public List<Layer> flattened() {
+    public List<Layer> getFlattened() {
         return new ArrayList<>(flattened);
     }
 
     @Override
-    public Optimizer optimizer() {
+    public Optimizer getOptimizer() {
         return optimizer;
     }
     
@@ -496,7 +496,7 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public Updater updater() {
+    public Updater getUpdater() {
         return updater;
     }
     
@@ -506,7 +506,7 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public LossFunction lossFunction() {
+    public LossFunction getLossFunction() {
         return lossFunction;
     }
     
@@ -527,7 +527,7 @@ public class Sequential extends Layer implements Model {
 
             @Override
             public Layer next() {
-                return flattenedAt(currentIndex++);
+                return getFlattenedAt(currentIndex++);
             }
         };
     }
@@ -542,7 +542,7 @@ public class Sequential extends Layer implements Model {
         Tensor[] pass = inputs;
         
         for (int i = 0; i < layers.size(); i++) {
-            Layer layer = layerAt(i);
+            Layer layer = getLayerAt(i);
 
             if (layer == null) {
                 throw new IllegalStateException("Layer at index " + i + " is null!");
@@ -557,7 +557,7 @@ public class Sequential extends Layer implements Model {
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         for (int l = layers.size() - 2; l >= 0; l--) {
-            Layer layer = layerAt(l);
+            Layer layer = getLayerAt(l);
 
             layer.backward(cache, updater, optimizer);
         }

@@ -192,7 +192,7 @@ public class BrainFormat implements ModelFormat {
                 
                 int layerIndex = Integer.parseInt(parts[1]);
                 
-                Layer layer = model.flattened().get(layerIndex);
+                Layer layer = model.getFlattened().get(layerIndex);
                 
                 Map<String, Tensor> weights = weightsMap.computeIfAbsent(layer, (l) -> new HashMap<>());
                 String weightName = parts[2];
@@ -214,9 +214,9 @@ public class BrainFormat implements ModelFormat {
         JsonObject metadata = new JsonObject();
         Instant date = Instant.now();
         
-        Class<? extends Optimizer> optimizerClass = model.optimizer().getClass();
-        Class<? extends LossFunction> lossFunctionClass = model.lossFunction().getClass();
-        Class<? extends Updater> updaterClass = model.updater().getClass();
+        Class<? extends Optimizer> optimizerClass = model.getOptimizer().getClass();
+        Class<? extends LossFunction> lossFunctionClass = model.getLossFunction().getClass();
+        Class<? extends Updater> updaterClass = model.getUpdater().getClass();
         
         metadata.addProperty("format_version", FORMAT_VERSION);
         metadata.addProperty("created_at", date.toString());
@@ -226,7 +226,7 @@ public class BrainFormat implements ModelFormat {
         metadata.addProperty("loss_function", LOSS_FUNCTION_REGISTRY.fromClass(lossFunctionClass));
         metadata.addProperty("updater", UPDATERS_REGISTRY.fromClass(updaterClass));
         
-        List<Layer> layers = model.flattened();
+        List<Layer> layers = model.getFlattened();
         JsonArray array = new JsonArray();
         
         for (int i = 0; i < layers.size(); i++) {
@@ -234,8 +234,8 @@ public class BrainFormat implements ModelFormat {
             JsonObject data = new JsonObject();
             
             Class<? extends Layer> layerClass = layer.getClass();
-            Class<? extends Activation> activationClass = layer.setActivation().getClass();
-            Class<? extends GradientClipper> clipperClass = layer.setClipper().getClass();
+            Class<? extends Activation> activationClass = layer.getActivation().getClass();
+            Class<? extends GradientClipper> clipperClass = layer.getClipper().getClass();
             
             Map<String, Tensor> weightsMap = layer.weightsMap();
             String identifier = LAYER_REGISTRY.fromClass(layerClass);

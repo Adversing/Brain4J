@@ -1,6 +1,7 @@
 package org.brain4j.math.data;
 
 import org.brain4j.math.Tensors;
+import org.brain4j.math.commons.Batch;
 import org.brain4j.math.commons.Pair;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -161,7 +162,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * @return a Pair containing input tensor and label tensor for the next batch,
      *         or null if no more batches are available
      */
-    public Pair<Tensor[], Tensor[]> nextBatch() {
+    public Batch nextBatch() {
         if (!hasNext()) return null;
 
         Tensor[] input = batchedInputs.get(cursor);
@@ -169,7 +170,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
 
         cursor++;
 
-        return new Pair<>(input, label);
+        return new Batch(input, label);
     }
 
     /**
@@ -178,21 +179,21 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * This method is called during construction and after normalization.
      */
     private void computeBatches() {
-        int size = size();
+        int size = getSize();
         int index = 0;
 
         while (index < size) {
             int end = Math.min(index + batchSize, size);
-            Pair<Tensor[], Tensor[]> batch = createBatch(index, end);
+            Batch batch = createBatch(index, end);
 
-            batchedInputs.add(batch.first());
-            batchedLabels.add(batch.second());
+            batchedInputs.add(batch.getFirst());
+            batchedLabels.add(batch.getSecond());
 
             index += batchSize;
         }
     }
 
-    private Pair<Tensor[], Tensor[]> createBatch(int start, int end) {
+    private Batch createBatch(int start, int end) {
         List<Sample> subSet = samples.subList(start, end);
 
         Sample first = subSet.getFirst();
@@ -237,7 +238,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
             batchedLabelTensors[i] = Tensors.mergeTensors(mergedLabels.get(i)).to(device);
         }
 
-        return new Pair<>(batchedInputTensors, batchedLabelTensors);
+        return new Batch(batchedInputTensors, batchedLabelTensors);
     }
 
     @Override
@@ -310,7 +311,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the total number of samples in the data source.
      * @return number of samples
      */
-    public int size() {
+    public int getSize() {
         return samples.size();
     }
 
@@ -318,7 +319,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the underlying list of samples.
      * @return the samples list
      */
-    public List<Sample> samples() {
+    public List<Sample> getSamples() {
         return samples;
     }
 
@@ -326,7 +327,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the list of batched input tensors.
      * @return list of input batches
      */
-    public List<Tensor[]> batchedInputs() {
+    public List<Tensor[]> getBatchedInputs() {
         return batchedInputs;
     }
 
@@ -334,7 +335,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the list of batched label tensors.
      * @return list of label batches
      */
-    public List<Tensor[]> batchedLabels() {
+    public List<Tensor[]> getBatchedLabels() {
         return batchedLabels;
     }
 
@@ -342,7 +343,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the configured batch size.
      * @return batch size
      */
-    public int batchSize() {
+    public int getBatchSize() {
         return batchSize;
     }
 
@@ -350,7 +351,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the total number of batches.
      * @return number of batches
      */
-    public int batches() {
+    public int getBatches() {
         return batches;
     }
 
@@ -358,7 +359,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
      * Returns the current batch cursor index.
      * @return current cursor position
      */
-    public int cursor() {
+    public int getCursor() {
         return cursor;
     }
 

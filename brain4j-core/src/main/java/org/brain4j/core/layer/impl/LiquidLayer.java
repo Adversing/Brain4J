@@ -112,7 +112,7 @@ public class LiquidLayer extends Layer {
             hiddenStates.add(hidden.reshapeGrad(batch, 1, dimension));
         }
 
-        if (this.returnSequences) {
+        if (returnSequences) {
             hidden = Tensors.concatGrad(hiddenStates, 1);
         }
 
@@ -202,40 +202,66 @@ public class LiquidLayer extends Layer {
         return result;
     }
 
-    public NumericalSolver solver() {
+    public DenseLayer getHiddenParams() {
+        return hiddenParams;
+    }
+
+    public LiquidLayer setHiddenParams(DenseLayer hiddenParams) {
+        this.hiddenParams = hiddenParams;
+        return this;
+    }
+
+    public DenseLayer getTauParams() {
+        return tauParams;
+    }
+
+    public LiquidLayer setTauParams(DenseLayer tauParams) {
+        this.tauParams = tauParams;
+        return this;
+    }
+
+    public NumericalSolver getSolver() {
         return solver;
     }
 
-    public LiquidLayer solver(NumericalSolver solver) {
+    public LiquidLayer setSolver(NumericalSolver solver) {
         this.solver = solver;
         return this;
     }
 
-    public DenseLayer hiddenParams() {
-        return hiddenParams;
-    }
-    
-    public void setHiddenParams(DenseLayer hiddenParams) {
-        this.hiddenParams = hiddenParams;
-    }
-    
-    public DenseLayer tauParams() {
-        return tauParams;
-    }
-    
-    public void setTauParams(DenseLayer tauParams) {
-        this.tauParams = tauParams;
-    }
-    
-    public int dimension() {
+    public int getDimension() {
         return dimension;
     }
 
-    public double tauMin() {
+    public LiquidLayer setDimension(int dimension) {
+        this.dimension = dimension;
+        return this;
+    }
+
+    public double getTauMin() {
         return tauMin;
     }
-    
-    public double tauMax() {
+
+    public LiquidLayer setTauMin(double tauMin) {
+        this.tauMin = tauMin;
+        return this;
+    }
+
+    public double getTauMax() {
         return tauMax;
+    }
+
+    public LiquidLayer setTauMax(double tauMax) {
+        this.tauMax = tauMax;
+        return this;
+    }
+
+    public boolean isReturnSequences() {
+        return returnSequences;
+    }
+
+    public LiquidLayer setReturnSequences(boolean returnSequences) {
+        this.returnSequences = returnSequences;
+        return this;
     }
 }

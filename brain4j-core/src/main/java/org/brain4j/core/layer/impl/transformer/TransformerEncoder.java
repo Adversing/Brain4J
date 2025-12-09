@@ -110,8 +110,8 @@ public class TransformerEncoder extends Layer {
 
         if (useGating) this.gateProjection = new DenseLayer(projDim);
         
-        attention.attnQkvHasBias(attnQkvHasBias);
-        attention.attnOutHasBias(attnOutHasBias);
+        attention.setAttnQkvBias(attnQkvHasBias);
+        attention.setAttnOutBias(attnOutHasBias);
     }
 
     public Layer createNormLayer() {
@@ -277,8 +277,8 @@ public class TransformerEncoder extends Layer {
         if (attnQkvHasBias) attention.setBias(mappedWeights.get("attention.bias"));
         if (attnOutHasBias) attention.setOutBias(mappedWeights.get("attention.out_bias"));
         
-        attention.attnOutHasBias(attnOutHasBias);
-        attention.attnQkvHasBias(attnQkvHasBias);
+        attention.setAttnOutBias(attnOutHasBias);
+        attention.setAttnQkvBias(attnQkvHasBias);
     }
     
     @Override
@@ -359,29 +359,29 @@ public class TransformerEncoder extends Layer {
     public Map<String, Tensor> weightsMap() {
         var result = super.weightsMap();
         
-        result.put("up_proj.weights", upProjection.weights());
-        result.put("up_proj.bias", upProjection.bias());
-        result.put("down_proj.weights", downProjection.weights());
-        result.put("down_proj.bias", downProjection.bias());
+        result.put("up_proj.weights", upProjection.getWeights());
+        result.put("up_proj.bias", upProjection.getBias());
+        result.put("down_proj.weights", downProjection.getWeights());
+        result.put("down_proj.bias", downProjection.getBias());
 
-        result.put("norm_1.weights", normalizer1.weights());
-        result.put("norm_2.weights", normalizer2.weights());
+        result.put("norm_1.weights", normalizer1.getWeights());
+        result.put("norm_2.weights", normalizer2.getWeights());
 
         if (normType == NormType.LAYER_NORM) {
-            result.put("norm_1.bias", normalizer1.bias());
-            result.put("norm_2.bias", normalizer2.bias());
+            result.put("norm_1.bias", normalizer1.getBias());
+            result.put("norm_2.bias", normalizer2.getBias());
         }
 
         if (useGating) {
-            result.put("gate_proj.weights", gateProjection.weights());
-            result.put("gate_proj.bias", gateProjection.bias());
+            result.put("gate_proj.weights", gateProjection.getWeights());
+            result.put("gate_proj.bias", gateProjection.getBias());
         }
 
-        result.put("attention.weights", attention.weights());
-        result.put("attention.out_proj", attention.outProj());
+        result.put("attention.weights", attention.getWeights());
+        result.put("attention.out_proj", attention.getOutProj());
         
-        if (attention.attnQkvHasBias()) result.put("attention.bias", attention.bias());
-        if (attention.attnOutHasBias()) result.put("attention.out_bias", attention.outBias());
+        if (attention.hasAttnQkvBias()) result.put("attention.bias", attention.getBias());
+        if (attention.hasAttnOutBias()) result.put("attention.out_bias", attention.getOutBias());
 
         return result;
     }

@@ -84,8 +84,8 @@ public class GPT2Adapter implements ArchitectureAdapter {
             Tensor attnOutBias = weights.get(prefix + "attn.c_proj.bias");
             
             MultiHeadAttention attention = decoder.attention();
-            attention.attnQkvHasBias(true);
-            attention.attnOutHasBias(true);
+            attention.setAttnQkvBias(true);
+            attention.setAttnOutBias(true);
             
             attention.setWeights(attnWeight);
             attention.setBias(attnBias);

@@ -4,7 +4,7 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.gpu.device.DeviceUtils;
-import org.brain4j.math.lang.DoubleToDoubleFunction;
+import org.brain4j.math.commons.D2DFunction;
 import org.brain4j.math.pooling.impl.MaxPooling;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
@@ -882,7 +882,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public Tensor map(DoubleToDoubleFunction function) {
+    public Tensor map(D2DFunction function) {
         ParallelMap.map(function, data);
         return this;
     }

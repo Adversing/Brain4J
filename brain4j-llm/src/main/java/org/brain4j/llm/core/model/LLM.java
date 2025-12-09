@@ -80,7 +80,7 @@ public class LLM implements InferenceProvider {
         List<String> tokens = tokenizer.splitTokens(prompt);
         Tensor input = tokenizer.encode(tokens);
 
-        StatesCache cache = new StatesCache(model.device());
+        StatesCache cache = new StatesCache(model.getDevice());
         StringBuilder response = new StringBuilder(prompt);
 
         int bosToken = tokenizer.bosTokenId();
@@ -88,7 +88,7 @@ public class LLM implements InferenceProvider {
         int generatedTokens = 0;
 
         if (bosToken != eosToken) input = input.concat(Tensors.scalar(bosToken));
-        if (model.device() != null) input = input.to(model.device());
+        if (model.getDevice() != null) input = input.to(model.getDevice());
 
         Random random = config.random();
         SoftmaxActivation activation = new SoftmaxActivation(config.temperature());

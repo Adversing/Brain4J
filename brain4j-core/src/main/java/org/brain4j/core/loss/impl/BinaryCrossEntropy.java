@@ -41,17 +41,17 @@ public class BinaryCrossEntropy implements LossFunction {
 
         if (classWeights == null) return error;
 
-        Tensor weighted = error.clone();
-        int numClasses = classWeights.shape(0);
-        float[] w = classWeights.data();
-        float[] data = weighted.data();
+        float w0 = classWeights.get(0);
+        float w1 = classWeights.get(1);
 
-        for (int i = 0; i < data.length; i++) {
-            int cls = i % numClasses;
-            data[i] *= w[cls];
-        }
+        // W = y * w1 + (1 - y) * w0
+        Tensor oneMinusTarget = target.mul(-1).plus(1);
+        Tensor weightOne = target.times(w1);
+        Tensor weightZero = oneMinusTarget.times(w0);
+        Tensor W = weightOne.plus(weightZero);
 
-        return weighted;
+        // delta = error * W
+        return error.mul(W);
     }
 
     @Override
@@ -59,12 +59,11 @@ public class BinaryCrossEntropy implements LossFunction {
         return false;
     }
 
-    public BinaryCrossEntropy classWeights(Tensor weights) {
-        this.classWeights = weights;
-        return this;
+    public Tensor getClassWeights() {
+        return classWeights;
     }
 
-    public Tensor classWeights() {
-        return classWeights;
+    public void setClassWeights(Tensor classWeights) {
+        this.classWeights = classWeights;
     }
 }

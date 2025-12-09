@@ -156,8 +156,8 @@ public abstract class Layer {
      */
     public Layer freeze() {
         this.frozen = true;
-        if (this.weights != null) weights.noGrad();
-        if (this.bias != null) bias.noGrad();
+        if (weights != null) weights.noGrad();
+        if (bias != null) bias.noGrad();
         return this;
     }
     
@@ -166,8 +166,8 @@ public abstract class Layer {
      */
     public Layer unfreeze() {
         this.frozen = false;
-        if (this.weights != null) weights.withGrad();
-        if (this.bias != null) bias.withGrad();
+        if (weights != null) weights.withGrad();
+        if (bias != null) bias.withGrad();
         return this;
     }
     
@@ -195,16 +195,16 @@ public abstract class Layer {
      * @param device the device to port the weights on
      */
     public void toDevice(Device device) {
-        if (this.weights != null) this.weights = weights.to(device);
-        if (this.bias != null) this.bias = bias.to(device);
+        if (weights != null) this.weights = weights.to(device);
+        if (bias != null) this.bias = bias.to(device);
     }
 
     /**
      * Resets the gradients for all the weights in this layer.
      */
     public void resetGrad() {
-        if (this.weights != null) weights.zeroGrad();
-        if (this.bias != null) bias.zeroGrad();
+        if (weights != null) weights.zeroGrad();
+        if (bias != null) bias.zeroGrad();
     }
 
     /**
@@ -219,63 +219,13 @@ public abstract class Layer {
         return true;
     }
 
-    public Activation setActivation() {
-        return activation;
-    }
-
-    public Layer setActivation(Activation activation) {
-        this.activation = activation;
-        return this;
-    }
-
-    public GradientClipper setClipper() {
-        return clipper;
-    }
-    
-    public Layer setClipper(GradientClipper clipper) {
-        this.clipper = clipper;
-        return this;
-    }
-    
-    public WeightInitialization setWeightInit() {
-        return weightInit;
-    }
-
-    public Layer setWeightInit(WeightInitialization weightInit) {
-        this.weightInit = weightInit;
-        return this;
-    }
-
-    public Tensor weights() {
-        return weights;
-    }
-    
-    public void setWeights(Tensor weights) {
-        this.weights = weights;
-    }
-
-    public Tensor bias() {
-        return bias;
-    }
-    
-    public void setBias(Tensor bias) {
-        this.bias = bias;
-    }
-    
-    public boolean frozen() {
-        return frozen;
-    }
-    
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
     
     /**
      * Gets the total number of biases in this layer.
      * @return 0 if bias is <code>null</code>, otherwise the number of elements in the bias tensor
      */
     public int totalBiases() {
-        if (this.bias == null) return 0;
+        if (bias == null) return 0;
 
         return bias.elements();
     }
@@ -285,7 +235,7 @@ public abstract class Layer {
      * @return 0 if the weights is <code>null</code>, otherwise the number of elements in the weights tensor
      */
     public int totalWeights() {
-        if (this.weights == null) return 0;
+        if (weights == null) return 0;
 
         return weights.elements();
     }
@@ -293,9 +243,63 @@ public abstract class Layer {
     public Map<String, Tensor> weightsMap() {
         Map<String, Tensor> result = new HashMap<>();
         
-        if (this.weights != null) result.put("weights", weights);
-        if (this.bias != null) result.put("bias", bias);
+        if (weights != null) result.put("weights", weights);
+        if (bias != null) result.put("bias", bias);
         
         return result;
+    }
+
+    public Activation getActivation() {
+        return activation;
+    }
+
+    public Layer setActivation(Activation activation) {
+        this.activation = activation;
+        return this;
+    }
+
+    public GradientClipper getClipper() {
+        return clipper;
+    }
+
+    public Layer setClipper(GradientClipper clipper) {
+        this.clipper = clipper;
+        return this;
+    }
+
+    public WeightInitialization getWeightInit() {
+        return weightInit;
+    }
+
+    public Layer setWeightInit(WeightInitialization weightInit) {
+        this.weightInit = weightInit;
+        return this;
+    }
+
+    public Tensor getWeights() {
+        return weights;
+    }
+
+    public Layer setWeights(Tensor weights) {
+        this.weights = weights;
+        return this;
+    }
+
+    public Tensor getBias() {
+        return bias;
+    }
+
+    public Layer setBias(Tensor bias) {
+        this.bias = bias;
+        return this;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public Layer setFrozen(boolean frozen) {
+        this.frozen = frozen;
+        return this;
     }
 }

@@ -214,14 +214,14 @@ public class MultiHeadAttention extends Layer {
     @Override
     public Layer freeze() {
         outProj.noGrad();
-        if (this.outBias != null) outBias.noGrad();
+        if (outBias != null) outBias.noGrad();
         return super.freeze();
     }
 
     @Override
     public Layer unfreeze() {
         outProj.withGrad();
-        if (this.outBias != null) outBias.withGrad();
+        if (outBias != null) outBias.withGrad();
         return super.unfreeze();
     }
 
@@ -252,7 +252,7 @@ public class MultiHeadAttention extends Layer {
         if (attnOutHasBias) outBias.zeroGrad();
     }
 
-    public Tensor outProj() {
+    public Tensor getOutProj() {
         return outProj;
     }
 
@@ -260,7 +260,7 @@ public class MultiHeadAttention extends Layer {
         this.outProj = outProj;
     }
 
-    public Tensor outBias() {
+    public Tensor getOutBias() {
         return outBias;
     }
 
@@ -268,11 +268,11 @@ public class MultiHeadAttention extends Layer {
         this.outBias = outBias;
     }
 
-    public int headCount() {
+    public int getHeadCount() {
         return headCount;
     }
 
-    public MultiHeadAttention headCount(int headCount) {
+    public MultiHeadAttention setHeadCount(int headCount) {
         this.headCount = headCount;
         return this;
     }
@@ -281,7 +281,7 @@ public class MultiHeadAttention extends Layer {
         return embeddingDim;
     }
 
-    public MultiHeadAttention embeddingDim(int embeddingDim) {
+    public MultiHeadAttention setEmbeddingDim(int embeddingDim) {
         this.embeddingDim = embeddingDim;
         return this;
     }
@@ -299,25 +299,25 @@ public class MultiHeadAttention extends Layer {
         return useFlashAttention;
     }
 
-    public MultiHeadAttention useFlashAttention(boolean enabled) {
+    public MultiHeadAttention setUseFlashAttention(boolean enabled) {
         this.useFlashAttention = enabled;
         return this;
     }
 
-    public boolean attnQkvHasBias() {
+    public boolean hasAttnQkvBias() {
         return attnQkvHasBias;
     }
 
-    public MultiHeadAttention attnQkvHasBias(boolean attnQkvHasBias) {
+    public MultiHeadAttention setAttnQkvBias(boolean attnQkvHasBias) {
         this.attnQkvHasBias = attnQkvHasBias;
         return this;
     }
 
-    public boolean attnOutHasBias() {
+    public boolean hasAttnOutBias() {
         return attnOutHasBias;
     }
 
-    public MultiHeadAttention attnOutHasBias(boolean attnOutHasBias) {
+    public MultiHeadAttention setAttnOutBias(boolean attnOutHasBias) {
         this.attnOutHasBias = attnOutHasBias;
         return this;
     }

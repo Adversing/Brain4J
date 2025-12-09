@@ -1,6 +1,6 @@
 package org.brain4j.math.tensor.parallel;
 
-import org.brain4j.math.lang.DoubleToDoubleFunction;
+import org.brain4j.math.commons.D2DFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.concurrent.RecursiveAction;
 
 public class ParallelMap extends RecursiveAction {
     
-    public record MapParameters(DoubleToDoubleFunction function, float[] data) { }
+    public record MapParameters(D2DFunction function, float[] data) { }
     
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int PARALLEL_WORK_THRESHOLD = PARALLELISM;
@@ -47,13 +47,13 @@ public class ParallelMap extends RecursiveAction {
             return;
         }
 
-        DoubleToDoubleFunction function = parameters.function();
+        D2DFunction function = parameters.function();
         float[] data = parameters.data();
 
         mapSection(function, start, end, data);
     }
 
-    public static void map(DoubleToDoubleFunction function, float[] data) {
+    public static void map(D2DFunction function, float[] data) {
         int start = 0;
         int end = data.length;
         int work = end - start;
@@ -81,7 +81,7 @@ public class ParallelMap extends RecursiveAction {
     }
 
     private static void mapSection(
-        DoubleToDoubleFunction function,
+        D2DFunction function,
         int start,
         int end,
         float[] data

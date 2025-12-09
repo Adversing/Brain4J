@@ -11,6 +11,7 @@ import org.brain4j.datasets.download.callback.ProgressCallback;
 import org.brain4j.datasets.format.FileFormat;
 import org.brain4j.datasets.format.RecordParser;
 import org.brain4j.datasets.format.impl.ParquetFormat;
+import org.brain4j.math.commons.Batch;
 import org.brain4j.math.commons.Pair;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.data.ListDataSource;
@@ -74,7 +75,7 @@ public final class Datasets {
                 Tensor output = Tensors.zeros(10);
                 
                 output.set(1, label);
-                return new Pair<>(new Tensor[] { input }, new Tensor[] { output });
+                return new Batch(new Tensor[] { input }, new Tensor[] { output });
             };
             
             return createDataSource(dataset, new ParquetFormat(), parser, shuffle, batchSize);
@@ -107,11 +108,11 @@ public final class Datasets {
         for (DatasetFile file : dataFiles) {
             for (T record : format.read(file.path().toFile())) {
                 try {
-                    Pair<Tensor[], Tensor[]> pair = parser.parse(record, samples.size());
+                    Batch pair = parser.parse(record, samples.size());
                     
                     if (pair == null) continue;
                     
-                    samples.add(new Sample(pair.first(), pair.second()));
+                    samples.add(new Sample(pair.getFirst(), pair.getSecond()));
                 } catch (Exception e) {
                     e.printStackTrace(System.err);
                     break;
