@@ -5,16 +5,10 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.weightsinit.UniformXavierInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
-public class SoftmaxActivation implements Activation {
-
-    private final double temperature;
+public record SoftmaxActivation(double temperature) implements Activation {
 
     public SoftmaxActivation() {
         this(1.0);
-    }
-
-    public SoftmaxActivation(double temperature) {
-        this.temperature = temperature;
     }
 
     @Override

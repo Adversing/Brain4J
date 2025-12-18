@@ -4,13 +4,7 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.index.Range;
 
-public class ConcatOperation implements Operation {
-
-    private final int dimension;
-
-    public ConcatOperation(int dimension) {
-        this.dimension = dimension;
-    }
+public record ConcatOperation(int dimension) implements Operation {
 
     @Override
     public Tensor compute(Tensor... inputs) {
@@ -34,7 +28,7 @@ public class ConcatOperation implements Operation {
         int[] shapeB = b.shape();
         int rank = shapeA.length;
         int actualDim = dimension;
-        
+
         if (actualDim == -1) {
             actualDim = shapeA.length - 1;
         }
@@ -59,7 +53,7 @@ public class ConcatOperation implements Operation {
 
         Tensor gradA = gradOutput.slice(rangeA);
         Tensor gradB = gradOutput.slice(rangeB);
-        
+
         return new Tensor[] { gradA, gradB };
     }
 }

@@ -6,16 +6,10 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.weightsinit.NormalHeInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
-public class ELUActivation implements Activation {
-
-    private final double alpha;
+public record ELUActivation(double alpha) implements Activation {
 
     public ELUActivation() {
         this(1.0);
-    }
-
-    public ELUActivation(double alpha) {
-        this.alpha = alpha;
     }
 
     @Override

@@ -4,13 +4,11 @@ import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
-import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Implements a single decoder block of the Transformer architecture,

@@ -2,9 +2,8 @@ package org.brain4j.core.transformer.tokenizers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.brain4j.core.transformer.tokenizers.impl.BytePairTokenizer;
 import org.brain4j.core.transformer.tokenizers.impl.BertPreTokenizer;
-import org.brain4j.core.transformer.tokenizers.model.Normalizer;
+import org.brain4j.core.transformer.tokenizers.impl.BytePairTokenizer;
 import org.brain4j.core.transformer.tokenizers.model.Tokenizer;
 
 import java.io.*;

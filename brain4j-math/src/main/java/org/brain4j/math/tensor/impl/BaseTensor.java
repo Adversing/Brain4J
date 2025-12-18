@@ -3,8 +3,8 @@ package org.brain4j.math.tensor.impl;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.commons.Commons;
-import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.commons.D2DFunction;
+import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.pooling.impl.MaxPooling;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
@@ -349,7 +349,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             case 2 -> layerNorm2D(epsilon);
             case 3 -> layerNorm3D(epsilon);
             default -> layerNormND(epsilon);
-        };
+        }
         
         return this;
     }
@@ -375,11 +375,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         
         var /= features;
         
-        float denom = (float) Math.sqrt(var + epsilon);
+        float invDenom = (float) (1.0f / Math.sqrt(var + epsilon));
         
         for (int j = 0; j < features; j++) {
             int idx = offset + j;
-            data[idx] = (data[idx] - mean) / denom;
+            data[idx] = (data[idx] - mean) * invDenom;
         }
     }
     
@@ -932,7 +932,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public void zeroGrad() {
         if (autogradContext != null) {
-            autogradContext.zerograd();
+            autogradContext.zeroGrad();
         }
     }
 

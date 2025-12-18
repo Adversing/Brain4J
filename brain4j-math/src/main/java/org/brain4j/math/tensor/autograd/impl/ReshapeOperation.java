@@ -3,13 +3,7 @@ package org.brain4j.math.tensor.autograd.impl;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 
-public class ReshapeOperation implements Operation {
-
-    private final int[] newShape;
-
-    public ReshapeOperation(int[] newShape) {
-        this.newShape = newShape;
-    }
+public record ReshapeOperation(int[] newShape) implements Operation {
 
     @Override
     public int requiredInputs() {

@@ -6,11 +6,6 @@ import org.brain4j.math.tensor.autograd.Operation;
 public class SubOperation implements Operation {
 
     @Override
-    public int requiredInputs() {
-        return 2;
-    }
-
-    @Override
     public Tensor compute(Tensor... inputs) {
         return inputs[0].minus(inputs[1]);
     }

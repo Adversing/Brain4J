@@ -2,7 +2,6 @@ package org.brain4j.math.data;
 
 import org.brain4j.math.Tensors;
 import org.brain4j.math.commons.Batch;
-import org.brain4j.math.commons.Pair;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 
@@ -30,7 +29,6 @@ import java.util.List;
  * @author xEcho1337
  * @author Adversing
  */
-@SuppressWarnings("unchecked")
 public class ListDataSource implements Cloneable, Iterable<Sample> {
 
     protected List<Sample> samples;

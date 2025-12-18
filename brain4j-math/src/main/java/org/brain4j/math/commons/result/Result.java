@@ -22,6 +22,7 @@ package org.brain4j.math.commons.result;
  * @param <T> the type of the success value
  * @param <E> the type of error/exception
  */
+@Deprecated(forRemoval = true)
 public sealed interface Result<T, E extends Exception> permits Ok, Err {
 
     /**

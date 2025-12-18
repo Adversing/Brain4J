@@ -11,9 +11,9 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
+import org.brain4j.math.Tensors;
 import org.brain4j.math.commons.Batch;
 import org.brain4j.math.commons.Commons;
-import org.brain4j.math.Tensors;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;
@@ -197,7 +197,7 @@ public class Sequential extends Layer implements Model {
     }
 
     protected void printProgress(ListDataSource source, int epoch, int epoches, int batch, double tookMs) {
-        String barChar = Commons.getHeaderChar();
+        String barChar = Commons.HEADER_CHAR;
 
         int progressBarLength = 25;
         int total = source.getBatches();
@@ -425,7 +425,7 @@ public class Sequential extends Layer implements Model {
         DecimalFormat format = new DecimalFormat("#,###");
 
         String pattern = "%-7s %-20s %-12s %-15s %-15s\n";
-        String divider = Commons.getHeader(" Architecture ", Commons.getHeaderChar());
+        String divider = Commons.getHeader(" Architecture ", Commons.HEADER_CHAR);
 
         stats.append(divider);
         stats.append(pattern.formatted("Index", "Layer Type", "Parameters", "Shape", "Activation")).append("\n");
@@ -449,11 +449,11 @@ public class Sequential extends Layer implements Model {
         String sizeOfWeights = Commons.formatNumber(weightsCount * floatSize);
         String sizeOfBiases = Commons.formatNumber(biasesCount * floatSize);
 
-        stats.append(Commons.getHeader(" Recap ", Commons.getHeaderChar()));
+        stats.append(Commons.getHeader(" Recap ", Commons.HEADER_CHAR));
         stats.append("Total weights: %s (%s)\n".formatted(weights, sizeOfWeights));
         stats.append("Total biases: %s (%s)\n".formatted(biases, sizeOfBiases));
         stats.append("Total parameters: %s (%s)\n".formatted(parameters, sizeOfParams));
-        stats.append(Commons.getHeader("", Commons.getHeaderChar()));
+        stats.append(Commons.getHeader("", Commons.HEADER_CHAR));
 
         Arrays.stream(stats.toString().split("\n")).forEach(System.out::println);
     }

@@ -3,11 +3,8 @@ package org.brain4j.math.gpu;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.memory.GpuQueue;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opencl.CL10;
 
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
 import java.util.HashMap;
 import java.util.Map;
 

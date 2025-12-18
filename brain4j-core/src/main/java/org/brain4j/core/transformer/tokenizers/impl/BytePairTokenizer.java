@@ -7,8 +7,8 @@ import com.google.gson.reflect.TypeToken;
 import org.brain4j.core.transformer.tokenizers.model.AddedToken;
 import org.brain4j.core.transformer.tokenizers.model.Normalizer;
 import org.brain4j.core.transformer.tokenizers.model.Tokenizer;
-import org.brain4j.math.commons.Commons;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.tensor.Tensor;
 
 import java.io.*;
@@ -351,7 +351,7 @@ public class BytePairTokenizer implements Tokenizer {
         int progressBarLength = 20;
         double percentage = (double) iteration / merges;
 
-        String barChar = Commons.getHeaderChar();
+        String barChar = Commons.HEADER_CHAR;
         int remaining = merges - iteration;
 
         double seconds = tookMs / 1000;

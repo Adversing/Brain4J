@@ -23,6 +23,7 @@ import java.time.Duration;
  */
 public class Commons {
 
+    public static String HEADER_CHAR = "━"; 
     private static final int[] EXP_TABLE = new int[64];
     private static final int[] MANT_TABLE = new int[2048];
     private static final int[] OFF_TABLE = new int[64];
@@ -220,10 +221,6 @@ public class Commons {
     
     public static double clamp(double value, double minimum, double maximum) {
         return Math.min(Math.max(value, minimum), maximum);
-    }
-    
-    public static String getHeaderChar() {
-        return "━";
     }
 
     public static float[] int2float(int[] array) {

@@ -719,11 +719,6 @@ public class GpuTensor extends BaseTensor {
     }
 
     @Override
-    public Tensor softmax() {
-        return super.softmax();
-    }
-
-    @Override
     public Tensor softmax(double temperature) {
         GpuTensor result = new GpuTensor(device, shape);
 

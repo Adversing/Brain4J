@@ -6,16 +6,10 @@ import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.weightsinit.NormalHeInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
-public class LeakyReLUActivation implements Activation {
-
-    private final double alpha;
+public record LeakyReLUActivation(double alpha) implements Activation {
 
     public LeakyReLUActivation() {
         this(0.01);
-    }
-
-    public LeakyReLUActivation(double alpha) {
-        this.alpha = alpha;
     }
 
     @Override

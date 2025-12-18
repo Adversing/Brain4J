@@ -3,13 +3,7 @@ package org.brain4j.math.tensor.autograd.impl;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 
-public class LayerNormOperation implements Operation {
-
-    private final double epsilon;
-
-    public LayerNormOperation(double epsilon) {
-        this.epsilon = epsilon;
-    }
+public record LayerNormOperation(double epsilon) implements Operation {
 
     @Override
     public int requiredInputs() {

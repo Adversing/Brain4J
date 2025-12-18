@@ -8,18 +8,18 @@ public class AutogradContext {
     private Tensor[] inputs;
     private Tensor grad;
     private Operation operation;
-    private int expectedContribs = 0;
-    private int receivedContribs = 0;
+    private int expectedContributions = 0;
+    private int receivedContributions = 0;
 
     public AutogradContext(boolean requiresGrad) {
         this.requiresGrad = requiresGrad;
         this.grad = null;
     }
 
-    public void zerograd() {
+    public void zeroGrad() {
         this.grad = null;
-        this.receivedContribs = 0;
-        this.expectedContribs = 0;
+        this.receivedContributions = 0;
+        this.expectedContributions = 0;
     }
 
     public void setOperation(Operation operation, Tensor... inputs) {
@@ -36,7 +36,7 @@ public class AutogradContext {
     }
 
     public void increaseContributes() {
-        expectedContribs++;
+        expectedContributions++;
     }
 
     public boolean requiresGrad() {
@@ -52,11 +52,11 @@ public class AutogradContext {
         
         this.grad = grad == null ? gradOutput.clone() : grad.add(gradOutput.broadcastLike(grad));
 
-        receivedContribs++;
+        receivedContributions++;
 
-        int needed = Math.max(1, expectedContribs);
+        int needed = Math.max(1, expectedContributions);
 
-        if (receivedContribs < needed) return;
+        if (receivedContributions < needed) return;
 
         if (operation == null) return;
 

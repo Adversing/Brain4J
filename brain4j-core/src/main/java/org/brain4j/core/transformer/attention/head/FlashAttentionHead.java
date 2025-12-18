@@ -3,8 +3,8 @@ package org.brain4j.core.transformer.attention.head;
 import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.gpu.ops.FlashAttention;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.impl.GpuTensor;
+import org.brain4j.math.tensor.index.Range;
 
 public class FlashAttentionHead extends AttentionHead {
 
