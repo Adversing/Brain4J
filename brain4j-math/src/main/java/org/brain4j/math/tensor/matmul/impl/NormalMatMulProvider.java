@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
-public class NormalMatmulProvider implements MatmulProvider {
+public class NormalMatMulProvider implements MatmulProvider {
     
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int WORK_THRESHOLD = 8;

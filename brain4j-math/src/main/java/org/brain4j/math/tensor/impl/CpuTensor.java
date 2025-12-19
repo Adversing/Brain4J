@@ -6,8 +6,8 @@ import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.broadcast.TensorBroadcast;
 import org.brain4j.math.tensor.matmul.MatmulProvider;
-import org.brain4j.math.tensor.matmul.impl.NormalMatmulProvider;
-import org.brain4j.math.tensor.matmul.impl.SimdMatmulProvider;
+import org.brain4j.math.tensor.matmul.impl.NormalMatMulProvider;
+import org.brain4j.math.tensor.matmul.impl.SIMDMatMulProvider;
 import org.brain4j.math.tensor.parallel.ParallelTranspose;
 
 import java.util.Arrays;
@@ -18,12 +18,12 @@ public class CpuTensor extends BaseTensor {
 
     static {
         if (DeviceUtils.isSimdAvailable()) {
-            matmulProvider = new SimdMatmulProvider();
+            matmulProvider = new SIMDMatMulProvider();
         } else {
             System.err.println("The Vector incubator API is not available. It's recommended to use for better performance.");
             System.err.println("For more information consult this guide: https://github.com/brain4j-org/brain4j/wiki/Using-SIMD");
 
-            matmulProvider = new NormalMatmulProvider();
+            matmulProvider = new NormalMatMulProvider();
         }
     }
 
@@ -57,7 +57,7 @@ public class CpuTensor extends BaseTensor {
     public Tensor transpose(int dim1, int dim2) {
         // Unfortunately, SIMD does not support non-contiguous data, therefore transposing
         // the data in a contiguous space is required for SIMD matmul to work
-        if (matmulProvider instanceof NormalMatmulProvider) {
+        if (matmulProvider instanceof NormalMatMulProvider) {
             return super.transpose(dim1, dim2);
         }
 
