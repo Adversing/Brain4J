@@ -31,6 +31,9 @@ public record TrainingConfig(LossFunction loss, Optimizer optimizer, Updater upd
         }
 
         public TrainingConfig build() {
+            if (loss == null) throw new IllegalStateException("Loss function has not been set");
+            if (optimizer == null) throw new IllegalStateException("Optimizer has not been set");
+            if (updater == null) throw new IllegalStateException("Updater has not been set");
             return new TrainingConfig(loss, optimizer, updater);
         }
     }

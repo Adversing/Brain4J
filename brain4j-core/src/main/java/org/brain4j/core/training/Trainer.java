@@ -3,6 +3,7 @@ package org.brain4j.core.training;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
+import org.brain4j.core.monitor.Monitor;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.commons.Batch;
@@ -12,13 +13,10 @@ import org.brain4j.math.tensor.Tensor;
 
 import java.util.List;
 
-public record Trainer(Model model, TrainingConfig config) {
+public record Trainer(Model model, Monitor monitor, TrainingConfig config) {
 
-    public static Trainer compile(Model model, LossFunction loss, Optimizer optimizer, Updater updater) {
-        return new Trainer(
-            model,
-            new TrainingConfig(loss, optimizer, updater)
-        );
+    public static Trainer compile(Model model, Monitor monitor, LossFunction loss, Optimizer optimizer, Updater updater) {
+        return new Trainer(model, monitor, new TrainingConfig(loss, optimizer, updater));
     }
 
     public void fit(ListDataSource dataSource, int epochs) {
