@@ -124,7 +124,7 @@ public class LLM implements InferenceProvider {
         if (model == null) throw new NullPointerException("Model has not been compiled!");
         if (device == null) throw new NullPointerException("Device cannot be null!");
 
-        model.to(device);
+        model.fork(device);
 
         return this;
     }

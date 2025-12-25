@@ -3,6 +3,7 @@ package org.brain4j.core.graphs;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
+import org.brain4j.core.model.ModelSpecs;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.updater.impl.StochasticUpdater;
@@ -107,49 +108,14 @@ public class GraphModel implements Model {
 
         return outputs;
     }
-
+    
     @Override
-    public void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Model add(Layer layer) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Model add(int index, Layer layer) {
-        throw new UnsupportedOperationException();
+    public EvaluationResult evaluate(ListDataSource dataSource, LossFunction lossFunction) {
+        return null; // TODO
     }
     
     @Override
-    public void fit(ListDataSource train, ListDataSource validation, int epoches, int evaluateEvery) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public EvaluationResult evaluate(ListDataSource dataSource) {
-        return null;
-    }
-
-    @Override
-    public double loss(ListDataSource dataSource) {
-        return 0;
-    }
-    
-    @Override
-    public Model compile(LossFunction lossFunction, Optimizer optimizer) {
-        return compile(lossFunction, optimizer, new StochasticUpdater());
-    }
-    
-    @Override
-    public Model compile(LossFunction lossFunction, Optimizer optimizer, Updater updater) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Model to(Device device) {
+    public Model fork(Device device) {
         this.device = device;
 
         Map<String, Tensor> copy = new HashMap<>(initializers);
@@ -168,69 +134,19 @@ public class GraphModel implements Model {
     public Device getDevice() {
         return device;
     }
-
-    @Override
-    public List<Layer> getLayers() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<Layer> getFlattened() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Layer getLayerAt(int index) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Layer getFlattenedAt(int index) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public Optimizer getOptimizer() {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public void setOptimizer(Optimizer optimizer) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public Updater getUpdater() {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public void setUpdater(Updater updater) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public LossFunction getLossFunction() {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public void setLossFunction(LossFunction lossFunction) {
-        throw new UnsupportedOperationException();
-    }
     
     @Override
     public void summary() {
         throw new UnsupportedOperationException();
     }
-
+    
     @Override
-    public void zeroGrad() {
+    public ModelSpecs getSpecs() {
         throw new UnsupportedOperationException();
     }
-
+    
     @Override
-    public Iterator<Layer> iterator() {
+    public List<Layer> getLayers() {
         throw new UnsupportedOperationException();
     }
 

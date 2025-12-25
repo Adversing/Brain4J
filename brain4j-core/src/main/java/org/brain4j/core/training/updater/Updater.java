@@ -64,7 +64,7 @@ public abstract class Updater {
     /**
      * Resets all accumulated gradients and clears the internal state.
      */
-    public void resetGradients() {
+    public void initialize() {
         weightsGradients.clear();
     }
 

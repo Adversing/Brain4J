@@ -10,7 +10,7 @@ import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
 import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.Sequential;
+import org.brain4j.core.model.impl.OldSequential;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
@@ -32,7 +32,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
         int context = config.get("n_ctx").getAsInt();
         int vocabSize = config.get("vocab_size").getAsInt();
         
-        Sequential seq = Sequential.of();
+        OldSequential seq = OldSequential.of();
         
         Tensor embedding = weights.get("wte.weight"); // embedding  -> [vocab, dim]
         Tensor posEncode = weights.get("wpe.weight"); // pos encode -> [length, dim]

@@ -3,14 +3,9 @@ package org.brain4j.core.importing.impl;
 import com.google.gson.*;
 import org.brain4j.core.importing.format.ModelFormat;
 import org.brain4j.core.layer.Layer;
-import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.Sequential;
-import org.brain4j.core.training.optimizer.Optimizer;
-import org.brain4j.core.training.updater.Updater;
+import org.brain4j.core.model.ModelSpecs;
 import org.brain4j.math.Tensors;
-import org.brain4j.math.activation.Activation;
-import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.tensor.Tensor;
 
 import java.io.*;
@@ -32,288 +27,232 @@ public class BrainFormat implements ModelFormat {
     
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final int FORMAT_VERSION = 1;
-
+    
     @Override
-    public Sequential deserialize(File file) {
-        Sequential model = Sequential.of();
-        Map<String, byte[]> files = new HashMap<>();
+    public Model deserialize(File file) {
+        Map<String, byte[]> files = readZip(file);
         
-        try (FileInputStream stream = new FileInputStream(file);
-             ZipInputStream zis = new ZipInputStream(stream)) {
-            
-            ZipEntry entry;
-            
-            while ((entry = zis.getNextEntry()) != null) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                
-                byte[] buffer = new byte[8192];
-                int read;
-                
-                while ((read = zis.read(buffer)) != -1) {
-                    baos.write(buffer, 0, read);
-                }
-                
-                files.put(entry.getName(), baos.toByteArray());
-                zis.closeEntry();
-            }
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
+        ModelSpecs specs = deserializeSpecs(files.get("metadata.json"));
+        Model model = specs.build(System.currentTimeMillis());
         
-        if (files.containsKey("metadata.json")) {
-            deserializeMetadata(model, files.get("metadata.json"));
-        }
-        
-        if (files.containsKey("weights.safetensors")) {
-            deserializeWeights(model, files.get("weights.safetensors"));
-        }
+        deserializeWeights(model, files.get("weights.safetensors"));
         
         return model;
     }
     
     @Override
     public void serialize(Model model, File file) {
-        Map<String, Tensor> globalWeightsMap = new HashMap<>();
+        Map<String, Tensor> weights = new HashMap<>();
+        byte[] metadata = buildMetadata(model, weights);
+        byte[] weightData = buildWeights(weights);
         
-        byte[] metadata = buildMetadata(model, globalWeightsMap);
-        byte[] weights = buildWeights(globalWeightsMap);
+        writeZip(file, Map.of(
+            "metadata.json", metadata,
+            "weights.safetensors", weightData
+        ));
+    }
+    
+    private ModelSpecs deserializeSpecs(byte[] data) {
+        JsonObject root = GSON.fromJson(
+            new String(data, StandardCharsets.UTF_8),
+            JsonObject.class
+        );
         
-        // TODO: serialize training metadata
-        String[] files = { "metadata.json", "weights.safetensors" };
-        byte[][] content = { metadata, weights };
+        JsonArray architecture = root.getAsJsonArray("architecture");
+        ModelSpecs specs = ModelSpecs.of();
         
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
-             ZipOutputStream zos = new ZipOutputStream(stream)) {
-            zos.setLevel(Deflater.BEST_COMPRESSION);
+        for (JsonElement element : architecture) {
+            JsonObject layerJson = element.getAsJsonObject();
             
-            for (int i = 0; i < files.length; i++) {
-                ZipEntry metaEntry = new ZipEntry(files[i]);
-                byte[] fileContent = content[i];
-                
-                metaEntry.setMethod(ZipEntry.DEFLATED);
-                metaEntry.setSize(fileContent.length);
-                
-                zos.putNextEntry(metaEntry);
-                zos.write(fileContent);
+            Layer layer = LAYER_REGISTRY.toInstance(layerJson.get("type").getAsString());
+            layer.setActivation(ACTIVATION_REGISTRY.toInstance(layerJson.get("activation").getAsString()));
+            layer.setClipper(CLIPPERS_REGISTRY.toInstance(layerJson.get("clipper").getAsString()));
+            
+            layer.deserialize(layerJson);
+            specs.add(layer);
+        }
+        
+        return specs;
+    }
+    
+    private void deserializeWeights(Model model, byte[] data) {
+        List<Layer> layers = model.getLayers();
+        Map<Layer, Map<String, Tensor>> weightsPerLayer = new HashMap<>();
+        
+        ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
+        
+        long headerSize = buffer.getLong();
+        byte[] headerBytes = new byte[(int) headerSize];
+        buffer.get(headerBytes);
+        
+        JsonObject header = GSON.fromJson(
+            new String(headerBytes, StandardCharsets.UTF_8),
+            JsonObject.class
+        );
+        
+        for (Map.Entry<String, JsonElement> entry : header.entrySet()) {
+            String fullName = entry.getKey(); // es: dense.0.weights
+            JsonObject info = entry.getValue().getAsJsonObject();
+            
+            JsonArray shapeArray = info.getAsJsonArray("shape");
+            int[] shape = new int[shapeArray.size()];
+            int elements = 1;
+            for (int i = 0; i < shape.length; i++) {
+                shape[i] = shapeArray.get(i).getAsInt();
+                elements *= shape[i];
             }
             
-            zos.closeEntry();
-            zos.close();
+            JsonArray offsets = info.getAsJsonArray("offsets");
+            int start = offsets.get(0).getAsInt();
+            int end = offsets.get(1).getAsInt();
             
-            byte[] zipData = stream.toByteArray();
+            buffer.position(8 + (int) headerSize + start);
             
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                fos.write(zipData);
+            float[] values = new float[elements];
+            for (int i = 0; i < elements; i++) {
+                values[i] = buffer.getFloat();
             }
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
+            
+            Tensor tensor = Tensors.create(shape, values);
+            
+            String[] parts = fullName.split("\\.");
+            int layerIndex = Integer.parseInt(parts[1]);
+            String paramName = parts[2]; // "weights" | "bias"
+            
+            Layer layer = layers.get(layerIndex);
+            
+            Map<String, Tensor> map = weightsPerLayer.computeIfAbsent(layer, l -> new HashMap<>());
+            
+            map.put(paramName, tensor);
+        }
+        
+        for (Map.Entry<Layer, Map<String, Tensor>> entry : weightsPerLayer.entrySet()) {
+            entry.getKey().loadWeights(entry.getValue());
         }
     }
     
-    private <T extends Model> void deserializeMetadata(T model, byte[] data) {
-        try {
-            String json = new String(data, StandardCharsets.UTF_8);
-            JsonObject metadata = GSON.fromJson(json, JsonObject.class);
-            
-            JsonArray architecture = metadata.getAsJsonArray("architecture");
-            
-            String optimizerId = metadata.get("optimizer").getAsString();
-            String lossFunctionId = metadata.get("loss_function").getAsString();
-            String updaterId = metadata.get("updater").getAsString();
-            
-            model.setOptimizer(OPTIMIZERS_REGISTRY.toInstance(optimizerId));
-            model.setLossFunction(LOSS_FUNCTION_REGISTRY.toInstance(lossFunctionId));
-            model.setUpdater(UPDATERS_REGISTRY.toInstance(updaterId));
-            
-            for (int i = 0; i < architecture.size(); i++) {
-                JsonObject layerJson = architecture.get(i).getAsJsonObject();
-                
-                String type = layerJson.get("type").getAsString();
-                String activationId = layerJson.get("activation").getAsString();
-                String clipperId = layerJson.get("clipper").getAsString();
-                
-                Layer layer = LAYER_REGISTRY.toInstance(type);
-                layer.setActivation(ACTIVATION_REGISTRY.toInstance(activationId));
-                layer.setClipper(CLIPPERS_REGISTRY.toInstance(clipperId));
-                
-                layer.deserialize(layerJson);
-                model.add(layer);
-            }
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
-    }
-    
-    private <T extends Model> void deserializeWeights(T model, byte[] data) {
-        try {
-            Map<Layer, Map<String, Tensor>> weightsMap = new HashMap<>();
-            ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
-            
-            long headerLength = buffer.getLong();
-            byte[] headerBytes = new byte[(int) headerLength];
-            buffer.get(headerBytes);
-            
-            String headerJson = new String(headerBytes, StandardCharsets.UTF_8);
-            JsonObject header = GSON.fromJson(headerJson, JsonObject.class);
-            
-            for (Map.Entry<String, JsonElement> entry : header.entrySet()) {
-                String name = entry.getKey();
-                
-                JsonObject info = entry.getValue().getAsJsonObject();
-                JsonArray shapeArray = info.getAsJsonArray("shape");
-                
-                int elements = 1;
-                int[] shape = new int[shapeArray.size()];
-                
-                for (int i = 0; i < shapeArray.size(); i++) {
-                    shape[i] = shapeArray.get(i).getAsInt();
-                    elements *= shape[i];
-                }
-                
-                JsonArray offsetArray = info.getAsJsonArray("offsets");
-                int start = offsetArray.get(0).getAsInt();
-                int end = offsetArray.get(1).getAsInt();
-                int length = end - start;
-                
-                byte[] tensorBytes = new byte[length];
-                
-                buffer.position(8 + (int) headerLength + start);
-                buffer.get(tensorBytes);
-                
-                float[] values = new float[elements];
-                ByteBuffer tensorBuffer = ByteBuffer.wrap(tensorBytes).order(ByteOrder.LITTLE_ENDIAN);
-                
-                for (int i = 0; i < elements; i++) {
-                    values[i] = tensorBuffer.getFloat();
-                }
-                
-                Tensor tensor = Tensors.create(shape, values);
-                String[] parts = name.split("\\.");
-                
-                int layerIndex = Integer.parseInt(parts[1]);
-                
-                Layer layer = model.getFlattened().get(layerIndex);
-                
-                Map<String, Tensor> weights = weightsMap.computeIfAbsent(layer, (l) -> new HashMap<>());
-                String weightName = parts[2];
-                
-                int nameIndex = name.indexOf(weightName);
-                weights.put(name.substring(nameIndex), tensor);
-            }
-            
-            for (Map.Entry<Layer, Map<String, Tensor>> entry : weightsMap.entrySet()) {
-                Layer layer = entry.getKey();
-                layer.loadWeights(entry.getValue());
-            }
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
-    }
-    
-    private byte[] buildMetadata(Model model, Map<String, Tensor> globalWeightsMap) {
-        JsonObject metadata = new JsonObject();
-        Instant date = Instant.now();
+    private byte[] buildMetadata(Model model, Map<String, Tensor> globalWeights) {
+        JsonObject root = new JsonObject();
+        root.addProperty("format_version", FORMAT_VERSION);
+        root.addProperty("created_at", Instant.now().toString());
         
-        Class<? extends Optimizer> optimizerClass = model.getOptimizer().getClass();
-        Class<? extends LossFunction> lossFunctionClass = model.getLossFunction().getClass();
-        Class<? extends Updater> updaterClass = model.getUpdater().getClass();
-        
-        metadata.addProperty("format_version", FORMAT_VERSION);
-        metadata.addProperty("created_at", date.toString());
-        metadata.addProperty("weights_file", "weights.safetensors");
-        
-        metadata.addProperty("optimizer", OPTIMIZERS_REGISTRY.fromClass(optimizerClass));
-        metadata.addProperty("loss_function", LOSS_FUNCTION_REGISTRY.fromClass(lossFunctionClass));
-        metadata.addProperty("updater", UPDATERS_REGISTRY.fromClass(updaterClass));
-        
-        List<Layer> layers = model.getFlattened();
-        JsonArray array = new JsonArray();
+        JsonArray architecture = new JsonArray();
+        List<Layer> layers = model.getLayers();
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);
-            JsonObject data = new JsonObject();
+            JsonObject obj = new JsonObject();
             
-            Class<? extends Layer> layerClass = layer.getClass();
-            Class<? extends Activation> activationClass = layer.getActivation().getClass();
-            Class<? extends GradientClipper> clipperClass = layer.getClipper().getClass();
+            obj.addProperty("index", i);
+            obj.addProperty("type", LAYER_REGISTRY.fromClass(layer.getClass()));
+            obj.addProperty("activation", ACTIVATION_REGISTRY.fromClass(layer.getActivation().getClass()));
+            obj.addProperty("clipper", CLIPPERS_REGISTRY.fromClass(layer.getClipper().getClass()));
             
-            Map<String, Tensor> weightsMap = layer.weightsMap();
-            String identifier = LAYER_REGISTRY.fromClass(layerClass);
+            layer.serialize(obj);
             
-            data.addProperty("index", i);
-            data.addProperty("type", identifier);
-            data.addProperty("activation", ACTIVATION_REGISTRY.fromClass(activationClass));
-            data.addProperty("clipper", CLIPPERS_REGISTRY.fromClass(clipperClass));
-            
-            layer.serialize(data);
-            
-            JsonArray weightsArray = new JsonArray();
-            
-            for (Map.Entry<String, Tensor> entry : weightsMap.entrySet()) {
-                String id = String.format("%s.%s.%s", identifier, i, entry.getKey());
-                globalWeightsMap.put(id, entry.getValue());
-                weightsArray.add(id);
+            JsonArray weights = new JsonArray();
+            for (var entry : layer.weightsMap().entrySet()) {
+                String id = "%s.%d.%s".formatted(obj.get("type").getAsString(), i, entry.getKey());
+                globalWeights.put(id, entry.getValue());
+                weights.add(id);
             }
             
-            data.add("weights", weightsArray);
-            array.add(data);
+            obj.add("weights", weights);
+            architecture.add(obj);
         }
         
-        metadata.add("architecture", array);
-        
-        return GSON.toJson(metadata).getBytes();
+        root.add("architecture", architecture);
+        return GSON.toJson(root).getBytes(StandardCharsets.UTF_8);
     }
     
-    private byte[] buildWeights(Map<String, Tensor> globalWeightsMap) {
+    private byte[] buildWeights(Map<String, Tensor> weights) {
         JsonObject header = new JsonObject();
         
         int offset = 0;
+        Map<String, byte[]> rawData = new HashMap<>();
         
-        for (Map.Entry<String, Tensor> entry : globalWeightsMap.entrySet()) {
+        for (var entry : weights.entrySet()) {
             String name = entry.getKey();
-            Tensor weight = entry.getValue();
+            Tensor tensor = entry.getValue();
             
-            int begin = offset;
-            offset += weight.elements() * 4;
-            int end = offset;
+            float[] values = tensor.data();
+            int byteSize = values.length * 4;
             
-            JsonArray offsets = new JsonArray();
-            offsets.add(begin);
-            offsets.add(end);
+            JsonObject info = new JsonObject();
             
             JsonArray shape = new JsonArray();
+            for (int d : tensor.shape()) shape.add(d);
             
-            for (int dimension : weight.shape()) {
-                shape.add(dimension);
-            }
+            JsonArray offsets = new JsonArray();
+            offsets.add(offset);
+            offsets.add(offset + byteSize);
             
-            JsonObject tensor = new JsonObject();
+            info.add("shape", shape);
+            info.add("offsets", offsets);
+            info.addProperty("dtype", "F32");
             
-            tensor.addProperty("dtype", "f32");
-            tensor.add("shape", shape);
-            tensor.add("offsets", offsets);
+            header.add(name, info);
             
-            header.add(name, tensor);
+            ByteBuffer buf = ByteBuffer
+                .allocate(byteSize)
+                .order(ByteOrder.LITTLE_ENDIAN);
+            
+            for (float v : values) buf.putFloat(v);
+            
+            rawData.put(name, buf.array());
+            offset += byteSize;
         }
         
-        byte[] headerJson = GSON.toJson(header).getBytes();
+        byte[] headerBytes = GSON.toJson(header).getBytes(StandardCharsets.UTF_8);
         
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            ByteBuffer buffer = ByteBuffer.allocate(8)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .putLong(headerJson.length);
+        ByteBuffer result = ByteBuffer
+            .allocate(8 + headerBytes.length + offset)
+            .order(ByteOrder.LITTLE_ENDIAN);
+        
+        result.putLong(headerBytes.length);
+        result.put(headerBytes);
+        
+        for (byte[] data : rawData.values()) {
+            result.put(data);
+        }
+        
+        return result.array();
+    }
             
-            stream.write(buffer.array());
-            stream.write(headerJson);
+    private Map<String, byte[]> readZip(File file) {
+        Map<String, byte[]> result = new HashMap<>();
+        
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(file))) {
+            ZipEntry entry;
+            byte[] buffer = new byte[8192];
             
-            for (Tensor tensor : globalWeightsMap.values()) {
-                stream.write(tensor.toByteArray());
+            while ((entry = zis.getNextEntry()) != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                int read;
+                while ((read = zis.read(buffer)) != -1) {
+                    baos.write(buffer, 0, read);
+                }
+                result.put(entry.getName(), baos.toByteArray());
             }
-            
-            return stream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace(System.err);
-            return new byte[0];
+            throw new RuntimeException("Failed to read model zip", e);
+        }
+        
+        return result;
+    }
+    
+    private void writeZip(File file, Map<String, byte[]> files) {
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file))) {
+            zos.setLevel(Deflater.BEST_SPEED);
+            
+            for (var entry : files.entrySet()) {
+                ZipEntry ze = new ZipEntry(entry.getKey());
+                zos.putNextEntry(ze);
+                zos.write(entry.getValue());
+                zos.closeEntry();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write model zip", e);
         }
     }
 }

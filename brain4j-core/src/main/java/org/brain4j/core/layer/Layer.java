@@ -2,6 +2,7 @@ package org.brain4j.core.layer;
 
 import com.google.gson.JsonObject;
 import org.brain4j.core.loss.LossFunction;
+import org.brain4j.core.model.ModelComponent;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.activation.Activation;
@@ -15,6 +16,7 @@ import org.brain4j.math.weightsinit.WeightInitialization;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 
@@ -35,7 +37,7 @@ import java.util.random.RandomGenerator;
  *
  * @author xEcho1337
  */
-public abstract class Layer {
+public abstract class Layer implements ModelComponent {
 
     protected Activation activation = new LinearActivation();
     protected GradientClipper clipper = new HardClipper(5);
@@ -45,7 +47,9 @@ public abstract class Layer {
     protected Tensor bias;
     protected boolean frozen;
     
-    public Layer() {
+    @Override
+    public void appendTo(List<Layer> layers) {
+        layers.add(this);
     }
     
     /**
@@ -223,7 +227,6 @@ public abstract class Layer {
     public boolean validInput(Tensor input) {
         return true;
     }
-
     
     /**
      * Gets the total number of biases in this layer.

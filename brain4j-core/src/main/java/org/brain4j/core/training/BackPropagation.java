@@ -24,7 +24,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         Tensor[] labels = batch.getSecond();
 
         Tensor[] output = model.predict(cache, inputs);
-        model.backpropagate(cache, output, labels);
+//        model.backpropagate(cache, output, labels);
 
         int elements = 0;
         
@@ -34,7 +34,7 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         
         optimizer.postBatch();
         updater.postBatch(optimizer.getLearningRate(), elements);
-        model.zeroGrad();
+//        model.zeroGrad();
         
         if (device != null) {
             GpuContext.finishAndRelease(device);
@@ -53,7 +53,6 @@ public record BackPropagation(Model model, Optimizer optimizer, Updater updater)
         }
         
         updater.postFit(optimizer.getLearningRate(), dataSource.getSize());
-        model.zeroGrad();
     }
     
     private Batch hostTo(Batch partition) {

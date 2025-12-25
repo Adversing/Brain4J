@@ -9,6 +9,12 @@ public record TrainingConfig(LossFunction loss, Optimizer optimizer, Updater upd
     public static Builder builder() {
         return new TrainingConfig.Builder();
     }
+    
+    public TrainingConfig {
+        if (loss == null) throw new IllegalArgumentException("Loss cannot be null!");
+        if (optimizer == null) throw new IllegalArgumentException("Optimizer cannot be null!");
+        if (updater == null) throw new IllegalArgumentException("Updater cannot be null!");
+    }
 
     public static class Builder {
         private LossFunction loss;

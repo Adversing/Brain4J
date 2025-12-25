@@ -2,10 +2,7 @@ package org.brain4j.core.model;
 
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
-import org.brain4j.core.training.optimizer.Optimizer;
-import org.brain4j.core.training.updater.Updater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
-import org.brain4j.core.training.wrappers.TrainingParams;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
@@ -14,232 +11,101 @@ import org.brain4j.math.tensor.Tensor;
 import java.util.List;
 
 /**
- * Represents a generic neural network.
+ * Represents a generic neural network model.
+ * <p>
+ * A {@code Model} defines the forward computation logic, device placement
+ * and structural introspection capabilities (layers and specifications),
+ * without prescribing a specific training implementation.
+ * </p>
+ *
  * @author xEcho1337
  */
-public interface Model extends Iterable<Layer> {
+public interface Model {
     
     /**
-     * Adds a layer at the end of the network.
-     * @param layer the layer to add
-     * @return this instance
-     */
-    Model add(Layer layer);
-
-    /**
-     * Adds a layer at the specified position.
-     * @param index the position to insert the layer
-     * @param layer the layer to insert
-     * @return this instance
-     */
-    Model add(int index, Layer layer);
-    
-    /**
-     * Computes a full forward pass on this model.
+     * Performs a full forward pass using a temporary {@link StatesCache}
+     * and returns the first output tensor.
+     * <p>
+     * This is a convenience method for single-input, single-output models.
+     * </p>
+     *
      * @param input the input tensor
-     * @return the first output tensor
+     * @return the first output tensor produced by the model
      */
     default Tensor predict(Tensor input) {
         return predict(new StatesCache(false, getDevice()), input)[0];
     }
-
-    /**
-     * Computes a full forward pass on this model.
-     * @param cache the cache for this pass
-     * @param inputs the input tensors
-     * @return a collection of output tensors
-     */
-    Tensor[] predict(StatesCache cache, Tensor... inputs);
-
-    /**
-     * Computes a full backward pass on this model.
-     * @param cache the states cache of the forward pass
-     * @param outputs the outputs of the network
-     * @param targets the target outputs
-     */
-    void backpropagate(StatesCache cache, Tensor[] outputs, Tensor[] targets);
-
-    /**
-     * Trains the model using full training parameters.
-     * @param params the training parameters
-     */
-    default void fit(TrainingParams params) {
-        fit(params.trainSet(), params.validationSet(), params.epochs(), params.evaluateEvery());
-    }
-
-    /**
-     * Trains the model on a dataset.
-     * @param train the training dataset
-     */
-    default void fit(ListDataSource train) {
-        fit(train, train, 1, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Trains the model with training and validation datasets.
-     * @param train training dataset
-     * @param validation validation dataset
-     */
-    default void fit(ListDataSource train, ListDataSource validation) {
-        fit(train, validation, 1, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Trains the model for a number of epochs.
-     * @param train training dataset
-     * @param epoches number of epochs
-     */
-    default void fit(ListDataSource train, int epoches) {
-        fit(train, train, epoches, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Trains the model with validation and epochs.
-     * @param train training dataset
-     * @param validation validation dataset
-     * @param epoches number of epochs
-     */
-    default void fit(ListDataSource train, ListDataSource validation, int epoches) {
-        fit(train, validation, epoches, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Trains the model with periodic evaluation.
-     * @param train training dataset
-     * @param epoches number of epochs
-     * @param evaluateEvery evaluation frequency
-     */
-    default void fit(ListDataSource train, int epoches, int evaluateEvery) {
-        fit(train, train, epoches, evaluateEvery);
-    }
-
-    /**
-     * Trains the model with validation and evaluation frequency.
-     * @param train training dataset
-     * @param validation validation dataset
-     * @param epoches number of epochs
-     * @param evaluateEvery frequency for evaluation
-     */
-    void fit(ListDataSource train, ListDataSource validation, int epoches, int evaluateEvery);
-
-    /**
-     * Evaluates the model on a dataset.
-     * @param dataSource dataset to evaluate
-     * @return result of evaluation
-     */
-    EvaluationResult evaluate(ListDataSource dataSource);
-
-    /**
-     * Computes average loss on the dataset.
-     * @param dataSource dataset to compute loss on
-     * @return average loss
-     */
-    double loss(ListDataSource dataSource);
     
     /**
-     * Compiles the model by setting the loss function and optimizer.
+     * Performs a full forward pass on the model using the provided cache.
+     * <p>
+     * The cache is used to store intermediate states required by certain
+     * layers (e.g. for training or recurrent architectures).
+     * </p>
      *
-     * @param lossFunction the loss function to use
-     * @param optimizer the optimization algorithm
-     * @return the compiled model instance
+     * @param cache  the cache used during this forward pass
+     * @param inputs one or more input tensors
+     * @return an array containing all output tensors of the model
      */
-    Model compile(LossFunction lossFunction, Optimizer optimizer);
-
+    Tensor[] predict(StatesCache cache, Tensor... inputs);
+    
     /**
-     * Compiles the model by setting the loss function, optimizer, and custom updater.
+     * Evaluates the model on the given dataset.
+     * <p>
+     * This method runs inference over the entire dataset and computes
+     * task-specific evaluation metrics (e.g. accuracy, loss).
+     * </p>
      *
+     * @param dataSource the dataset to evaluate the model on
      * @param lossFunction the loss function to use
-     * @param optimizer the optimization algorithm
-     * @param updater the updater managing gradient application
-     * @return the compiled model instance
+     * @return an {@link EvaluationResult} containing evaluation metrics
      */
-    Model compile(LossFunction lossFunction, Optimizer optimizer, Updater updater);
-
+    EvaluationResult evaluate(ListDataSource dataSource, LossFunction lossFunction);
+    
     /**
-     * Moves the model weights to the specified device.
-     * @param device the device
-     * @return the current model instance
+     * Copies all model parameters to the specified device.
+     *
+     * @param device the target device
+     * @return a copy of this model instance
      */
-    Model to(Device device);
-
+    Model fork(Device device);
+    
     /**
-     * Gets the device the model is stored on.
-     * @return the device type of this model
+     * Returns the device on which the model parameters are currently stored.
+     * @return the device associated with this model
      */
     Device getDevice();
     
     /**
-     * Prints a formatted summary of the model architecture to the console,
-     * including weights, dimensions and activations of the layers, along with the total parameters.
+     * Prints a formatted summary of the model architecture to the console.
+     * <p>
+     * The summary typically includes:
+     * <ul>
+     *   <li>Layer types and order</li>
+     *   <li>Input and output shapes</li>
+     *   <li>Number of parameters per layer</li>
+     *   <li>Total number of trainable parameters</li>
+     * </ul>
+     * </p>
      *
-     * @throws IllegalStateException if the model is not compiled before calling this method
+     * @throws IllegalStateException if the model has not been properly initialized
      */
     void summary();
     
     /**
-     * Resets all the gradients in the model.
+     * Returns the specifications used to construct this model.
+     * <p>
+     * {@link ModelSpecs} describes the logical structure of the model
+     * independently of its runtime state.
+     * </p>
+     *
+     * @return the model specifications
      */
-    void zeroGrad();
-
+    ModelSpecs getSpecs();
+    
     /**
-     * Returns an immutable list of layers composing the model.
-     * @return the list of layers
+     * Returns an immutable view of the layers composing this model, in execution order.
+     * @return an unmodifiable list of layers
      */
     List<Layer> getLayers();
-
-    /**
-     * Returns an immutable list of all the layers in the model, including nested layers.
-     * @return the list of layers
-     */
-    List<Layer> getFlattened();
-
-    /**
-     * Returns the layer at the specified index.
-     * @param index the index
-     * @return the layer in that index
-     */
-    Layer getLayerAt(int index);
-
-    /**
-     * Returns the flattened layer at the specified index.
-     * @param index the index
-     * @return the layer in that index
-     */
-    Layer getFlattenedAt(int index);
-
-    /**
-     * Returns the optimizer currently used by the model.
-     * @return the optimizer instance
-     */
-    Optimizer getOptimizer();
-    
-    /**
-     * Sets the optimizer used for this model.
-     * @param optimizer the new optimizer to use
-     */
-    void setOptimizer(Optimizer optimizer);
-    
-    /**
-     * Returns the updater currently used by the model.
-     * @return the updater instance
-     */
-    Updater getUpdater();
-    
-    /**
-     * Sets the updater used for this model.
-     * @param updater the new updater to use
-     */
-    void setUpdater(Updater updater);
-    
-    /**
-     * Returns the loss function currently set in the model.
-     * @return the loss function instance
-     */
-    LossFunction getLossFunction();
-    
-    /**
-     * Sets the loss function used for this model.
-     * @param lossFunction the new loss function
-     */
-    void setLossFunction(LossFunction lossFunction);
 }

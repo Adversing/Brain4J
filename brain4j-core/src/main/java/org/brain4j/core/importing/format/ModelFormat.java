@@ -6,6 +6,5 @@ import java.io.File;
 
 public interface ModelFormat {
     Model deserialize(File file);
-
     void serialize(Model model, File file);
 }

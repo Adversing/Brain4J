@@ -121,7 +121,7 @@ public class OnnxFormat implements ModelFormat {
     }
     
     private void addInitializers(Model model, GraphProto.Builder graphBuilder, Map<Tensor, String> weightsMap) {
-        List<Layer> layers = model.getFlattened();
+        List<Layer> layers = model.getLayers();
         
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);

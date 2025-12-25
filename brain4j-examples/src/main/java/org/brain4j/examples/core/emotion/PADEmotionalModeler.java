@@ -4,7 +4,7 @@ import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.impl.MeanSquaredError;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.Sequential;
+import org.brain4j.core.model.impl.OldSequential;
 import org.brain4j.core.training.optimizer.impl.Adam;
 import org.brain4j.examples.core.emotion.registry.EmotionRegistry;
 import org.brain4j.math.Tensors;
@@ -59,7 +59,7 @@ public class PADEmotionalModeler {
         int inputSize = trainingFeatures.getFirst().elements();
         int outputSize = 3; // for P, A, D
 
-        Model model = Sequential.of(
+        Model model = OldSequential.of(
                 new InputLayer(inputSize),
                 new DenseLayer(64, Activations.RELU).setWeightInit(new UniformXavierInit()),
                 new DenseLayer(32, Activations.RELU).setWeightInit(new UniformXavierInit()),

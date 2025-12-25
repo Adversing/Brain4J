@@ -4,6 +4,12 @@ import org.brain4j.math.tensor.Tensor;
 
 import java.lang.reflect.Constructor;
 import java.time.Duration;
+import java.util.Map;
+
+import static org.brain4j.math.Constants.*;
+import static org.brain4j.math.Constants.GRAY;
+import static org.brain4j.math.Constants.LIGHT_GREEN;
+import static org.brain4j.math.Constants.RESET;
 
 /**
  * General utility methods used across the math module.
@@ -23,10 +29,19 @@ import java.time.Duration;
  */
 public class Commons {
 
-    public static String HEADER_CHAR = "━"; 
+    public static final String HEADER_CHAR = "━";
     private static final int[] EXP_TABLE = new int[64];
     private static final int[] MANT_TABLE = new int[2048];
     private static final int[] OFF_TABLE = new int[64];
+    private static final Map<String, String> COLORS = Map.of(
+        "yellow", LIGHT_YELLOW,
+        "white", WHITE,
+        "blue", LIGHT_BLUE,
+        "green", LIGHT_GREEN,
+        "gray", GRAY,
+        "magenta", MAGENTA,
+        "reset", RESET
+    );
 
     static {
         precomputeTables();
@@ -105,7 +120,17 @@ public class Commons {
     public static boolean isPowerOf2(int n) {
         return n > 0 && (n & (n - 1)) == 0;
     }
-
+    
+    public static String renderText(String template, Object... args) {
+        String formatted = String.format(template, args);
+        
+        for (var entry : COLORS.entrySet()) {
+            formatted = formatted.replace("<" + entry.getKey() + ">", entry.getValue());
+        }
+        
+        return formatted + RESET;
+    }
+    
     public static String formatDuration(double seconds) {
         double millis = seconds * 1000;
         Duration duration = Duration.ofMillis((long) millis);
