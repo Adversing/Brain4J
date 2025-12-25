@@ -26,14 +26,14 @@ import static org.brain4j.core.importing.Registries.*;
 public class BrainFormat implements ModelFormat {
     
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final int FORMAT_VERSION = 1;
+    public static final int FORMAT_VERSION = 2;
     
     @Override
     public Model deserialize(File file) {
         Map<String, byte[]> files = readZip(file);
         
         ModelSpecs specs = deserializeSpecs(files.get("metadata.json"));
-        Model model = specs.build(System.currentTimeMillis());
+        Model model = specs.compile(System.currentTimeMillis());
         
         deserializeWeights(model, files.get("weights.safetensors"));
         
@@ -43,6 +43,7 @@ public class BrainFormat implements ModelFormat {
     @Override
     public void serialize(Model model, File file) {
         Map<String, Tensor> weights = new HashMap<>();
+        
         byte[] metadata = buildMetadata(model, weights);
         byte[] weightData = buildWeights(weights);
         
@@ -64,9 +65,13 @@ public class BrainFormat implements ModelFormat {
         for (JsonElement element : architecture) {
             JsonObject layerJson = element.getAsJsonObject();
             
-            Layer layer = LAYER_REGISTRY.toInstance(layerJson.get("type").getAsString());
-            layer.setActivation(ACTIVATION_REGISTRY.toInstance(layerJson.get("activation").getAsString()));
-            layer.setClipper(CLIPPERS_REGISTRY.toInstance(layerJson.get("clipper").getAsString()));
+            String type = layerJson.get("type").getAsString();
+            String activation = layerJson.get("activation").getAsString();
+            String clipper = layerJson.get("clipper").getAsString();
+            
+            Layer layer = LAYER_REGISTRY.toInstance(type);
+            layer.setActivation(ACTIVATION_REGISTRY.toInstance(activation));
+            layer.setClipper(CLIPPERS_REGISTRY.toInstance(clipper));
             
             layer.deserialize(layerJson);
             specs.add(layer);
@@ -102,7 +107,7 @@ public class BrainFormat implements ModelFormat {
                 elements *= shape[i];
             }
             
-            JsonArray offsets = info.getAsJsonArray("offsets");
+            JsonArray offsets = info.getAsJsonArray("data_offsets");
             int start = offsets.get(0).getAsInt();
             int end = offsets.get(1).getAsInt();
             
@@ -188,7 +193,7 @@ public class BrainFormat implements ModelFormat {
             offsets.add(offset + byteSize);
             
             info.add("shape", shape);
-            info.add("offsets", offsets);
+            info.add("data_offsets", offsets);
             info.addProperty("dtype", "F32");
             
             header.add(name, info);
