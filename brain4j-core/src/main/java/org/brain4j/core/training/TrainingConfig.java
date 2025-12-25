@@ -6,7 +6,7 @@ import org.brain4j.core.training.updater.Updater;
 
 public record TrainingConfig(LossFunction loss, Optimizer optimizer, Updater updater) {
 
-    public static Builder newBuilder() {
+    public static Builder builder() {
         return new TrainingConfig.Builder();
     }
 
