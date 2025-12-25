@@ -72,11 +72,11 @@ public class NormLayer extends Layer {
         return weights.elements();
     }
 
-    public double epsilon() {
+    public double getEpsilon() {
         return epsilon;
     }
 
-    public NormLayer epsilon(double epsilon) {
+    public NormLayer setEpsilon(double epsilon) {
         this.epsilon = epsilon;
         return this;
     }

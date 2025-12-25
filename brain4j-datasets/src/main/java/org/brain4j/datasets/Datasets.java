@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * <p>This class contains convenience methods to obtain commonly used datasets (for
  * example MNIST) and utility methods to transform dataset files into the
- * library's {@link org.brain4j.math.data.DataSource} implementations.
+ * library's {@link ListDataSource} implementations.
  */
 public final class Datasets {
 

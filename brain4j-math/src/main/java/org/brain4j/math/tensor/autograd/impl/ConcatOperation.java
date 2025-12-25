@@ -4,6 +4,8 @@ import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.Arrays;
+
 public record ConcatOperation(int dimension) implements Operation {
 
     @Override
@@ -41,9 +43,7 @@ public record ConcatOperation(int dimension) implements Operation {
         int sizeB = shapeB[actualDim];
 
         Range[] base = new Range[rank];
-        for (int i = 0; i < rank; i++) {
-            base[i] = Range.all();
-        }
+        Arrays.fill(base, Range.all());
 
         Range[] rangeA = base.clone();
         rangeA[actualDim] = new Range(0, sizeA);

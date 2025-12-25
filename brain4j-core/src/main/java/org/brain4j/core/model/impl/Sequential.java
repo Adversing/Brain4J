@@ -267,8 +267,8 @@ public class Sequential extends Layer implements Model {
     }
     
     @Override
-    public void fit(ListDataSource train, ListDataSource validation, int epoches, int evaluateEvery) {
-        for (int epoch = 1; epoch <= epoches; epoch++) {
+    public void fit(ListDataSource train, ListDataSource validation, int epochs, int evaluateEvery) {
+        for (int epoch = 1; epoch <= epochs; epoch++) {
             int finalEpoch = epoch;
 
             List<Double> times = new ArrayList<>();
@@ -286,7 +286,7 @@ public class Sequential extends Layer implements Model {
                 double average = totalForBatch.get() / Math.min(batch, 20);
 
                 if (Brain4J.logging()) {
-                    printProgress(train, finalEpoch, epoches, batch, average);
+                    printProgress(train, finalEpoch, epochs, batch, average);
                 }
             };
             
@@ -297,7 +297,7 @@ public class Sequential extends Layer implements Model {
                     System.out.println();
                 }
                 
-                printEvaluation(epoch, epoches, validation);
+                printEvaluation(epoch, epochs, validation);
             }
         }
     }
