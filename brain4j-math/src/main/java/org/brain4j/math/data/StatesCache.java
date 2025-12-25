@@ -14,6 +14,10 @@ public class StatesCache {
     private final Device device;
     private final boolean training;
 
+    public static StatesCache withTraining() {
+        return new StatesCache(true, null);
+    }
+
     public StatesCache() {
         this(false, null);
     }

@@ -112,7 +112,12 @@ public abstract class Layer {
      * @param outputs the output tensors
      * @param lossFunction the loss function of this model
      */
-    public void computeLoss(StatesCache cache, Tensor[] labels, Tensor[] outputs, LossFunction lossFunction) {
+    public void computeLoss(
+        StatesCache cache,
+        Tensor[] labels,
+        Tensor[] outputs,
+        LossFunction lossFunction
+    ) {
         Tensor[] preOutputs = cache.output(this);
         
         if (labels.length != outputs.length) {
