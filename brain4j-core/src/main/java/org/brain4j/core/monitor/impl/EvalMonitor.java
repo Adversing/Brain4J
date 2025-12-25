@@ -32,7 +32,7 @@ public class EvalMonitor implements Monitor {
     @Override
     public void onEvent(TrainingEvent event) {
         if (event instanceof EpochEnd(Trainer trainer, int epoch, int total)) {
-            if (epoch % evaluationDelay != 0) return;
+            if ((epoch + 1) % evaluationDelay != 0) return;
             
             printEvaluation(trainer, epoch, total);
         }
@@ -53,10 +53,8 @@ public class EvalMonitor implements Monitor {
         String firstMetric = regression
             ? Commons.renderText(" | R^2 Score: <blue>%.2f<reset>", r2)
             : Commons.renderText(" | Accuracy: <blue>%.2f%%<reset>", accuracy);
-        
-        String secondMetric = regression ? "" :
-            Commons.renderText(" | F1-Score: <green>%.2f%%<reset>", f1);
-        String prefix = Commons.renderText("Epoch <yellow>%s<white>/<yellow>%s<white>", epoch, epochs);
+        String secondMetric = regression ? "" : Commons.renderText(" | F1-Score: <green>%.2f%%<reset>", f1);
+        String prefix = Commons.renderText("Epoch <yellow>%s<white>/<yellow>%s<white> ", epoch + 1, epochs);
         
         String message = prefix + lossMsg + firstMetric + secondMetric + "\n";
         System.out.print("\n\r" + message);
