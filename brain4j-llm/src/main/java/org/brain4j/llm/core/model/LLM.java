@@ -124,9 +124,9 @@ public class LLM implements InferenceProvider {
         if (model == null) throw new NullPointerException("Model has not been compiled!");
         if (device == null) throw new NullPointerException("Device cannot be null!");
 
-        model.fork(device);
-
-        return this;
+        LLM llm = new LLM(id, info, files, config);
+        llm.model = model.fork(device);
+        return llm;
     }
 
     public Optional<ModelFile> find(String filename) {
@@ -145,27 +145,27 @@ public class LLM implements InferenceProvider {
         return files.stream().mapToLong(ModelFile::size).sum();
     }
     
-    public String id() {
+    public String getId() {
         return id;
     }
     
-    public ModelInfo info() {
+    public ModelInfo getInfo() {
         return info;
     }
     
-    public List<ModelFile> files() {
+    public List<ModelFile> getFiles() {
         return files;
     }
     
-    public Map<String, Object> config() {
+    public Map<String, Object> getConfig() {
         return config;
     }
     
-    public Model model() {
+    public Model getModel() {
         return model;
     }
     
-    public Tokenizer tokenizer() {
+    public Tokenizer getTokenizer() {
         return tokenizer;
     }
 }

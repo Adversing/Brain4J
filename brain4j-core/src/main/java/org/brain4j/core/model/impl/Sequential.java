@@ -58,7 +58,7 @@ public class Sequential implements Model {
                 input = input.reshape(1, input.elements()); // reshape to [batch, input_size]
             }
             
-            buffer[i] = input.withGrad();
+            buffer[i] = cache.training() ? input.withGrad() : input;
         }
         
         for (Layer layer : layers) {
