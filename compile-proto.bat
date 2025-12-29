@@ -6,7 +6,7 @@ set PROTO_FILE=%PROTO_PATH%\model.proto
 set OUT_DIR=%SCRIPT_DIR%brain4j-core\src\main\java
 
 if not exist "%PROTO_FILE%" (
-  echo ERRORE: File %PROTO_FILE% was not found
+  echo ERROR: File %PROTO_FILE% was not found
   exit /b 1
 )
 
@@ -24,7 +24,7 @@ protoc ^
   "%PROTO_FILE%"
 
 if errorlevel 1 (
-  echo ERRORE: protoc reported an error during generation
+  echo ERROR: protoc reported an error during generation
   exit /b 1
 )
 
