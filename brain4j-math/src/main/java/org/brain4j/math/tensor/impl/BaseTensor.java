@@ -322,9 +322,37 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             BaseTensor copy = (BaseTensor) super.clone();
 
             copy.shape = shape.clone();
-            copy.strides = strides.clone();
-            copy.data = data.clone();
             copy.autogradContext = null;
+
+            int[] standardStrides = Tensors.computeStrides(shape);
+            boolean isContiguous = java.util.Arrays.equals(strides, standardStrides);
+
+            if (isContiguous) {
+                copy.strides = strides.clone();
+                copy.data = data.clone();
+            } else {
+                copy.strides = standardStrides;
+                int total = Tensors.computeSize(shape);
+                copy.data = new float[total];
+
+                int rank = shape.length;
+                int[] index = new int[rank];
+
+                for (int i = 0; i < total; i++) {
+                    int remaining = i;
+                    for (int d = rank - 1; d >= 0; d--) {
+                        index[d] = remaining % shape[d];
+                        remaining /= shape[d];
+                    }
+
+                    int srcIdx = 0;
+                    for (int d = 0; d < rank; d++) {
+                        srcIdx += index[d] * strides[d];
+                    }
+
+                    copy.data[i] = data[srcIdx];
+                }
+            }
 
             return copy;
         } catch (CloneNotSupportedException e) {

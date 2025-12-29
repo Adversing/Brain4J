@@ -163,6 +163,11 @@ public class GpuTensor extends BaseTensor {
         GpuContext.register(device, "hard_clip", gradientClipProgram);
         GpuContext.register(device, "l2_clip", gradientClipProgram);
         GpuContext.register(device, "flash_attention_forward", attentionProgram);
+        GpuContext.register(device, "flash_attention_forward_with_lse", attentionProgram);
+        GpuContext.register(device, "flash_attention_backward", attentionProgram);
+        GpuContext.register(device, "flash_attention_backward_dq", attentionProgram);
+        GpuContext.register(device, "flash_attention_forward_tiled", attentionProgram);
+        GpuContext.register(device, "flash_attention_backward_tiled", attentionProgram);
     }
 
     private long roundUp(int globalSize) {

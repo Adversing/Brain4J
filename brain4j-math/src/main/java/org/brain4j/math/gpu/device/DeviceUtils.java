@@ -10,9 +10,10 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class DeviceUtils {
     
@@ -73,7 +74,7 @@ public class DeviceUtils {
         ByteBuffer nameBuffer = stack.malloc((int) size);
         CL10.clGetDeviceInfo(device, CL10.CL_DEVICE_NAME, nameBuffer, null);
 
-        return StandardCharsets.UTF_8.decode(nameBuffer).toString().trim();
+        return UTF_8.decode(nameBuffer).toString().trim();
     }
 
     public static List<String> allDeviceNames() {
@@ -116,7 +117,7 @@ public class DeviceUtils {
             if (input == null) {
                 throw new IllegalArgumentException("Resource not found: " + resourcePath);
             }
-            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            return new String(input.readAllBytes(), UTF_8);
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to read kernel source from: " + resourcePath, e);
         }
@@ -134,10 +135,30 @@ public class DeviceUtils {
 
         int buildErr = CL10.clBuildProgram(program, device.device(), "", null, 0);
         if (buildErr != CL10.CL_SUCCESS) {
-            throw new RuntimeException("clBuildProgram failed: " + buildErr);
+            String buildLog = getBuildLog(program, device.device());
+            throw new RuntimeException("clBuildProgram failed: " + buildErr + " (" + getErrorCode(buildErr) + ")\nBuild log:\n" + buildLog);
         }
 
         return program;
+    }
+
+    private static String getBuildLog(long program, long device) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer sizeBuf = stack.mallocPointer(1);
+            CL10.clGetProgramBuildInfo(program, device, CL10.CL_PROGRAM_BUILD_LOG, (ByteBuffer) null, sizeBuf);
+
+            long size = sizeBuf.get(0);
+            if (size <= 1) {
+                return "(no build log available)";
+            }
+
+            ByteBuffer logBuffer = stack.malloc((int) size);
+            CL10.clGetProgramBuildInfo(program, device, CL10.CL_PROGRAM_BUILD_LOG, logBuffer, null);
+
+            return UTF_8.decode(logBuffer).toString().trim();
+        } catch (Exception e) {
+            return "(failed to get build log: " + e.getMessage() + ")";
+        }
     }
 
     public static boolean isSimdAvailable() {

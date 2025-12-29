@@ -200,4 +200,94 @@ public class TensorTest {
         assertEquals(3, transposed.get(1, 0, 0));
         assertEquals(7, transposed.get(1, 1, 0));
     }
+
+    @Test
+    public void testCloneTransposedTensor() {
+        Tensor A = Tensors.matrix(2, 3,
+                1, 2, 3,
+                4, 5, 6
+        );
+
+        Tensor A_T = A.transpose();
+        Tensor A_T_clone = A_T.clone();
+
+        int[] expectedStrides = Tensors.computeStrides(A_T_clone.shape());
+        assertArrayEquals(expectedStrides, A_T_clone.strides(),
+                "Cloned transposed tensor should have contiguous strides");
+
+        assertEquals(1, A_T_clone.get(0, 0), 0.001f);
+        assertEquals(4, A_T_clone.get(0, 1), 0.001f);
+        assertEquals(2, A_T_clone.get(1, 0), 0.001f);
+        assertEquals(5, A_T_clone.get(1, 1), 0.001f);
+        assertEquals(3, A_T_clone.get(2, 0), 0.001f);
+        assertEquals(6, A_T_clone.get(2, 1), 0.001f);
+
+        float[] expectedData = {1, 4, 2, 5, 3, 6};
+        assertArrayEquals(expectedData, A_T_clone.data(), 0.001f,
+                "Cloned data should be in contiguous row-major order");
+    }
+
+    @Test
+    public void testTimesWithTransposedTensor() {
+        Tensor P = Tensors.matrix(2, 2,
+                0.7f, 0.3f,
+                0.4f, 0.6f
+        );
+
+        Tensor V = Tensors.matrix(2, 2,
+                1, 2,
+                3, 4
+        );
+        Tensor V_T = V.transpose(); // V_T is a view with non-standard strides
+
+        // dO @ V_T
+        Tensor dO = Tensors.matrix(2, 2,
+                1, 1,
+                1, 1
+        );
+
+        Tensor dP = dO.matmul(V_T);
+        Tensor PdP = P.times(dP);
+
+        assertArrayEquals(new int[]{2, 2}, PdP.shape());
+        assertEquals(2.1f, PdP.get(0, 0), 0.01f);
+        assertEquals(2.1f, PdP.get(0, 1), 0.01f);
+        assertEquals(1.2f, PdP.get(1, 0), 0.01f);
+        assertEquals(4.2f, PdP.get(1, 1), 0.01f);
+    }
+
+    @Test
+    public void testMatmulWithTransposedResult() {
+        Tensor A = Tensors.matrix(2, 3,
+                1, 2, 3,
+                4, 5, 6
+        );
+        Tensor B = Tensors.matrix(3, 2,
+                1, 2,
+                3, 4,
+                5, 6
+        );
+
+        // C = A @ B -> [2, 2]
+        Tensor C = A.matmul(B);
+
+        // C_T = C^T -> [2, 2] (transposed view)
+        Tensor C_T = C.transpose();
+
+        // D should be able to use C_T in further operations
+        Tensor D = Tensors.matrix(2, 2,
+                1, 0,
+                0, 1
+        );
+
+        Tensor result = C_T.matmul(D);
+
+        // check that the result is equal to C_T (since D is identity)
+        assertArrayEquals(C_T.shape(), result.shape());
+
+        assertEquals(22, result.get(0, 0), 0.01f);
+        assertEquals(49, result.get(0, 1), 0.01f);
+        assertEquals(28, result.get(1, 0), 0.01f);
+        assertEquals(64, result.get(1, 1), 0.01f);
+    }
 }

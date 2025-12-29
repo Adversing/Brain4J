@@ -41,36 +41,72 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        // fast path: fused FlashAttention (causal) for inference without cache
-        if (useFlashAttention && input instanceof GpuTensor && !cache.training()) {
+        if (useFlashAttention && input instanceof GpuTensor) {
             // skip fast path if we are using incremental cache
             Tensor cachedQKV = cache.get(weights);
             if (cachedQKV == null) {
                 int H = headCount;
                 int d = headDimension;
+                boolean training = input.usesGrad();
 
-                Tensor QKV = input.matmul(weights);
-                if (attnQkvHasBias) QKV = QKV.add(bias);
+                Tensor QKV = training ? input.matmulGrad(weights) : input.matmul(weights);
+                if (attnQkvHasBias) QKV = training ? QKV.addGrad(bias) : QKV.add(bias);
 
                 Range all = Range.all();
-                Tensor Q = QKV.slice(all, all, Range.interval(0, embeddingDim))
-                        .reshape(batch, seqLength, H, d)
-                        .transpose(1, 2); // [B,H,L,d]
-                Tensor K = QKV.slice(all, all, Range.interval(embeddingDim, 2 * embeddingDim))
-                        .reshape(batch, seqLength, H, d)
-                        .transpose(1, 2); // [B,H,L,d]
-                Tensor V = QKV.slice(all, all, Range.interval(2 * embeddingDim, 3 * embeddingDim))
-                        .reshape(batch, seqLength, H, d)
-                        .transpose(1, 2); // [B,H,L,d]
+                Tensor Q, K, V;
+
+                if (training) {
+                    Tensor reshaped = QKV.reshapeGrad(batch, seqLength, H, d * 3);
+                    Q = reshaped.sliceGrad(all, all, Range.interval(0, d * H))
+                            .reshapeGrad(batch, seqLength, H, d)
+                            .transposeGrad(1, 2); // [B,H,L,d]
+                    K = reshaped.sliceGrad(all, all, Range.interval(d * H, 2 * d * H))
+                            .reshapeGrad(batch, seqLength, H, d)
+                            .transposeGrad(1, 2); // [B,H,L,d]
+                    V = reshaped.sliceGrad(all, all, Range.interval(2 * d * H, 3 * d * H))
+                            .reshapeGrad(batch, seqLength, H, d)
+                            .transposeGrad(1, 2); // [B,H,L,d]
+                } else {
+                    Q = QKV.slice(all, all, Range.interval(0, embeddingDim))
+                            .reshape(batch, seqLength, H, d)
+                            .transpose(1, 2); // [B,H,L,d]
+                    K = QKV.slice(all, all, Range.interval(embeddingDim, 2 * embeddingDim))
+                            .reshape(batch, seqLength, H, d)
+                            .transpose(1, 2); // [B,H,L,d]
+                    V = QKV.slice(all, all, Range.interval(2 * embeddingDim, 3 * embeddingDim))
+                            .reshape(batch, seqLength, H, d)
+                            .transpose(1, 2); // [B,H,L,d]
+                }
 
                 float scale = (float) (1.0 / Math.sqrt(d));
-                Tensor context = FlashAttention.forward(Q, K, V, scale, true);
+
+                Tensor context;
+                if (training) {
+                    // use forward with LSE for training (required for backward pass)
+                    Tensor[] flashResult = FlashAttention.forwardWithLse(Q, K, V, scale, true);
+                    if (flashResult != null) {
+                        context = flashResult[0];
+                        // store LSE in cache for potential use in backward
+                        cache.set(this, flashResult[1]);
+                    } else {
+                        context = null;
+                    }
+                } else {
+                    context = FlashAttention.forward(Q, K, V, scale, true);
+                }
 
                 if (context != null) {
-                    Tensor output = context.transpose(1, 2)
-                            .reshape(batch, seqLength, embeddingDim);
-                    Tensor result = output.matmul(outProj);
-                    if (attnOutHasBias) result = result.add(outBias);
+                    Tensor output = training
+                        ? context.transposeGrad(1, 2).reshapeGrad(batch, seqLength, embeddingDim)
+                        : context.transpose(1, 2).reshape(batch, seqLength, embeddingDim);
+
+                    Tensor result = training
+                        ? output.matmulGrad(outProj)
+                        : output.matmul(outProj);
+
+                    if (attnOutHasBias) {
+                        result = training ? result.addGrad(outBias) : result.add(outBias);
+                    }
                     return new Tensor[]{result};
                 }
             }

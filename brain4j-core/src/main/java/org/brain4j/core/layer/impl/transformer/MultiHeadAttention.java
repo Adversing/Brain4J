@@ -113,31 +113,62 @@ public class MultiHeadAttention extends Layer {
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        if ((useFlashAttention && input instanceof GpuTensor) && !input.usesGrad()) {
+        if (useFlashAttention && input instanceof GpuTensor) {
             int H = headCount;
             int d = headDimension;
 
-            Tensor QKV = input.matmul(weights);
-            if (attnQkvHasBias) QKV = QKV.add(bias);
+            boolean training = input.usesGrad();
 
-            Tensor reshaped = QKV
-                    .reshape(batch, seqLength, H, 3, d)
-                    .transpose(1, 2); // [B,H,L,3,d]
+            Tensor QKV = training ? input.matmulGrad(weights) : input.matmul(weights);
+            if (attnQkvHasBias) QKV = training ? QKV.addGrad(bias) : QKV.add(bias);
 
             Range all = Range.all();
-            Tensor Q = reshaped.slice(all, all, all, Range.point(0), all).squeeze(3);
-            Tensor K = reshaped.slice(all, all, all, Range.point(1), all).squeeze(3);
-            Tensor V = reshaped.slice(all, all, all, Range.point(2), all).squeeze(3);
+            Tensor Q, K, V;
+
+            if (training) {
+                Tensor reshaped = QKV.reshapeGrad(batch, seqLength, H, 3, d)
+                        .transposeGrad(1, 2); // [B,H,L,3,d]
+                Q = reshaped.sliceGrad(all, all, all, Range.point(0), all).squeezeGrad(3);
+                K = reshaped.sliceGrad(all, all, all, Range.point(1), all).squeezeGrad(3);
+                V = reshaped.sliceGrad(all, all, all, Range.point(2), all).squeezeGrad(3);
+            } else {
+                Tensor reshaped = QKV.reshape(batch, seqLength, H, 3, d)
+                        .transpose(1, 2); // [B,H,L,3,d]
+                Q = reshaped.slice(all, all, all, Range.point(0), all).squeeze(3);
+                K = reshaped.slice(all, all, all, Range.point(1), all).squeeze(3);
+                V = reshaped.slice(all, all, all, Range.point(2), all).squeeze(3);
+            }
 
             float scale = (float) (1.0 / Math.sqrt(d));
-            Tensor context = FlashAttention.forward(Q, K, V, scale, false);
+
+            Tensor context;
+            if (training) {
+                // use forward with LSE for training (required for backward pass)
+                Tensor[] flashResult = FlashAttention.forwardWithLse(Q, K, V, scale, false);
+                if (flashResult != null) {
+                    context = flashResult[0];
+                    // store LSE in cache for potential use in backward
+                    cache.set(this, flashResult[1]);
+                } else {
+                    context = null;
+                }
+            } else {
+                context = FlashAttention.forward(Q, K, V, scale, false);
+            }
 
             if (context != null) {
                 // [B,H,L,d] -> [B,L,H,d] -> [B,L,embed]
-                Tensor output = context.transpose(1, 2)
-                        .reshape(batch, seqLength, embeddingDim);
-                Tensor result = output.matmul(outProj);
-                if (attnOutHasBias) result = result.add(outBias);
+                Tensor output = training
+                    ? context.transposeGrad(1, 2).reshapeGrad(batch, seqLength, embeddingDim)
+                    : context.transpose(1, 2).reshape(batch, seqLength, embeddingDim);
+
+                Tensor result = training
+                    ? output.matmulGrad(outProj)
+                    : output.matmul(outProj);
+
+                if (attnOutHasBias) {
+                    result = training ? result.addGrad(outBias) : result.add(outBias);
+                }
                 return new Tensor[]{result};
             }
             // else fall through to standard path
