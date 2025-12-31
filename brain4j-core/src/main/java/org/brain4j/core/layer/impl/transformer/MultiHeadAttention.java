@@ -17,7 +17,6 @@ import org.brain4j.math.tensor.index.Range;
 import java.util.random.RandomGenerator;
 
 // TODO: add standalone weights saving/loading
-
 /**
  * Implements the Multi-Head Attention mechanism as used in Transformer architectures.
  * <p>
@@ -49,7 +48,7 @@ public class MultiHeadAttention extends Layer {
     protected int headDimension;
     protected boolean attnQkvHasBias;
     protected boolean attnOutHasBias;
-    protected boolean useFlashAttention;
+    protected boolean flashAttention;
 
     private MultiHeadAttention() {
     }
@@ -113,7 +112,7 @@ public class MultiHeadAttention extends Layer {
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        if (useFlashAttention && input instanceof GpuTensor) {
+        if (flashAttention && input instanceof GpuTensor) {
             int H = headCount;
             int d = headDimension;
 
@@ -273,10 +272,7 @@ public class MultiHeadAttention extends Layer {
         if (attnOutHasBias) total += outBias.elements();
         return total;
     }
-
-    /**
-     * Resets the autograd state.
-     */
+    
     public void resetGrad() {
         super.resetGrad();
         outProj.zeroGrad();
@@ -308,7 +304,7 @@ public class MultiHeadAttention extends Layer {
         return this;
     }
 
-    public int embeddingDim() {
+    public int getEmbeddingDim() {
         return embeddingDim;
     }
 
@@ -317,7 +313,7 @@ public class MultiHeadAttention extends Layer {
         return this;
     }
 
-    public int headDimension() {
+    public int getHeadDimension() {
         return headDimension;
     }
 
@@ -326,12 +322,12 @@ public class MultiHeadAttention extends Layer {
         return this;
     }
 
-    public boolean useFlashAttention() {
-        return useFlashAttention;
+    public boolean isFlashAttention() {
+        return flashAttention;
     }
 
-    public MultiHeadAttention setUseFlashAttention(boolean enabled) {
-        this.useFlashAttention = enabled;
+    public MultiHeadAttention setFlashAttention(boolean flashattention) {
+        this.flashAttention = flashattention;
         return this;
     }
 

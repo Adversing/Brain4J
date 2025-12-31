@@ -44,7 +44,7 @@ public class OnnxFormat implements ModelFormat {
             
             ModelProto modelProto = ModelProto.parseFrom(data);
             GraphProto graphProto = modelProto.getGraph();
-            GraphModel.Builder model = GraphModel.newGraph();
+            GraphModel.Builder model = GraphModel.builder();
             
             for (TensorProto tensor : graphProto.getInitializerList()) {
                 model.initializer(tensor.getName(), deserializeTensor(tensor));

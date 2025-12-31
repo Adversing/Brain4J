@@ -18,10 +18,10 @@ public class ConvLayer extends Layer {
     private int filters;
     private int kernelWidth;
     private int kernelHeight;
-    private int stride = 1;
-    private int padding = 0;
+    private int stride = 1; // TODO: configurable
+    private int padding = 0; // TODO: configurable
     
-    public ConvLayer() {
+    private ConvLayer() {
     }
     
     public ConvLayer(int inputChannels, int filters, int kernelWidth, int kernelHeight) {
@@ -56,9 +56,7 @@ public class ConvLayer extends Layer {
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor input = inputs[0];
 
-        if (!validInput(input)) {
-            throw new IllegalArgumentException("Input dimension mismatch! Got: " + Arrays.toString(input.shape()));
-        }
+        checkValidInput(input, "Input must have shape [batch, channels, height, width]! Got: %s", Arrays.toString(input.shape()));
 
         Tensor convolved = input.convolveGrad(weights);
         Tensor added = convolved.addGrad(bias.reshape(1, filters, 1, 1));
@@ -96,53 +94,57 @@ public class ConvLayer extends Layer {
         // [batch, channels, height, width]
         return input.rank() == 4 && input.shape(1) == channels;
     }
-
-    public int filters() {
-        return filters;
-    }
-
-    public ConvLayer filters(int filters) {
-        this.filters = filters;
-        return this;
-    }
-
-    public int kernelWidth() {
-        return kernelWidth;
-    }
-
-    public int kernelHeight() {
-        return kernelHeight;
-    }
-
-    public ConvLayer kernelSize(int kernelWidth, int kernelHeight) {
-        this.kernelWidth = kernelWidth;
-        this.kernelHeight = kernelHeight;
-        return this;
-    }
-
-    public int channels() {
+    
+    public int getChannels() {
         return channels;
     }
-
-    public ConvLayer channels(int channels) {
+    
+    public ConvLayer setChannels(int channels) {
         this.channels = channels;
         return this;
     }
-
-    public int stride() {
+    
+    public int getFilters() {
+        return filters;
+    }
+    
+    public ConvLayer setFilters(int filters) {
+        this.filters = filters;
+        return this;
+    }
+    
+    public int getKernelWidth() {
+        return kernelWidth;
+    }
+    
+    public ConvLayer setKernelWidth(int kernelWidth) {
+        this.kernelWidth = kernelWidth;
+        return this;
+    }
+    
+    public int getKernelHeight() {
+        return kernelHeight;
+    }
+    
+    public ConvLayer setKernelHeight(int kernelHeight) {
+        this.kernelHeight = kernelHeight;
+        return this;
+    }
+    
+    public int getStride() {
         return stride;
     }
-
-    public ConvLayer stride(int stride) {
+    
+    public ConvLayer setStride(int stride) {
         this.stride = stride;
         return this;
     }
-
-    public int padding() {
+    
+    public int getPadding() {
         return padding;
     }
-
-    public ConvLayer padding(int padding) {
+    
+    public ConvLayer setPadding(int padding) {
         this.padding = padding;
         return this;
     }

@@ -62,10 +62,7 @@ public class EmbeddingLayer extends Layer {
         checkInputLength(1, inputs);
 
         Tensor input = inputs[0];
-
-        if (input.rank() < 2) {
-            input = input.unsqueeze();
-        }
+        checkValidInput(input, "Input must have shape [batch, tokens]! Got: %s", Arrays.toString(input.shape()));
 
         int[] shape = input.shape();
 
@@ -85,20 +82,17 @@ public class EmbeddingLayer extends Layer {
         float[] outData = output.data();
         float[] weightData = weights.data();
         float[] inputData = input.data();
+        
+        IntStream.range(0, batchSize).parallel().forEach(b -> {
+            for (int s = 0; s < seqLength; s++) {
+                int index = input.linearIndex(b, s);
+                int tokenId = (int) inputData[index];
+                int outOffset = (b * seqLength + s) * embeddingDim;
+                int weightOffset = tokenId * embeddingDim;
 
-        Tensor finalInput = input;
-        IntStream.range(0, batchSize)
-            .parallel()
-            .forEach(b -> {
-                for (int s = 0; s < seqLength; s++) {
-                    int index = finalInput.linearIndex(b, s);
-                    int tokenId = (int) inputData[index];
-                    int outOffset = (b * seqLength + s) * embeddingDim;
-                    int weightOffset = tokenId * embeddingDim;
-
-                    System.arraycopy(weightData, weightOffset, outData, outOffset, embeddingDim);
-                }
-            });
+                System.arraycopy(weightData, weightOffset, outData, outOffset, embeddingDim);
+            }
+        });
 
         if (input instanceof GpuTensor gpuInput) {
             output = output.gpu(gpuInput.device());
@@ -115,8 +109,8 @@ public class EmbeddingLayer extends Layer {
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         if (!weights.usesGrad()) return;
         
-        Tensor input = cache.input(this)[0];
-        Tensor output = cache.output(this)[0];
+        Tensor input = cache.getInputs(this)[0];
+        Tensor output = cache.getOutputs(this)[0];
         Tensor gradOutput = output.grad();
         
         int[] shape = output.shape();
@@ -157,6 +151,11 @@ public class EmbeddingLayer extends Layer {
     public void deserialize(JsonObject object) {
         this.vocabSize =  object.get("vocab_size").getAsInt();
         this.embeddingDim = object.get("embedding_dim").getAsInt();
+    }
+    
+    @Override
+    public boolean validInput(Tensor input) {
+        return input.rank() == 2;
     }
     
     @Override

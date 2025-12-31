@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xEcho1337
  */
-public interface Model {
+public interface Model extends ModelComponent {
     
     /**
      * Performs a full forward pass using a temporary {@link StatesCache}
@@ -108,4 +108,9 @@ public interface Model {
      * @return an unmodifiable list of layers
      */
     List<Layer> getLayers();
+    
+    @Override
+    default void appendTo(List<Layer> layers) {
+        layers.addAll(getLayers());
+    }
 }

@@ -41,7 +41,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         int batch = input.shape(0);
         int seqLength = input.shape(1);
 
-        if (useFlashAttention && input instanceof GpuTensor) {
+        if (flashAttention && input instanceof GpuTensor) {
             // skip fast path if we are using incremental cache
             Tensor cachedQKV = cache.get(weights);
             if (cachedQKV == null) {
@@ -120,7 +120,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor cachedQKV = cache.get(weights);
         Tensor QKV; // [batch, seq_len, 3 * H * head_dim]
 
-        if (cachedQKV != null && !cache.training()) {
+        if (cachedQKV != null && !cache.isTraining()) {
             Tensor newTokens = input.slice(slicingRanges);
             Tensor proj = newTokens.matmul(weights);
 
@@ -166,7 +166,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         Tensor output = context.reshapeGrad(batch, seqLength, embeddingDim);
         Tensor result;
 
-        if (cachedOutput != null && !cache.training()) {
+        if (cachedOutput != null && !cache.isTraining()) {
             Tensor newOutput = output.slice(slicingRanges);
             Tensor proj = newOutput.matmul(outProj);
 

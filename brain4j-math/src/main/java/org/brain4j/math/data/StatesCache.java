@@ -34,7 +34,7 @@ public class StatesCache {
         this.device = device;
     }
 
-    public boolean training() {
+    public boolean isTraining() {
         return training;
     }
 
@@ -46,7 +46,7 @@ public class StatesCache {
         tensorCache.put(key, value);
     }
     
-    public Tensor[] input(Object layer) {
+    public Tensor[] getInputs(Object layer) {
         return inputStates.get(layer);
     }
 
@@ -54,7 +54,7 @@ public class StatesCache {
         inputStates.put(layer, tensor);
     }
 
-    public Tensor[] output(Object layer) {
+    public Tensor[] getOutputs(Object layer) {
         return outputStates.computeIfAbsent(layer, (x) -> new Tensor[0]);
     }
 
@@ -62,7 +62,7 @@ public class StatesCache {
         outputStates.put(layer, state);
     }
 
-    public Device device() {
+    public Device getDevice() {
         return device;
     }
 }

@@ -10,6 +10,7 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
@@ -66,13 +67,7 @@ public class RecurrentLayer extends Layer {
         // [batch, timesteps, dimension]
         Tensor input = inputs[0];
 
-        if (input.rank() > 3) {
-            throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");
-        }
-        
-        while (input.rank() < 3) {
-            input = input.unsqueeze();
-        }
+        checkValidInput(input, "Input must have shape [batch, timesteps, dimension]! Got: %s", Arrays.toString(input.shape()));
         
         int batch = input.shape(0);
         int timesteps = input.shape(1);

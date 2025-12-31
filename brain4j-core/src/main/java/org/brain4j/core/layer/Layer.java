@@ -9,6 +9,7 @@ import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.impl.LinearActivation;
 import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.clipper.impl.HardClipper;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -122,7 +123,7 @@ public abstract class Layer implements ModelComponent {
         Tensor[] outputs,
         LossFunction lossFunction
     ) {
-        Tensor[] preOutputs = cache.output(this);
+        Tensor[] preOutputs = cache.getOutputs(this);
         
         if (labels.length != outputs.length) {
             throw new IllegalArgumentException("Targets amount does not equal to output amount.");
@@ -226,6 +227,12 @@ public abstract class Layer implements ModelComponent {
      */
     public boolean validInput(Tensor input) {
         return true;
+    }
+    
+    protected void checkValidInput(Tensor tensor, String message, Object... args) {
+        if (validInput(tensor)) return;
+        
+        Commons.illegalArgument(message, args);
     }
     
     /**

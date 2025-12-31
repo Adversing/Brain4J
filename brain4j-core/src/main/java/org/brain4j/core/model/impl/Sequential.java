@@ -5,6 +5,7 @@ import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.model.Model;
+import org.brain4j.core.model.ModelComponent;
 import org.brain4j.core.model.ModelSpecs;
 import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.brain4j.math.Tensors;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-public class Sequential implements Model {
+public class Sequential implements Model, ModelComponent {
     
     private final ModelSpecs specs;
     private final List<Layer> layers;
@@ -51,14 +52,14 @@ public class Sequential implements Model {
             Tensor input = inputs[i];
             
             if (input == null || input.rank() == 0) {
-                throw new IllegalArgumentException("Input at " + i + " is either null or has dimension of 0!");
+                Commons.illegalArgument("Input at %s is either null or has dimension of 0!", i);
             }
             
             if (input.rank() < 2) {
                 input = input.reshape(1, input.elements()); // reshape to [batch, input_size]
             }
             
-            buffer[i] = cache.training() ? input.withGrad() : input;
+            buffer[i] = cache.isTraining() ? input.withGrad() : input;
         }
         
         for (Layer layer : layers) {

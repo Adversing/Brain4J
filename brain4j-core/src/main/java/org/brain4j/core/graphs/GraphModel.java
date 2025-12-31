@@ -4,10 +4,8 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.ModelSpecs;
-import org.brain4j.core.training.optimizer.Optimizer;
-import org.brain4j.core.training.updater.Updater;
-import org.brain4j.core.training.updater.impl.StochasticUpdater;
 import org.brain4j.core.training.wrappers.EvaluationResult;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;
@@ -53,18 +51,18 @@ public class GraphModel implements Model {
         this.initializers = initializers;
     }
 
-    public static Builder newGraph() {
+    public static Builder builder() {
         return new Builder();
     }
 
     @Override
     public Tensor[] predict(StatesCache cache, Tensor... inputs) {
         if (inputs.length != inputNames.size()) {
-            throw new IllegalArgumentException("Expected " + inputNames.size() + " inputs, but got " + inputs.length);
+            Commons.illegalArgument("Expected %s inputs, but got %s!", inputNames.size(), inputs.length);
         }
         
         if (device != null) {
-            cache.device().createQueue();
+            cache.getDevice().createQueue();
         }
 
         Map<String, Tensor> computed = new HashMap<>(initializers);
@@ -81,9 +79,7 @@ public class GraphModel implements Model {
                 Tensor input = computed.get(inputNames.get(j));
 
                 if (input == null) {
-                    throw new IllegalStateException(
-                        "Missing tensor for input: " + inputNames.get(j) + " for node " + node.name()
-                    );
+                    Commons.illegalState("Missing tensor for input: %s for node %s", inputNames.get(j), node.name());
                 }
 
                 inputTensors[j] = input.to(device);
@@ -102,8 +98,8 @@ public class GraphModel implements Model {
             outputs[i] = computed.get(outputNames.get(i));
         }
 
-        if (device != null && !cache.training()) {
-            GpuContext.finishAndRelease(cache.device());
+        if (device != null && !cache.isTraining()) {
+            GpuContext.finishAndRelease(cache.getDevice());
         }
 
         return outputs;

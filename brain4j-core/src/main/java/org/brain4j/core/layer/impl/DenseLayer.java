@@ -113,14 +113,6 @@ public class DenseLayer extends Layer {
         this.dimension = object.get("dimension").getAsInt();
     }
 
-    @Override
-    public boolean validInput(Tensor input) {
-        int[] shape = input.shape();
-        int[] weightsShape = weights.shape();
-
-        return shape[shape.length - 1] == weightsShape[0];
-    }
-
     public int getDimension() {
         return dimension;
     }

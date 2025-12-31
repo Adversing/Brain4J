@@ -262,4 +262,12 @@ public class Commons {
         int r = x % m;
         return r < 0 ? r + m : r;
     }
+    
+    public static void illegalArgument(String message, Object... args) {
+        throw new IllegalArgumentException(String.format(message, args));
+    }
+    
+    public static void illegalState(String message, Object... args) {
+        throw new IllegalStateException(String.format(message, args));
+    }
 }

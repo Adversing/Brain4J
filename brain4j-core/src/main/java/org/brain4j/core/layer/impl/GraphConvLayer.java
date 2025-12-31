@@ -27,7 +27,7 @@ import org.brain4j.math.tensor.Tensor;
  * </ul>
  * <p>The adjacency normalization step computes:</p>
  * <blockquote><pre>
- * Â = D^{-1/2} (A + I) D^{-1/2}
+ * Â = D^{-0.5} (A + I) D^{-0.5}
  * </pre></blockquote>
  * where {@code A} is the adjacency matrix, {@code I} is the identity matrix,
  * and {@code D} is the degree matrix of {@code A + I}.
@@ -85,7 +85,10 @@ public class GraphConvLayer extends Layer {
 
         Tensor features = inputs[0]; // [batch, nodes, features]
         Tensor adjacencyMatrix = inputs[1]; // [batch, nodes, nodes]
-
+        
+        checkValidInput(features, "Features must have shape [batch, nodes, features]!");
+        checkValidInput(adjacencyMatrix, "Adjacency matrix must have shape [batch, nodes, nodes]!");
+        
         // [batch, nodes, dimension]
         Tensor support = features.matmulGrad(weights);
         Tensor adjNorm = normalizeAdjacency(adjacencyMatrix);
@@ -98,7 +101,7 @@ public class GraphConvLayer extends Layer {
 
         return new Tensor[] { out.activateGrad(activation), adjacencyMatrix };
     }
-
+    
     @Override
     public int size() {
         return dimension;
@@ -124,13 +127,9 @@ public class GraphConvLayer extends Layer {
         int nodes = adjacent.shape(1);
 
         Tensor identity = Tensors.eye(nodes);
-
-        // [batch, nodes, nodes]
-        Tensor Ahat = adjacent.add(identity);
-        // [batch, nodes]
-        Tensor deg = Ahat.sum(1, false).add(1e-12);
-        Tensor degInvSqrt = deg.pow(-0.5);
-
+        Tensor Ahat = adjacent.add(identity); // [batch, nodes, nodes]
+        Tensor deg = Ahat.sum(1, false).add(1e-12); // [batch, nodes]
+        Tensor degInvSqrt = deg.pow(-0.5); // shortcut for 1 / sqrt(deg)
         Tensor DinvSqrt = Tensors.zeros(batch, nodes, nodes);
 
         for (int b = 0; b < batch; b++) {
