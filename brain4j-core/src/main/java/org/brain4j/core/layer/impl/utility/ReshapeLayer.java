@@ -6,13 +6,35 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 
+/**
+ * A utility layer that reshapes input tensors while preserving the batch dimension.
+ * <p>
+ * This layer applies a reshape operation to each input tensor, keeping the first
+ * dimension unchanged (typically the batch size) and replacing the remaining
+ * dimensions with the specified target shape.
+ * <p>
+ * The reshape operation is differentiable and preserves gradient flow.
+ *
+ * @apiNote this layer assumes that the first dimension of the input tensor
+ *          represents the batch dimension and is always preserved
+ *
+ * @author xEcho1337
+ */
 public class ReshapeLayer extends Layer {
 
     private int[] shape;
     
+    /**
+     * DO NOT TOUCH: used for instancing when deserializing a model.
+     */
     protected ReshapeLayer() {
     }
     
+    /**
+     * Creates a reshape layer with the specified target shape.
+     *
+     * @param shape the new shape applied after the batch dimension
+     */
     public ReshapeLayer(int... shape) {
         this.shape = shape;
     }

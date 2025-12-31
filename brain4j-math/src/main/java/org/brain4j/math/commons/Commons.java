@@ -80,7 +80,21 @@ public class Commons {
             }
         }
     }
-
+    
+    /**
+     * Creates a textual progress bar representation.
+     * <p>
+     * The progress is expressed as a value in the range {@code [0, 1]} and mapped
+     * to a fixed number of characters. The filled portion is rendered using
+     * {@code barCharacter}, while the remaining portion uses {@code emptyCharacter}.
+     *
+     * @param percent progress value in the range {@code [0, 1]}
+     * @param characterCount total number of characters composing the bar
+     * @param barCharacter character used for the filled portion
+     * @param emptyCharacter character used for the empty portion
+     * @return a string representing the progress bar
+     * @throws IllegalArgumentException if {@code percent} is outside {@code [0, 1]}
+     */
     public static String createProgressBar(
         double percent,
         int characterCount,
@@ -96,16 +110,35 @@ public class Commons {
 
         return barCharacter.repeat(fill) + emptyCharacter.repeat(remaining);
     }
-
+    
+    /**
+     * Converts a 16-bit IEEE 754 half-precision floating-point value (FP16)
+     * into a 32-bit single-precision float.
+     * <p>
+     * This implementation uses precomputed lookup tables to efficiently handle
+     * normal, subnormal, zero, infinity, and NaN values without branching.
+     *
+     * @param half the half-precision floating-point value encoded as a {@code short}
+     * @return the corresponding 32-bit floating-point value
+     */
     public static float f16ToFloat(short half) {
         int bits = half & 0xFFFF;
-        int sign = bits >>> 15;
-        int exp = (bits >>> 10) & 0x1F;
-        int mantissa = bits & 0x3FF;
+        // [1 bit sign] | [5 bits exponent] | [12 bits mantissa]
+        int sign = bits >>> 15; // 1 bit of sign
+        int exp = (bits >>> 10) & 0b11111; // 5 bits of exp
+        int mantissa = bits & 0b1111111111; // 12 bits of mantissa
         int floatBits = (sign << 31) | EXP_TABLE[exp] | MANT_TABLE[mantissa + OFF_TABLE[exp]];
         return Float.intBitsToFloat(floatBits);
     }
-
+    
+    /**
+     * Computes the smallest power of two greater than or equal to the given value.
+     * <p>
+     * If the input is less than or equal to zero, the method returns {@code 1}.
+     *
+     * @param n the input value
+     * @return the next power of two greater than or equal to {@code n}
+     */
     public static int nextPowerOf2(int n) {
         if (n <= 0) return 1;
         n--;
@@ -116,11 +149,33 @@ public class Commons {
         n |= n >>> 16;
         return n + 1;
     }
-
+    
+    /**
+     * Checks whether the given integer is a power of two.
+     *
+     * @param n the value to check
+     * @return {@code true} if {@code n} is a positive power of two, {@code false} otherwise
+     */
     public static boolean isPowerOf2(int n) {
+        // bit shifting tricks: it's a power of 2 only if one bit is 1
+        // ex: 4 & 3 = 0b100 & 0b011 = 0b000 = 0
+        // ex: 5 & 4 = 0b101 & 0b100 = 0b100 = 4
         return n > 0 && (n & (n - 1)) == 0;
     }
     
+    /**
+     * Renders a formatted string with inline color tags.
+     * <p>
+     * The method first applies {@link String#format(String, Object...)} using the
+     * provided arguments, then replaces color placeholders of the form
+     * {@code <color>} with their corresponding ANSI escape codes.
+     * <p>
+     * A terminal reset code is always appended at the end of the returned string.
+     *
+     * @param template the format string containing optional color tags
+     * @param args arguments referenced by the format specifiers
+     * @return the rendered string with ANSI color codes applied
+     */
     public static String renderText(String template, Object... args) {
         String formatted = String.format(template, args);
         
@@ -131,6 +186,20 @@ public class Commons {
         return formatted + RESET;
     }
     
+    /**
+     * Formats a duration expressed in seconds into a human-readable string.
+     * <p>
+     * The output format depends on the magnitude of the duration:
+     * <ul>
+     *   <li>Less than 1 second: milliseconds (e.g. {@code 12.34ms})</li>
+     *   <li>Less than 60 seconds: seconds (e.g. {@code 1.23s})</li>
+     *   <li>Less than 1 hour: minutes and seconds (e.g. {@code 2m15s})</li>
+     *   <li>One minute or more: hours and minutes (e.g. {@code 4h32m})</li>
+     * </ul>
+     *
+     * @param seconds the duration in seconds
+     * @return a formatted string representing the duration
+     */
     public static String formatDuration(double seconds) {
         double millis = seconds * 1000;
         Duration duration = Duration.ofMillis((long) millis);
@@ -145,10 +214,13 @@ public class Commons {
 
         long minutes = duration.toMinutesPart();
         long secs = duration.toSecondsPart();
-
-        return (secs == 0)
-                ? String.format("%dm", minutes)
-                : String.format("%dm%ds", minutes, secs);
+        long hours = duration.toHoursPart();
+        
+        if (hours < 1) {
+            return (secs == 0) ? String.format("%dm", minutes) : String.format("%dm%ds", minutes, secs);
+        }
+        
+        return (minutes == 0) ? String.format("%dh", hours) : String.format("%dh%dm", hours, minutes);
     }
 
     /**
@@ -196,24 +268,56 @@ public class Commons {
 
         return result + "\n";
     }
-
-    public static String formatNumber(long params) {
+    
+    /**
+     * Formats a positive numeric value using SI decimal prefixes (base 1000),
+     * producing a human-readable string with two decimal digits.
+     * <p>
+     * The following prefixes are supported:
+     * <ul>
+     *   <li>B  (bytes)</li>
+     *   <li>KB (10³)</li>
+     *   <li>MB (10⁶)</li>
+     *   <li>GB (10⁹)</li>
+     *   <li>TB (10¹²)</li>
+     * </ul>
+     *
+     * The method assumes a non-negative input value. A value of {@code 0}
+     * is formatted as {@code "0"} without any suffix.
+     *
+     * @param bytes the numeric value to format, expressed in bytes
+     * @return a formatted string representing the value scaled with an SI prefix
+     * @throws UnsupportedOperationException if the value exceeds the largest
+     *         supported prefix (TB)
+     */
+    public static String formatNumber(long bytes) {
         String[] prefixes = {"B", "KB", "MB", "GB", "TB"};
 
-        if (params == 0) return "0";
+        if (bytes == 0) return "0";
 
-        int exponent = (int) (Math.log10(params) / 3);
+        int exponent = (int) (Math.log10(bytes) / 3);
 
         double divisor = Math.pow(1000, exponent);
-        double normalized = params / divisor;
+        double normalized = bytes / divisor; // ex. 12345 -> 1.2345
 
-        if (exponent > prefixes.length) {
-            throw new UnsupportedOperationException("Input number too big!");
+        if (exponent >= prefixes.length) {
+            Commons.illegalArgument("Input number is too big to be parsed!");
         }
 
         return "%.2f %s".formatted(normalized, prefixes[exponent]);
     }
-
+    
+    /**
+     * Creates a new instance of a class given its fully qualified name.
+     * <p>
+     * This method provides backward compatibility by remapping legacy package
+     * names to their current equivalents before class loading.
+     *
+     * @param classPath the fully qualified class name
+     * @param <T> the expected type of the created instance
+     * @return a new instance of the specified class
+     * @throws RuntimeException if the class cannot be found or instantiated
+     */
     @SuppressWarnings("all")
     public static <T> T newInstance(String classPath) {
         // Support for versions prior to 2.9
@@ -228,6 +332,16 @@ public class Commons {
         }
     }
     
+    /**
+     * Creates a new instance of the specified class using its no-argument constructor.
+     * <p>
+     * The constructor is made accessible if necessary.
+     *
+     * @param clazz the class to instantiate
+     * @param <T> the type of the class
+     * @return a new instance of {@code clazz}
+     * @throws RuntimeException if instantiation fails
+     */
     @SuppressWarnings("all")
     public static <T> T newInstance(Class<T> clazz) {
         try {
@@ -240,14 +354,36 @@ public class Commons {
         }
     }
     
+    /**
+     * Clamps a floating-point value to the specified range.
+     *
+     * @param value the value to clamp
+     * @param minimum the lower bound
+     * @param maximum the upper bound
+     * @return {@code value} constrained to the interval {@code [minimum, maximum]}
+     */
     public static double clamp(float value, double minimum, double maximum) {
         return Math.min(Math.max(value, minimum), maximum);
     }
     
+    /**
+     * Clamps a double-precision value to the specified range.
+     *
+     * @param value the value to clamp
+     * @param minimum the lower bound
+     * @param maximum the upper bound
+     * @return {@code value} constrained to the interval {@code [minimum, maximum]}
+     */
     public static double clamp(double value, double minimum, double maximum) {
         return Math.min(Math.max(value, minimum), maximum);
     }
-
+    
+    /**
+     * Converts an integer array to a float array by widening each element.
+     *
+     * @param array the input integer array
+     * @return a new array containing the converted floating-point values
+     */
     public static float[] int2float(int[] array) {
         float[] result = new float[array.length];
 
@@ -258,15 +394,39 @@ public class Commons {
         return result;
     }
     
+    /**
+     * Computes a mathematical modulo operation with a non-negative result.
+     * <p>
+     * Unlike the Java remainder operator ({@code %}), this method guarantees
+     * a result in the range {@code [0, m)} for {@code m > 0}.
+     *
+     * @param x the dividend
+     * @param m the modulus
+     * @return the modulo result in the range {@code [0, m)}
+     */
     public static int mod(int x, int m) {
         int r = x % m;
         return r < 0 ? r + m : r;
     }
     
+    /**
+     * Throws an {@link IllegalArgumentException} with a formatted message.
+     *
+     * @param message the exception message format string
+     * @param args arguments referenced by the format specifiers
+     * @throws IllegalArgumentException always thrown
+     */
     public static void illegalArgument(String message, Object... args) {
         throw new IllegalArgumentException(String.format(message, args));
     }
     
+    /**
+     * Throws an {@link IllegalStateException} with a formatted message.
+     *
+     * @param message the exception message format string
+     * @param args arguments referenced by the format specifiers
+     * @throws IllegalStateException always thrown
+     */
     public static void illegalState(String message, Object... args) {
         throw new IllegalStateException(String.format(message, args));
     }

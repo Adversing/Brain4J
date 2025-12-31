@@ -27,17 +27,28 @@ import java.util.Arrays;
  *     new InputLayer(3, 4),
  *     new DenseLayer(16),
  *     new DenseLayer(10)
- * );
+ * );}
  * </pre></blockquote>
- * @implNote this layer supports multiple input tensors. To ignore a dimension, simply put -1 there
+ *
+ * @apiNote Individual dimensions may be set to {@code -1} to indicate that the
+ *          corresponding size should not be checked.
+ *
+ * @author xEcho1337
  */
 public class InputLayer extends Layer {
 
     private int[] shape;
-
+    
+    /**
+     * DO NOT TOUCH: used for instancing when deserializing a model.
+     */
     protected InputLayer() {
     }
-
+    
+    /**
+     * Creates an input layer with the specified expected input shape.
+     * @param shape the expected input shape, excluding any optional batch dimension
+     */
     public InputLayer(int... shape) {
         this.shape = shape;
     }
@@ -84,7 +95,7 @@ public class InputLayer extends Layer {
         if (input == null || input.rank() > shape.length + 1) return false;
 
         int[] inputShape = input.shape();
-        // Leniency, input COULD have a batch, it's not guaranteed
+        // give leniency, we only care about the trailing part of the shape
         int offset = inputShape.length - shape.length;
 
         for (int i = 0; i < shape.length; i++) {

@@ -24,8 +24,9 @@ import java.util.random.RandomGenerator;
  *   <li>Weights: {@code [input_dim, output_dim]}</li>
  *   <li>Bias: {@code [output_dim]}</li>
  * </ul>
- * @implNote this layer supports multiple input tensors; assuming each one has the correct shape, each input tensor
- * gets processed in the same way
+ * @implNote this layer supports multiple input tensors; assuming each one has the correct shape,
+ *           each input tensor gets processed in the same way
+ *
  * @author xEcho1337
  */
 public class DenseLayer extends Layer {

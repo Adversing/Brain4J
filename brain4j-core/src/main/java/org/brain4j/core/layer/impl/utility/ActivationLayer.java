@@ -7,17 +7,42 @@ import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 
+/**
+ * A utility layer that applies an element-wise activation function.
+ * <p>
+ * This layer does not introduce trainable parameters and simply transforms
+ * its input tensors by applying the configured activation function. The output
+ * shape is identical to the input shape.
+ * <p>
+ * The layer derives its dimensionality from the previous layer during the
+ * {@link #connect(Layer)} phase.
+ *
+ * @author xEcho1337
+ */
 public class ActivationLayer extends Layer {
 
     private int dimension;
-
+    
+    /**
+     * DO NOT TOUCH: used for instancing when deserializing a model.
+     */
     protected ActivationLayer() {
     }
     
+    /**
+     * Creates an activation layer using a predefined activation function.
+     *
+     * @param activation the activation enum specifying the function to apply
+     */
     public ActivationLayer(Activations activation) {
         this.activation = activation.function();
     }
-
+    
+    /**
+     * Creates an activation layer with a custom activation function.
+     *
+     * @param activation the activation function to apply
+     */
     public ActivationLayer(Activation activation) {
         this.activation = activation;
     }

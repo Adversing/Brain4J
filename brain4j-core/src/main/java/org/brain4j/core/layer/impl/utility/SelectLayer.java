@@ -11,6 +11,8 @@ import org.brain4j.math.tensor.Tensor;
  * and need to select one of the tensors for further processing. It
  * acts as a multiplexer, forwarding only the tensor at the specified
  * index position.
+ *
+ * @author xEcho1337
  */
 public class SelectLayer extends Layer {
 

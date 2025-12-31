@@ -15,6 +15,7 @@ import java.util.random.RandomGenerator;
  * Implementation of a dropout layer, used to mitigate overfitting.
  * During training, it randomly turns to zero a fraction of the values in the input tensor.
  * During inference, the input gets multiplied by {@code 1 - dropout}.
+ *
  * @author xEcho1337
  */
 public class DropoutLayer extends Layer {
