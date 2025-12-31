@@ -1,5 +1,6 @@
 package org.brain4j.math.gpu.device;
 
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.tensor.impl.GpuTensor;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.opencl.CL10;
@@ -115,7 +116,7 @@ public class DeviceUtils {
     public static String readKernelSource(String resourcePath) {
         try (InputStream input = GpuTensor.class.getResourceAsStream(resourcePath)) {
             if (input == null) {
-                throw new IllegalArgumentException("Resource not found: " + resourcePath);
+                Commons.illegalArgument("Resource not found: %s", resourcePath);
             }
             return new String(input.readAllBytes(), UTF_8);
         } catch (IOException e) {

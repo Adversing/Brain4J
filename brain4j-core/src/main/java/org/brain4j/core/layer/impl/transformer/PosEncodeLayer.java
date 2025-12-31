@@ -3,6 +3,7 @@ package org.brain4j.core.layer.impl.transformer;
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
@@ -39,9 +40,8 @@ public class PosEncodeLayer extends Layer {
         int[] shape = input.shape();
 
         if (shape.length != 3) {
-            throw new IllegalArgumentException(
-                "Expected input shape [batch, seq_len, dimension], got: " + Arrays.toString(shape)
-            );
+            Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: %s",
+                Arrays.toString(shape));
         }
 
         int seqLength = shape[1];

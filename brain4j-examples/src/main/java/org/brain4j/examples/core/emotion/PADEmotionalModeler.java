@@ -4,7 +4,9 @@ import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.impl.MeanSquaredError;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.OldSequential;
+import org.brain4j.core.model.ModelSpecs;
+import org.brain4j.core.training.Trainer;
+import org.brain4j.core.training.TrainingConfig;
 import org.brain4j.core.training.optimizer.impl.Adam;
 import org.brain4j.examples.core.emotion.registry.EmotionRegistry;
 import org.brain4j.math.Tensors;
@@ -59,15 +61,16 @@ public class PADEmotionalModeler {
         int inputSize = trainingFeatures.getFirst().elements();
         int outputSize = 3; // for P, A, D
 
-        Model model = OldSequential.of(
-                new InputLayer(inputSize),
-                new DenseLayer(64, Activations.RELU).setWeightInit(new UniformXavierInit()),
-                new DenseLayer(32, Activations.RELU).setWeightInit(new UniformXavierInit()),
-                new DenseLayer(outputSize, Activations.TANH).setWeightInit(new UniformXavierInit())
+        ModelSpecs specs = ModelSpecs.of(
+            new InputLayer(inputSize),
+            new DenseLayer(64, Activations.RELU).setWeightInit(new UniformXavierInit()),
+            new DenseLayer(32, Activations.RELU).setWeightInit(new UniformXavierInit()),
+            new DenseLayer(outputSize, Activations.TANH).setWeightInit(new UniformXavierInit())
         );
 
-        model.compile(new MeanSquaredError(), new Adam(0.001));
-
+        Model model = specs.compile();
+        TrainingConfig config = new TrainingConfig(new MeanSquaredError(), new Adam(0.001));
+        
         int epochs = 100;
         int batchSize = 1;
 
@@ -76,11 +79,11 @@ public class PADEmotionalModeler {
             samples.add(new Sample(trainingFeatures.get(i), trainingLabels.get(i)));
         }
         ListDataSource trainSource = new ListDataSource(samples, false, batchSize);
-
+        Trainer trainer = new Trainer(model, List.of(), config);
         System.out.println("Starting conceptual training...");
         for (int i = 0; i < epochs; i++) {
-            model.fit(trainSource.clone(), 1);
-            double avgLoss = model.loss(trainSource.clone());
+            trainer.fit(trainSource.clone(), 1);
+            double avgLoss = model.evaluate(trainSource.clone(), config.loss()).loss();
             System.out.printf("Epoch %d, Average Loss: %.4f%n", (i + 1), avgLoss);
         }
         System.out.println("Conceptual training finished.");

@@ -10,7 +10,6 @@ import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
 import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.impl.OldSequential;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;

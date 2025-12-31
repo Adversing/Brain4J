@@ -10,6 +10,7 @@ import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
@@ -193,9 +194,8 @@ public class TransformerEncoder extends Layer {
         Tensor input = inputs[0];
 
         if (input.rank() != 3) {
-            throw new IllegalArgumentException(
-                "Expected input with shape [batch, seq_len, dimension], got: " + Arrays.toString(input.shape())
-            );
+            Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: ",
+                Arrays.toString(input.shape()));
         }
 
         Tensor attended = attention.forward(cache, input);

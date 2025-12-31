@@ -4,6 +4,7 @@ import org.brain4j.core.layer.impl.DenseLayer;
 import org.brain4j.core.layer.impl.DropoutLayer;
 import org.brain4j.core.layer.impl.NormLayer;
 import org.brain4j.core.transformer.attention.MaskedMultiHeadAttention;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
@@ -55,9 +56,8 @@ public class TransformerDecoder extends TransformerEncoder {
         Tensor input = inputs[0];
 
         if (input.rank() != 3) {
-            throw new IllegalArgumentException(
-                "Expected input with shape [batch, seq_len, dimension], got: " + Arrays.toString(input.shape())
-            );
+            Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: %s",
+                Arrays.toString(input.shape()));
         }
         
         Tensor norm1 = normalizer1.forward(cache, input);

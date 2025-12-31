@@ -7,6 +7,7 @@ import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.clipper.GradientClipper;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.ops.FlashAttention;
@@ -67,8 +68,8 @@ public class MultiHeadAttention extends Layer {
         this.attnQkvHasBias = true;
 
         if (embeddingDim % headCount != 0) {
-            throw new IllegalArgumentException("Embedding dimension must be divisible by head count! (%s %% %s = %s)"
-                    .formatted(embeddingDim, headCount, embeddingDim % headCount));
+            Commons.illegalArgument("Embedding dimension must be divisible by head count! (%s %% %s = %s)",
+                embeddingDim, headCount, embeddingDim % headCount);
         }
 
         this.headDimension = embeddingDim / headCount;

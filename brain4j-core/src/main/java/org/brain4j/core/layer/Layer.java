@@ -126,7 +126,7 @@ public abstract class Layer implements ModelComponent {
         Tensor[] preOutputs = cache.getOutputs(this);
         
         if (labels.length != outputs.length) {
-            throw new IllegalArgumentException("Targets amount does not equal to output amount.");
+            Commons.illegalArgument("Labels amount does not match outputs amount!");
         }
         
         for (int i = 0; i < outputs.length; i++) {
@@ -135,8 +135,8 @@ public abstract class Layer implements ModelComponent {
             Tensor preOutput = preOutputs[i];
             
             if (!Arrays.equals(output.shape(), target.shape())) {
-                throw new IllegalArgumentException("Output and target shapes do not match! Output: " +
-                    Arrays.toString(output.shape()) + ", Target: " + Arrays.toString(target.shape()));
+                Commons.illegalState("Output and target shapes don't match! Output %s, Target: %s",
+                    Arrays.toString(output.shape()),  Arrays.toString(target.shape()));
             }
 
             Tensor derivatives = activation.derivative(preOutput);

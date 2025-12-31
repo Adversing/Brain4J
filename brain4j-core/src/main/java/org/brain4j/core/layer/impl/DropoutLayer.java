@@ -2,6 +2,7 @@ package org.brain4j.core.layer.impl;
 
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.CpuTensor;
@@ -33,7 +34,7 @@ public class DropoutLayer extends Layer {
      */
     public DropoutLayer(double dropoutRate) {
         if (dropoutRate < 0 || dropoutRate >= 1) {
-            throw new IllegalArgumentException("Dropout must be greater than 0 and less than 1!");
+            Commons.illegalArgument("Dropout must be greater or equal to 0 and less than 1!");
         }
 
         this.random = new SplittableRandom();

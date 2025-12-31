@@ -7,11 +7,13 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.Activations;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
@@ -60,7 +62,8 @@ public class LSTMLayer extends Layer {
         Tensor input = inputs[0];
 
         if (input.rank() > 3) {
-            throw new IllegalArgumentException("Recurrent layers expected 3-dimensional tensors! Got " + input.rank() + "instead");
+            Commons.illegalArgument("Input must have shape [batch, timesteps, dimension]! Got: %s",
+                Arrays.toString(input.shape()));
         }
         
         while (input.rank() < 3) {

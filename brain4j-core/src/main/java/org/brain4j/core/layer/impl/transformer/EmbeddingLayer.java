@@ -5,6 +5,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.Tensors;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
@@ -67,9 +68,7 @@ public class EmbeddingLayer extends Layer {
         int[] shape = input.shape();
 
         if (shape.length != 2) {
-            throw new IllegalStateException(
-                "Expecting shape [batch, seq_len] with dimension 2, got " + Arrays.toString(shape)
-            );
+            Commons.illegalState("Input must have shape [batch, seq_length]! Got: %s", Arrays.toString(shape));
         }
 
         int batchSize = shape[0];

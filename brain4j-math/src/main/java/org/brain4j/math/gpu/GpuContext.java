@@ -16,6 +16,7 @@ public class GpuContext {
         kernelCache.computeIfAbsent(device, d -> new HashMap<>())
             .compute(kernelName, (name, existingKernel) -> {
                 if (existingKernel != null) {
+                    
                     throw new IllegalArgumentException("Kernel " + name + " already initialized for device " + device);
                 }
 

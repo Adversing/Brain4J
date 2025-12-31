@@ -76,15 +76,13 @@ public class LiquidLayer extends Layer {
         Tensor deltas = inputs[1];
 
         if (input.rank() != 3) {
-            throw new IllegalArgumentException(
-                "LTC requires rank 3 input! Expected [batch, timesteps, features], got: " + Arrays.toString(input.shape())
-            );
+            Commons.illegalArgument("Input must have shape [batch, timesteps, features]! Got: %s",
+                Arrays.toString(input.shape()));
         }
 
         if (deltas.rank() != 3) {
-            throw new IllegalArgumentException(
-                "LTC requires rank 3 deltas! Expected [batch, timesteps, features], got: " + Arrays.toString(deltas.shape())
-            );
+            Commons.illegalArgument("Deltas must have shape [batch, timesteps, features]! Got: %s",
+                Arrays.toString(deltas.shape()));
         }
 
         int batch = input.shape(0);

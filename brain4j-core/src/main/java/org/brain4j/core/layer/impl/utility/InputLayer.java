@@ -3,6 +3,7 @@ package org.brain4j.core.layer.impl.utility;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 
@@ -46,9 +47,8 @@ public class InputLayer extends Layer {
         for (Tensor input : inputs) {
             if (validInput(input)) continue;
             
-            throw new IllegalArgumentException(
-                "Input shape is not valid! Expecting " + Arrays.toString(shape) + " but got " + Arrays.toString(input.shape())
-            );
+            Commons.illegalArgument("Input must have shape %s! Got: %s",
+                Arrays.toString(shape), Arrays.toString(input.shape()));
         }
         return inputs;
     }

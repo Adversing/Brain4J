@@ -11,6 +11,7 @@ import org.brain4j.core.model.Model;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.activation.impl.*;
+import org.brain4j.math.commons.Commons;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
@@ -53,7 +54,9 @@ public class OnnxFormat implements ModelFormat {
             for (NodeProto node : graphProto.getNodeList()) {
                 Operation op = ONNX_OPERATIONS_REGISTRY.toInstance(node.getOpType(), node);
                 
-                if (op == null) throw new IllegalArgumentException("Unknown operation: " + node.getOpType());
+                if (op == null) {
+                    Commons.illegalArgument("Unknown operation: %s", node.getOpType());
+                }
                 
                 if (node.getInputCount() != op.requiredInputs()) {
                     throw new IllegalArgumentException("Node " + node.getOpType() + " requires "
@@ -86,7 +89,7 @@ public class OnnxFormat implements ModelFormat {
         Layer inputLayer = model.getLayers().getFirst();
         
         if (!(inputLayer instanceof InputLayer wrapped)) {
-            throw new IllegalArgumentException("First layer is not an input layer!");
+            Commons.illegalArgument("First layer is not an InputLayer instance!");
         }
         
         Tensor input = Tensors.zeros(wrapped.shape()).unsqueeze();
@@ -155,7 +158,7 @@ public class OnnxFormat implements ModelFormat {
                 ONNX_OPERATIONS_REGISTRY.fromClass(op.getClass());
             
             if (opType == null) {
-                throw new IllegalStateException("No operation found for " + op + "!");
+                Commons.illegalState("No operation for for %s!", op);
             }
             
             NodeProto.Builder node = NodeProto.newBuilder()

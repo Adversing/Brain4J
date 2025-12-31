@@ -38,7 +38,7 @@ public class Sequential implements Model, ModelComponent {
         this.seed = seed;
         
         if (!(layers.getFirst() instanceof InputLayer)) {
-            throw new IllegalArgumentException("First layer in the model must be an InputLayer instance!");
+            Commons.illegalArgument("First layer in the model must be an InputLayer instance!");
         }
         
         initLayers();
