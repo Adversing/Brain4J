@@ -36,7 +36,7 @@ public class Brain4J {
      *
      * @return the version string (e.g. "3.0")
      */
-    public static String version() {
+    public static String getVersion() {
         return "3.0";
     }
 
@@ -46,7 +46,7 @@ public class Brain4J {
      *
      * @return {@code true} if logging is enabled; {@code false} otherwise
      */
-    public static boolean logging() {
+    public static boolean isLogging() {
         return logging;
     }
 
@@ -66,7 +66,7 @@ public class Brain4J {
      *
      * @return the number of decimal digits displayed (default: 4)
      */
-    public static int precision() {
+    public static int getDecimalDigits() {
         return decimalDigits;
     }
 
@@ -90,7 +90,7 @@ public class Brain4J {
      *
      * @return a comma-separated list of device names
      */
-    public static String availableDevices() {
+    public static String getAvailableDevices() {
         return String.join(", ", DeviceUtils.allDeviceNames());
     }
 
@@ -134,7 +134,7 @@ public class Brain4J {
      *
      * @return a list of all available {@link Device} instances
      */
-    public static List<Device> allDevices() {
+    public static List<Device> getAllDevices() {
         List<Device> devices = new ArrayList<>();
 
         for (String device : DeviceUtils.allDeviceNames()) {

@@ -126,7 +126,7 @@ public abstract class Layer implements ModelComponent {
         Tensor[] preOutputs = cache.getOutputs(this);
         
         if (labels.length != outputs.length) {
-            Commons.illegalArgument("Labels amount does not match outputs amount!");
+            throw Commons.illegalArgument("Labels amount does not match outputs amount!");
         }
         
         for (int i = 0; i < outputs.length; i++) {
@@ -135,7 +135,7 @@ public abstract class Layer implements ModelComponent {
             Tensor preOutput = preOutputs[i];
             
             if (!Arrays.equals(output.shape(), target.shape())) {
-                Commons.illegalState("Output and target shapes don't match! Output %s, Target: %s",
+                throw Commons.illegalState("Output and target shapes don't match! Output %s, Target: %s",
                     Arrays.toString(output.shape()),  Arrays.toString(target.shape()));
             }
 
@@ -232,7 +232,7 @@ public abstract class Layer implements ModelComponent {
     protected void checkValidInput(Tensor tensor, String message, Object... args) {
         if (validInput(tensor)) return;
         
-        Commons.illegalArgument(message, args);
+        throw Commons.illegalArgument(message, args);
     }
     
     /**

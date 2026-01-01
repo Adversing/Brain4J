@@ -1,7 +1,6 @@
 package org.brain4j.core.monitor.impl;
 
 import org.brain4j.core.Brain4J;
-import org.brain4j.core.model.Model;
 import org.brain4j.core.monitor.Monitor;
 import org.brain4j.core.training.Trainer;
 import org.brain4j.core.training.events.*;
@@ -52,7 +51,7 @@ public final class DefaultMonitor implements Monitor {
         double totalTime = times.stream().reduce(Double::sum).orElse(0.0);
         double average = totalTime / Math.min(batch, timeWindow);
         
-        if (Brain4J.logging()) {
+        if (Brain4J.isLogging()) {
             printProgress(batch, total, average);
         }
     }

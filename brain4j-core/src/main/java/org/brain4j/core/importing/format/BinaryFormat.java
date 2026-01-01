@@ -4,7 +4,7 @@ import org.brain4j.core.model.Model;
 
 import java.io.File;
 
-public interface ModelFormat {
+public interface BinaryFormat {
     Model deserialize(File file);
-    void serialize(Model model, File file);
+    void serialize(Model input, File file);
 }

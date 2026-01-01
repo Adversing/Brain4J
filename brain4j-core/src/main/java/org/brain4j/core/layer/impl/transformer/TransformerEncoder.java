@@ -194,7 +194,7 @@ public class TransformerEncoder extends Layer {
         Tensor input = inputs[0];
 
         if (input.rank() != 3) {
-            Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: ",
+            throw Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: ",
                 Arrays.toString(input.shape()));
         }
 

@@ -68,7 +68,7 @@ public class MultiHeadAttention extends Layer {
         this.attnQkvHasBias = true;
 
         if (embeddingDim % headCount != 0) {
-            Commons.illegalArgument("Embedding dimension must be divisible by head count! (%s %% %s = %s)",
+            throw Commons.illegalArgument("Embedding dimension must be divisible by head count! (%s %% %s = %s)",
                 embeddingDim, headCount, embeddingDim % headCount);
         }
 

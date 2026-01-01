@@ -68,7 +68,7 @@ public class EmbeddingLayer extends Layer {
         int[] shape = input.shape();
 
         if (shape.length != 2) {
-            Commons.illegalState("Input must have shape [batch, seq_length]! Got: %s", Arrays.toString(shape));
+            throw Commons.illegalState("Input must have shape [batch, seq_length]! Got: %s", Arrays.toString(shape));
         }
 
         int batchSize = shape[0];

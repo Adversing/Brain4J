@@ -76,12 +76,12 @@ public class LiquidLayer extends Layer {
         Tensor deltas = inputs[1];
 
         if (input.rank() != 3) {
-            Commons.illegalArgument("Input must have shape [batch, timesteps, features]! Got: %s",
+            throw Commons.illegalArgument("Input must have shape [batch, timesteps, features]! Got: %s",
                 Arrays.toString(input.shape()));
         }
 
         if (deltas.rank() != 3) {
-            Commons.illegalArgument("Deltas must have shape [batch, timesteps, features]! Got: %s",
+            throw Commons.illegalArgument("Deltas must have shape [batch, timesteps, features]! Got: %s",
                 Arrays.toString(deltas.shape()));
         }
 

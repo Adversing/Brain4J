@@ -416,8 +416,8 @@ public class Commons {
      * @param args arguments referenced by the format specifiers
      * @throws IllegalArgumentException always thrown
      */
-    public static void illegalArgument(String message, Object... args) {
-        throw new IllegalArgumentException(String.format(message, args));
+    public static IllegalArgumentException illegalArgument(String message, Object... args) {
+        return new IllegalArgumentException(String.format(message, args));
     }
     
     /**
@@ -427,7 +427,7 @@ public class Commons {
      * @param args arguments referenced by the format specifiers
      * @throws IllegalStateException always thrown
      */
-    public static void illegalState(String message, Object... args) {
-        throw new IllegalStateException(String.format(message, args));
+    public static IllegalStateException illegalState(String message, Object... args) {
+        return new IllegalStateException(String.format(message, args));
     }
 }

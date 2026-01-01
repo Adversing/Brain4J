@@ -58,7 +58,7 @@ public class InputLayer extends Layer {
         for (Tensor input : inputs) {
             if (validInput(input)) continue;
             
-            Commons.illegalArgument("Input must have shape %s! Got: %s",
+            throw Commons.illegalArgument("Input must have shape %s! Got: %s",
                 Arrays.toString(shape), Arrays.toString(input.shape()));
         }
         return inputs;

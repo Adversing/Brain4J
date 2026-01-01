@@ -1,9 +1,9 @@
-package org.brain4j.core.importing.impl;
+package org.brain4j.core.importing.format.impl;
 
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
-import org.brain4j.core.importing.format.ModelFormat;
+import org.brain4j.core.importing.format.BinaryFormat;
 import org.brain4j.core.importing.onnx.ProtoOnnx.*;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.brain4j.core.importing.Registries.LAYER_REGISTRY;
 import static org.brain4j.core.importing.Registries.ONNX_OPERATIONS_REGISTRY;
 
-public class OnnxFormat implements ModelFormat {
+public class OnnxFormat implements BinaryFormat {
     
     private static final Map<Class<? extends Activation>, String> ACTIVATION_MAP = Map.of(
         ReLUActivation.class, "Relu",
@@ -55,7 +55,7 @@ public class OnnxFormat implements ModelFormat {
                 Operation op = ONNX_OPERATIONS_REGISTRY.toInstance(node.getOpType(), node);
                 
                 if (op == null) {
-                    Commons.illegalArgument("Unknown operation: %s", node.getOpType());
+                    throw Commons.illegalArgument("Unknown operation: %s", node.getOpType());
                 }
                 
                 if (node.getInputCount() != op.requiredInputs()) {
@@ -89,7 +89,7 @@ public class OnnxFormat implements ModelFormat {
         Layer inputLayer = model.getLayers().getFirst();
         
         if (!(inputLayer instanceof InputLayer wrapped)) {
-            Commons.illegalArgument("First layer is not an InputLayer instance!");
+            throw Commons.illegalArgument("First layer is not an InputLayer instance!");
         }
         
         Tensor input = Tensors.zeros(wrapped.shape()).unsqueeze();
@@ -111,7 +111,7 @@ public class OnnxFormat implements ModelFormat {
         ModelProto modelProto = ModelProto.newBuilder()
             .setIrVersion(9)
             .setProducerName("Brain4J")
-            .setProducerVersion(Brain4J.version())
+            .setProducerVersion(Brain4J.getVersion())
             .setGraph(graphBuilder)
             .addOpsetImport(opset)
             .build();
@@ -158,7 +158,7 @@ public class OnnxFormat implements ModelFormat {
                 ONNX_OPERATIONS_REGISTRY.fromClass(op.getClass());
             
             if (opType == null) {
-                Commons.illegalState("No operation for for %s!", op);
+                throw Commons.illegalState("No operation for for %s!", op);
             }
             
             NodeProto.Builder node = NodeProto.newBuilder()

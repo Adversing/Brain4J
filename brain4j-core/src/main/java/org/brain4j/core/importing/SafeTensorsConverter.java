@@ -10,15 +10,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.brain4j.core.importing.impl.BrainFormat.GSON;
+import static org.brain4j.core.importing.format.impl.BrainFormat.GSON;
 
 public class SafeTensorsConverter {
 
@@ -50,7 +48,7 @@ public class SafeTensorsConverter {
             
             tensor.addProperty("dtype", "f32");
             tensor.add("shape", shape);
-            tensor.add("offsets", offsets);
+            tensor.add("data_offsets", offsets);
             
             header.add(name, tensor);
         }
@@ -77,79 +75,77 @@ public class SafeTensorsConverter {
     }
     
     public static Map<String, Tensor> load(Path path) throws IOException {
-        try (FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
-            ByteBuffer headerLenBuf = ByteBuffer.allocate(8).order(NATIVE_ORDER);
-            int readHeaderLen = 0;
-            
-            while (headerLenBuf.hasRemaining()) {
-                readHeaderLen += channel.read(headerLenBuf, readHeaderLen);
-            }
-            
-            headerLenBuf.rewind();
-            long headerLengthLong = headerLenBuf.getLong();
-            
-            if (headerLengthLong > Integer.MAX_VALUE) {
-                throw new IOException("Header too large (>2GB) unexpected for safetensors header");
-            }
-            
-            int headerLength = (int) headerLengthLong;
-            ByteBuffer headerBuf = ByteBuffer.allocate(headerLength);
-            int read = 0;
-            
-            while (headerBuf.hasRemaining()) {
-                int r = channel.read(headerBuf, 8 + read);
-                if (r < 0) throw new IOException("Unexpected EOF while reading header");
-                read += r;
-            }
-            
-            headerBuf.rewind();
-            
-            String headerJson = StandardCharsets.UTF_8.decode(headerBuf).toString();
-            JsonObject header = GSON.fromJson(headerJson, JsonObject.class);
-            
-            Map<String, Tensor> weights = new HashMap<>();
-            long baseDataOffset = 8L + headerLength;
-            
-            for (Map.Entry<String, JsonElement> entry : header.entrySet()) {
-                String name = entry.getKey();
-                JsonObject info = entry.getValue().getAsJsonObject();
-                
-                if (!info.has("shape")) continue;
-                
-                JsonArray shapeArray = info.getAsJsonArray("shape");
-                
-                int[] shape = new int[shapeArray.size()];
-                int elements = 1;
-                
-                for (int i = 0; i < shapeArray.size(); i++) {
-                    shape[i] = shapeArray.get(i).getAsInt();
-                    elements *= shape[i];
-                }
-                
-                JsonArray offsets = info.has("offsets")
-                    ? info.getAsJsonArray("offsets")
-                    : info.has("data_offsets")
-                    ? info.getAsJsonArray("data_offsets") : null;
-                
-                if (offsets == null || offsets.size() < 2) continue;
-                
-                long start = offsets.get(0).getAsLong();
-                long end = offsets.get(1).getAsLong();
-                long length = end - start;
-                
-                if (length < 0) throw new IOException("Invalid tensor offsets for " + name);
-                
-                long absolutePos = baseDataOffset + start;
-                
-                float[] values = new float[elements];
-                MappedByteBuffer mb = channel.map(FileChannel.MapMode.READ_ONLY, absolutePos, length);
-                mb.order(ByteOrder.LITTLE_ENDIAN);
-                mb.asFloatBuffer().get(values);
-                
-                weights.put(name, Tensors.create(shape, values));
-            }
-            
-            return weights;
+        byte[] data = Files.readAllBytes(path);
+        return load(data);
+    }
+    
+    public static Map<String, Tensor> load(byte[] data) throws IOException {
+        ByteBuffer buffer = ByteBuffer.wrap(data).order(NATIVE_ORDER);
+        return load(buffer);
+    }
+    
+    private static Map<String, Tensor> load(ByteBuffer buffer) throws IOException {
+        buffer.order(NATIVE_ORDER);
+        
+        if (buffer.remaining() < 8) {
+            throw new IOException("Invalid safetensors buffer");
         }
+        
+        long headerLengthLong = buffer.getLong();
+        
+        if (headerLengthLong > Integer.MAX_VALUE) {
+            throw new IOException("Header too large (>2GB)");
+        }
+        
+        int headerLength = (int) headerLengthLong;
+        
+        if (buffer.remaining() < headerLength) {
+            throw new IOException("Unexpected EOF while reading header");
+        }
+        
+        byte[] headerBytes = new byte[headerLength];
+        buffer.get(headerBytes);
+        
+        String headerJson = new String(headerBytes, StandardCharsets.UTF_8);
+        JsonObject header = GSON.fromJson(headerJson, JsonObject.class);
+        
+        long baseDataOffset = 8L + headerLength;
+        Map<String, Tensor> weights = new HashMap<>();
+        
+        for (Map.Entry<String, JsonElement> entry : header.entrySet()) {
+            String name = entry.getKey();
+            JsonObject info = entry.getValue().getAsJsonObject();
+            
+            JsonArray shapeArray = info.getAsJsonArray("shape");
+            int[] shape = new int[shapeArray.size()];
+            int elements = 1;
+            
+            for (int i = 0; i < shape.length; i++) {
+                shape[i] = shapeArray.get(i).getAsInt();
+                elements *= shape[i];
+            }
+            
+            JsonArray offsets = info.has("offsets")
+                ? info.getAsJsonArray("offsets")
+                : info.getAsJsonArray("data_offsets");
+            
+            long start = offsets.get(0).getAsLong();
+            long end   = offsets.get(1).getAsLong();
+            
+            int byteLength = Math.toIntExact(end - start);
+            
+            int pos = Math.toIntExact(baseDataOffset + start);
+            ByteBuffer slice = buffer.duplicate();
+            slice.position(pos);
+            slice.limit(pos + byteLength);
+            slice = slice.slice().order(ByteOrder.LITTLE_ENDIAN);
+            
+            float[] values = new float[elements];
+            slice.asFloatBuffer().get(values);
+            
+            weights.put(name, Tensors.create(shape, values));
+        }
+        
+        return weights;
     }
 }

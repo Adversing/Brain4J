@@ -2,22 +2,14 @@ package org.brain4j.core.monitor.impl;
 
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.loss.LossFunction;
-import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.monitor.Monitor;
 import org.brain4j.core.training.Trainer;
 import org.brain4j.core.training.events.EpochEnd;
 import org.brain4j.core.training.events.TrainingEvent;
 import org.brain4j.core.training.wrappers.EvaluationResult;
-import org.brain4j.math.commons.Batch;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.ListDataSource;
-import org.brain4j.math.data.StatesCache;
-import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.index.Range;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class EvalMonitor implements Monitor {
     
@@ -49,7 +41,7 @@ public class EvalMonitor implements Monitor {
         double f1 = result.f1Score() * 100.0;
         double accuracy = result.accuracy() * 100.0;
         
-        String lossMsg = Commons.renderText("Loss: <magenta>%." + Brain4J.precision() + "f<reset>", result.loss());
+        String lossMsg = Commons.renderText("Loss: <magenta>%." + Brain4J.getDecimalDigits() + "f<reset>", result.loss());
         String firstMetric = regression
             ? Commons.renderText(" | R^2 Score: <blue>%.2f<reset>", r2)
             : Commons.renderText(" | Accuracy: <blue>%.2f%%<reset>", accuracy);

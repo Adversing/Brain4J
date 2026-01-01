@@ -58,7 +58,7 @@ public class GraphModel implements Model {
     @Override
     public Tensor[] predict(StatesCache cache, Tensor... inputs) {
         if (inputs.length != inputNames.size()) {
-            Commons.illegalArgument("Expected %s inputs, but got %s!", inputNames.size(), inputs.length);
+            throw Commons.illegalArgument("Expected %s inputs, but got %s!", inputNames.size(), inputs.length);
         }
         
         if (device != null) {
@@ -79,7 +79,7 @@ public class GraphModel implements Model {
                 Tensor input = computed.get(inputNames.get(j));
 
                 if (input == null) {
-                    Commons.illegalState("Missing tensor for input: %s for node %s", inputNames.get(j), node.name());
+                    throw Commons.illegalState("Missing tensor for input: %s for node %s", inputNames.get(j), node.name());
                 }
 
                 inputTensors[j] = input.to(device);

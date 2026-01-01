@@ -56,7 +56,7 @@ public class TransformerDecoder extends TransformerEncoder {
         Tensor input = inputs[0];
 
         if (input.rank() != 3) {
-            Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: %s",
+            throw Commons.illegalArgument("Input must have shape [batch, seq_length, dimension]! Got: %s",
                 Arrays.toString(input.shape()));
         }
         

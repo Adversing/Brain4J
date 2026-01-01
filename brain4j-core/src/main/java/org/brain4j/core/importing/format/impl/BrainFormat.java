@@ -1,7 +1,8 @@
-package org.brain4j.core.importing.impl;
+package org.brain4j.core.importing.format.impl;
 
 import com.google.gson.*;
-import org.brain4j.core.importing.format.ModelFormat;
+import org.brain4j.core.importing.SafeTensorsConverter;
+import org.brain4j.core.importing.format.BinaryFormat;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.ModelSpecs;
@@ -23,7 +24,7 @@ import java.util.zip.ZipOutputStream;
 
 import static org.brain4j.core.importing.Registries.*;
 
-public class BrainFormat implements ModelFormat {
+public class BrainFormat implements BinaryFormat {
     
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final int FORMAT_VERSION = 2;
@@ -41,10 +42,10 @@ public class BrainFormat implements ModelFormat {
     }
     
     @Override
-    public void serialize(Model model, File file) {
+    public void serialize(Model input, File file) {
         Map<String, Tensor> weights = new HashMap<>();
         
-        byte[] metadata = buildMetadata(model, weights);
+        byte[] metadata = buildMetadata(input, weights);
         byte[] weightData = buildWeights(weights);
         
         writeZip(file, Map.of(
@@ -81,58 +82,44 @@ public class BrainFormat implements ModelFormat {
     }
     
     private void deserializeWeights(Model model, byte[] data) {
+        Map<String, Tensor> tensors;
+        
+        try {
+            tensors = SafeTensorsConverter.load(data);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to deserialize safe tensors!", e);
+        }
+        
         List<Layer> layers = model.getLayers();
         Map<Layer, Map<String, Tensor>> weightsPerLayer = new HashMap<>();
         
-        ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
-        
-        long headerSize = buffer.getLong();
-        byte[] headerBytes = new byte[(int) headerSize];
-        buffer.get(headerBytes);
-        
-        JsonObject header = GSON.fromJson(
-            new String(headerBytes, StandardCharsets.UTF_8),
-            JsonObject.class
-        );
-        
-        for (Map.Entry<String, JsonElement> entry : header.entrySet()) {
+        for (Map.Entry<String, Tensor> entry : tensors.entrySet()) {
             String fullName = entry.getKey(); // es: dense.0.weights
-            JsonObject info = entry.getValue().getAsJsonObject();
-            
-            JsonArray shapeArray = info.getAsJsonArray("shape");
-            int[] shape = new int[shapeArray.size()];
-            int elements = 1;
-            for (int i = 0; i < shape.length; i++) {
-                shape[i] = shapeArray.get(i).getAsInt();
-                elements *= shape[i];
-            }
-            
-            JsonArray offsets = info.getAsJsonArray("data_offsets");
-            int start = offsets.get(0).getAsInt();
-            int end = offsets.get(1).getAsInt();
-            
-            buffer.position(8 + (int) headerSize + start);
-            
-            float[] values = new float[elements];
-            for (int i = 0; i < elements; i++) {
-                values[i] = buffer.getFloat();
-            }
-            
-            Tensor tensor = Tensors.create(shape, values);
+            Tensor tensor = entry.getValue();
             
             String[] parts = fullName.split("\\.");
+            if (parts.length < 3) {
+                throw new IllegalStateException("Invalid weight name: " + fullName);
+            }
+            
             int layerIndex = Integer.parseInt(parts[1]);
-            String paramName = parts[2]; // "weights" | "bias"
+            String paramName = parts[2];
+            
+            if (layerIndex < 0 || layerIndex >= layers.size()) {
+                throw new IllegalStateException("Invalid layer index: " + layerIndex);
+            }
             
             Layer layer = layers.get(layerIndex);
             
-            Map<String, Tensor> map = weightsPerLayer.computeIfAbsent(layer, l -> new HashMap<>());
-            
-            map.put(paramName, tensor);
+            weightsPerLayer
+                .computeIfAbsent(layer, l -> new HashMap<>())
+                .put(paramName, tensor);
         }
         
-        for (Map.Entry<Layer, Map<String, Tensor>> entry : weightsPerLayer.entrySet()) {
-            entry.getKey().loadWeights(entry.getValue());
+        for (var entry : weightsPerLayer.entrySet()) {
+            Layer layer = entry.getKey();
+            Map<String, Tensor> weights = entry.getValue();
+            layer.loadWeights(weights);
         }
     }
     

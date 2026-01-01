@@ -35,7 +35,7 @@ public class DropoutLayer extends Layer {
      */
     public DropoutLayer(double dropoutRate) {
         if (dropoutRate < 0 || dropoutRate >= 1) {
-            Commons.illegalArgument("Dropout must be greater or equal to 0 and less than 1!");
+            throw Commons.illegalArgument("Dropout must be greater or equal to 0 and less than 1!");
         }
 
         this.random = new SplittableRandom();

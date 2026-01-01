@@ -71,7 +71,7 @@ public class NormLSTMLayer extends Layer {
         Tensor input = inputs[0];
 
         if (input.rank() != 3) {
-            Commons.illegalArgument("Input must have shape [batch, timesteps, dimension]! Got: %s",
+            throw Commons.illegalArgument("Input must have shape [batch, timesteps, dimension]! Got: %s",
                 Arrays.toString(input.shape()));
         }
         
