@@ -154,7 +154,7 @@ public class GpuTensor extends BaseTensor {
         
         for (Activations activation : Activations.values()) {
             Activation function = activation.function();
-            String prefix = function.kernelPrefix();
+            String prefix = function.getKernelPrefix();
             
             GpuContext.register(device, prefix + "_forward", activationsProgram);
             GpuContext.register(device, prefix + "_backward", activationsProgram);
@@ -190,7 +190,7 @@ public class GpuTensor extends BaseTensor {
 
     private Tensor launchElementaryKernel(String kernelName, Tensor other) {
         if (!(other instanceof GpuTensor)) {
-            other = other.gpu(device);
+            other = other.to(device);
         }
 
         GpuTensor B = (GpuTensor) other;
@@ -321,7 +321,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor matmul(Tensor other) {
         if (!(other instanceof GpuTensor B)) {
-            return matmul(other.gpu(device));
+            return matmul(other.to(device));
         }
         
         int[] shapeA = shape();
@@ -505,7 +505,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor concat(Tensor other) {
         if (!(other instanceof GpuTensor)) {
-            other = other.gpu(device);
+            other = other.to(device);
         }
 
         GpuTensor B = (GpuTensor) other;
@@ -550,7 +550,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor concat(Tensor other, int dimension) {
         if (!(other instanceof GpuTensor)) {
-            other = other.gpu(device);
+            other = other.to(device);
         }
 
         GpuTensor B = (GpuTensor) other;
@@ -656,25 +656,6 @@ public class GpuTensor extends BaseTensor {
         }
 
         return result;
-    }
-
-    @Override
-    public Tensor mask(float[] mask) {
-        if (mask.length != size) {
-            throw new IllegalArgumentException("Mask length must be as long as the data");
-        }
-
-        long gpuMask = device.createBuffer(CL_MEM_COPY_HOST_PTR, mask);
-
-        try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            KernelFactory.create(device, "mask")
-                .addMemParam(dataBuffer)
-                .addMemParam(gpuMask)
-                .addIntParam(size)
-                .launch(queue, 1, mask.length);
-        }
-
-        return this;
     }
 
     @Override

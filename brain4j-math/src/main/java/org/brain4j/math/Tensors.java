@@ -1,8 +1,8 @@
 package org.brain4j.math;
 
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.convolve.Im2ColParams;
-import org.brain4j.math.tensor.convolve.Im2ColTask;
+import org.brain4j.math.tensor.convolution.im2col.Im2ColParams;
+import org.brain4j.math.tensor.convolution.im2col.Im2ColTask;
 import org.brain4j.math.tensor.impl.CpuTensor;
 import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelConvolve;

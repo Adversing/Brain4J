@@ -18,20 +18,20 @@ public class Sample implements Cloneable {
         this.labels = labels;
     }
 
-    public Tensor[] inputs() {
+    public Tensor[] getInputs() {
         return inputs;
     }
 
-    public Tensor input() {
-        return inputs[0];
+    public Tensor getInput(int index) {
+        return inputs[index];
     }
 
-    public Tensor[] labels() {
+    public Tensor[] getLabels() {
         return labels;
     }
 
-    public Tensor label() {
-        return labels[0];
+    public Tensor getLabel(int index) {
+        return labels[index];
     }
 
     @Override

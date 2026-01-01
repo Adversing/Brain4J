@@ -6,7 +6,7 @@ import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
 
-public final class FlashAttention {
+public class FlashAttention {
 
     private static final int FA_TILE_SIZE = 16;
     private static final int FA_HEAD_DIM = 64;

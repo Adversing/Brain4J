@@ -71,7 +71,7 @@ public class Sequential implements Model, ModelComponent {
     
     @Override
     public EvaluationResult evaluate(ListDataSource dataSource, LossFunction lossFunction) {
-        int classes = Math.max(2, dataSource.getSamples().getFirst().label().elements());
+        int classes = Math.max(2, dataSource.getSamples().getFirst().getLabel(0).elements());
         Map<Integer, Tensor> classifications = new HashMap<>();
         
         for (int i = 0; i < classes; i++) {
@@ -160,11 +160,11 @@ public class Sequential implements Model, ModelComponent {
         Tensor[] outputs = predict(new StatesCache(false, device), inputs);
         
         for (Tensor input : inputs) {
-            int batchSize = input.shape(0);
+            int batchSize = input.shapeAt(0);
             
             for (int i = 0; i < outputs.length; i++) {
-                Tensor output = outputs[i].cpu();
-                Tensor label = labels[i].cpu();
+                Tensor output = outputs[i].to(null); // GPU -> CPU
+                Tensor label = labels[i].to(null); // GPU -> CPU
                 
                 for (int b = 0; b < batchSize; b++) {
                     Range range = Range.point(b);

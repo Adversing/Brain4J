@@ -17,8 +17,8 @@ public class FlashAttentionHead extends AttentionHead {
         boolean isGpu = input instanceof GpuTensor;
         boolean training = input.usesGrad();
 
-        int batch = input.shape(0);
-        int seq = input.shape(1);
+        int batch = input.shapeAt(0);
+        int seq = input.shapeAt(1);
         int d = headDimension;
 
         // project to QKV

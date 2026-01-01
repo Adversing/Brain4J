@@ -9,7 +9,7 @@ import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.impl.GpuTensor;
-import org.brain4j.math.weightsinit.UniformXavierInit;
+import org.brain4j.math.weightsinit.impl.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.random.RandomGenerator;
@@ -94,7 +94,7 @@ public class EmbeddingLayer extends Layer {
         });
 
         if (input instanceof GpuTensor gpuInput) {
-            output = output.gpu(gpuInput.device());
+            output = output.to(gpuInput.device());
         }
 
         cache.rememberInput(this, inputs);

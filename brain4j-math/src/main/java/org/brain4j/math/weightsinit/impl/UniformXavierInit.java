@@ -1,4 +1,6 @@
-package org.brain4j.math.weightsinit;
+package org.brain4j.math.weightsinit.impl;
+
+import org.brain4j.math.weightsinit.WeightInitialization;
 
 import java.util.random.RandomGenerator;
 

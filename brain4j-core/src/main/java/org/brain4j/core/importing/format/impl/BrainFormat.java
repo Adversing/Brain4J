@@ -6,7 +6,6 @@ import org.brain4j.core.importing.format.BinaryFormat;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.ModelSpecs;
-import org.brain4j.math.Tensors;
 import org.brain4j.math.tensor.Tensor;
 
 import java.io.*;

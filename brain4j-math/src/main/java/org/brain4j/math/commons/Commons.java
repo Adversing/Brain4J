@@ -410,24 +410,34 @@ public class Commons {
     }
     
     /**
-     * Throws an {@link IllegalArgumentException} with a formatted message.
+     * Returns an {@link IllegalArgumentException} with a formatted message.
      *
      * @param message the exception message format string
      * @param args arguments referenced by the format specifiers
-     * @throws IllegalArgumentException always thrown
+     * @return IllegalArgumentException the exception to throw
      */
     public static IllegalArgumentException illegalArgument(String message, Object... args) {
         return new IllegalArgumentException(String.format(message, args));
     }
     
     /**
-     * Throws an {@link IllegalStateException} with a formatted message.
+     * Returns an {@link IllegalStateException} with a formatted message.
      *
      * @param message the exception message format string
      * @param args arguments referenced by the format specifiers
-     * @throws IllegalStateException always thrown
+     * @throws IllegalStateException the exception to throw
      */
     public static IllegalStateException illegalState(String message, Object... args) {
         return new IllegalStateException(String.format(message, args));
+    }
+    
+    /**
+     * Returns an {@link IndexOutOfBoundsException} with a formatted message.
+     * @param message the exception message format string
+     * @param args arguments referenced by the format specifiers
+     * @return the exception to throw
+     */
+    public static IndexOutOfBoundsException indexOOB(String message, Object... args) {
+        return new IndexOutOfBoundsException(String.format(message, args));
     }
 }

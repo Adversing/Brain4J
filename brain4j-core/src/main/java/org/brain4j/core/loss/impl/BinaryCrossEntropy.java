@@ -17,7 +17,7 @@ public class BinaryCrossEntropy implements LossFunction {
     @Override
     public double calculate(Tensor actual, Tensor predicted) {
         double loss = 0.0;
-        int numClasses = actual.shape(actual.rank() - 1);
+        int numClasses = actual.shapeAt(actual.rank() - 1);
 
         for (int i = 0; i < actual.elements(); i++) {
             double y = actual.get(i);
@@ -32,7 +32,7 @@ public class BinaryCrossEntropy implements LossFunction {
             loss -= w * (y * Math.log(p + 1e-15) + (1 - y) * Math.log(1 - p + 1e-15));
         }
 
-        return loss / actual.shape(0);
+        return loss / actual.shapeAt(0);
     }
 
     @Override

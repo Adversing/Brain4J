@@ -2,6 +2,7 @@ package org.brain4j.core.layer.impl;
 
 import com.google.gson.JsonObject;
 import org.brain4j.core.layer.Layer;
+import org.brain4j.math.Tensors;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
@@ -14,7 +15,7 @@ import java.util.random.RandomGenerator;
 /**
  * Implementation of a dropout layer, used to mitigate overfitting.
  * During training, it randomly turns to zero a fraction of the values in the input tensor.
- * During inference, the input gets multiplied by {@code 1 - dropout}.
+ * During inference, the input doesn't change.
  *
  * @author xEcho1337
  */
@@ -24,7 +25,7 @@ public class DropoutLayer extends Layer {
     private double dropoutRate;
     private int size;
     
-    public DropoutLayer() {
+    private DropoutLayer() {
         this.random = new SplittableRandom();
     }
     
@@ -50,33 +51,22 @@ public class DropoutLayer extends Layer {
 
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        if (cache.isTraining()) {
-            return scale(inputs);
-        }
+        if (!cache.isTraining()) return inputs;
         
-        for (Tensor input : inputs) {
+        Tensor[] result = new Tensor[inputs.length];
+        
+        for (int i = 0; i < inputs.length; i++) {
+            Tensor input = inputs[i];
             float[] mask = new float[input.elements()];
-
-            for (int i = 0; i < mask.length; i++) {
-                if (random.nextDouble() > dropoutRate) continue;
-
-                mask[i] = Float.MIN_VALUE;
-            }
-
-            if (input instanceof GpuTensor gpu) {
-                gpu.mask(mask);
+            
+            for (int j = 0; j < mask.length; j++) {
+                mask[j] = random.nextFloat() > dropoutRate ? 1 : 0;
             }
             
-            if (input instanceof CpuTensor cpu) {
-                float[] data = cpu.data();
-                
-                for (int i = 0; i < input.elements(); i++) {
-                    data[i] = Math.max(data[i] + mask[i], 0);
-                }
-            }
+            result[i] = input.mulGrad(Tensors.vector(mask)).div(1 - dropoutRate);
         }
         
-        return inputs;
+        return result;
     }
 
     @Override
@@ -94,18 +84,6 @@ public class DropoutLayer extends Layer {
         object.addProperty("dropout", dropoutRate);
     }
     
-    /**
-     * Scales the input tensor by {@code 1 - input}.
-     * @param inputs the input tensors
-     */
-    public Tensor[] scale(Tensor... inputs) {
-        for (Tensor input : inputs) {
-            input.mul(1 - dropoutRate);
-        }
-        
-        return inputs;
-    }
-
     public RandomGenerator getRandom() {
         return random;
     }

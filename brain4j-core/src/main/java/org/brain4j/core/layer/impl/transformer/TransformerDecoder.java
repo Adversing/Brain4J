@@ -73,7 +73,7 @@ public class TransformerDecoder extends TransformerEncoder {
         Tensor upProjected, downProjected;
         Tensor downCache = cache.get(downProjection);
 
-        int seqLength = input.shape(1);
+        int seqLength = input.shapeAt(1);
 
         if (downCache == null) {
             upProjected = upProjection.forward(cache, norm2).activateGrad(activation);

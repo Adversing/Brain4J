@@ -4,8 +4,6 @@ import org.brain4j.llm.api.huggingface.FileDownloadResponse;
 import org.brain4j.llm.api.huggingface.HuggingFaceClient;
 import org.brain4j.llm.cache.manager.CacheManager;
 import org.brain4j.llm.download.callback.ProgressCallback;
-import org.brain4j.llm.exception.HuggingFaceException;
-import org.brain4j.math.commons.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,17 +24,17 @@ public record DownloadManager(HuggingFaceClient client, CacheManager cacheManage
         this(client, cacheManager, ForkJoinPool.commonPool(), ProgressCallback.NOOP);
     }
 
-    public Result<Path, Exception> downloadFile(String modelId, String filename) {
+    public Path downloadFile(String modelId, String filename) throws Exception {
         return downloadFile(modelId, filename, false);
     }
 
-    public Result<Path, Exception> downloadFile(String modelId, String filename, boolean force) {
+    public Path downloadFile(String modelId, String filename, boolean force) throws Exception {
         Path cachedPath = cacheManager.getCachedFilePath(modelId, filename);
 
         if (!force && cacheManager.isCached(modelId, filename)) {
             log.debug("Using cached file: {}", cachedPath);
             progressCallback.onProgress(filename, 100.0, "Using cached file");
-            return Result.ok(cachedPath);
+            return cachedPath;
         }
 
         log.info("Downloading '{}' from model '{}'", filename, modelId);
@@ -59,27 +57,25 @@ public record DownloadManager(HuggingFaceClient client, CacheManager cacheManage
 
                 progressCallback.onProgress(filename, 100.0, "Download complete");
                 log.info("Successfully downloaded: {}", cachedPath);
-                return Result.ok(cachedPath);
-            } catch (HuggingFaceException e) {
-                return Result.err(e);
-            }
+                return cachedPath;
+                }
         } catch (IOException e) {
-            try {
-                Files.deleteIfExists(cachedPath);
-            } catch (IOException ex) {
-                return Result.err(ex);
-            }
-            return Result.err(e);
+            Files.deleteIfExists(cachedPath);
+            throw e;
         }
     }
 
-    public CompletableFuture<Result<Path, Exception>> downloadFileAsync(String modelId, String filename) {
+    public CompletableFuture<Path> downloadFileAsync(String modelId, String filename) {
         return downloadFileAsync(modelId, filename, false);
     }
 
-    public CompletableFuture<Result<Path, Exception>> downloadFileAsync(String modelId, String filename, boolean force) {
+    public CompletableFuture<Path> downloadFileAsync(String modelId, String filename, boolean force) {
         return CompletableFuture.supplyAsync(() -> {
-            return downloadFile(modelId, filename, force);
+            try {
+                return downloadFile(modelId, filename, force);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }, executor);
     }
 }

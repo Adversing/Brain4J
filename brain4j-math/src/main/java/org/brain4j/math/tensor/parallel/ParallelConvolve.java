@@ -3,15 +3,22 @@ package org.brain4j.math.tensor.parallel;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.convolve.ConvolveProvider;
-import org.brain4j.math.tensor.convolve.impl.NormalConvolveProvider;
-import org.brain4j.math.tensor.convolve.impl.SIMDConvolveProvider;
+import org.brain4j.math.tensor.convolution.ConvolveProvider;
+import org.brain4j.math.tensor.convolution.impl.NormalConvolveProvider;
+import org.brain4j.math.tensor.convolution.impl.SIMDConvolveProvider;
 import org.brain4j.math.tensor.index.Range;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.IntStream;
 
 public class ParallelConvolve {
 
+    private static final int CORES = Runtime.getRuntime().availableProcessors();
+    private static final ForkJoinPool POOL = new ForkJoinPool(CORES);
+    
     public static Tensor convolve(Tensor a, Tensor b) {
         while (a.rank() < 4) a = a.unsqueeze();
         while (b.rank() < 4) b = b.unsqueeze();
@@ -46,18 +53,35 @@ public class ParallelConvolve {
         float[] outData = out.data();
 
         for (int bIdx = 0; bIdx < batch; bIdx++) {
+            List<Callable<Void>> tasks = new ArrayList<>();
+            
             Tensor inputBatch = (aHasBatch ? a.slice(Range.point(bIdx)) : a).squeeze(0);
             Tensor patchMatrix = Tensors.im2col(inputBatch, filterHeight, filterWidth);
-            float[] patchData = patchMatrix.data();
+            float[] patchData = patchMatrix.data(); // [patch_size, total_patches]
 
-            int finalBIdx = bIdx;
-            IntStream.range(0, numFilters).parallel().forEach(f -> {
+            for (int f = 0; f < numFilters; f++) {
                 int filterOffset = f * patchSize;
-                int outBase = (finalBIdx * numFilters + f) * totalPatches;
-                provider.dotPerFilter(totalPatches, patchSize,
-                    filterData, filterOffset,
-                    patchData, outData, outBase);
-            });
+                int outBase = (bIdx * numFilters + f) * totalPatches;
+                
+                int blockSize = 512;
+                int blocks = (totalPatches + blockSize - 1) / blockSize;
+                
+                ConvolveProvider.PatchData data = new ConvolveProvider.PatchData(
+                    filterData, patchData, outData, totalPatches, patchSize, filterOffset, outBase
+                );
+                
+                for (int block = 0; block < blocks; block++) {
+                    int finalBlock = block;
+                    tasks.add(() -> {
+                        int start = finalBlock * blockSize;
+                        int end = Math.min(start + blockSize, totalPatches);
+                        provider.dotBlock(start, end, data);
+                        return null;
+                    });
+                }
+            }
+            
+            POOL.invokeAll(tasks);
         }
 
         return out;

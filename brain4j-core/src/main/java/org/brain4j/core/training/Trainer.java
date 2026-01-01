@@ -81,7 +81,7 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
 
         int elements = 0;
 
-        for (Tensor input : inputs) elements += input.shape(0);
+        for (Tensor input : inputs) elements += input.shapeAt(0);
 
         optimizer.postBatch();
         updater.postBatch(optimizer.getLearningRate(), elements);

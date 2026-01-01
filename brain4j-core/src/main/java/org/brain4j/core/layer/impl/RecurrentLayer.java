@@ -15,11 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 
-/**
- * Implementation of a recurrent layer.
- * @apiNote This implementation is not completed and doesn't support training yet.
- * @author xEcho1337
- */
 public class RecurrentLayer extends Layer {
 
     private Tensor inputWeights;
@@ -69,8 +64,8 @@ public class RecurrentLayer extends Layer {
 
         checkValidInput(input, "Input must have shape [batch, timesteps, dimension]! Got: %s", Arrays.toString(input.shape()));
         
-        int batch = input.shape(0);
-        int timesteps = input.shape(1);
+        int batch = input.shapeAt(0);
+        int timesteps = input.shapeAt(1);
 
         // [batch, timesteps, hidden_size]
         Tensor projectedInput = input.matmulGrad(inputWeights);

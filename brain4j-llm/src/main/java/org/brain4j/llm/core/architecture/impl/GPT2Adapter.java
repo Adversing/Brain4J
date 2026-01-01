@@ -116,7 +116,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
             if (cache.isTraining()) return inputs;
             
             Tensor input = inputs[0]; // [batch, seq_len, dim]
-            int seqLength = input.shape(1);
+            int seqLength = input.shapeAt(1);
             
             return new Tensor[] { input.slice(Range.all(), Range.point(seqLength - 1), Range.all()).squeeze(1) };
         }

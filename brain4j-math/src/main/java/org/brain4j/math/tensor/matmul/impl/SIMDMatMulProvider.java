@@ -1,7 +1,6 @@
 package org.brain4j.math.tensor.matmul.impl;
 
 import jdk.incubator.vector.FloatVector;
-import jdk.incubator.vector.IntVector;
 import jdk.incubator.vector.VectorSpecies;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.matmul.MatmulParameters;
@@ -14,8 +13,7 @@ import java.util.concurrent.RecursiveAction;
 
 public class SIMDMatMulProvider implements MatmulProvider {
 
-    private static final VectorSpecies<Float> FLOAT_SPECIES = FloatVector.SPECIES_PREFERRED;
-    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_PREFERRED;
+    private static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
 
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int PARALLEL_COMPLEXITY_THRESHOLD = 65536;
@@ -120,9 +118,9 @@ public class SIMDMatMulProvider implements MatmulProvider {
                 
                 int j = 0;
 
-                for (; j < FLOAT_SPECIES.loopBound(p); j += FLOAT_SPECIES.length()) {
-                    FloatVector vb = FloatVector.fromArray(FLOAT_SPECIES, b, colB + j);
-                    FloatVector vc = FloatVector.fromArray(FLOAT_SPECIES, c, rowC + j);
+                for (; j < SPECIES.loopBound(p); j += SPECIES.length()) {
+                    FloatVector vb = FloatVector.fromArray(SPECIES, b, colB + j);
+                    FloatVector vc = FloatVector.fromArray(SPECIES, c, rowC + j);
                     vc.add(vb.mul(aVal)).intoArray(c, rowC + j);
                 }
                 
@@ -154,9 +152,9 @@ public class SIMDMatMulProvider implements MatmulProvider {
                 
                 int j = 0;
                 
-                for (; j < FLOAT_SPECIES.loopBound(p); j += FLOAT_SPECIES.length()) {
-                    FloatVector vb = FloatVector.fromArray(FLOAT_SPECIES, b, colB + j);
-                    FloatVector vc = FloatVector.fromArray(FLOAT_SPECIES, c, rowC + j);
+                for (; j < SPECIES.loopBound(p); j += SPECIES.length()) {
+                    FloatVector vb = FloatVector.fromArray(SPECIES, b, colB + j);
+                    FloatVector vc = FloatVector.fromArray(SPECIES, c, rowC + j);
                     vc.add(vb.mul(aVal)).intoArray(c, rowC + j);
                 }
                 

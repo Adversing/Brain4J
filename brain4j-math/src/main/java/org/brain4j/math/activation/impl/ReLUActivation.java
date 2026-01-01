@@ -1,7 +1,7 @@
 package org.brain4j.math.activation.impl;
 
 import org.brain4j.math.activation.Activation;
-import org.brain4j.math.weightsinit.NormalHeInit;
+import org.brain4j.math.weightsinit.impl.NormalHeInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
 public class ReLUActivation implements Activation {
@@ -22,7 +22,7 @@ public class ReLUActivation implements Activation {
     }
 
     @Override
-    public String kernelPrefix() {
+    public String getKernelPrefix() {
         return "relu";
     }
 }

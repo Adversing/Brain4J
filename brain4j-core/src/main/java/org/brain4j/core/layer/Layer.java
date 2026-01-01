@@ -196,6 +196,7 @@ public abstract class Layer implements ModelComponent {
     
     /**
      * Returns the output size of this layer, i.e. the number of neurons.
+     * This is useful for weights creation in consecutive layers.
      * @return the output size
      */
     public abstract int size();

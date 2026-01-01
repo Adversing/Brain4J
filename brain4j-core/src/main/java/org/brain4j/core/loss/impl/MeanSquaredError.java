@@ -16,7 +16,7 @@ public class MeanSquaredError implements LossFunction {
             loss += Math.pow(actualData[i] - predictedData[i], 2);
         }
 
-        return loss / actual.shape(0);
+        return loss / actual.shapeAt(0);
     }
 
     @Override

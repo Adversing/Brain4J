@@ -10,7 +10,6 @@ import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.brain4j.llm.api.ModelInfo;
 import org.brain4j.llm.exception.HuggingFaceException;
-import org.brain4j.math.commons.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ public class HuggingFaceClient implements AutoCloseable {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public Result<ModelInfo, HuggingFaceException> getModelInfo(String modelId) {
+    public ModelInfo getModelInfo(String modelId) throws HuggingFaceException {
         validateId(modelId);
 
         String encoded = URLEncoder.encode(modelId, StandardCharsets.UTF_8);
@@ -49,18 +48,15 @@ public class HuggingFaceClient implements AutoCloseable {
             String body = EntityUtils.toString(res.getEntity());
 
             return switch (code) {
-                case 200 -> {
-                    ModelInfo info = objectMapper.readValue(body, ModelInfo.class);
-                    yield Result.ok(info);
-                }
+                case 200 -> objectMapper.readValue(body, ModelInfo.class);
                 case 404 -> {
                     logger.warn("Model not found or private: {}", modelId);
-                    yield Result.err(new HuggingFaceException("Model not found or private: " + modelId));
+                    throw new HuggingFaceException("Model not found or private: " + modelId);
                 }
-                default -> Result.err(new HuggingFaceException("Failed to get model info (" + code + "): " + body));
+                default -> throw new HuggingFaceException("Failed to get model info (" + code + "): " + body);
             };
         } catch (IOException | ParseException e) {
-            return Result.err(new HuggingFaceException("Network or parse error while fetching " + modelId, e));
+            throw new HuggingFaceException("Network or parse error while fetching " + modelId, e);
         }
     }
 

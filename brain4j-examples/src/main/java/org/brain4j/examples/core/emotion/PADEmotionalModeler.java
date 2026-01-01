@@ -14,7 +14,7 @@ import org.brain4j.math.activation.Activations;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.Sample;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.weightsinit.UniformXavierInit;
+import org.brain4j.math.weightsinit.impl.UniformXavierInit;
 
 import java.util.ArrayList;
 import java.util.List;

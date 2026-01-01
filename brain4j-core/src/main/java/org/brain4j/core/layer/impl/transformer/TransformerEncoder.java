@@ -14,7 +14,7 @@ import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.weightsinit.UniformXavierInit;
+import org.brain4j.math.weightsinit.impl.UniformXavierInit;
 
 import java.util.Arrays;
 import java.util.Map;

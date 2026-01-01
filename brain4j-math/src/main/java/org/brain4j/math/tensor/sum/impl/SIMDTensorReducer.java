@@ -8,7 +8,7 @@ import org.brain4j.math.tensor.sum.TensorReducer;
 
 import java.util.Arrays;
 
-public class SimdTensorReducer implements TensorReducer {
+public class SIMDTensorReducer implements TensorReducer {
     
     private static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
     

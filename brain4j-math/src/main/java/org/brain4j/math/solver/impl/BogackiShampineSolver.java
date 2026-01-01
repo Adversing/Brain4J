@@ -92,10 +92,9 @@ public class BogackiShampineSolver implements NumericalSolver {
 
     @Override
     public Tensor update(
-            Tensor deltaTimestep, Tensor tauT, Tensor projInput,
-            Tensor hidden, Function<Tensor, Tensor> hiddenFunction
+        Tensor deltaTimestep, Tensor tauT, Tensor projInput,
+        Tensor hidden, Function<Tensor, Tensor> hiddenFunction
     ) {
-
         // Δt / τ(x)
         Tensor alpha = deltaTimestep.broadcastLike(tauT).divGrad(tauT);
 
@@ -128,9 +127,9 @@ public class BogackiShampineSolver implements NumericalSolver {
 
     @Override
     public StepResult updateAdaptive(
-            Tensor deltaTimestep, Tensor tauT, Tensor projInput,
-            Tensor hidden, Function<Tensor, Tensor> hiddenFunction,
-            float tolerance
+        Tensor deltaTimestep, Tensor tauT, Tensor projInput,
+        Tensor hidden, Function<Tensor, Tensor> hiddenFunction,
+        float tolerance
     ) {
         // Δt / τ(x)
         Tensor alpha = deltaTimestep.broadcastLike(tauT).divGrad(tauT);
@@ -216,10 +215,7 @@ public class BogackiShampineSolver implements NumericalSolver {
      */
     private Tensor computeF(Tensor h, Tensor projInput, Function<Tensor, Tensor> hiddenFunction) {
         Tensor projHidden = hiddenFunction.apply(h);
-
-        Tensor z = projInput.addGrad(projHidden)
-                .activateGrad(TANH.function());
-
+        Tensor z = projInput.addGrad(projHidden).tanh();
         return z.subGrad(h);
     }
 

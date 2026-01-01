@@ -35,7 +35,7 @@ public interface Activation {
      * Gets the kernel prefix for this activation
      * @return the prefix of the kernel
      */
-    String kernelPrefix();
+    String getKernelPrefix();
 
     /**
      * Gets the default name for this activation function.
@@ -72,7 +72,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-                long kernel = GpuContext.kernel(device, kernelPrefix() + "_forward");
+                long kernel = GpuContext.kernel(device, getKernelPrefix() + "_forward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());
@@ -108,7 +108,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-                long kernel = GpuContext.kernel(device, kernelPrefix() + "_backward");
+                long kernel = GpuContext.kernel(device, getKernelPrefix() + "_backward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());

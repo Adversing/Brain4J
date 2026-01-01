@@ -18,6 +18,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 
+/**
+ * Long Short-Term Memory (LSTM) recurrent layer.
+ * <p>
+ * This layer implements a standard LSTM cell, designed to capture long-term
+ * temporal dependencies by maintaining an explicit cell state and gating
+ * mechanisms.
+ * </p>
+ *
+ * <h2>Shape conventions:</h2>
+ * <p>Input:</p>
+ * <ul>
+ *     <li>{@code input}: {@code [batch, timesteps, features]}</li>
+ * </ul>
+ *
+ * <p>Output:</p>
+ * <ul>
+ *     <li>{@code hidden}:
+ *         <ul>
+ *             <li>{@code [batch, timesteps, hidden_dim]} if {@code returnSequences = true}</li>
+ *             <li>{@code [batch, hidden_dim]} otherwise</li>
+ *         </ul>
+ *     </li>
+ * </ul>
+ *
+ * @implNote this implementation uses a single concatenated weight matrix
+ *           for all gates to improve memory locality and performance
+ * @author xEcho1337
+ */
 public class LSTMLayer extends Layer {
     
     private Tensor hiddenWeights;
@@ -27,11 +55,17 @@ public class LSTMLayer extends Layer {
     private LSTMLayer() {
     }
     
+    /**
+     * Creates an LSTM layer with the specified hidden dimension.
+     *
+     * @param hiddenDimension the size of the hidden state
+     * @param returnSequences whether to return the full hidden sequence or only the final state
+     */
     public LSTMLayer(int hiddenDimension, boolean returnSequences) {
         this.hiddenDimension = hiddenDimension;
         this.returnSequences = returnSequences;
     }
-    
+
     @Override
     public Layer connect(Layer previous) {
         List<Tensor> gates = new ArrayList<>();
@@ -70,8 +104,8 @@ public class LSTMLayer extends Layer {
             input = input.unsqueeze();
         }
         
-        int batch = input.shape(0);
-        int timesteps = input.shape(1);
+        int batch = input.shapeAt(0);
+        int timesteps = input.shapeAt(1);
         
         // [batch, timesteps, 4 * hidden_dim]
         Tensor projection = input.matmulGrad(weights);

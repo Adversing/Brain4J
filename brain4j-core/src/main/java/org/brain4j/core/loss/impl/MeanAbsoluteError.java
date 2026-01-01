@@ -13,7 +13,7 @@ public class MeanAbsoluteError implements LossFunction {
             loss += Math.abs(actual.get(i) - predicted.get(i));
         }
 
-        return loss / actual.shape(0);
+        return loss / actual.shapeAt(0);
     }
 
     @Override

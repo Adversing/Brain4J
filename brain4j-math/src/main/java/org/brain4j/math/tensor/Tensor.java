@@ -9,8 +9,6 @@ import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.*;
-import org.brain4j.math.tensor.impl.CpuTensor;
-import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.util.function.Supplier;
@@ -39,6 +37,9 @@ import java.util.function.Supplier;
  *
  * <p>The framework automatically handles moving tensors between CPU and GPU
  * as needed based on the operations being performed.
+ *
+ * @apiNote unless specified otherwise, all operations which return
+ *          a new tensor do not retain the autograd context from the input
  */
 public interface Tensor extends Iterable<Float> {
 
@@ -49,7 +50,7 @@ public interface Tensor extends Iterable<Float> {
      * @return size of the dimension
      * @throws IndexOutOfBoundsException if index >= rank()
      */
-    int shape(int index);
+    int shapeAt(int index);
 
     /**
      * Returns the shape (dimensions) of this tensor.
@@ -71,17 +72,6 @@ public interface Tensor extends Iterable<Float> {
      * @return float array containing tensor data
      */
     float[] data();
-
-    /**
-     * Returns tensor data in canonical order.
-     * <p>
-     * Unlike {@link #data()}, this method always returns the data in
-     * row-major order, even if the tensor uses a different internal layout
-     * (e.g. due to transposition).
-     *
-     * @return float array containing tensor data in canonical order
-     */
-    float[] toArray();
 
     /**
      * Returns the stride (step size) for each dimension.
@@ -179,36 +169,12 @@ public interface Tensor extends Iterable<Float> {
     Tensor to(Device device);
 
     /**
-     * Moves this tensor to the specified GPU device.
-     * <p>
-     * Convenience method equivalent to {@code to(device)} with explicit
-     * return type for GPU tensors.
-     *
-     * @param device target GPU device
-     * @return tensor on the GPU device
-     */
-    default GpuTensor gpu(Device device) {
-        return (GpuTensor) to(device);
-    }
-
-    /**
-     * Moves this tensor to the CPU.
-     * <p>
-     * Convenience method equivalent to {@code to(null)} with explicit
-     * return type for CPU tensors.
-     *
-     * @return tensor on the CPU
-     */
-    default CpuTensor cpu() {
-        return (CpuTensor) to(null);
-    }
-
-    /**
      * Creates a deep copy of this tensor.
      * <p>
      * The clone has its own copy of the data buffer and shape information.
      * Modifying the clone will not affect the original tensor.
      *
+     * @implNote the cloned tensor will not have an active autograd context
      * @return new independent copy of this tensor
      */
     Tensor clone();
@@ -219,14 +185,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the current tensor modified
      */
     Tensor add(Tensor other);
-
-    /**
-     * Adds this tensor with a constant value element-wise.
-     * @param value the constant value to add
-     * @return the current tensor modified
-     */
-    Tensor add(double value);
-
+    
     /**
      * Performs element-wise addition of two tensors (alias for `add`).
      * @param other the tensor to add
@@ -235,6 +194,13 @@ public interface Tensor extends Iterable<Float> {
     default Tensor plus(Tensor other) {
         return clone().add(other);
     }
+    
+    /**
+     * Adds this tensor with a constant value element-wise.
+     * @param value the constant value to add
+     * @return the current tensor modified
+     */
+    Tensor add(double value);
 
     /**
      * Adds a constant value to this tensor element-wise (alias for `add`).
@@ -251,14 +217,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the current tensor modified
      */
     Tensor sub(Tensor other);
-
-    /**
-     * Subtracts a constant value from this tensor element-wise.
-     * @param value the constant value to subtract
-     * @return the current tensor modified
-     */
-    Tensor sub(double value);
-
+    
     /**
      * Performs element-wise subtraction of two tensors (alias for `sub`).
      * @param other the tensor to subtract
@@ -267,6 +226,13 @@ public interface Tensor extends Iterable<Float> {
     default Tensor minus(Tensor other) {
         return clone().sub(other);
     }
+    
+    /**
+     * Subtracts a constant value from this tensor element-wise.
+     * @param value the constant value to subtract
+     * @return the current tensor modified
+     */
+    Tensor sub(double value);
 
     /**
      * Subtracts a constant value from this tensor element-wise (alias for `sub`).
@@ -283,14 +249,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the current tensor modified
      */
     Tensor mul(Tensor other);
-
-    /**
-     * Multiplies this tensor with a constant value element-wise.
-     * @param value the constant value to multiply
-     * @return a new tensor with the result
-     */
-    Tensor mul(double value);
-
+    
     /**
      * Performs element-wise multiplication of two tensors (alias for `mul`).
      * @param other the tensor to multiply
@@ -299,7 +258,14 @@ public interface Tensor extends Iterable<Float> {
     default Tensor times(Tensor other) {
         return clone().mul(other);
     }
-
+    
+    /**
+     * Multiplies this tensor with a constant value element-wise.
+     * @param value the constant value to multiply
+     * @return a new tensor with the result
+     */
+    Tensor mul(double value);
+    
     /**
      * Multiplies a constant value with this tensor element-wise (alias for `mul`).
      * @param value the constant value to multiply
@@ -315,14 +281,7 @@ public interface Tensor extends Iterable<Float> {
      * @return the current tensor modified
      */
     Tensor div(Tensor other);
-
-    /**
-     * Divides this tensor by a constant value element-wise.
-     * @param value the constant value to divide by
-     * @return the current tensor modified
-     */
-    Tensor div(double value);
-
+    
     /**
      * Performs element-wise division of two tensors (alias for `div`).
      * @param other the tensor to divide by
@@ -331,6 +290,13 @@ public interface Tensor extends Iterable<Float> {
     default Tensor divide(Tensor other) {
         return clone().div(other);
     }
+
+    /**
+     * Divides this tensor by a constant value element-wise.
+     * @param value the constant value to divide by
+     * @return the current tensor modified
+     */
+    Tensor div(double value);
 
     /**
      * Divides this tensor by a constant value element-wise (alias for `div`).
@@ -426,7 +392,7 @@ public interface Tensor extends Iterable<Float> {
     /**
      * Performs a layer normalization along this tensor.
      * @param epsilon the epsilon to avoid division by zero
-     * @return a new normalized tensor
+     * @return the current tensor
      */
     Tensor layerNorm(double epsilon);
 
@@ -560,6 +526,8 @@ public interface Tensor extends Iterable<Float> {
      * @param dim the dimension along which to sum the elements, -1 to specify the last dimension
      * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
      * @return a new tensor containing the sum along the specified dimension
+     *
+     * @apiNote the returned tensor preserves the autograd context of the input
      */
     Tensor sum(int dim, boolean keepDim);
 
@@ -569,6 +537,8 @@ public interface Tensor extends Iterable<Float> {
      * @param dim the dimension along which to compute the mean, -1 to specify the last dimension
      * @param keepDim if true, retains the reduced dimension with size 1; otherwise, the dimension is removed
      * @return a new tensor containing the mean along the specified dimension
+     *
+     * @apiNote the returned tensor preserves the autograd context of the input
      */
     Tensor mean(int dim, boolean keepDim);
     
@@ -624,7 +594,7 @@ public interface Tensor extends Iterable<Float> {
     /**
      * Activates all the elements of this tensor using the specified activation function.
      * @param activation the activation function
-     * @return the resulting tensor
+     * @return a new activated tensor
      */
     Tensor activate(Activation activation);
 
@@ -646,22 +616,6 @@ public interface Tensor extends Iterable<Float> {
      * @throws IllegalArgumentException if more ranges are specified than the number of dimensions
      */
     Tensor slice(Range... ranges);
-
-    /**
-     * Slices the tensor along the last dimension, starting at the specified offset.
-     *
-     * @param offset the offset along the last dimension
-     * @param input the tensor to slice
-     */
-    void setSliceAlongLastDim(int offset, Tensor input);
-
-    /**
-     * Applies a mask to the current tensor. The float array gets added to the underlying
-     * tensor data array, then negative numbers get clamped to 0.
-     * @param mask the mask to apply
-     * @return this tensor
-     */
-    Tensor mask(float[] mask);
 
     /**
      * Applies a given function to each element of the tensor and returns a new tensor with the results.

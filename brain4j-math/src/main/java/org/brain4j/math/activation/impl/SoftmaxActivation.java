@@ -2,7 +2,7 @@ package org.brain4j.math.activation.impl;
 
 import org.brain4j.math.activation.Activation;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.weightsinit.UniformXavierInit;
+import org.brain4j.math.weightsinit.impl.UniformXavierInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
 public record SoftmaxActivation(double temperature) implements Activation {
@@ -32,7 +32,7 @@ public record SoftmaxActivation(double temperature) implements Activation {
     }
 
     @Override
-    public String kernelPrefix() {
+    public String getKernelPrefix() {
         return "softmax";
     }
 }

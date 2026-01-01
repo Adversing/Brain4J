@@ -1,7 +1,7 @@
 package org.brain4j.math.activation.impl;
 
 import org.brain4j.math.activation.Activation;
-import org.brain4j.math.weightsinit.NormalXavierInit;
+import org.brain4j.math.weightsinit.impl.NormalXavierInit;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
 public class SwishActivation implements Activation {
@@ -23,7 +23,7 @@ public class SwishActivation implements Activation {
     }
 
     @Override
-    public String kernelPrefix() {
+    public String getKernelPrefix() {
         return "swish";
     }
 }

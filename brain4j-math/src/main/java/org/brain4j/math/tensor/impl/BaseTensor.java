@@ -14,7 +14,7 @@ import org.brain4j.math.tensor.index.Range;
 import org.brain4j.math.tensor.parallel.ParallelMap;
 import org.brain4j.math.tensor.sum.TensorReducer;
 import org.brain4j.math.tensor.sum.impl.ScalarTensorReducer;
-import org.brain4j.math.tensor.sum.impl.SimdTensorReducer;
+import org.brain4j.math.tensor.sum.impl.SIMDTensorReducer;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static org.brain4j.math.Tensors.ones;
-import static org.brain4j.math.Tensors.unravelIndex;
 
 public abstract class BaseTensor implements Tensor, Cloneable {
 
@@ -212,7 +211,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public int shape(int index) {
+    public int shapeAt(int index) {
         return shape[Math.floorMod(index, shape.length)];
     }
 
@@ -227,35 +226,17 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public float[] toArray() {
-        if (!transposed) return data;
-
-        float[] result = new float[data.length];
-        float[] data = data();
-
-        for (int i = 0; i < data.length; i++) {
-            int[] srcIndices = unravelIndex(i, shape);
-            result[i] = data[linearIndex(srcIndices)];
-        }
-
-        return result;
-    }
-
-    @Override
     public int[] strides() {
         return strides;
     }
     
     @Override
     public byte[] toByteArray() {
-        float[] data = data(); // gpu workaround
+        float[] data = data();
         
-        ByteBuffer buffer = ByteBuffer.allocate(data.length * 4);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.allocate(data.length * 4).order(ByteOrder.nativeOrder());
         
-        for (float value : data) {
-            buffer.putFloat(value);
-        }
+        for (float value : data) buffer.putFloat(value);
         
         return buffer.array();
     }
@@ -263,15 +244,14 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     @Override
     public int linearIndex(int... indices) {
         if (indices.length != shape.length) {
-            throw new IllegalArgumentException(
-                "The shape of the tensor does not match the number of indices");
+            throw Commons.illegalArgument("Number of indices does not match tensor rank!");
         }
 
         for (int i = 0; i < indices.length; i++) {
-            if (indices[i] < 0 || indices[i] >= shape[i]) {
-                throw new IndexOutOfBoundsException(
-                    "Index " + indices[i] + " for dimension " + i + " is out of bounds [0, " + shape[i] + ")"
-                );
+            int index = indices[i];
+            
+            if (index < 0 || index >= shape[i]) {
+                throw Commons.indexOOB("Index %s for dimension %s is out of bounds [0, %s)", index, i, shape[i]);
             }
         }
 
@@ -325,7 +305,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             copy.autogradContext = null;
 
             int[] standardStrides = Tensors.computeStrides(shape);
-            boolean isContiguous = java.util.Arrays.equals(strides, standardStrides);
+            boolean isContiguous = Arrays.equals(strides, standardStrides);
 
             if (isContiguous) {
                 copy.strides = strides.clone();
@@ -699,7 +679,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     public Tensor sum(int dim, boolean keepDim) {
         dim = Commons.mod(dim, shape.length);
 
-        TensorReducer reducer = DeviceUtils.isSimdAvailable() ? new SimdTensorReducer() : new ScalarTensorReducer();
+        TensorReducer reducer = DeviceUtils.isSimdAvailable() ? new SIMDTensorReducer() : new ScalarTensorReducer();
         Tensor result = reducer.sum(this, dim, keepDim);
         
         result.setAutogradContext(autogradContext);
@@ -882,31 +862,6 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         sliceCopy(result, ranges, srcIndices, dstIndices, 0);
 
         return result;
-    }
-
-    @Override
-    public void setSliceAlongLastDim(int offset, Tensor input) {
-        int[] inputShape = input.shape();
-        int[] thisShape = this.shape();
-
-        int rank = thisShape.length;
-        int sliceSize = inputShape[rank - 1];
-
-        int[] current = new int[rank];
-        setSliceRecursive(current, 0, offset, sliceSize, input);
-    }
-
-    @Override
-    public Tensor mask(float[] mask) {
-        if (mask.length != data.length) {
-            throw new IllegalArgumentException("Mask length must be as long as the data");
-        }
-
-        for (int i = 0; i < mask.length; i++) {
-            data[i] = Math.max(0, data[i] - mask[i]);
-        }
-
-        return this;
     }
 
     @Override

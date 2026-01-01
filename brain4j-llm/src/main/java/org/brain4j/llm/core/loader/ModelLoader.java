@@ -65,12 +65,10 @@ public class ModelLoader implements AutoCloseable {
             throw new FileNotFoundException("File not found: " + fileToDownload);
         }
         
-        Result<Path, Exception> filePathResult = downloadManager.downloadFile(info.id(), fileToDownload, config.forceDownload());
+        Path path = downloadManager.downloadFile(info.id(), fileToDownload, config.forceDownload());
         Tokenizer tokenizer = new BytePairTokenizer();
         
-        Path path = filePathResult.unwrap();
         tokenizer.load(path.toFile());
-
         return tokenizer;
     }
     
@@ -86,9 +84,7 @@ public class ModelLoader implements AutoCloseable {
         List<ModelFile> files = new ArrayList<>();
 
         for (String filename : filesToDownload) {
-            Result<Path, Exception> filePathResult = downloadManager.downloadFile(info.id(), filename, config.forceDownload());
-
-            Path path = filePathResult.unwrap();
+            Path path = downloadManager.downloadFile(info.id(), filename, config.forceDownload());
             String format = determineFileFormat(filename);
 
             long size = Files.size(path);

@@ -16,6 +16,8 @@ import org.brain4j.math.tensor.Tensor;
  *     <li>Weights: {@code [input_dim]}</li>
  *     <li>Bias: {@code [input_dim]}</li>
  * </ul>
+ * Normalization is applied across the last dimension (feature axis).
+ * @implNote normalization is applied independently for each sample and timestep
  * @author xEcho1337
  */
 public class NormLayer extends Layer {

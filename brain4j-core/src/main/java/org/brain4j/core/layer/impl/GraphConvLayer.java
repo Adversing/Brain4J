@@ -123,8 +123,8 @@ public class GraphConvLayer extends Layer {
     }
 
     private Tensor normalizeAdjacency(Tensor adjacent) {
-        int batch = adjacent.shape(0);
-        int nodes = adjacent.shape(1);
+        int batch = adjacent.shapeAt(0);
+        int nodes = adjacent.shapeAt(1);
 
         Tensor identity = Tensors.eye(nodes);
         Tensor Ahat = adjacent.add(identity); // [batch, nodes, nodes]

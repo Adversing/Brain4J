@@ -144,7 +144,7 @@ public class CpuTensor extends BaseTensor {
     @Override
     public Tensor add(Tensor other) {
         if (!(other instanceof CpuTensor)) {
-            return add(other.cpu());
+            return add(other.to(null));
         }
 
         return TensorBroadcast.add(this, other);
@@ -162,7 +162,7 @@ public class CpuTensor extends BaseTensor {
     @Override
     public Tensor sub(Tensor other) {
         if (!(other instanceof CpuTensor)) {
-            return sub(other.cpu());
+            return sub(other.to(null));
         }
 
         return TensorBroadcast.sub(this, other);
@@ -180,7 +180,7 @@ public class CpuTensor extends BaseTensor {
     @Override
     public Tensor mul(Tensor other) {
         if (!(other instanceof CpuTensor)) {
-            return mul(other.cpu());
+            return mul(other.to(null));
         }
 
         return TensorBroadcast.mul(this, other);
@@ -198,7 +198,7 @@ public class CpuTensor extends BaseTensor {
     @Override
     public Tensor div(Tensor other) {
         if (!(other instanceof CpuTensor)) {
-            return div(other.cpu());
+            return div(other.to(null));
         }
 
         return TensorBroadcast.div(this, other);
@@ -216,7 +216,7 @@ public class CpuTensor extends BaseTensor {
     @Override
     public Tensor pow(Tensor other) {
         if (!(other instanceof CpuTensor)) {
-            return pow(other.cpu());
+            return pow(other.to(null));
         }
         
         return TensorBroadcast.pow(this, other);

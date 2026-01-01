@@ -110,8 +110,8 @@ public class MultiHeadAttention extends Layer {
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor input = inputs[0];
-        int batch = input.shape(0);
-        int seqLength = input.shape(1);
+        int batch = input.shapeAt(0);
+        int seqLength = input.shapeAt(1);
 
         if (flashAttention && input instanceof GpuTensor) {
             int H = headCount;

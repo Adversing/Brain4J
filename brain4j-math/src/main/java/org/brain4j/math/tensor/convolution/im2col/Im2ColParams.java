@@ -1,4 +1,4 @@
-package org.brain4j.math.tensor.convolve;
+package org.brain4j.math.tensor.convolution.im2col;
 
 public record Im2ColParams(
     float[] inputData,

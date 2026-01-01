@@ -59,8 +59,8 @@ public class TensorTest {
         Tensor B = Tensors.random(2, 2);
         Tensor C = A.concat(B);
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.concat(gpuB);
 
         assertArrayEquals(C.shape(), gpuC.shape());
@@ -73,8 +73,8 @@ public class TensorTest {
         Tensor B = Tensors.random(8, 3);
         Tensor C = A.matmul(B);
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.matmul(gpuB);
 
         assertArrayEquals(C.shape(), gpuC.shape());
@@ -91,7 +91,7 @@ public class TensorTest {
         Tensor A = Tensors.random(64, 32);
         Tensor B = A.slice(ranges);
 
-        Tensor gpuA = A.gpu(device);
+        Tensor gpuA = A.to(device);
         Tensor gpuB = gpuA.slice(ranges);
 
         assertArrayEquals(B.shape(), gpuB.shape());
@@ -107,8 +107,8 @@ public class TensorTest {
         Tensor B = Tensors.random(32, 32);
         Tensor C = A.plus(B);
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.plus(gpuB);
 
         assertArrayEquals(C.data(), gpuC.data(), 0.001f);
@@ -123,8 +123,8 @@ public class TensorTest {
         Tensor B = Tensors.random(32, 32);
         Tensor C = A.minus(B);
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.minus(gpuB);
 
         assertArrayEquals(C.data(), gpuC.data(), 0.001f);
@@ -139,8 +139,8 @@ public class TensorTest {
         Tensor B = Tensors.random(32, 32);
         Tensor C = A.times(B);
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.times(gpuB);
 
         assertArrayEquals(C.data(), gpuC.data(), 0.001f);
@@ -152,8 +152,8 @@ public class TensorTest {
         Tensor B = Tensors.random(32, 32);
         Tensor C = A.divide(B);
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.divide(gpuB);
 
         assertArrayEquals(C.data(), gpuC.data(), 0.001f);
@@ -164,7 +164,7 @@ public class TensorTest {
         Tensor A = Tensors.random(16, 16);
         Tensor B = A.matmul(A.transpose()).relu().sum(0, false);
 
-        Tensor gpuA = A.gpu(device);
+        Tensor gpuA = A.to(device);
         Tensor gpuB = gpuA.matmul(gpuA.transpose()).relu().sum(0, false);
 
         assertEquals(B.get(0), gpuB.get(0), 0.001f);
@@ -176,8 +176,8 @@ public class TensorTest {
         Tensor B = Tensors.random(3, 8);
         Tensor C = A.matmul(B.transpose());
 
-        Tensor gpuA = A.gpu(device);
-        Tensor gpuB = B.gpu(device);
+        Tensor gpuA = A.to(device);
+        Tensor gpuB = B.to(device);
         Tensor gpuC = gpuA.matmul(gpuB.transpose());
 
         assertArrayEquals(C.shape(), gpuC.shape());

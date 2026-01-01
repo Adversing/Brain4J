@@ -38,8 +38,8 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
         Tensor input = inputs[0];
-        int batch = input.shape(0);
-        int seqLength = input.shape(1);
+        int batch = input.shapeAt(0);
+        int seqLength = input.shapeAt(1);
 
         if (flashAttention && input instanceof GpuTensor) {
             // skip fast path if we are using incremental cache
@@ -149,7 +149,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
 
         Tensor mask = Tensors.triangularMask(seqLength, seqLength);
 
-        if (input instanceof GpuTensor gpu) mask = mask.gpu(gpu.device());
+        if (input instanceof GpuTensor gpu) mask = mask.to(gpu.device());
 
         // [batch, heads, head_dim, seq_len]
         Tensor K_T = K.transposeGrad();

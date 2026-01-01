@@ -92,7 +92,7 @@ public class ConvLayer extends Layer {
     @Override
     public boolean validInput(Tensor input) {
         // [batch, channels, height, width]
-        return input.rank() == 4 && input.shape(1) == channels;
+        return input.rank() == 4 && input.shapeAt(1) == channels;
     }
     
     public int getChannels() {

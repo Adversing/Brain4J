@@ -100,7 +100,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
     public ListDataSource normalize() {
         if (samples.isEmpty()) return this;
 
-        int numInputs = samples.getFirst().inputs().length;
+        int numInputs = samples.getFirst().getInputs().length;
         List<List<Tensor>> inputStreams = new ArrayList<>(numInputs);
         
         for (int i = 0; i < numInputs; i++) {
@@ -108,7 +108,7 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         }
 
         for (Sample sample : samples) {
-            Tensor[] inputs = sample.inputs();
+            Tensor[] inputs = sample.getInputs();
             
             for (int i = 0; i < inputs.length; i++) {
                 inputStreams.get(i).add(inputs[i]);
@@ -196,8 +196,8 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
 
         Sample first = subSet.getFirst();
 
-        int inputCount = first.inputs().length;
-        int labelCount = first.labels().length;
+        int inputCount = first.getInputs().length;
+        int labelCount = first.getLabels().length;
 
         List<List<Tensor>> mergedInputs = new ArrayList<>(inputCount);
         List<List<Tensor>> mergedLabels = new ArrayList<>();
@@ -211,8 +211,8 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         }
 
         for (Sample sample : subSet) {
-            Tensor[] inputs = sample.inputs();
-            Tensor[] labels = sample.labels();
+            Tensor[] inputs = sample.getInputs();
+            Tensor[] labels = sample.getLabels();
 
 
             for (int i = 0; i < inputs.length; i++) {
@@ -261,8 +261,8 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
         List<Sample> newSamples = new ArrayList<>(samples.size());
 
         for (Sample sample : samples) {
-            Tensor[] inputs = sample.inputs();
-            Tensor[] labels = sample.labels();
+            Tensor[] inputs = sample.getInputs();
+            Tensor[] labels = sample.getLabels();
 
             for (int i = 0; i < inputs.length; i++) {
                 inputs[i] = inputs[i].to(device);
