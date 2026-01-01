@@ -53,17 +53,17 @@ public class ParallelConvolve {
         float[] outData = out.data();
 
         for (int bIdx = 0; bIdx < batch; bIdx++) {
-            List<Callable<Void>> tasks = new ArrayList<>();
-            
             Tensor inputBatch = (aHasBatch ? a.slice(Range.point(bIdx)) : a).squeeze(0);
             Tensor patchMatrix = Tensors.im2col(inputBatch, filterHeight, filterWidth);
             float[] patchData = patchMatrix.data(); // [patch_size, total_patches]
-
+            
+            List<Callable<Void>> tasks = new ArrayList<>();
+            
             for (int f = 0; f < numFilters; f++) {
                 int filterOffset = f * patchSize;
                 int outBase = (bIdx * numFilters + f) * totalPatches;
                 
-                int blockSize = 512;
+                int blockSize = 4096;
                 int blocks = (totalPatches + blockSize - 1) / blockSize;
                 
                 ConvolveProvider.PatchData data = new ConvolveProvider.PatchData(
