@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xEcho1337
  */
-public interface Model extends ModelComponent {
+public interface Model extends ModelBlock {
     
     /**
      * Performs a full forward pass using a temporary {@link StatesCache}

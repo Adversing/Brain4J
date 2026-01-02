@@ -67,7 +67,7 @@ public class LSTMLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         List<Tensor> gates = new ArrayList<>();
         
         for (int i = 0; i < 4; i++) {
@@ -78,7 +78,6 @@ public class LSTMLayer extends Layer {
         this.hiddenWeights = Tensors.concat(gates, 1).withGrad();
         this.bias = Tensors.zeros(4 * hiddenDimension).withGrad();
 
-        return this;
     }
     
     @Override

@@ -33,7 +33,7 @@ dependencies {
     implementation libs.lwjglOpenCL
 
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-    implementation libs.jocl
+    implementation libs.gson
 }
 
 compileJava {

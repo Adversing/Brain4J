@@ -114,12 +114,15 @@ public class LiquidLayer extends Layer {
     }
     
     @Override
-    public LiquidLayer connect(Layer previous) {
+    public void connect(Layer previous) {
         this.weights = Tensors.zeros(previous.size(), dimension);
         this.bias = Tensors.zeros(dimension);
-        this.hiddenParams = new DenseLayer(dimension).connect(this);
-        this.tauParams = new DenseLayer(dimension, Activations.SOFTPLUS).connect(previous);
-        return this;
+        this.hiddenParams = new DenseLayer(dimension);
+        this.tauParams = new DenseLayer(dimension, Activations.SOFTPLUS);
+
+        hiddenParams.connect(this);
+        tauParams.connect(previous);
+
     }
     
     @Override

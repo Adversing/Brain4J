@@ -76,13 +76,12 @@ public class MultiHeadAttention extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         this.outProj = Tensors.matrix(embeddingDim, embeddingDim).withGrad();
 
         if (attnQkvHasBias) this.bias = Tensors.zeros(3 * embeddingDim).withGrad();
         if (attnOutHasBias) this.outBias = Tensors.zeros(embeddingDim).withGrad();
 
-        return this;
     }
 
     @Override

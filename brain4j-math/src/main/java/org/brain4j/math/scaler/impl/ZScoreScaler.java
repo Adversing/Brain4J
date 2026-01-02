@@ -1,5 +1,6 @@
 package org.brain4j.math.scaler.impl;
 
+import com.google.gson.JsonObject;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.scaler.FeatureScaler;
 import org.brain4j.math.tensor.Tensor;
@@ -10,6 +11,9 @@ public class ZScoreScaler implements FeatureScaler {
 
     private float mean;
     private float std;
+
+    public ZScoreScaler() {
+    }
 
     @Override
     public void fit(List<Tensor> tensors) {
@@ -47,5 +51,33 @@ public class ZScoreScaler implements FeatureScaler {
         }
 
         return Tensors.create(tensor.shape(), out);
+    }
+
+    @Override
+    public void serialize(JsonObject object) {
+        object.addProperty("mean", mean);
+        object.addProperty("std", std);
+    }
+
+    @Override
+    public void deserialize(JsonObject object) {
+        this.mean = object.get("mean").getAsFloat();
+        this.std = object.get("std").getAsFloat();
+    }
+
+    public float getMean() {
+        return mean;
+    }
+
+    public void setMean(float mean) {
+        this.mean = mean;
+    }
+
+    public float getStd() {
+        return std;
+    }
+
+    public void setStd(float std) {
+        this.std = std;
     }
 }

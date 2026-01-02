@@ -22,9 +22,8 @@ public class MaxPoolLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         this.size = previous.size();
-        return this;
     }
 
     @Override

@@ -28,8 +28,7 @@ public class SelectLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
-        return previous;
+    public void connect(Layer previous) {
     }
 
     @Override

@@ -40,11 +40,10 @@ public class NormLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         this.weights = Tensors.ones(previous.size()).withGrad();
         this.bias = Tensors.zeros(previous.size()).withGrad();
-        
-        return this;
+
     }
     
     @Override
@@ -53,7 +52,7 @@ public class NormLayer extends Layer {
 
         Tensor input = inputs[0];
         Tensor cloned = input.clone();
-        cloned.setAutogradContext(input.autogradContext());
+        cloned.setAutogradContext(input.getAutogradContext());
 
         Tensor result = cloned.layerNorm(epsilon).mulGrad(weights).addGrad(bias);
         return new Tensor[] { result };

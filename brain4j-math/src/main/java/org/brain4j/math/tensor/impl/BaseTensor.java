@@ -886,7 +886,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
     }
 
     @Override
-    public AutogradContext autogradContext() {
+    public AutogradContext getAutogradContext() {
         return autogradContext;
     }
 
@@ -952,11 +952,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         Tensor result = operation.compute(this);
 
-        if (result.autogradContext() == null) {
+        if (result.getAutogradContext() == null) {
             result.setAutogradContext(new AutogradContext(true));
         }
 
-        result.autogradContext().setOperation(operation, this);
+        result.getAutogradContext().setOperation(operation, this);
         return result;
     }
 
@@ -970,11 +970,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
         Tensor result = operation.compute(this, other);
 
-        if (result.autogradContext() == null) {
+        if (result.getAutogradContext() == null) {
             result.setAutogradContext(new AutogradContext(true));
         }
 
-        result.autogradContext().setOperation(operation, this, other);
+        result.getAutogradContext().setOperation(operation, this, other);
         return result;
     }
 
@@ -995,11 +995,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
         Tensor[] allInputsArray = allInputs.toArray(new Tensor[0]);
         Tensor result = operation.compute(allInputsArray);
 
-        if (result.autogradContext() == null) {
+        if (result.getAutogradContext() == null) {
             result.setAutogradContext(new AutogradContext(true));
         }
 
-        result.autogradContext().setOperation(operation, allInputsArray);
+        result.getAutogradContext().setOperation(operation, allInputsArray);
         return result;
     }
 

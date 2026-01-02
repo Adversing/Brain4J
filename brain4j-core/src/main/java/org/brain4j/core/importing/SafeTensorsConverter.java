@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.brain4j.core.importing.format.impl.BrainFormat.GSON;
+import static org.brain4j.core.importing.format.impl.BrainAdapter.GSON;
 
 public class SafeTensorsConverter {
 

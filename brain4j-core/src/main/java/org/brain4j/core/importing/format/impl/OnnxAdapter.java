@@ -3,7 +3,7 @@ package org.brain4j.core.importing.format.impl;
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.graphs.GraphModel;
 import org.brain4j.core.graphs.GraphNode;
-import org.brain4j.core.importing.format.BinaryFormat;
+import org.brain4j.core.importing.format.BinaryAdapter;
 import org.brain4j.core.importing.onnx.ProtoOnnx.*;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.layer.impl.utility.InputLayer;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.brain4j.core.importing.Registries.LAYER_REGISTRY;
 import static org.brain4j.core.importing.Registries.ONNX_OPERATIONS_REGISTRY;
 
-public class OnnxFormat implements BinaryFormat {
+public class OnnxAdapter implements BinaryAdapter {
     
     private static final Map<Class<? extends Activation>, String> ACTIVATION_MAP = Map.of(
         ReLUActivation.class, "Relu",
@@ -149,7 +149,7 @@ public class OnnxFormat implements BinaryFormat {
         
         while (!queue.isEmpty()) {
             Tensor tensor = queue.poll();
-            AutogradContext context = tensor.autogradContext();
+            AutogradContext context = tensor.getAutogradContext();
             
             if (context == null || context.operation() == null) continue;
             

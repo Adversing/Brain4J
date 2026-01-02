@@ -1,16 +1,16 @@
 package org.brain4j.core.importing;
 
 import org.brain4j.core.graphs.GraphModel;
-import org.brain4j.core.importing.format.impl.BrainFormat;
-import org.brain4j.core.importing.format.impl.OnnxFormat;
+import org.brain4j.core.importing.format.impl.BrainAdapter;
+import org.brain4j.core.importing.format.impl.OnnxAdapter;
 import org.brain4j.core.model.Model;
 
 import java.io.File;
 
 public class ModelZoo {
     
-    public static final BrainFormat BRAIN_FORMAT = new BrainFormat();
-    public static final OnnxFormat ONNX_FORMAT = new OnnxFormat();
+    public static final BrainAdapter BRAIN_FORMAT = new BrainAdapter();
+    public static final OnnxAdapter ONNX_FORMAT = new OnnxAdapter();
     
     public static void saveModel(Model model, File file) {
         BRAIN_FORMAT.serialize(model, file);

@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ModelSpecs implements ModelComponent, Cloneable {
+public class ModelSpecs implements ModelBlock, Cloneable {
     
-    private final List<ModelComponent> components = new ArrayList<>();
+    private final List<ModelBlock> components = new ArrayList<>();
     private boolean frozen = false;
     
-    public static ModelSpecs of(ModelComponent... components) {
+    public static ModelSpecs of(ModelBlock... components) {
         if (components == null) {
             throw new IllegalArgumentException("Component list cannot be null!");
         }
@@ -25,12 +25,12 @@ public class ModelSpecs implements ModelComponent, Cloneable {
     
     @Override
     public void appendTo(List<Layer> layers) {
-        for (ModelComponent component : components) {
+        for (ModelBlock component : components) {
             component.appendTo(layers);
         }
     }
     
-    public ModelSpecs add(ModelComponent component) {
+    public ModelSpecs add(ModelBlock component) {
         if (frozen) {
             throw new IllegalArgumentException("ModelSpecs has been compiled and cannot be modified! Consider checking out clone().");
         }
@@ -48,7 +48,7 @@ public class ModelSpecs implements ModelComponent, Cloneable {
         return new Sequential(this, null, seed);
     }
     
-    public List<ModelComponent> getComponents() {
+    public List<ModelBlock> getComponents() {
         if (frozen) {
             return Collections.unmodifiableList(components);
         }

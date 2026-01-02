@@ -140,7 +140,7 @@ public class TransformerEncoder extends Layer {
     }
     
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         normalizer1.connect(this);
         normalizer2.connect(this);
         upProjection.connect(this);
@@ -159,7 +159,6 @@ public class TransformerEncoder extends Layer {
             if (useGating) gateProjection.freeze();
         }
 
-        return this;
     }
 
     @Override

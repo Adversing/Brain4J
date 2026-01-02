@@ -2,7 +2,7 @@ package org.brain4j.core.importing.format.impl;
 
 import com.google.gson.*;
 import org.brain4j.core.importing.SafeTensorsConverter;
-import org.brain4j.core.importing.format.BinaryFormat;
+import org.brain4j.core.importing.format.BinaryAdapter;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.ModelSpecs;
@@ -23,7 +23,7 @@ import java.util.zip.ZipOutputStream;
 
 import static org.brain4j.core.importing.Registries.*;
 
-public class BrainFormat implements BinaryFormat {
+public class BrainAdapter implements BinaryAdapter {
     
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final int FORMAT_VERSION = 2;

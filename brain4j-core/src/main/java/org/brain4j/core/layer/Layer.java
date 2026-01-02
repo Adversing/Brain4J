@@ -2,7 +2,7 @@ package org.brain4j.core.layer;
 
 import com.google.gson.JsonObject;
 import org.brain4j.core.loss.LossFunction;
-import org.brain4j.core.model.ModelComponent;
+import org.brain4j.core.model.ModelBlock;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.activation.Activation;
@@ -38,7 +38,7 @@ import java.util.random.RandomGenerator;
  *
  * @author xEcho1337
  */
-public abstract class Layer implements ModelComponent {
+public abstract class Layer implements ModelBlock {
 
     protected Activation activation = new LinearActivation();
     protected GradientClipper clipper = new HardClipper(5);
@@ -56,10 +56,9 @@ public abstract class Layer implements ModelComponent {
     /**
      * Constructs the tensors for weights in this layer.
      * @param previous the previous layer in the model
-     * @return this layer by default
      */
-    public Layer connect(Layer previous) {
-        return this;
+    public void connect(Layer previous) {
+        // No-op
     }
     
     /**

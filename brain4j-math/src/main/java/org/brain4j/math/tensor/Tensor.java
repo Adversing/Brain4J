@@ -642,7 +642,7 @@ public interface Tensor extends Iterable<Float> {
      * Gets the autograd context for this tensor.
      * @return the autograd context instance
      */
-    AutogradContext autogradContext();
+    AutogradContext getAutogradContext();
 
     /**
      * Updates the autograd context instance for this tensor.

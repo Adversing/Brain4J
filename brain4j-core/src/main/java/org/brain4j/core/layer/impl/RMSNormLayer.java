@@ -38,9 +38,8 @@ public class RMSNormLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         this.weights = Tensors.ones(previous.size()).withGrad();
-        return this;
     }
 
     @Override

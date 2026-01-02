@@ -31,7 +31,7 @@ public class AutogradContext {
         for (Tensor input : inputs) {
             if (input == null || !input.usesGrad()) continue;
 
-            input.autogradContext().increaseContributes();
+            input.getAutogradContext().increaseContributes();
         }
     }
 

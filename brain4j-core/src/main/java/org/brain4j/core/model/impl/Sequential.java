@@ -5,7 +5,7 @@ import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.loss.impl.BinaryCrossEntropy;
 import org.brain4j.core.model.Model;
-import org.brain4j.core.model.ModelComponent;
+import org.brain4j.core.model.ModelBlock;
 import org.brain4j.core.model.ModelSpecs;
 import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.brain4j.math.Tensors;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-public class Sequential implements Model, ModelComponent {
+public class Sequential implements Model, ModelBlock {
     
     private final ModelSpecs specs;
     private final List<Layer> layers;
@@ -202,8 +202,9 @@ public class Sequential implements Model, ModelComponent {
             Layer layer = layers.get(i);
             
             if (layer.isFrozen()) continue;
-            
-            prev = layer.connect(prev);
+
+            layer.connect(prev);
+            prev = layer;
         }
         
         IntStream.range(1, length).parallel().forEach(i -> {

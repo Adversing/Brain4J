@@ -52,7 +52,7 @@ public class FlashAttention {
         int D = shape[3];
 
         GpuTensor O = new GpuTensor(Q.device(), shape);
-        O.setAutogradContext(Q.autogradContext());
+        O.setAutogradContext(Q.getAutogradContext());
 
         long[] global = new long[] { L, (long) B * H };
 
@@ -112,7 +112,7 @@ public class FlashAttention {
         int D = shape[3];
 
         GpuTensor O = new GpuTensor(Q.device(), shape);
-        O.setAutogradContext(Q.autogradContext());
+        O.setAutogradContext(Q.getAutogradContext());
 
         // LSE has shape [B, H, L]
         GpuTensor LSE = new GpuTensor(Q.device(), new int[]{B, H, L});
@@ -288,7 +288,7 @@ public class FlashAttention {
         }
 
         GpuTensor O = new GpuTensor(Q.device(), shape);
-        O.setAutogradContext(Q.autogradContext());
+        O.setAutogradContext(Q.getAutogradContext());
 
         GpuTensor LSE = new GpuTensor(Q.device(), new int[]{B, H, L});
 

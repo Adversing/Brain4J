@@ -29,6 +29,9 @@ import org.brain4j.math.clipper.GradientClipper;
 import org.brain4j.math.clipper.impl.HardClipper;
 import org.brain4j.math.clipper.impl.L2Clipper;
 import org.brain4j.math.clipper.impl.NoClipper;
+import org.brain4j.math.scaler.FeatureScaler;
+import org.brain4j.math.scaler.impl.MinMaxScaler;
+import org.brain4j.math.scaler.impl.ZScoreScaler;
 import org.brain4j.math.tensor.autograd.Operation;
 import org.brain4j.math.tensor.autograd.impl.*;
 
@@ -41,7 +44,8 @@ public class Registries {
     public static final GeneralRegistry<GradientClipper, Object> CLIPPERS_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<Activation, Object> ACTIVATION_REGISTRY = new GeneralRegistry<>();
     public static final GeneralRegistry<Layer, Object> LAYER_REGISTRY = new GeneralRegistry<>();
-    
+    public static final GeneralRegistry<FeatureScaler, Object> SCALER_REGISTRY = new GeneralRegistry<>();
+
     static {
         ONNX_OPERATIONS_REGISTRY.register("Add", AddOperation.class);
         ONNX_OPERATIONS_REGISTRY.register("Add", AddOperation.class);
@@ -124,5 +128,8 @@ public class Registries {
         LAYER_REGISTRY.register("reshape", ReshapeLayer.class);
         LAYER_REGISTRY.register("slice", SliceLayer.class);
         LAYER_REGISTRY.register("squeeze", SqueezeLayer.class);
+
+        SCALER_REGISTRY.register("z_score", ZScoreScaler.class);
+        SCALER_REGISTRY.register("min_max", MinMaxScaler.class);
     }
 }

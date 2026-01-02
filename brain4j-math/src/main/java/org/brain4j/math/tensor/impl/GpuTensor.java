@@ -15,7 +15,7 @@ import org.lwjgl.opencl.CL10;
 
 import java.util.Arrays;
 
-import static org.jocl.CL.*;
+import static org.lwjgl.opencl.CL10.*;
 
 public class GpuTensor extends BaseTensor {
 
@@ -65,7 +65,7 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = new TempBuffer(dataBuffer);
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            CL10.clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer, 0, 0, dataSize,
+            clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer, 0, 0, dataSize,
                 null, null);
         }
     }
@@ -687,9 +687,9 @@ public class GpuTensor extends BaseTensor {
         float[] buffer = new float[size];
         long queue = device.newCommandQueue();
 
-        CL10.clEnqueueReadBuffer(queue, dataBuffer.value(), CL_TRUE, 0, buffer, null, null);
-        CL10.clFinish(queue);
-        CL10.clReleaseCommandQueue(queue);
+        clEnqueueReadBuffer(queue, dataBuffer.value(), true, 0, buffer, null, null);
+        clFinish(queue);
+        clReleaseCommandQueue(queue);
 
         return buffer;
     }

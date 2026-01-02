@@ -41,14 +41,13 @@ public class RecurrentLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         int size = previous == null ? dimension : previous.size();
         this.inputWeights = Tensors.zeros(size, hiddenDimension).withGrad();
         this.hiddenWeights = Tensors.orthogonal(hiddenDimension, hiddenDimension).withGrad();
         this.hiddenBias = Tensors.zeros(hiddenDimension).withGrad();
         this.weights = Tensors.zeros(hiddenDimension, dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();
-        return this;
     }
 
     @Override

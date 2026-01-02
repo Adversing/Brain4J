@@ -6,8 +6,6 @@ import org.brain4j.math.Tensors;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.impl.CpuTensor;
-import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.SplittableRandom;
 import java.util.random.RandomGenerator;
@@ -44,9 +42,8 @@ public class DropoutLayer extends Layer {
     }
 
     @Override
-    public Layer connect(Layer previous) {
+    public void connect(Layer previous) {
         this.size = previous.size();
-        return this;
     }
 
     @Override
