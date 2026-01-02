@@ -532,23 +532,6 @@ public class Tensors {
 
         return indices;
     }
-    
-    public static void validateShape(Tensor a, Tensor b) {
-        int[] shapeA = a.shape();
-        int[] shapeB = b.shape();
-
-        if (shapeA.length != shapeB.length) {
-            throw new IllegalArgumentException("Tensors dimensions must match: " + shapeA.length + " != " + shapeB.length);
-        }
-
-        for (int i = 0; i < shapeA.length; i++) {
-            if (shapeA[i] != shapeB[i]) {
-                throw new IllegalArgumentException(
-                    "Tensors shapes must match: " + Arrays.toString(shapeA) + " != " + Arrays.toString(shapeB)
-                );
-            }
-        }
-    }
 
     public static int computeSize(int[] shape) {
         int size = 1;

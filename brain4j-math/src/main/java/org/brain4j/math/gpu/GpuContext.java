@@ -45,7 +45,7 @@ public class GpuContext {
     }
 
     public static GpuQueue getOrCreate(Device device) {
-        GpuQueue queue = device.queue();
+        GpuQueue queue = device.getQueue();
         
         if (queue == null) {
             long clQueue = device.newCommandQueue();
@@ -61,7 +61,7 @@ public class GpuContext {
     }
 
     public static void finishAndRelease(Device device) {
-        GpuQueue queue = device.queue();
+        GpuQueue queue = device.getQueue();
         
         if (queue != null && queue.pointer() != 0) {
             finishAndRelease(queue.pointer());

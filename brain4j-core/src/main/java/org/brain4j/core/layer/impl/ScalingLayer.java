@@ -24,7 +24,6 @@ public class ScalingLayer extends Layer {
     @Override
     public void connect(Layer previous) {
         this.dimension = previous.size();
-
     }
 
     @Override

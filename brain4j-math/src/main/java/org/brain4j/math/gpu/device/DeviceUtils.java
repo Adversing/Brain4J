@@ -126,7 +126,7 @@ public class DeviceUtils {
 
     public static long createBuildProgram(Device device, String path) {
         String source = readKernelSource(path);
-        long  context = device.context();
+        long  context = device.getContext();
 
         long program = CL10.clCreateProgramWithSource(context, source, null);
         
@@ -134,9 +134,9 @@ public class DeviceUtils {
             throw new RuntimeException("clCreateProgramWithSource returned NULL");
         }
 
-        int buildErr = CL10.clBuildProgram(program, device.device(), "", null, 0);
+        int buildErr = CL10.clBuildProgram(program, device.getDevice(), "", null, 0);
         if (buildErr != CL10.CL_SUCCESS) {
-            String buildLog = getBuildLog(program, device.device());
+            String buildLog = getBuildLog(program, device.getDevice());
             throw new RuntimeException("clBuildProgram failed: " + buildErr + " (" + getErrorCode(buildErr) + ")\nBuild log:\n" + buildLog);
         }
 
