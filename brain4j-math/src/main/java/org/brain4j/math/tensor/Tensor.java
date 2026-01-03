@@ -870,4 +870,8 @@ public interface Tensor extends Iterable<Float> {
     default Tensor tanh() {
         return activateAuto(new TanhActivation());
     }
+    
+    default Tensor cpu() {
+        return to(null);
+    }
 }

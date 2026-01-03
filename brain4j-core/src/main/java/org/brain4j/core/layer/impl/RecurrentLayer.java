@@ -75,7 +75,7 @@ public class RecurrentLayer extends Layer {
         for (int t = 0; t < timesteps; t++) {
             Range[] ranges = new Range[] { Range.all(), Range.point(t), Range.all() };
 
-            Tensor timestepX = projectedInput.sliceGrad(ranges).squeeze(1);
+            Tensor timestepX = projectedInput.sliceGrad(ranges).squeezeGrad(1);
             Tensor timestepH = hiddenState.matmulGrad(hiddenWeights);
 
             hiddenState = timestepX.addGrad(timestepH).addGrad(hiddenBias).activateGrad(activation);

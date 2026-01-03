@@ -133,9 +133,9 @@ public class MultiHeadAttention extends Layer {
             } else {
                 Tensor reshaped = QKV.reshape(batch, seqLength, H, 3, d)
                         .transpose(1, 2); // [B,H,L,3,d]
-                Q = reshaped.slice(all, all, all, Range.point(0), all).squeeze(3);
-                K = reshaped.slice(all, all, all, Range.point(1), all).squeeze(3);
-                V = reshaped.slice(all, all, all, Range.point(2), all).squeeze(3);
+                Q = reshaped.slice(all, all, all, Range.point(0), all).squeezeGrad(3);
+                K = reshaped.slice(all, all, all, Range.point(1), all).squeezeGrad(3);
+                V = reshaped.slice(all, all, all, Range.point(2), all).squeezeGrad(3);
             }
 
             float scale = (float) (1.0 / Math.sqrt(d));

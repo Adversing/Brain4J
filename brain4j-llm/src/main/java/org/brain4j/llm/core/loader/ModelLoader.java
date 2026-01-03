@@ -11,7 +11,6 @@ import org.brain4j.llm.core.loader.config.LoadConfig;
 import org.brain4j.llm.core.model.LLM;
 import org.brain4j.llm.download.callback.ProgressCallback;
 import org.brain4j.llm.download.manager.DownloadManager;
-import org.brain4j.math.commons.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ public class ModelLoader implements AutoCloseable {
     public Tokenizer loadTokenizer(String tokenizerId, LoadConfig config) throws Exception {
         log.info("Loading tokenizer: {}", tokenizerId);
         
-        ModelInfo info = client.getModelInfo(tokenizerId).unwrap();
+        ModelInfo info = client.getModelInfo(tokenizerId);
         log.debug("Tokenizer info retrieved for: {} (resolved id: {})", tokenizerId, info.id());
         
         String fileToDownload = "tokenizer.json";
@@ -75,7 +74,7 @@ public class ModelLoader implements AutoCloseable {
     public LLM loadModel(String modelId, LoadConfig config) throws Exception {
         log.info("Loading model: {}", modelId);
 
-        ModelInfo info = client.getModelInfo(modelId).unwrap();
+        ModelInfo info = client.getModelInfo(modelId);
         log.debug("Model info retrieved for: {} (resolved id: {})", modelId, info.id());
 
         List<String> filesToDownload = determineFilesToDownload(info, config);

@@ -69,6 +69,11 @@ public class LLM implements InferenceProvider {
     }
     
     @Override
+    public void move(Device device) {
+        this.model = model.fork(device);
+    }
+    
+    @Override
     public String chat(String prompt) {
         return chat(prompt, SamplingConfig.defaultConfig());
     }

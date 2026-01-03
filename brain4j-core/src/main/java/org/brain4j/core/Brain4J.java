@@ -123,7 +123,11 @@ public class Brain4J {
             throw new IllegalStateException("No GPU-acceleration device has been found!");
         }
 
-        return DeviceUtils.findDevice(devices.getFirst());
+        Device device = DeviceUtils.findDevice(devices.getFirst());
+        
+        if (device != null) Brain4J.initKernels(device);
+        
+        return device;
     }
 
     /**

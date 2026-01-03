@@ -114,6 +114,9 @@ public class SafeTensorsConverter {
         
         for (Map.Entry<String, JsonElement> entry : header.entrySet()) {
             String name = entry.getKey();
+            
+            if (name.equals("__metadata__")) continue;
+            
             JsonObject info = entry.getValue().getAsJsonObject();
             
             JsonArray shapeArray = info.getAsJsonArray("shape");

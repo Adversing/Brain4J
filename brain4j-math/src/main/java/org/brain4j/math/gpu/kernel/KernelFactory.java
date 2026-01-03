@@ -26,7 +26,7 @@ public class KernelFactory {
     }
 
     public static KernelFactory create(Device device, String kernelName) {
-        return create(GpuContext.kernel(device, kernelName));
+        return create(GpuContext.findKernel(device, kernelName));
     }
 
     public KernelFactory addIntParam(int variable) {

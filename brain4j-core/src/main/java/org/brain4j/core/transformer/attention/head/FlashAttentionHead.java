@@ -66,11 +66,8 @@ public class FlashAttentionHead extends AttentionHead {
             }
 
             if (context != null) {
-                return training
-                    ? context.squeezeGrad(1) // [B,L,d]
-                    : context.squeeze(1);
+                return context.squeezeGrad(1); // [B,L,d]
             }
-            // fallthrough if context null
         }
 
         // fallback to standard path with autograd support

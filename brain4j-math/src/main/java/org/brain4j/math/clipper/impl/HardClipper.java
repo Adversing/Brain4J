@@ -26,7 +26,7 @@ public class HardClipper implements GradientClipper {
     @Override
     public void clipGpu(GpuTensor grad) {
         Device device = grad.device();
-        long kernel = GpuContext.kernel(device, kernelName());
+        long kernel = GpuContext.findKernel(device, kernelName());
         
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(kernel)

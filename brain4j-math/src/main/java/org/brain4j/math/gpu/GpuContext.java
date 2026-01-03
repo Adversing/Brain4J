@@ -28,7 +28,7 @@ public class GpuContext {
             });
     }
 
-    public static long kernel(Device device, String kernelName) {
+    public static long findKernel(Device device, String kernelName) {
         Map<String, Long> deviceKernels = kernelCache.get(device);
 
         if (deviceKernels == null) {

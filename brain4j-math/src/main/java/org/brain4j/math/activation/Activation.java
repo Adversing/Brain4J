@@ -72,7 +72,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-                long kernel = GpuContext.kernel(device, getKernelPrefix() + "_forward");
+                long kernel = GpuContext.findKernel(device, getKernelPrefix() + "_forward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());
@@ -108,7 +108,7 @@ public interface Activation {
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-                long kernel = GpuContext.kernel(device, getKernelPrefix() + "_backward");
+                long kernel = GpuContext.findKernel(device, getKernelPrefix() + "_backward");
 
                 KernelFactory factory = createKernel(kernel, gpuInput, result);
                 factory.launch(queue, 1, gpuInput.size());

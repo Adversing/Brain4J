@@ -283,24 +283,26 @@ public class TransformerEncoder extends Layer {
     @Override
     public Layer freeze() {
         upProjection.freeze();
-        gateProjection.freeze();
-        gateProjection.freeze();
         downProjection.freeze();
         normalizer1.freeze();
         normalizer2.freeze();
         attention.freeze();
+        
+        if (gateProjection != null) gateProjection.freeze();
+        
         return super.freeze();
     }
     
     @Override
     public Layer unfreeze() {
         upProjection.unfreeze();
-        gateProjection.unfreeze();
-        gateProjection.unfreeze();
         downProjection.unfreeze();
         normalizer1.unfreeze();
         normalizer2.unfreeze();
         attention.unfreeze();
+        
+        if (gateProjection != null) gateProjection.unfreeze();
+        
         return super.unfreeze();
     }
     

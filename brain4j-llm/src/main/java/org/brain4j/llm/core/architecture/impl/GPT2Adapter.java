@@ -10,6 +10,7 @@ import org.brain4j.core.layer.impl.transformer.PosEncodeLayer;
 import org.brain4j.core.layer.impl.transformer.TransformerDecoder;
 import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.model.Model;
+import org.brain4j.core.model.ModelSpecs;
 import org.brain4j.llm.core.architecture.ArchitectureAdapter;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
@@ -31,7 +32,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
         int context = config.get("n_ctx").getAsInt();
         int vocabSize = config.get("vocab_size").getAsInt();
         
-        OldSequential seq = OldSequential.of();
+        ModelSpecs specs = ModelSpecs.of();
         
         Tensor embedding = weights.get("wte.weight"); // embedding  -> [vocab, dim]
         Tensor posEncode = weights.get("wpe.weight"); // pos encode -> [length, dim]
@@ -44,9 +45,9 @@ public class GPT2Adapter implements ArchitectureAdapter {
         vocabLayer.setWeights(embedding.transpose());
         posEncodeLayer.setWeights(posEncode);
         
-        seq.add(new InputLayer(-1));
-        seq.add(embeddingLayer);
-        seq.add(posEncodeLayer);
+        specs.add(new InputLayer(-1).freeze());
+        specs.add(embeddingLayer.freeze());
+        specs.add(posEncodeLayer.freeze());
         
         for (int i = 0; i < layers; i++) {
             String prefix = String.format("h.%s.", i);
@@ -91,7 +92,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
             attention.setOutProj(attnOutWeight);
             attention.setOutBias(attnOutBias);
             
-            seq.add(decoder);
+            specs.add(decoder.freeze());
         }
         
         TokenSelectionLayer selectionLayer = new TokenSelectionLayer();
@@ -103,11 +104,11 @@ public class GPT2Adapter implements ArchitectureAdapter {
         normLayer.setWeights(lnGamma);
         normLayer.setBias(lnBeta);
         
-        seq.add(normLayer);
-        seq.add(selectionLayer);
-        seq.add(vocabLayer);
+        specs.add(normLayer.freeze());
+        specs.add(selectionLayer.freeze());
+        specs.add(vocabLayer.freeze());
         
-        return seq;
+        return specs.compile();
     }
     
     static class TokenSelectionLayer extends Layer {
@@ -118,7 +119,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
             Tensor input = inputs[0]; // [batch, seq_len, dim]
             int seqLength = input.shapeAt(1);
             
-            return new Tensor[] { input.slice(Range.all(), Range.point(seqLength - 1), Range.all()).squeeze(1) };
+            return new Tensor[] { input.slice(Range.all(), Range.point(seqLength - 1), Range.all()).squeezeGrad(1) };
         }
         
         @Override

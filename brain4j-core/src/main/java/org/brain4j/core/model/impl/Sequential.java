@@ -59,7 +59,8 @@ public class Sequential implements Model, ModelBlock {
                 input = input.reshape(1, input.elements()); // reshape to [batch, input_size]
             }
             
-            buffer[i] = cache.isTraining() ? input.withGrad() : input;
+            Tensor chosen = cache.isTraining() ? input.withGrad() : input;
+            buffer[i] = chosen.to(device);
         }
         
         for (Layer layer : layers) {

@@ -114,7 +114,7 @@ public class MaskedMultiHeadAttention extends MultiHeadAttention {
         }
 
         Range[] slicingRanges = {
-                Range.all(), Range.point(seqLength - 1), Range.all()
+            Range.all(), Range.point(seqLength - 1), Range.all()
         }; // [batch, 1, dim]
         Tensor cachedOutput = cache.get(outProj);
         Tensor cachedQKV = cache.get(weights);
