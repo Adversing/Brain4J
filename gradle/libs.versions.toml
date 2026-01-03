@@ -10,8 +10,6 @@ guava = "32.1.2-jre"
 commonsCsv = "1.10.0"
 junitBom = "6.0.0"
 junitPlatform = "1.10.2"
-junitJupiter = "5.10.2"
-jocl = "2.0.5"
 slf4j = "2.0.12"
 logback = "1.5.15"
 httpclient5 = "5.3.1"
@@ -54,7 +52,6 @@ junitJupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
 junitPlatform = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junitPlatform" }
 
 # Other libraries
-jocl = { group = "org.jocl", name = "jocl", version.ref = "jocl" }
 typesafeConfig = { group = "com.typesafe", name = "config", version.ref = "typesafeConfig" }
 pngj = { group = "ar.com.hjg", name = "pngj", version.ref = "pngj" }
 
