@@ -49,24 +49,29 @@ public class Lion extends Optimizer {
     public void initialize() {
         this.momentumHistory = new HashMap<>();
     }
-
-    public Map<Tensor, Tensor> momentumHistory() {
+    
+    public Map<Tensor, Tensor> getMomentumHistory() {
         return momentumHistory;
     }
-
-    public double beta1() {
+    
+    public Lion setMomentumHistory(Map<Tensor, Tensor> momentumHistory) {
+        this.momentumHistory = momentumHistory;
+        return this;
+    }
+    
+    public double getBeta1() {
         return beta1;
     }
-
+    
     public Lion setBeta1(double beta1) {
         this.beta1 = beta1;
         return this;
     }
-
-    public double beta2() {
+    
+    public double getBeta2() {
         return beta2;
     }
-
+    
     public Lion setBeta2(double beta2) {
         this.beta2 = beta2;
         return this;

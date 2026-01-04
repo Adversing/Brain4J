@@ -68,12 +68,12 @@ public class RMSNormLayer extends Layer {
     public int size() {
         return weights.elements();
     }
-
-    public double epsilon() {
+    
+    public double getEpsilon() {
         return epsilon;
     }
-
-    public RMSNormLayer epsilon(double epsilon) {
+    
+    public RMSNormLayer setEpsilon(double epsilon) {
         this.epsilon = epsilon;
         return this;
     }

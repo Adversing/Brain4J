@@ -16,22 +16,22 @@ public record LoadConfig(String split, boolean streaming, boolean forceDownload,
         private boolean forceDownload = false;
         private int maxFiles = Integer.MAX_VALUE;
 
-        public Builder split(String split) {
+        public Builder setSplit(String split) {
             this.split = split;
             return this;
         }
 
-        public Builder streaming(boolean streaming) {
+        public Builder setStreaming(boolean streaming) {
             this.streaming = streaming;
             return this;
         }
 
-        public Builder forceDownload(boolean forceDownload) {
+        public Builder setForceDownload(boolean forceDownload) {
             this.forceDownload = forceDownload;
             return this;
         }
 
-        public Builder maxFiles(int maxFiles) {
+        public Builder setMaxFiles(int maxFiles) {
             this.maxFiles = maxFiles;
             return this;
         }

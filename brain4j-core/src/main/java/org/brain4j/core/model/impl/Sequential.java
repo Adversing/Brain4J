@@ -110,7 +110,7 @@ public class Sequential implements Model, ModelBlock {
         String divider = Commons.getHeader(" Architecture ", Commons.HEADER_CHAR);
         
         stats.append(divider);
-        stats.append(pattern.formatted("Index", "Layer Type", "Parameters", "Shape", "Activation")).append("\n");
+        stats.append(pattern.formatted("Index", "Layer Type", "Parameters", "Biases", "Activation")).append("\n");
         
         AtomicLong totalWeights = new AtomicLong(0);
         AtomicLong totalBiases = new AtomicLong(0);

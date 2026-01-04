@@ -386,94 +386,130 @@ public class TransformerEncoder extends Layer {
 
         return result;
     }
-
-    public DenseLayer upProjection() {
+    
+    public DenseLayer getUpProjection() {
         return upProjection;
     }
-
-    public TransformerEncoder upProjection(DenseLayer upProjection) {
+    
+    public TransformerEncoder setUpProjection(DenseLayer upProjection) {
         this.upProjection = upProjection;
         return this;
     }
-
-    public DenseLayer downProjection() {
+    
+    public DenseLayer getGateProjection() {
+        return gateProjection;
+    }
+    
+    public TransformerEncoder setGateProjection(DenseLayer gateProjection) {
+        this.gateProjection = gateProjection;
+        return this;
+    }
+    
+    public DenseLayer getDownProjection() {
         return downProjection;
     }
-
-    public TransformerEncoder downProjection(DenseLayer downProjection) {
+    
+    public TransformerEncoder setDownProjection(DenseLayer downProjection) {
         this.downProjection = downProjection;
         return this;
     }
-
-    public Layer normalizer1() {
+    
+    public Layer getNormalizer1() {
         return normalizer1;
     }
-
-    public TransformerEncoder normalizer1(Layer normalizer1) {
+    
+    public TransformerEncoder setNormalizer1(Layer normalizer1) {
         this.normalizer1 = normalizer1;
         return this;
     }
-
-    public Layer normalizer2() {
+    
+    public Layer getNormalizer2() {
         return normalizer2;
     }
-
-    public TransformerEncoder normalizer2(Layer normalizer2) {
+    
+    public TransformerEncoder setNormalizer2(Layer normalizer2) {
         this.normalizer2 = normalizer2;
         return this;
     }
-
-    public DropoutLayer dropout() {
+    
+    public DropoutLayer getDropout() {
         return dropout;
     }
-
-    public TransformerEncoder dropout(DropoutLayer dropout) {
+    
+    public TransformerEncoder setDropout(DropoutLayer dropout) {
         this.dropout = dropout;
         return this;
     }
-
-    public MultiHeadAttention attention() {
+    
+    public MultiHeadAttention getAttention() {
         return attention;
     }
-
-    public TransformerEncoder attention(MultiHeadAttention attention) {
+    
+    public TransformerEncoder setAttention(MultiHeadAttention attention) {
         this.attention = attention;
         return this;
     }
-
-    public NormType normType() {
+    
+    public NormType getNormType() {
         return normType;
     }
-
-    public TransformerEncoder normType(NormType normType) {
+    
+    public TransformerEncoder setNormType(NormType normType) {
         this.normType = normType;
         return this;
     }
-
-    public int numHeads() {
+    
+    public int getNumHeads() {
         return numHeads;
     }
-
-    public TransformerEncoder numHeads(int numHeads) {
+    
+    public TransformerEncoder setNumHeads(int numHeads) {
         this.numHeads = numHeads;
         return this;
     }
-
-    public int embeddingDim() {
+    
+    public int getEmbeddingDim() {
         return embeddingDim;
     }
-
-    public TransformerEncoder embeddingDim(int embeddingDim) {
+    
+    public TransformerEncoder setEmbeddingDim(int embeddingDim) {
         this.embeddingDim = embeddingDim;
         return this;
     }
-
-    public double dropoutRate() {
+    
+    public double getDropoutRate() {
         return dropoutRate;
     }
-
-    public TransformerEncoder dropoutRate(double dropoutRate) {
+    
+    public TransformerEncoder setDropoutRate(double dropoutRate) {
         this.dropoutRate = dropoutRate;
+        return this;
+    }
+    
+    public boolean isUseGating() {
+        return useGating;
+    }
+    
+    public TransformerEncoder setUseGating(boolean useGating) {
+        this.useGating = useGating;
+        return this;
+    }
+    
+    public boolean isAttnQkvHasBias() {
+        return attnQkvHasBias;
+    }
+    
+    public TransformerEncoder setAttnQkvHasBias(boolean attnQkvHasBias) {
+        this.attnQkvHasBias = attnQkvHasBias;
+        return this;
+    }
+    
+    public boolean isAttnOutHasBias() {
+        return attnOutHasBias;
+    }
+    
+    public TransformerEncoder setAttnOutHasBias(boolean attnOutHasBias) {
+        this.attnOutHasBias = attnOutHasBias;
         return this;
     }
 }
