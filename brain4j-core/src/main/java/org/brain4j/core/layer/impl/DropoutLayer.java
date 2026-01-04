@@ -65,7 +65,7 @@ public class DropoutLayer extends Layer {
             
             result[i] = reshaped.mulGrad(tensorMask)
                 .div(1 - dropoutRate)
-                .reshape(input.shape());
+                .reshapeGrad(input.shape());
         }
         
         return result;

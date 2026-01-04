@@ -92,12 +92,12 @@ public class InputLayer extends Layer {
     
     @Override
     public boolean validInput(Tensor input) {
-        if (input == null || input.rank() > shape.length + 1) return false;
+        if (input == null || input.rank() - 1 > shape.length) return false;
 
         int[] inputShape = input.shape();
         // give leniency, we only care about the trailing part of the shape
         int offset = inputShape.length - shape.length;
-
+        
         for (int i = 0; i < shape.length; i++) {
             if (shape[i] == -1) continue;
             if (inputShape[i + offset] != shape[i]) return false;
