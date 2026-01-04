@@ -60,7 +60,12 @@ public class DropoutLayer extends Layer {
                 mask[j] = random.nextFloat() > dropoutRate ? 1 : 0;
             }
             
-            result[i] = input.mulGrad(Tensors.vector(mask)).div(1 - dropoutRate);
+            Tensor tensorMask = Tensors.vector(mask);
+            Tensor reshaped = input.reshapeGrad(input.elements());
+            
+            result[i] = reshaped.mulGrad(tensorMask)
+                .div(1 - dropoutRate)
+                .reshape(input.shape());
         }
         
         return result;

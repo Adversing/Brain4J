@@ -53,10 +53,10 @@ public class GPT2Adapter implements ArchitectureAdapter {
             String prefix = String.format("h.%s.", i);
             TransformerDecoder decoder = new TransformerDecoder(heads, embeddingDim, 0.0);
             
-            NormLayer norm1 = (NormLayer) decoder.normalizer1();
-            NormLayer norm2 = (NormLayer) decoder.normalizer2();
-            DenseLayer upProj = decoder.upProjection();
-            DenseLayer downProj = decoder.downProjection();
+            NormLayer norm1 = (NormLayer) decoder.getNormalizer1();
+            NormLayer norm2 = (NormLayer) decoder.getNormalizer2();
+            DenseLayer upProj = decoder.getUpProjection();
+            DenseLayer downProj = decoder.getDownProjection();
             
             Tensor ln1Gamma = weights.get(prefix + "ln_1.weight");
             Tensor ln1Beta = weights.get(prefix + "ln_1.bias");
@@ -83,7 +83,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
             Tensor attnOutWeight = weights.get(prefix + "attn.c_proj.weight");
             Tensor attnOutBias = weights.get(prefix + "attn.c_proj.bias");
             
-            MultiHeadAttention attention = decoder.attention();
+            MultiHeadAttention attention = decoder.getAttention();
             attention.setAttnQkvBias(true);
             attention.setAttnOutBias(true);
             
