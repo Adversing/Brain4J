@@ -58,7 +58,7 @@ Screenshots taken from the MNIST example.
 
 ## Contact
 
-This project is maintained by [xEcho1337](https://github.com/xEcho1337).
+This project is maintained by [xEcho1337](https://github.com/xEcho1337) and [Adversing](https://github.com/Adversing).
 
 Message `contact@brain4j.org` for business inquiries.
 
