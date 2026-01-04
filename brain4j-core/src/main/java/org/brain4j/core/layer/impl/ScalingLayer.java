@@ -22,7 +22,12 @@ public class ScalingLayer extends Layer {
 
     private ScalingLayer() {
     }
-
+    
+    public ScalingLayer(FeatureScaler scaler) {
+        this.scaler = scaler;
+        this.enabledInputs = null;
+    }
+    
     public ScalingLayer(FeatureScaler scaler, Set<Integer> enabledInputs) {
         this.scaler = scaler;
         this.enabledInputs = enabledInputs;
@@ -35,18 +40,22 @@ public class ScalingLayer extends Layer {
 
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        for (int i : enabledInputs) {
-            if (i < 0 || i >= inputs.length) {
-                throw Commons.illegalState("Enabled input index out of range: %s", i);
+        boolean scaleAll = enabledInputs == null;
+        
+        if (!scaleAll) {
+            for (int i : enabledInputs) {
+                if (i < 0 || i >= inputs.length) {
+                    throw Commons.illegalState("Enabled input index out of range: %s", i);
+                }
             }
         }
         
         Tensor[] outputs = new Tensor[inputs.length];
-
+        
         for (int i = 0; i < outputs.length; i++) {
             Tensor input = inputs[i];
             
-            if (!enabledInputs.contains(i)) {
+            if (!scaleAll && !enabledInputs.contains(i)) {
                 outputs[i] = input;
                 continue;
             }
