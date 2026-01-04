@@ -22,11 +22,11 @@ import java.util.Arrays;
  * </p>
  * <h2>Use example:</h2>
  * <blockquote><pre>{@code
- * Model model = Sequential.of(
+ * ModelSpecs specs = ModelSpecs.of(
  *     // Expects input with shape [..., 3, 4]
  *     new InputLayer(3, 4),
  *     new DenseLayer(16),
- *     new DenseLayer(10)
+ *     new DenseLayer(1)
  * );}
  * </pre></blockquote>
  *
