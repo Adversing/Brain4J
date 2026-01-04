@@ -236,7 +236,7 @@ public abstract class Layer implements ModelBlock {
     }
     
     /**
-     * Gets the total number of biases in this layer.
+     * Gets the totalEpochs number of biases in this layer.
      * @return 0 if bias is <code>null</code>, otherwise the number of elements in the bias tensor
      */
     public int totalBiases() {
@@ -246,7 +246,7 @@ public abstract class Layer implements ModelBlock {
     }
 
     /**
-     * Gets the total number of weights in this layer.
+     * Gets the totalEpochs number of weights in this layer.
      * @return 0 if the weights is <code>null</code>, otherwise the number of elements in the weights tensor
      */
     public int totalWeights() {

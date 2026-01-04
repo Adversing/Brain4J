@@ -38,7 +38,7 @@ public class Sequential implements Model, ModelBlock {
         this.seed = seed;
         
         if (!(layers.getFirst() instanceof InputLayer)) {
-            Commons.illegalArgument("First layer in the model must be an InputLayer instance!");
+            throw Commons.illegalArgument("First layer in the model must be an InputLayer instance!");
         }
         
         initLayers();
@@ -52,7 +52,7 @@ public class Sequential implements Model, ModelBlock {
             Tensor input = inputs[i];
             
             if (input == null || input.rank() == 0) {
-                Commons.illegalArgument("Input at %s is either null or has dimension of 0!", i);
+                throw Commons.illegalArgument("Input at %s is either null or has dimension of 0!", i);
             }
             
             if (input.rank() < 2) {

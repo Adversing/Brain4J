@@ -4,10 +4,7 @@ import org.brain4j.core.layer.Layer;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.monitor.Monitor;
-import org.brain4j.core.training.events.BatchEnd;
-import org.brain4j.core.training.events.BatchStart;
-import org.brain4j.core.training.events.EpochEnd;
-import org.brain4j.core.training.events.EpochStart;
+import org.brain4j.core.training.events.*;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.commons.Batch;
@@ -33,16 +30,21 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
     
     public void fit(ListDataSource dataSource, int epochs) {
         for (int i = 0; i < epochs; i++) {
-            EpochStart start = new EpochStart(this, i, epochs);
-            EpochEnd end = new EpochEnd(this, i, epochs);
-            
-            monitors.forEach(x -> x.onEvent(start));
-            fit(dataSource);
-            monitors.forEach(x -> x.onEvent(end));
+            fitEpoch(dataSource, i, epochs);
         }
+        
+        monitors.forEach(x -> x.onEvent(new TrainingEnd()));
     }
 
-    public void fit(ListDataSource dataSource) {
+    private void fit(ListDataSource dataSource) {
+        fitEpoch(dataSource, 0, 1);
+        monitors.forEach(x -> x.onEvent(new TrainingEnd()));
+    }
+    
+    private void fitEpoch(ListDataSource dataSource, int index, int total) {
+        EpochStart start = new EpochStart(this, index, total);
+        monitors.forEach(x -> x.onEvent(start));
+        
         dataSource.reset();
 
         while (dataSource.hasNext()) {
@@ -53,18 +55,20 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
         Updater updater = config.updater();
 
         updater.postFit(optimizer.getLearningRate(), dataSource.getSize());
+        
+        EpochEnd end = new EpochEnd(this, index, total);
+        monitors.forEach(x -> x.onEvent(end));
     }
 
     public void fitBatch(ListDataSource dataSource) {
-        int current = dataSource.getCursor(), total = dataSource.getBatches();
+        int current = dataSource.getCursor();
+        int total = dataSource.getBatches();
         Batch batch = dataSource.nextBatch();
 
         Tensor[] inputs = batch.getFirst();
         Tensor[] targets = batch.getSecond();
         
         BatchStart start = new BatchStart(this, current, total);
-        BatchEnd end = new BatchEnd(this, current, total);
-        
         monitors.forEach(x -> x.onEvent(start));
         
         StatesCache cache = StatesCache.withTraining();
@@ -87,6 +91,8 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
         updater.postBatch(optimizer.getLearningRate(), elements);
 
         layers.forEach(Layer::resetGrad);
+        
+        BatchEnd end = new BatchEnd(this, current, total);
         monitors.forEach(x -> x.onEvent(end));
     }
 }

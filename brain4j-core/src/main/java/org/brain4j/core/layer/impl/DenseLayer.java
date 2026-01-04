@@ -89,11 +89,9 @@ public class DenseLayer extends Layer {
             if (bias != null) output = output.addGrad(bias);
 
             beforeActivation[i] = output;
-            result[i] = activation instanceof LinearActivation
-                ? output : output.activateGrad(activation);
+            result[i] = output.activateGrad(activation);
         }
-
-
+        
         cache.rememberOutput(this, beforeActivation);
         return result;
     }

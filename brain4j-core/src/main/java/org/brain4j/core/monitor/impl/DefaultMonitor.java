@@ -32,8 +32,9 @@ public final class DefaultMonitor implements Monitor {
     public void onEvent(TrainingEvent event) {
         switch (event) {
             case BatchStart ignored -> this.batchStart = System.nanoTime();
-            case BatchEnd(Trainer ignored, int batch, int totalBatches) -> batchCompleted(batch, totalBatches);
-            case EpochStart(Trainer ignored, int epoch, int total) -> epochStarted(epoch, total);
+            case BatchEnd(Trainer trainer, int batch, int totalBatches) -> batchCompleted(batch, totalBatches);
+            case EpochStart(Trainer trainer, int epoch, int totalEpochs) -> epochStarted(epoch, totalEpochs);
+            case TrainingEnd() -> trainingEnd();
             default -> {}
         }
     }
@@ -52,13 +53,19 @@ public final class DefaultMonitor implements Monitor {
         double average = totalTime / Math.min(batch, timeWindow);
         
         if (Brain4J.isLogging()) {
-            printProgress(batch, total, average);
+            printProgress(batch + 1, total, average);
         }
     }
     
     public void epochStarted(int epoch, int total) {
         this.epoch = epoch;
         this.totalEpochs = total;
+    }
+    
+    private void trainingEnd() {
+        if (!Brain4J.isLogging()) return;
+        
+        System.out.println(); // go to new line to avoid future formatting issues
     }
     
     private void printProgress(int batch, int totalBatches, double tookMs) {
