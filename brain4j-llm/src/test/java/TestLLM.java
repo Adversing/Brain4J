@@ -4,12 +4,9 @@ import org.brain4j.llm.core.model.LLM;
 import org.brain4j.llm.core.model.SamplingConfig;
 import org.brain4j.math.gpu.device.Device;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class TestModel {
+public class TestLLM {
 
     public static void main(String[] args) throws Exception {
         LLM llm = Models.loadModel("gpt2");
@@ -18,12 +15,6 @@ public class TestModel {
         TokenHandler handler = new TokenHandler();
         String prompt = "Hello, my name is";
 
-        Device device = Brain4J.firstDevice();
-        if (device != null) {
-            System.out.printf("Using device %s %n", device.name());
-            llm.move(device);
-        }
-        
         llm.getModel().summary();
         llm.chat(prompt, config, handler);
         handler.printStats();
