@@ -4,6 +4,7 @@ import org.brain4j.core.Brain4J;
 import org.brain4j.core.monitor.Monitor;
 import org.brain4j.core.training.Trainer;
 import org.brain4j.core.training.events.*;
+import org.brain4j.core.utils.Colored;
 import org.brain4j.math.commons.Commons;
 
 import java.util.ArrayList;
@@ -78,14 +79,17 @@ public final class DefaultMonitor implements Monitor {
         
         String timeStr = Commons.formatDuration(tookInSeconds);
         
-        String progressBar = Commons.createProgressBar(percentage, progressBarLength, barChar, RESET + barChar);
-        String progress = Commons.renderText(" <green>%s ", progressBar);
+        String progressBar = Commons.createProgressBar(
+            percentage, progressBarLength,
+            "<green>", barChar,
+            RESET, barChar
+        );
         
-        String intro = Commons.renderText("Epoch <yellow>%s<white>/<yellow>%s", epoch + 1, totalEpochs);
-        String batches = Commons.renderText("<blue>%s<white>/<blue>%s <white>batches", batch, totalBatches);
-        String time = Commons.renderText("<gray> [%s/batch]<reset>", timeStr);
+        String intro = Colored.renderText("Epoch <yellow>%s<white>/<yellow>%s ", epoch + 1, totalEpochs);
+        String batches = Colored.renderText("<blue>%s<white>/<blue>%s <white>batches", batch, totalBatches);
+        String time = Colored.renderText("<gray> [%s/batch]<reset>", timeStr);
         
-        String message = intro + progress + batches + time;
+        String message = intro + progressBar + batches + time;
         System.out.print("\r" + message);
     }
 }

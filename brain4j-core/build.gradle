@@ -25,7 +25,6 @@ test {
 
 shadowJar {
     archiveFileName = "brain4j-core-${parent.version}.jar"
-    relocate("com.google", "org.brain4j.relocated.google")
     exclude "org/brain4j/math/**"
 }
 

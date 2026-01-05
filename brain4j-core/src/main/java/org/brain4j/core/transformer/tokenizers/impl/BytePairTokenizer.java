@@ -222,7 +222,7 @@ public class BytePairTokenizer implements Tokenizer {
         }
     }
 
-    public void fit(List<String> corpus, int numMerges, int evaluateDelay) throws InterruptedException {
+    public void fit(List<String> corpus, int numMerges, int evaluateDelay) {
         if (merges.isEmpty()) {
             for (String word : corpus) {
                 String token = String.join(" ", word.split(""));
@@ -352,26 +352,16 @@ public class BytePairTokenizer implements Tokenizer {
         double percentage = (double) iteration / merges;
 
         String barChar = Commons.HEADER_CHAR;
-        int remaining = merges - iteration;
-
         double seconds = tookMs / 1000;
-        double remainingTime = seconds * remaining;
 
-        String remainingTimeStr = Commons.formatDuration(remainingTime);
         String timeStr = Commons.formatDuration(seconds);
-
-        String progressMsg = WHITE + "[%s/%s] ";
-        String progressBar = LIGHT_GREEN + Commons.createProgressBar(
-                percentage,
-                progressBarLength,
-                barChar,
-                RESET + barChar
+        String progressBar = Commons.createProgressBar(
+            percentage, progressBarLength,
+            "<green>", barChar,
+            RESET, barChar
         );
-
-        String percentual = LIGHT_YELLOW + " %.2f%%" + RESET;
-        String time = GRAY + " [%s/epoch | %s remaining]" + RESET;
-        String message = String.format(progressMsg + progressBar + percentual + time,
-                iteration, merges, percentage * 100, timeStr, remainingTimeStr);
+        String format = "<reset>[%s/%s] %s <gray>[%s/iter]<reset>";
+        String message = String.format(format, iteration, merges, progressBar, timeStr);
 
         System.out.print(message);
 
@@ -383,8 +373,8 @@ public class BytePairTokenizer implements Tokenizer {
     private void printEvaluation(int iteration, int total) {
         System.out.println();
 
-        String symbolsMsg = "Symbols: " + LIGHT_BLUE + "%,d" + RESET;
-        String tokensMsg = "Tokens: " + LIGHT_GREEN + "%,d" + RESET;
+        String symbolsMsg = "Symbols: <blue>%,d<reset>";
+        String tokensMsg = "Tokens: <green>%,d<reset>";
 
         String message = "[%s/%s] " + symbolsMsg + " | " + tokensMsg + "\n";
         String formatted = String.format(message, iteration, total, merges.size(), totalSymbols());
@@ -399,19 +389,19 @@ public class BytePairTokenizer implements Tokenizer {
                 .sum();
     }
     
-    public Normalizer normalizer() {
+    public Normalizer getNormalizer() {
         return normalizer;
     }
     
-    public List<AddedToken> addedTokens() {
+    public List<AddedToken> getAddedTokens() {
         return addedTokens;
     }
     
-    public Map<String, Integer> vocab() {
+    public Map<String, Integer> getVocab() {
         return Collections.unmodifiableMap(vocab);
     }
     
-    public Map<String, String[]> merges() {
+    public Map<String, String[]> getMerges() {
         return Collections.unmodifiableMap(merges);
     }
 

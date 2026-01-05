@@ -33,15 +33,6 @@ public class Commons {
     private static final int[] EXP_TABLE = new int[64];
     private static final int[] MANT_TABLE = new int[2048];
     private static final int[] OFF_TABLE = new int[64];
-    private static final Map<String, String> COLORS = Map.of(
-        "yellow", LIGHT_YELLOW,
-        "white", WHITE,
-        "blue", LIGHT_BLUE,
-        "green", LIGHT_GREEN,
-        "gray", GRAY,
-        "magenta", MAGENTA,
-        "reset", RESET
-    );
 
     static {
         precomputeTables();
@@ -98,7 +89,9 @@ public class Commons {
     public static String createProgressBar(
         double percent,
         int characterCount,
+        String barPrefix,
         String barCharacter,
+        String emptyPrefix,
         String emptyCharacter
     ) {
         if (percent < 0 || percent > 1) {
@@ -108,7 +101,7 @@ public class Commons {
         int fill = (int) Math.round(percent * characterCount);
         int remaining = characterCount - fill;
 
-        return barCharacter.repeat(fill) + emptyCharacter.repeat(remaining);
+        return barPrefix + barCharacter.repeat(fill) + emptyPrefix + emptyCharacter.repeat(remaining);
     }
     
     /**
@@ -161,29 +154,6 @@ public class Commons {
         // ex: 4 & 3 = 0b100 & 0b011 = 0b000 = 0
         // ex: 5 & 4 = 0b101 & 0b100 = 0b100 = 4
         return n > 0 && (n & (n - 1)) == 0;
-    }
-    
-    /**
-     * Renders a formatted string with inline color tags.
-     * <p>
-     * The method first applies {@link String#format(String, Object...)} using the
-     * provided arguments, then replaces color placeholders of the form
-     * {@code <color>} with their corresponding ANSI escape codes.
-     * <p>
-     * A terminal reset code is always appended at the end of the returned string.
-     *
-     * @param template the format string containing optional color tags
-     * @param args arguments referenced by the format specifiers
-     * @return the rendered string with ANSI color codes applied
-     */
-    public static String renderText(String template, Object... args) {
-        String formatted = String.format(template, args);
-        
-        for (var entry : COLORS.entrySet()) {
-            formatted = formatted.replace("<" + entry.getKey() + ">", entry.getValue());
-        }
-        
-        return formatted + RESET;
     }
     
     /**

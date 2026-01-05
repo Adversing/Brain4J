@@ -29,6 +29,7 @@ import java.util.List;
 public class Brain4J {
 
     private static boolean logging = true;
+    private static boolean disableColors = false;
     private static int decimalDigits = 4;
 
     /**
@@ -44,7 +45,7 @@ public class Brain4J {
      * Indicates whether training progress and system information
      * are currently being logged to the console.
      *
-     * @return {@code true} if logging is enabled; {@code false} otherwise
+     * @return {@code true} if logging is enabled; {@code false} by default
      */
     public static boolean isLogging() {
         return logging;
@@ -59,7 +60,23 @@ public class Brain4J {
     public static void setLogging(boolean logging) {
         Brain4J.logging = logging;
     }
-
+    
+    /**
+     * Indicates whether the ANSI color codes are active or not.
+     * @return {@code true} if the colors are disabled; {@code false} by default
+     */
+    public static boolean isDisableColors() {
+        return disableColors;
+    }
+    
+    /**
+     * Sets whether the ANSI color codes should be active.
+     * @param disableColors the flag to enable/disable colors
+     */
+    public static void setDisableColors(boolean disableColors) {
+        Brain4J.disableColors = disableColors;
+    }
+    
     /**
      * Returns the numeric precision used when displaying
      * loss or metric values during training.

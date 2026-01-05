@@ -8,6 +8,7 @@ import org.brain4j.core.training.Trainer;
 import org.brain4j.core.training.events.EpochEnd;
 import org.brain4j.core.training.events.TrainingEvent;
 import org.brain4j.core.training.wrappers.EvaluationResult;
+import org.brain4j.core.utils.Colored;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.ListDataSource;
 
@@ -41,12 +42,12 @@ public class EvalMonitor implements Monitor {
         double f1 = result.f1Score() * 100.0;
         double accuracy = result.accuracy() * 100.0;
         
-        String lossMsg = Commons.renderText("Loss: <magenta>%." + Brain4J.getDecimalDigits() + "f<reset>", result.loss());
+        String lossMsg = Colored.renderText("Loss: <magenta>%." + Brain4J.getDecimalDigits() + "f<reset>", result.loss());
         String firstMetric = regression
-            ? Commons.renderText(" | R^2 Score: <blue>%.2f<reset>", r2)
-            : Commons.renderText(" | Accuracy: <blue>%.2f%%<reset>", accuracy);
-        String secondMetric = regression ? "" : Commons.renderText(" | F1-Score: <green>%.2f%%<reset>", f1);
-        String prefix = Commons.renderText("Epoch <yellow>%s<white>/<yellow>%s<white> ", epoch + 1, epochs);
+            ? Colored.renderText(" | R^2 Score: <blue>%.2f<reset>", r2)
+            : Colored.renderText(" | Accuracy: <blue>%.2f%%<reset>", accuracy);
+        String secondMetric = regression ? "" : Colored.renderText(" | F1-Score: <green>%.2f%%<reset>", f1);
+        String prefix = Colored.renderText("Epoch <yellow>%s<white>/<yellow>%s<white> ", epoch + 1, epochs);
         
         String message = prefix + lossMsg + firstMetric + secondMetric + "\n";
         System.out.print("\n\r" + message);
