@@ -8,6 +8,7 @@ import org.brain4j.math.activation.Activations;
 import org.brain4j.math.activation.impl.LinearActivation;
 import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.tensor.Tensor;
+import org.brain4j.math.tensor.impl.GpuTensor;
 
 import java.util.random.RandomGenerator;
 
@@ -69,7 +70,6 @@ public class DenseLayer extends Layer {
         // Shape: [input_size, output_size]
         this.weights = Tensors.zeros(previous.size(), dimension).withGrad();
         this.bias = Tensors.zeros(dimension).withGrad();
-
     }
 
     @Override

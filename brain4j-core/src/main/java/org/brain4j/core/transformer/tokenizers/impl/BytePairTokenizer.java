@@ -359,7 +359,7 @@ public class BytePairTokenizer implements Tokenizer {
         String progressBar = Commons.createProgressBar(
             percentage, progressBarLength,
             "<green>", barChar,
-            RESET, barChar
+            "<reset>", barChar
         );
         String format = "<reset>[%s/%s] %s <gray>[%s/iter]<reset>";
         String message = String.format(format, iteration, merges, progressBar, timeStr);

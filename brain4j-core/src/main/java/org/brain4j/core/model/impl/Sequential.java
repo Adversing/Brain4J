@@ -93,7 +93,9 @@ public class Sequential implements Model, ModelBlock {
     
     @Override
     public Model fork(Device device) {
-        return new Sequential(specs, device, seed);
+        Model copy = new Sequential(specs, device, seed);
+        copy.getLayers().forEach(x -> x.toDevice(device));
+        return copy;
     }
     
     @Override

@@ -82,7 +82,7 @@ public final class DefaultMonitor implements Monitor {
         String progressBar = Commons.createProgressBar(
             percentage, progressBarLength,
             "<green>", barChar,
-            RESET, barChar
+            "<reset>", barChar
         ) + " ";
         
         String intro = Colored.renderText("Epoch <yellow>%s<white>/<yellow>%s ", epoch + 1, totalEpochs);

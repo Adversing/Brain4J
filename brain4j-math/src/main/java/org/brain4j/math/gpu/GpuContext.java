@@ -15,10 +15,7 @@ public class GpuContext {
     public static void register(Device device, String kernelName, long program) {
         kernelCache.computeIfAbsent(device, d -> new HashMap<>())
             .compute(kernelName, (name, existingKernel) -> {
-                if (existingKernel != null) {
-                    
-                    throw new IllegalArgumentException("Kernel " + name + " already initialized for device " + device);
-                }
+                if (existingKernel != null) return existingKernel;
 
                 int[] err = new int[1];
                 long result = CL10.clCreateKernel(program, name, err);

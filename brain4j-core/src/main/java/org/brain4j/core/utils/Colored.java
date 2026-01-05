@@ -43,6 +43,6 @@ public class Colored {
             formatted = formatted.replace("<" + entry.getKey() + ">", value);
         }
         
-        return formatted + RESET;
+        return formatted;
     }
 }
