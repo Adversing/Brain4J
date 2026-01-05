@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import org.brain4j.core.transformer.tokenizers.model.AddedToken;
 import org.brain4j.core.transformer.tokenizers.model.Normalizer;
 import org.brain4j.core.transformer.tokenizers.model.Tokenizer;
+import org.brain4j.core.utils.Colored;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.tensor.Tensor;
@@ -363,7 +364,7 @@ public class BytePairTokenizer implements Tokenizer {
         String format = "<reset>[%s/%s] %s <gray>[%s/iter]<reset>";
         String message = String.format(format, iteration, merges, progressBar, timeStr);
 
-        System.out.print(message);
+        System.out.print(Colored.renderText(message));
 
         if (iteration % evaluateDelay == 0) {
             printEvaluation(iteration, merges);

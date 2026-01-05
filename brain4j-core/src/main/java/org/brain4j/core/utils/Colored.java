@@ -45,5 +45,4 @@ public class Colored {
         
         return formatted + RESET;
     }
-    
 }

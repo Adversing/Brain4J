@@ -83,13 +83,13 @@ public final class DefaultMonitor implements Monitor {
             percentage, progressBarLength,
             "<green>", barChar,
             RESET, barChar
-        );
+        ) + " ";
         
         String intro = Colored.renderText("Epoch <yellow>%s<white>/<yellow>%s ", epoch + 1, totalEpochs);
         String batches = Colored.renderText("<blue>%s<white>/<blue>%s <white>batches", batch, totalBatches);
         String time = Colored.renderText("<gray> [%s/batch]<reset>", timeStr);
         
-        String message = intro + progressBar + batches + time;
+        String message = Colored.renderText(intro + progressBar + batches + time);
         System.out.print("\r" + message);
     }
 }
