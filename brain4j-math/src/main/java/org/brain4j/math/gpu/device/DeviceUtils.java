@@ -116,7 +116,7 @@ public class DeviceUtils {
     public static String readKernelSource(String resourcePath) {
         try (InputStream input = GpuTensor.class.getResourceAsStream(resourcePath)) {
             if (input == null) {
-                Commons.illegalArgument("Resource not found: %s", resourcePath);
+                throw Commons.illegalArgument("Resource not found: %s", resourcePath);
             }
             return new String(input.readAllBytes(), UTF_8);
         } catch (IOException e) {

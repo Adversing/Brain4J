@@ -2,11 +2,11 @@ package org.brain4j.math.gpu.memory;
 
 import org.brain4j.math.gpu.GpuContext;
 
-public record GpuQueue(long pointer, boolean shouldClose) implements AutoCloseable {
+public record GpuQueue(long pointer, boolean temporary) implements AutoCloseable {
     
     @Override
     public void close() {
-        if (!shouldClose) return;
+        if (!temporary) return;
         
         GpuContext.finishAndRelease(pointer);
     }

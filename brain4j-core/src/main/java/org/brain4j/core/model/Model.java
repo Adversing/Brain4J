@@ -33,7 +33,7 @@ public interface Model extends ModelBlock {
      * @return the first output tensor produced by the model
      */
     default Tensor predict(Tensor input) {
-        return predict(new StatesCache(false, getDevice()), input)[0];
+        return predict(new StatesCache(false), input)[0];
     }
     
     /**

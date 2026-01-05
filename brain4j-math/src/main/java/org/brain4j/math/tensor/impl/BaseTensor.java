@@ -501,11 +501,11 @@ public abstract class BaseTensor implements Tensor, Cloneable {
 
     @Override
     public Tensor broadcast(int[] targetShape) {
-
         if (Arrays.equals(shape, targetShape)) {
             return this;
         }
-
+        
+        // TODO: GPU kernel
         int targetRank = targetShape.length;
         int srcRank = shape.length;
 

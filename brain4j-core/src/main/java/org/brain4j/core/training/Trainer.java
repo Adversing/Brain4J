@@ -10,6 +10,8 @@ import org.brain4j.core.training.updater.Updater;
 import org.brain4j.math.commons.Batch;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.gpu.GpuContext;
+import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 
 import java.util.List;
@@ -49,6 +51,7 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
 
         while (dataSource.hasNext()) {
             fitBatch(dataSource);
+//            System.gc();
         }
 
         Optimizer optimizer = config.optimizer();
@@ -71,7 +74,13 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
         BatchStart start = new BatchStart(this, current, total);
         monitors.forEach(x -> x.onEvent(start));
         
-        StatesCache cache = StatesCache.withTraining();
+        Device device = model.getDevice();
+        StatesCache cache = new StatesCache(true);
+        
+        if (device != null) {
+            device.createQueue();
+        }
+
         Tensor[] outputs = model.predict(cache, batch.getFirst());
 
         Optimizer optimizer = config.optimizer();
@@ -85,12 +94,18 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
 
         int elements = 0;
 
-        for (Tensor input : inputs) elements += input.shapeAt(0);
+        for (Tensor input : inputs) {
+            elements += input.shapeAt(0);
+        }
 
         optimizer.postBatch();
         updater.postBatch(optimizer.getLearningRate(), elements);
 
         layers.forEach(Layer::resetGrad);
+        
+        if (device != null) {
+            GpuContext.finishAndRelease(device);
+        }
         
         BatchEnd end = new BatchEnd(this, current, total);
         monitors.forEach(x -> x.onEvent(end));

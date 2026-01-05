@@ -1,6 +1,7 @@
 package org.brain4j.math.gpu.device;
 
 import org.brain4j.math.gpu.memory.GpuQueue;
+import org.brain4j.math.gpu.memory.TempBuffer;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 
@@ -79,30 +80,30 @@ public class Device {
         return DeviceUtils.deviceName(device);
     }
 
-    public long createBuffer(long flags, float[] data) {
+    public TempBuffer createBuffer(long flags, float[] data) {
         int[] err = new int[1];
         long buffer = clCreateBuffer(context, flags, data, err);
         
         DeviceUtils.checkError("create_buffer", err[0]);
-        return buffer;
+        return new TempBuffer(buffer);
     }
 
-    public long createBuffer(long flags, long dataSize) {
+    public TempBuffer createBuffer(long flags, long dataSize) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer err = stack.mallocInt(1);
             long buffer = clCreateBuffer(context, flags, dataSize, err);
             
             DeviceUtils.checkError("create_buffer", err.get(0));
-            return buffer;
+            return new TempBuffer(buffer);
         }
     }
 
-    public long createBuffer(long flags, int[] data) {
+    public TempBuffer createBuffer(long flags, int[] data) {
         int[] err = new int[1];
         long buffer = clCreateBuffer(context, flags, data, err);
         
         DeviceUtils.checkError("create_buffer", err[0]);
-        return buffer;
+        return new TempBuffer(buffer);
     }
 
     public void createQueue() {

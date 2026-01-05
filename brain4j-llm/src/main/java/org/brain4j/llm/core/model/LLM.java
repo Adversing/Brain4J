@@ -17,6 +17,7 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,7 +89,7 @@ public class LLM implements InferenceProvider {
         List<String> tokens = tokenizer.splitTokens(prompt);
         Tensor input = tokenizer.encode(tokens);
 
-        StatesCache cache = new StatesCache(model.getDevice());
+        StatesCache cache = StatesCache.withTraining();
         StringBuilder response = new StringBuilder(prompt);
 
         int bosToken = tokenizer.bosTokenId();

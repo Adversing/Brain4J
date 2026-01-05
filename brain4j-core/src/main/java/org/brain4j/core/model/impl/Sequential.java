@@ -13,6 +13,7 @@ import org.brain4j.math.commons.Batch;
 import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.ListDataSource;
 import org.brain4j.math.data.StatesCache;
+import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
@@ -48,6 +49,10 @@ public class Sequential implements Model, ModelBlock {
     public Tensor[] predict(StatesCache cache, Tensor... inputs) {
         Tensor[] buffer = new Tensor[inputs.length];
         
+        if (device != null && !cache.isTraining()) {
+            device.createQueue();
+        }
+        
         for (int i = 0; i < buffer.length; i++) {
             Tensor input = inputs[i];
             
@@ -65,6 +70,10 @@ public class Sequential implements Model, ModelBlock {
         
         for (Layer layer : layers) {
             buffer = layer.forward(cache, buffer);
+        }
+        
+        if (device != null && !cache.isTraining()) {
+            GpuContext.finishAndRelease(device);
         }
         
         return buffer;
@@ -93,8 +102,15 @@ public class Sequential implements Model, ModelBlock {
     
     @Override
     public Model fork(Device device) {
-        Model copy = new Sequential(specs, device, seed);
-        copy.getLayers().forEach(x -> x.toDevice(device));
+        Sequential copy = new Sequential(specs, device, seed);
+//        copy.getLayers().forEach(x -> x.toDevice(device));
+        
+        List<Layer> copiedLayers = layers.stream().map(Layer::clone).toList();
+        copiedLayers.forEach(x -> x.toDevice(device));
+
+        copy.layers.clear();
+        copy.layers.addAll(copiedLayers);
+        
         return copy;
     }
     
@@ -160,14 +176,14 @@ public class Sequential implements Model, ModelBlock {
         Tensor[] inputs = batch.getFirst();
         Tensor[] labels = batch.getSecond();
         
-        Tensor[] outputs = predict(new StatesCache(false, device), inputs);
+        Tensor[] outputs = predict(new StatesCache(false), inputs);
         
         for (Tensor input : inputs) {
             int batchSize = input.shapeAt(0);
             
             for (int i = 0; i < outputs.length; i++) {
                 Tensor output = outputs[i].to(null); // GPU -> CPU
-                Tensor label = labels[i].to(null); // GPU -> CPU
+                Tensor label = labels[i].to(null);   // GPU -> CPU
                 
                 for (int b = 0; b < batchSize; b++) {
                     Range range = Range.point(b);

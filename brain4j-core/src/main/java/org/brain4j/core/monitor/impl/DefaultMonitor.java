@@ -51,7 +51,7 @@ public final class DefaultMonitor implements Monitor {
         }
         
         double totalTime = times.stream().reduce(Double::sum).orElse(0.0);
-        double average = totalTime / Math.min(batch, timeWindow);
+        double average = totalTime / Math.min(batch + 1, timeWindow);
         
         if (Brain4J.isLogging()) {
             printProgress(batch + 1, total, average);
@@ -84,12 +84,13 @@ public final class DefaultMonitor implements Monitor {
             "<green>", barChar,
             "<reset>", barChar
         ) + " ";
+        String progress = Colored.renderText(progressBar);
         
         String intro = Colored.renderText("Epoch <yellow>%s<white>/<yellow>%s ", epoch + 1, totalEpochs);
         String batches = Colored.renderText("<blue>%s<white>/<blue>%s <white>batches", batch, totalBatches);
         String time = Colored.renderText("<gray> [%s/batch]<reset>", timeStr);
         
-        String message = Colored.renderText(intro + progressBar + batches + time);
+        String message = intro + progress + batches + time;
         System.out.print("\r" + message);
     }
 }

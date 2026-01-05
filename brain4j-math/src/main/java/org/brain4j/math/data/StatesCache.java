@@ -1,6 +1,5 @@
 package org.brain4j.math.data;
 
-import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 
 import java.util.HashMap;
@@ -11,27 +10,21 @@ public class StatesCache {
     private final Map<Object, Tensor> tensorCache;
     private final Map<Object, Tensor[]> inputStates;
     private final Map<Object, Tensor[]> outputStates;
-    private final Device device;
     private final boolean training;
 
     public static StatesCache withTraining() {
-        return new StatesCache(true, null);
+        return new StatesCache(true);
     }
 
     public StatesCache() {
-        this(false, null);
+        this(false);
     }
 
-    public StatesCache(Device device) {
-        this(false, device);
-    }
-
-    public StatesCache(boolean training, Device device) {
+    public StatesCache(boolean training) {
         this.training = training;
         this.inputStates = new HashMap<>();
         this.outputStates = new HashMap<>();
         this.tensorCache = new HashMap<>();
-        this.device = device;
     }
 
     public boolean isTraining() {
@@ -60,10 +53,6 @@ public class StatesCache {
 
     public void rememberOutput(Object layer, Tensor... state) {
         outputStates.put(layer, state);
-    }
-
-    public Device getDevice() {
-        return device;
     }
 }
 

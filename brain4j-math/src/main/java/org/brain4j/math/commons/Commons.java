@@ -271,7 +271,7 @@ public class Commons {
         double normalized = bytes / divisor; // ex. 12345 -> 1.2345
 
         if (exponent >= prefixes.length) {
-            Commons.illegalArgument("Input number is too big to be parsed!");
+            throw Commons.illegalArgument("Input number is too big to be parsed!");
         }
 
         return "%.2f %s".formatted(normalized, prefixes[exponent]);

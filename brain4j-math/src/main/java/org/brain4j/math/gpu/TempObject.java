@@ -11,9 +11,11 @@ public class TempObject<T> {
     private final AtomicInteger refCount = new AtomicInteger(1);
 
     private T value;
+    private final Runnable cleanerTask;
     
     public TempObject(T value, Runnable cleanerTask) {
         this.value = value;
+        this.cleanerTask = cleanerTask;
         CLEANER.register(this, new CleanerTask(cleanerTask, refCount));
     }
     
@@ -35,6 +37,11 @@ public class TempObject<T> {
     }
     
     public void release() {
+        if (refCount.get() == 0) {
+            cleanerTask.run();
+            return;
+        }
+        
         refCount.decrementAndGet();
     }
 

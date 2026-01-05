@@ -6,6 +6,8 @@ import org.lwjgl.opencl.CL10;
 public class TempBuffer extends TempObject<Long> {
     
     public TempBuffer(long value) {
-        super(value, () -> CL10.clReleaseMemObject(value));
+        super(value, () -> {
+            CL10.clReleaseMemObject(value);
+        });
     }
 }

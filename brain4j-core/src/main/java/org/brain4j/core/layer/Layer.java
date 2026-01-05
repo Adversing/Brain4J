@@ -38,7 +38,7 @@ import java.util.random.RandomGenerator;
  *
  * @author xEcho1337
  */
-public abstract class Layer implements ModelBlock {
+public abstract class Layer implements ModelBlock, Cloneable {
 
     protected Activation activation = new LinearActivation();
     protected GradientClipper clipper = new HardClipper(5);
@@ -316,5 +316,22 @@ public abstract class Layer implements ModelBlock {
     public Layer setFrozen(boolean frozen) {
         this.frozen = frozen;
         return this;
+    }
+    
+    @Override
+    public Layer clone() {
+        try {
+            Layer clone = (Layer) super.clone();
+            
+            if (weights != null) {
+                clone.weights = weights.clone();
+                clone.weights.setAutogradContext(weights.getAutogradContext());
+            }
+            if (bias != null) clone.bias = bias.clone();
+            
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

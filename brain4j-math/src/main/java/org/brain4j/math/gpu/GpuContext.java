@@ -53,6 +53,7 @@ public class GpuContext {
     }
 
     public static void finishAndRelease(long commandQueue) {
+//        System.out.println("Closing command queue " + commandQueue);
         DeviceUtils.checkError("finish", CL10.clFinish(commandQueue));
         DeviceUtils.checkError("release_command_queue", CL10.clReleaseCommandQueue(commandQueue));
     }
