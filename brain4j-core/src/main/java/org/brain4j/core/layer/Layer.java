@@ -15,10 +15,7 @@ import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.weightsinit.WeightInitialization;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.random.RandomGenerator;
 
 /**
@@ -325,9 +322,13 @@ public abstract class Layer implements ModelBlock, Cloneable {
             
             if (weights != null) {
                 clone.weights = weights.clone();
-                clone.weights.setAutogradContext(weights.getAutogradContext());
+                if (weights.usesGrad()) clone.weights.withGrad();
             }
-            if (bias != null) clone.bias = bias.clone();
+
+            if (bias != null) {
+                clone.bias = bias.clone();
+                if (bias.usesGrad()) clone.bias.withGrad();
+            }
             
             return clone;
         } catch (CloneNotSupportedException e) {

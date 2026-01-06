@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-public class Sequential implements Model, ModelBlock {
+public class Sequential implements Model, ModelBlock, Cloneable {
     
     private final ModelSpecs specs;
     private final List<Layer> layers;
@@ -102,15 +102,13 @@ public class Sequential implements Model, ModelBlock {
     
     @Override
     public Model fork(Device device) {
-        Sequential copy = new Sequential(specs, device, seed);
-//        copy.getLayers().forEach(x -> x.toDevice(device));
-        
-        List<Layer> copiedLayers = layers.stream().map(Layer::clone).toList();
-        copiedLayers.forEach(x -> x.toDevice(device));
-
-        copy.layers.clear();
-        copy.layers.addAll(copiedLayers);
-        
+        Sequential copy = clone();
+        for (int i = 0; i < layers.size(); i++) {
+            Layer l =  layers.get(i);
+            Layer c = copy.layers.get(i);
+            System.out.println(l == c);
+        }
+        copy.layers.forEach(x -> x.toDevice(device));
         return copy;
     }
     
@@ -263,6 +261,27 @@ public class Sequential implements Model, ModelBlock {
             
             totalWeights.addAndGet(weights);
             totalBiases.addAndGet(biases);
+        }
+    }
+
+    @Override
+    public Sequential clone() {
+        try {
+            Sequential clone = (Sequential) super.clone();
+            List<Layer> copiedLayers = layers.stream().map(Layer::clone).toList();
+
+            clone.layers.clear();
+            clone.layers.addAll(copiedLayers);
+
+            for (int i = 0; i < layers.size(); i++) {
+                Layer l =  layers.get(i);
+                Layer c = clone.layers.get(i);
+                System.out.println(l == c);
+            }
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
         }
     }
 }
