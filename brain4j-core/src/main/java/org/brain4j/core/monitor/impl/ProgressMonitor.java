@@ -12,12 +12,15 @@ import java.util.List;
 
 public final class ProgressMonitor implements Monitor {
     
+    private static final long PRINT_THRESHOLD = 20 * 1_000_000; // 20 ms in ns
+    
     private final List<Double> times = new ArrayList<>();
     private final int timeWindow;
     
     private double batchStart;
     private int epoch;
     private int totalEpochs;
+    private long lastLogTimestamp;
     
     public ProgressMonitor() {
         this(20);
@@ -68,6 +71,10 @@ public final class ProgressMonitor implements Monitor {
     }
     
     private void printProgress(int batch, int totalBatches, double tookMs) {
+        long diff = System.nanoTime() - lastLogTimestamp;
+        
+        if (diff < PRINT_THRESHOLD && batch != totalBatches) return;
+        
         String barChar = Commons.HEADER_CHAR;
         
         int progressBarLength = 25;
@@ -90,5 +97,7 @@ public final class ProgressMonitor implements Monitor {
         
         String message = intro + progress + batches + time;
         System.out.print("\r" + message);
+        
+        this.lastLogTimestamp = System.nanoTime();
     }
 }

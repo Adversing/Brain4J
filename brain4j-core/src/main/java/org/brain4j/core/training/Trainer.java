@@ -51,7 +51,6 @@ public record Trainer(Model model, List<Monitor> monitors, TrainingConfig config
 
         while (dataSource.hasNext()) {
             fitBatch(dataSource);
-//            System.gc();
         }
 
         Optimizer optimizer = config.optimizer();

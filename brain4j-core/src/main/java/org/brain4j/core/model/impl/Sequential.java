@@ -27,10 +27,10 @@ import java.util.stream.IntStream;
 
 public class Sequential implements Model, ModelBlock, Cloneable {
     
-    private final Device device;
     private final long seed;
     private ModelSpecs specs;
     private List<Layer> layers;
+    private Device device;
     
     public Sequential(ModelSpecs specs, Device device, long seed) {
         this.specs = specs;
@@ -103,6 +103,7 @@ public class Sequential implements Model, ModelBlock, Cloneable {
     @Override
     public Model fork(Device device) {
         Sequential copy = clone();
+        copy.device = device;
         copy.layers.forEach(x -> x.toDevice(device));
         return copy;
     }
