@@ -6,6 +6,7 @@ import org.brain4j.math.commons.Commons;
 import org.brain4j.math.commons.D2DFunction;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.pooling.impl.MaxPooling;
+import org.brain4j.math.tensor.Shape;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.autograd.AutogradContext;
 import org.brain4j.math.tensor.autograd.Operation;
@@ -848,7 +849,7 @@ public abstract class BaseTensor implements Tensor, Cloneable {
             newShape[i] = range != null ? range.size(dim) : dim;
         }
 
-        Tensor result = new CpuTensor(newShape);
+        Tensor result = new CpuTensor(Shape.of(newShape));
 
         int[] srcIndices = new int[shape.length];
         int[] dstIndices = new int[shape.length];

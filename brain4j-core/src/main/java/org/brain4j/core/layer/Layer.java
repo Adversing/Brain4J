@@ -80,7 +80,15 @@ public abstract class Layer implements ModelBlock, Cloneable {
     public Tensor forward(StatesCache cache, Tensor input) {
         return forward(cache, new Tensor[] { input })[0];
     }
-    
+
+    protected void backward(Tensor tensor, Updater updater, Optimizer optimizer) {
+        Tensor grad = tensor.grad();
+        Tensor optimized = optimizer.step(weights, grad);
+
+        clipper.clip(optimized);
+        updater.change(weights, optimized);
+    }
+
     /**
      * Computes the backward step for this layer, by calling the optimizer and scheduling weights update.
      *
@@ -90,10 +98,7 @@ public abstract class Layer implements ModelBlock, Cloneable {
      */
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         if (weights != null && weights.grad() != null) {
-            Tensor weightsGrad = optimizer.step(weights);
-
-            clipper.clip(weightsGrad);
-            updater.change(weights, weightsGrad);
+            backward(weights, updater, optimizer);
         }
         
         if (bias != null && bias.grad() != null) {

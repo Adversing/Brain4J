@@ -9,6 +9,7 @@ import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.kernel.KernelFactory;
 import org.brain4j.math.gpu.memory.GpuQueue;
 import org.brain4j.math.gpu.memory.TempBuffer;
+import org.brain4j.math.tensor.Shape;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.lwjgl.opencl.CL10;
@@ -208,7 +209,7 @@ public class GpuTensor extends BaseTensor {
     @Override
     public Tensor to(Device device) {
         if (device == null) {
-            Tensor result = new CpuTensor(shape, data());
+            Tensor result = new CpuTensor(Shape.of(shape), data());
             result.setAutogradContext(autogradContext);
             return result;
         }

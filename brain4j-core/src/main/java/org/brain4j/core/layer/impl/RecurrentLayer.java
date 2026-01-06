@@ -93,17 +93,12 @@ public class RecurrentLayer extends Layer {
     @Override
     public void backward(StatesCache cache, Updater updater, Optimizer optimizer) {
         super.backward(cache, updater, optimizer);
-        
-        Tensor inputWeightsGrad = optimizer.step(inputWeights);
-        Tensor hiddenWeightsGrad = optimizer.step(hiddenWeights);
+
+        backward(inputWeights, updater, optimizer);
+        backward(hiddenWeights, updater, optimizer);
+
         Tensor hiddenBiasGrad = hiddenBias.grad().sum(0, false);
-        
-        clipper.clip(inputWeightsGrad);
-        clipper.clip(hiddenWeightsGrad);
         clipper.clip(hiddenBiasGrad);
-        
-        updater.change(inputWeights, inputWeightsGrad);
-        updater.change(hiddenWeights, hiddenWeightsGrad);
         updater.change(hiddenBias, hiddenBiasGrad);
     }
     

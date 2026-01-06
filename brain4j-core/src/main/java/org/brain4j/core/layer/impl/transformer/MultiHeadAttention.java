@@ -3,7 +3,6 @@ package org.brain4j.core.layer.impl.transformer;
 import org.brain4j.core.layer.Layer;
 import org.brain4j.core.training.optimizer.Optimizer;
 import org.brain4j.core.training.updater.Updater;
-import org.brain4j.core.transformer.attention.head.AttentionHead;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.activation.impl.SoftmaxActivation;
 import org.brain4j.math.clipper.GradientClipper;
@@ -17,7 +16,6 @@ import org.brain4j.math.tensor.index.Range;
 
 import java.util.random.RandomGenerator;
 
-// TODO: add standalone weights saving/loading
 /**
  * Implements the Multi-Head Attention mechanism as used in Transformer architectures.
  * <p>
@@ -35,7 +33,6 @@ import java.util.random.RandomGenerator;
  * </ul>
  *
  * @author xEcho1337
- * @see AttentionHead
  * @see Tensor
  * @see Optimizer
  * @see Updater
@@ -326,8 +323,8 @@ public class MultiHeadAttention extends Layer {
         return flashAttention;
     }
 
-    public MultiHeadAttention setFlashAttention(boolean flashattention) {
-        this.flashAttention = flashattention;
+    public MultiHeadAttention setFlashAttention(boolean flashAttention) {
+        this.flashAttention = flashAttention;
         return this;
     }
 

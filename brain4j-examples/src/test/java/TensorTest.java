@@ -1,6 +1,7 @@
 import org.brain4j.core.Brain4J;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
+import org.brain4j.math.tensor.Shape;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
 import org.junit.jupiter.api.Test;
@@ -186,7 +187,8 @@ public class TensorTest {
 
     @Test
     void testTranspose3D() {
-        Tensor t = Tensors.create(new int[]{2, 2, 2}, 1, 2,
+        Tensor t = Tensors.create(Shape.of(2, 2, 2),
+            1, 2,
                 3, 4,
                 5, 6,
                 7, 8);

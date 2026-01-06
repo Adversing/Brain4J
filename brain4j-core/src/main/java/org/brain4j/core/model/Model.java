@@ -71,12 +71,6 @@ public interface Model extends ModelBlock {
     Model fork(Device device);
     
     /**
-     * Returns the device on which the model parameters are currently stored.
-     * @return the device associated with this model
-     */
-    Device getDevice();
-    
-    /**
      * Prints a formatted summary of the model architecture to the console.
      * <p>
      * The summary typically includes:
@@ -102,13 +96,19 @@ public interface Model extends ModelBlock {
      * @return the model specifications
      */
     ModelSpecs getSpecs();
-    
+
+    /**
+     * Returns the device on which the model parameters are currently stored.
+     * @return the device associated with this model
+     */
+    Device getDevice();
+
     /**
      * Returns an immutable view of the layers composing this model, in execution order.
      * @return an unmodifiable list of layers
      */
     List<Layer> getLayers();
-    
+
     @Override
     default void appendTo(List<Layer> layers) {
         layers.addAll(getLayers());

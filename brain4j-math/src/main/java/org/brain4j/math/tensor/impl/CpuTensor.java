@@ -3,6 +3,7 @@ package org.brain4j.math.tensor.impl;
 import org.brain4j.math.Tensors;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
+import org.brain4j.math.tensor.Shape;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.broadcast.TensorBroadcast;
 import org.brain4j.math.tensor.matmul.MatmulProvider;
@@ -27,23 +28,23 @@ public class CpuTensor extends BaseTensor {
         }
     }
 
-    public CpuTensor(int[] shape, float... data) {
+    public CpuTensor(Shape shape, float... data) {
         if (data.length == 0) {
-            data = new float[Tensors.computeSize(shape)];
+            data = new float[Tensors.computeSize(shape.dims())];
         }
 
         this.data = data;
-        this.shape = shape;
-        this.strides = Tensors.computeStrides(shape);
+        this.shape = shape.dims();
+        this.strides = Tensors.computeStrides(shape.dims());
     }
 
-    public CpuTensor(int[] shape, int[] strides, float... data) {
+    public CpuTensor(Shape shape, int[] strides, float... data) {
         if (data.length == 0) {
-            data = new float[Tensors.computeSize(shape)];
+            data = new float[Tensors.computeSize(shape.dims())];
         }
 
         this.data = data;
-        this.shape = shape;
+        this.shape = shape.dims();
         this.strides = strides;
     }
     
@@ -286,7 +287,7 @@ public class CpuTensor extends BaseTensor {
         resultShape[resultShape.length - 2] = m;
         resultShape[resultShape.length - 1] = p;
 
-        Tensor result = new CpuTensor(resultShape);
+        Tensor result = new CpuTensor(Shape.of(resultShape));
 
         matmulProvider.multiply(this, other, result);
 

@@ -1,5 +1,6 @@
 package org.brain4j.math;
 
+import org.brain4j.math.tensor.Shape;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.convolution.im2col.Im2ColParams;
 import org.brain4j.math.tensor.convolution.im2col.Im2ColTask;
@@ -43,7 +44,7 @@ public class Tensors {
      * @return a rank-1 tensor of length 1
      */
     public static Tensor scalar(double value) {
-        return new CpuTensor(new int[]{1}, (float) value);
+        return new CpuTensor(Shape.of(1), (float) value);
     }
 
     /**
@@ -57,6 +58,20 @@ public class Tensors {
      * @return a new {@link Tensor} instance
      */
     public static Tensor create(int[] shape, float... data) {
+        return create(Shape.of(shape), data);
+    }
+
+    /**
+     * Creates a tensor with the given shape and backing data buffer.
+     *
+     * <p>The data array is interpreted in row-major order and its length
+     * must match the total number of elements implied by {@code shape}.
+     *
+     * @param shape the tensor shape
+     * @param data the backing data buffer
+     * @return a new {@link Tensor} instance
+     */
+    public static Tensor create(Shape shape, float... data) {
         return new CpuTensor(shape, data);
     }
 
@@ -76,7 +91,7 @@ public class Tensors {
      * @return a new {@link Tensor} instance
      */
     public static Tensor create(int[] shape, int[] strides, float... data) {
-        return new CpuTensor(shape, strides, data);
+        return new CpuTensor(Shape.of(shape), strides, data);
     }
 
     /**
@@ -87,7 +102,7 @@ public class Tensors {
      * @return a 1D tensor
      */
     public static Tensor vector(float... data) {
-        return create(new int[]{data.length}, data);
+        return create(Shape.of(data.length), data);
     }
 
     /**
@@ -102,7 +117,7 @@ public class Tensors {
      * @return a 2D tensor
      */
     public static Tensor matrix(int rows, int cols, float... data) {
-        return create(new int[]{rows, cols}, data);
+        return create(Shape.of(rows, cols), data);
     }
 
     /**
@@ -112,6 +127,16 @@ public class Tensors {
      * @return a tensor initialized with zeros
      */
     public static Tensor zeros(int... shape) {
+        return new CpuTensor(Shape.of(shape));
+    }
+
+    /**
+     * Returns a tensor filled with zeros of the requested shape.
+     *
+     * @param shape desired shape
+     * @return a tensor initialized with zeros
+     */
+    public static Tensor zeros(Shape shape) {
         return new CpuTensor(shape);
     }
 
@@ -143,6 +168,16 @@ public class Tensors {
      * @return a tensor initialized with ones
      */
     public static Tensor ones(int... shape) {
+        return ones(Shape.of(shape));
+    }
+
+    /**
+     * Returns a tensor filled with ones of the requested shape.
+     *
+     * @param shape desired shape
+     * @return a tensor initialized with ones
+     */
+    public static Tensor ones(Shape shape) {
         Tensor result = new CpuTensor(shape);
         Arrays.fill(result.data(), 1);
         return result;
@@ -160,6 +195,20 @@ public class Tensors {
         Tensor result = Tensors.zeros(shape);
         return result.map(x -> generator.nextFloat());
     }
+
+    /**
+     * Creates a tensor filled with uniformly distributed random values
+     * in the range {@code [0, 1)}.
+     *
+     * @param generator the random number generator to use
+     * @param shape     the desired tensor shape
+     * @return a randomly initialized tensor
+     */
+    public static Tensor random(RandomGenerator generator, Shape shape) {
+        Tensor result = Tensors.zeros(shape);
+        return result.map(x -> generator.nextFloat());
+    }
+
     /**
      * Creates a tensor filled with uniformly distributed random values
      * in the range {@code [0, 1)}.
@@ -169,6 +218,18 @@ public class Tensors {
      * @return a randomly initialized tensor
      */
     public static Tensor random(int... shape) {
+        return random(new SplittableRandom(), shape);
+    }
+
+    /**
+     * Creates a tensor filled with uniformly distributed random values
+     * in the range {@code [0, 1)}.
+     * <p>By default, uses a new instance of {@link SplittableRandom}.
+     *
+     * @param shape     the desired tensor shape
+     * @return a randomly initialized tensor
+     */
+    public static Tensor random(Shape shape) {
         return random(new SplittableRandom(), shape);
     }
 
@@ -408,7 +469,7 @@ public class Tensors {
             pool.invoke(new Im2ColTask(params, 0, totalPatches));
         }
 
-        return Tensors.create(new int[]{patchSize, totalPatches}, resultData);
+        return Tensors.create(Shape.of(patchSize, totalPatches), resultData);
     }
 
     /**
@@ -454,7 +515,7 @@ public class Tensors {
             }
         }
 
-        return Tensors.create(new int[]{channels, inHeight, inWidth}, imgData);
+        return Tensors.create(Shape.of(channels, inHeight, inWidth), imgData);
     }
 
     /**
