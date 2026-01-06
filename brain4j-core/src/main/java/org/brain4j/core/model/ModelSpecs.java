@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ModelSpecs implements ModelBlock, Cloneable {
     
-    private final List<ModelBlock> components = new ArrayList<>();
+    private List<ModelBlock> components = new ArrayList<>();
     private boolean frozen = false;
     
     public static ModelSpecs of(ModelBlock... components) {
@@ -68,7 +68,7 @@ public class ModelSpecs implements ModelBlock, Cloneable {
             ModelSpecs clone = (ModelSpecs) super.clone();
             
             clone.frozen = false;
-            clone.components.clear();
+            clone.components = new ArrayList<>();
             clone.components.addAll(components);
             
             return clone;

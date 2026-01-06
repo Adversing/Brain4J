@@ -27,10 +27,10 @@ import java.util.stream.IntStream;
 
 public class Sequential implements Model, ModelBlock, Cloneable {
     
-    private final ModelSpecs specs;
-    private final List<Layer> layers;
     private final Device device;
     private final long seed;
+    private ModelSpecs specs;
+    private List<Layer> layers;
     
     public Sequential(ModelSpecs specs, Device device, long seed) {
         this.specs = specs;
@@ -103,11 +103,6 @@ public class Sequential implements Model, ModelBlock, Cloneable {
     @Override
     public Model fork(Device device) {
         Sequential copy = clone();
-        for (int i = 0; i < layers.size(); i++) {
-            Layer l =  layers.get(i);
-            Layer c = copy.layers.get(i);
-            System.out.println(l == c);
-        }
         copy.layers.forEach(x -> x.toDevice(device));
         return copy;
     }
@@ -269,16 +264,10 @@ public class Sequential implements Model, ModelBlock, Cloneable {
         try {
             Sequential clone = (Sequential) super.clone();
             List<Layer> copiedLayers = layers.stream().map(Layer::clone).toList();
-
-            clone.layers.clear();
-            clone.layers.addAll(copiedLayers);
-
-            for (int i = 0; i < layers.size(); i++) {
-                Layer l =  layers.get(i);
-                Layer c = clone.layers.get(i);
-                System.out.println(l == c);
-            }
-
+            
+            clone.specs = specs.clone();
+            clone.layers = new ArrayList<>(copiedLayers);
+            
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

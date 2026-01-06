@@ -86,14 +86,6 @@ public class DenseLayer extends Layer {
             Tensor input = inputs[i];
             Tensor output = input.matmulGrad(weights);
             
-            if (!cache.isTraining()) {
-//                System.out.println("==========================");
-//                System.out.println("gpu: " + (weights instanceof GpuTensor));
-//                System.out.println("input:  " + input);
-//                System.out.println("output: " + output);
-//                System.out.println("weights: " + weights.flatten());
-            }
-            
             if (bias != null) output = output.addGrad(bias);
 
             beforeActivation[i] = output;
