@@ -10,9 +10,7 @@ import org.brain4j.math.commons.Commons;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.brain4j.math.Constants.RESET;
-
-public final class DefaultMonitor implements Monitor {
+public final class ProgressMonitor implements Monitor {
     
     private final List<Double> times = new ArrayList<>();
     private final int timeWindow;
@@ -21,11 +19,11 @@ public final class DefaultMonitor implements Monitor {
     private int epoch;
     private int totalEpochs;
     
-    public DefaultMonitor() {
+    public ProgressMonitor() {
         this(20);
     }
     
-    public DefaultMonitor(int timeWindow) {
+    public ProgressMonitor(int timeWindow) {
         this.timeWindow = timeWindow;
     }
     
