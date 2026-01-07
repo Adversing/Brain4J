@@ -12,7 +12,6 @@ import org.brain4j.math.gpu.memory.TempBuffer;
 import org.brain4j.math.tensor.Shape;
 import org.brain4j.math.tensor.Tensor;
 import org.brain4j.math.tensor.index.Range;
-import org.lwjgl.opencl.CL10;
 
 import java.util.Arrays;
 
@@ -123,19 +122,19 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer.release();
     }
 
-    public Device device() {
+    public Device getDevice() {
         return device;
     }
 
-    public long dataBuffer() {
+    public long getDataBuffer() {
         return dataBuffer.value();
     }
 
-    public long stridesBuffer() {
+    public long getStridesBuffer() {
         return stridesBuffer.value();
     }
 
-    public long shapeBuffer() {
+    public long getShapeBuffer() {
         return shapeBuffer.value();
     }
 

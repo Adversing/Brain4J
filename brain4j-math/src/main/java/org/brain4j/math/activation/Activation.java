@@ -55,8 +55,8 @@ public interface Activation {
     default KernelFactory createKernel(long kernel, GpuTensor current, GpuTensor other) {
         return KernelFactory
             .create(kernel)
-            .addMemParam(current.dataBuffer())
-            .addMemParam(other.dataBuffer())
+            .addMemParam(current.getDataBuffer())
+            .addMemParam(other.getDataBuffer())
             .addIntParam(current.size());
     }
 
@@ -68,7 +68,7 @@ public interface Activation {
         int[] shape = input.shape();
 
         if (input instanceof GpuTensor gpuInput) {
-            Device device = gpuInput.device();
+            Device device = gpuInput.getDevice();
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {
@@ -104,7 +104,7 @@ public interface Activation {
         int[] shape = input.shape();
 
         if (input instanceof GpuTensor gpuInput) {
-            Device device = gpuInput.device();
+            Device device = gpuInput.getDevice();
             GpuTensor result = new GpuTensor(device, gpuInput.shape());
 
             try (GpuQueue queue = GpuContext.getOrCreate(device)) {

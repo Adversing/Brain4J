@@ -93,7 +93,7 @@ public class EmbeddingLayer extends Layer {
         });
 
         if (input instanceof GpuTensor gpuInput) {
-            output = output.to(gpuInput.device());
+            output = output.to(gpuInput.getDevice());
         }
 
         cache.rememberInput(this, inputs);
@@ -132,7 +132,7 @@ public class EmbeddingLayer extends Layer {
                 }
             }
         }
-        
+
         Tensor optimized = optimizer.step(weights, weightsGrad);
         
         clipper.clip(optimized);

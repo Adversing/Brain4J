@@ -41,7 +41,7 @@ public class FlashAttention {
         if (!(q instanceof GpuTensor Q) || !(k instanceof GpuTensor K) || !(v instanceof GpuTensor V)) {
             return null;
         }
-        if (!Q.device().equals(K.device()) || !Q.device().equals(V.device())) {
+        if (!Q.getDevice().equals(K.getDevice()) || !Q.getDevice().equals(V.getDevice())) {
             return null;
         }
 
@@ -51,21 +51,21 @@ public class FlashAttention {
         int L = shape[2];
         int D = shape[3];
 
-        GpuTensor O = new GpuTensor(Q.device(), shape);
+        GpuTensor O = new GpuTensor(Q.getDevice(), shape);
         O.setAutogradContext(Q.getAutogradContext());
 
         long[] global = new long[] { L, (long) B * H };
 
-        try (GpuQueue queue = GpuContext.getOrCreate(Q.device())) {
-            KernelFactory.create(Q.device(), "flash_attention_forward")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
+        try (GpuQueue queue = GpuContext.getOrCreate(Q.getDevice())) {
+            KernelFactory.create(Q.getDevice(), "flash_attention_forward")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)
@@ -101,7 +101,7 @@ public class FlashAttention {
         if (!(q instanceof GpuTensor Q) || !(k instanceof GpuTensor K) || !(v instanceof GpuTensor V)) {
             return null;
         }
-        if (!Q.device().equals(K.device()) || !Q.device().equals(V.device())) {
+        if (!Q.getDevice().equals(K.getDevice()) || !Q.getDevice().equals(V.getDevice())) {
             return null;
         }
 
@@ -111,25 +111,25 @@ public class FlashAttention {
         int L = shape[2];
         int D = shape[3];
 
-        GpuTensor O = new GpuTensor(Q.device(), shape);
+        GpuTensor O = new GpuTensor(Q.getDevice(), shape);
         O.setAutogradContext(Q.getAutogradContext());
 
         // LSE has shape [B, H, L]
-        GpuTensor LSE = new GpuTensor(Q.device(), new int[]{B, H, L});
+        GpuTensor LSE = new GpuTensor(Q.getDevice(), new int[]{B, H, L});
 
         long[] global = new long[] { L, (long) B * H };
 
-        try (GpuQueue queue = GpuContext.getOrCreate(Q.device())) {
-            KernelFactory.create(Q.device(), "flash_attention_forward_with_lse")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(LSE.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
+        try (GpuQueue queue = GpuContext.getOrCreate(Q.getDevice())) {
+            KernelFactory.create(Q.getDevice(), "flash_attention_forward_with_lse")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(LSE.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)
@@ -177,8 +177,8 @@ public class FlashAttention {
             !(o instanceof GpuTensor O) || !(dO instanceof GpuTensor DO) || !(lse instanceof GpuTensor LSE)) {
             return null;
         }
-        if (!Q.device().equals(K.device()) || !Q.device().equals(V.device()) ||
-            !Q.device().equals(O.device()) || !Q.device().equals(DO.device()) || !Q.device().equals(LSE.device())) {
+        if (!Q.getDevice().equals(K.getDevice()) || !Q.getDevice().equals(V.getDevice()) ||
+            !Q.getDevice().equals(O.getDevice()) || !Q.getDevice().equals(DO.getDevice()) || !Q.getDevice().equals(LSE.getDevice())) {
             return null;
         }
 
@@ -189,31 +189,31 @@ public class FlashAttention {
         int D = shape[3];
 
         // output gradient tensors setup
-        GpuTensor dQ = new GpuTensor(Q.device(), shape);
-        GpuTensor dK = new GpuTensor(Q.device(), shape);
-        GpuTensor dV = new GpuTensor(Q.device(), shape);
+        GpuTensor dQ = new GpuTensor(Q.getDevice(), shape);
+        GpuTensor dK = new GpuTensor(Q.getDevice(), shape);
+        GpuTensor dV = new GpuTensor(Q.getDevice(), shape);
 
         long[] global = new long[] { L, (long) B * H };
 
-        try (GpuQueue queue = GpuContext.getOrCreate(Q.device())) {
+        try (GpuQueue queue = GpuContext.getOrCreate(Q.getDevice())) {
             // first kernel: compute dK and dV
-            KernelFactory.create(Q.device(), "flash_attention_backward")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(DO.dataBuffer())
-                .addMemParam(LSE.dataBuffer())
-                .addMemParam(dQ.dataBuffer())
-                .addMemParam(dK.dataBuffer())
-                .addMemParam(dV.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
-                .addMemParam(DO.stridesBuffer())
-                .addMemParam(dK.stridesBuffer())
-                .addMemParam(dV.stridesBuffer())
+            KernelFactory.create(Q.getDevice(), "flash_attention_backward")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(DO.getDataBuffer())
+                .addMemParam(LSE.getDataBuffer())
+                .addMemParam(dQ.getDataBuffer())
+                .addMemParam(dK.getDataBuffer())
+                .addMemParam(dV.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
+                .addMemParam(DO.getStridesBuffer())
+                .addMemParam(dK.getStridesBuffer())
+                .addMemParam(dV.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)
@@ -223,20 +223,20 @@ public class FlashAttention {
                 .launch(queue, 2, global);
 
             // second kernel: compute dQ
-            KernelFactory.create(Q.device(), "flash_attention_backward_dq")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(DO.dataBuffer())
-                .addMemParam(LSE.dataBuffer())
-                .addMemParam(dQ.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
-                .addMemParam(DO.stridesBuffer())
-                .addMemParam(dQ.stridesBuffer())
+            KernelFactory.create(Q.getDevice(), "flash_attention_backward_dq")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(DO.getDataBuffer())
+                .addMemParam(LSE.getDataBuffer())
+                .addMemParam(dQ.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
+                .addMemParam(DO.getStridesBuffer())
+                .addMemParam(dQ.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)
@@ -272,7 +272,7 @@ public class FlashAttention {
         if (!(q instanceof GpuTensor Q) || !(k instanceof GpuTensor K) || !(v instanceof GpuTensor V)) {
             return null;
         }
-        if (!Q.device().equals(K.device()) || !Q.device().equals(V.device())) {
+        if (!Q.getDevice().equals(K.getDevice()) || !Q.getDevice().equals(V.getDevice())) {
             return null;
         }
 
@@ -287,26 +287,26 @@ public class FlashAttention {
             return forwardWithLse(q, k, v, scale, causal);
         }
 
-        GpuTensor O = new GpuTensor(Q.device(), shape);
+        GpuTensor O = new GpuTensor(Q.getDevice(), shape);
         O.setAutogradContext(Q.getAutogradContext());
 
-        GpuTensor LSE = new GpuTensor(Q.device(), new int[]{B, H, L});
+        GpuTensor LSE = new GpuTensor(Q.getDevice(), new int[]{B, H, L});
 
 
         long[] global = new long[] { L, (long) B * H };
         long[] local = new long[] { Math.min(FA_TILE_SIZE, L), 1 };
 
-        try (GpuQueue queue = GpuContext.getOrCreate(Q.device())) {
-            KernelFactory.create(Q.device(), "flash_attention_forward_tiled")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(LSE.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
+        try (GpuQueue queue = GpuContext.getOrCreate(Q.getDevice())) {
+            KernelFactory.create(Q.getDevice(), "flash_attention_forward_tiled")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(LSE.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)
@@ -346,8 +346,8 @@ public class FlashAttention {
             !(o instanceof GpuTensor O) || !(dO instanceof GpuTensor DO) || !(lse instanceof GpuTensor LSE)) {
             return null;
         }
-        if (!Q.device().equals(K.device()) || !Q.device().equals(V.device()) ||
-            !Q.device().equals(O.device()) || !Q.device().equals(DO.device()) || !Q.device().equals(LSE.device())) {
+        if (!Q.getDevice().equals(K.getDevice()) || !Q.getDevice().equals(V.getDevice()) ||
+            !Q.getDevice().equals(O.getDevice()) || !Q.getDevice().equals(DO.getDevice()) || !Q.getDevice().equals(LSE.getDevice())) {
             return null;
         }
 
@@ -362,32 +362,32 @@ public class FlashAttention {
             return backward(q, k, v, o, dO, lse, scale, causal);
         }
 
-        GpuTensor dQ = new GpuTensor(Q.device(), shape);
-        GpuTensor dK = new GpuTensor(Q.device(), shape);
-        GpuTensor dV = new GpuTensor(Q.device(), shape);
+        GpuTensor dQ = new GpuTensor(Q.getDevice(), shape);
+        GpuTensor dK = new GpuTensor(Q.getDevice(), shape);
+        GpuTensor dV = new GpuTensor(Q.getDevice(), shape);
 
         long[] global = new long[] { L, (long) B * H };
         long[] local = new long[] { Math.min(FA_TILE_SIZE, L), 1 };
 
-        try (GpuQueue queue = GpuContext.getOrCreate(Q.device())) {
+        try (GpuQueue queue = GpuContext.getOrCreate(Q.getDevice())) {
             // tiled backward for dK and dV
-            KernelFactory.create(Q.device(), "flash_attention_backward_tiled")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(DO.dataBuffer())
-                .addMemParam(LSE.dataBuffer())
-                .addMemParam(dQ.dataBuffer())
-                .addMemParam(dK.dataBuffer())
-                .addMemParam(dV.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
-                .addMemParam(DO.stridesBuffer())
-                .addMemParam(dK.stridesBuffer())
-                .addMemParam(dV.stridesBuffer())
+            KernelFactory.create(Q.getDevice(), "flash_attention_backward_tiled")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(DO.getDataBuffer())
+                .addMemParam(LSE.getDataBuffer())
+                .addMemParam(dQ.getDataBuffer())
+                .addMemParam(dK.getDataBuffer())
+                .addMemParam(dV.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
+                .addMemParam(DO.getStridesBuffer())
+                .addMemParam(dK.getStridesBuffer())
+                .addMemParam(dV.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)
@@ -398,20 +398,20 @@ public class FlashAttention {
 
             // dQ kernel
             // TODO: optimize this with tiled version as well
-            KernelFactory.create(Q.device(), "flash_attention_backward_dq")
-                .addMemParam(Q.dataBuffer())
-                .addMemParam(K.dataBuffer())
-                .addMemParam(V.dataBuffer())
-                .addMemParam(O.dataBuffer())
-                .addMemParam(DO.dataBuffer())
-                .addMemParam(LSE.dataBuffer())
-                .addMemParam(dQ.dataBuffer())
-                .addMemParam(Q.stridesBuffer())
-                .addMemParam(K.stridesBuffer())
-                .addMemParam(V.stridesBuffer())
-                .addMemParam(O.stridesBuffer())
-                .addMemParam(DO.stridesBuffer())
-                .addMemParam(dQ.stridesBuffer())
+            KernelFactory.create(Q.getDevice(), "flash_attention_backward_dq")
+                .addMemParam(Q.getDataBuffer())
+                .addMemParam(K.getDataBuffer())
+                .addMemParam(V.getDataBuffer())
+                .addMemParam(O.getDataBuffer())
+                .addMemParam(DO.getDataBuffer())
+                .addMemParam(LSE.getDataBuffer())
+                .addMemParam(dQ.getDataBuffer())
+                .addMemParam(Q.getStridesBuffer())
+                .addMemParam(K.getStridesBuffer())
+                .addMemParam(V.getStridesBuffer())
+                .addMemParam(O.getStridesBuffer())
+                .addMemParam(DO.getStridesBuffer())
+                .addMemParam(dQ.getStridesBuffer())
                 .addIntParam(B)
                 .addIntParam(H)
                 .addIntParam(L)

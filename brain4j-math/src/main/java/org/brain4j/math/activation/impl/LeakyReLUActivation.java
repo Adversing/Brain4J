@@ -35,8 +35,8 @@ public record LeakyReLUActivation(double alpha) implements Activation {
     @Override
     public KernelFactory createKernel(long kernel, GpuTensor current, GpuTensor other) {
         return KernelFactory.create(kernel)
-            .addMemParam(current.dataBuffer())
-            .addMemParam(other.dataBuffer())
+            .addMemParam(current.getDataBuffer())
+            .addMemParam(other.getDataBuffer())
             .addFloatParam((float) alpha)
             .addIntParam(current.size());
     }

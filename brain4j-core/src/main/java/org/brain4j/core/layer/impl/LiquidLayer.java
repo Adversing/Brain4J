@@ -157,7 +157,7 @@ public class LiquidLayer extends Layer {
         Tensor hidden = Tensors.zeros(batch, dimension).withGrad();
         
         if (input instanceof GpuTensor gpu) {
-            hidden = hidden.to(gpu.device()).withGrad();
+            hidden = hidden.to(gpu.getDevice()).withGrad();
         }
         
         List<Tensor> hiddenStates = new ArrayList<>();
