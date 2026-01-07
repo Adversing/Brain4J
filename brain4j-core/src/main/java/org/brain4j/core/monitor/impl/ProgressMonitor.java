@@ -2,7 +2,7 @@ package org.brain4j.core.monitor.impl;
 
 import org.brain4j.core.Brain4J;
 import org.brain4j.core.monitor.Monitor;
-import org.brain4j.core.training.Trainer;
+import org.brain4j.core.training.impl.DefaultTrainer;
 import org.brain4j.core.training.events.*;
 import org.brain4j.core.utils.Colored;
 import org.brain4j.math.commons.Commons;
@@ -34,8 +34,8 @@ public final class ProgressMonitor implements Monitor {
     public void onEvent(TrainingEvent event) {
         switch (event) {
             case BatchStart ignored -> this.batchStart = System.nanoTime();
-            case BatchEnd(Trainer trainer, int batch, int totalBatches) -> batchCompleted(batch, totalBatches);
-            case EpochStart(Trainer trainer, int epoch, int totalEpochs) -> epochStarted(epoch, totalEpochs);
+            case BatchEnd(DefaultTrainer trainer, int batch, int totalBatches) -> batchCompleted(batch, totalBatches);
+            case EpochStart(DefaultTrainer trainer, int epoch, int totalEpochs) -> epochStarted(epoch, totalEpochs);
             case TrainingEnd() -> trainingEnd();
             default -> {}
         }
@@ -55,7 +55,7 @@ public final class ProgressMonitor implements Monitor {
         double average = totalTime / Math.min(batch + 1, timeWindow);
         
         if (Brain4J.isLogging()) {
-            printProgress(batch + 1, total, average);
+            printProgress(batch, total, average);
         }
     }
     
@@ -78,10 +78,10 @@ public final class ProgressMonitor implements Monitor {
         String barChar = Commons.HEADER_CHAR;
         
         int progressBarLength = 25;
-        
+
         double percentage = (double) batch / totalBatches;
         double tookInSeconds = tookMs / 1000.0;
-        
+
         String timeStr = Commons.formatDuration(tookInSeconds);
         
         String progressBar = Commons.createProgressBar(
@@ -92,7 +92,7 @@ public final class ProgressMonitor implements Monitor {
         String progress = Colored.renderText(progressBar);
         
         String intro = Colored.renderText("Epoch <yellow>%s<white>/<yellow>%s ", epoch + 1, totalEpochs);
-        String batches = Colored.renderText("<blue>%s<white>/<blue>%s <white>batches", batch, totalBatches);
+        String batches = Colored.renderText("<blue>%s<white>/<blue>%s <white>batches", batch + 1, totalBatches);
         String time = Colored.renderText("<gray> [%s/batch]<reset>", timeStr);
         
         String message = intro + progress + batches + time;

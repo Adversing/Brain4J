@@ -45,7 +45,7 @@ public final class Datasets {
      */
     public static ListDataSource mnist(boolean shuffle, int batchSize) {
         try {
-            Dataset dataset = loadDataset("mnist");
+            Dataset dataset = loadDataset("ylecun/mnist");
             RecordParser<Group> parser = (record, index) -> {
                 int label = (int) record.getLong("label", 0);
                 Group imageGroup = record.getGroup("image", 0);

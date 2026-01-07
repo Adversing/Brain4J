@@ -42,6 +42,12 @@ public class GpuTensor extends BaseTensor {
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = device.createBuffer(flags, data);
+
+        if (device.getQueue() != null) {
+            GpuContext.RELEASE_QUEUE.add(this);
+        } else {
+            System.out.println("Not releasing this tensor with shape " + Arrays.toString(shape));
+        }
     }
 
     public GpuTensor(Device device, int[] shape, long otherBuffer) {
@@ -56,10 +62,14 @@ public class GpuTensor extends BaseTensor {
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = device.createBuffer(CL_MEM_READ_WRITE, dataSize);
-        
+
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer.value(), 0, 0, dataSize,
                 null, null);
+        }
+
+        if (device.getQueue() != null) {
+            GpuContext.RELEASE_QUEUE.add(this);
         }
     }
 
@@ -84,6 +94,10 @@ public class GpuTensor extends BaseTensor {
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = dataBuffer;
+
+        if (device.getQueue() != null) {
+            GpuContext.RELEASE_QUEUE.add(this);
+        }
     }
 
     public GpuTensor(GpuTensor reference, int[] newShape) {
@@ -93,13 +107,20 @@ public class GpuTensor extends BaseTensor {
         this.strides = Tensors.computeStrides(newShape);
 
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-        
-        // make sure GC does not close this resource
-        reference.dataBuffer.retain();
-        
+
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = reference.dataBuffer;
+
+        if (device.getQueue() != null) {
+            GpuContext.RELEASE_QUEUE.add(this);
+        }
+    }
+
+    public void release() {
+        this.shapeBuffer.release();
+        this.stridesBuffer.release();
+        this.dataBuffer.release();
     }
 
     public Device device() {
@@ -448,7 +469,7 @@ public class GpuTensor extends BaseTensor {
         memoryA.release();
         memoryB.release();
         memoryC.release();
-        
+
         return result;
     }
     

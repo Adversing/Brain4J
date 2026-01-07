@@ -319,7 +319,7 @@ public abstract class Layer implements ModelBlock, Cloneable {
         this.frozen = frozen;
         return this;
     }
-    
+
     @Override
     public Layer clone() {
         try {

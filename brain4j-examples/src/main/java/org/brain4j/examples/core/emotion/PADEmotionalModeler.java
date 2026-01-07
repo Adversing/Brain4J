@@ -5,7 +5,7 @@ import org.brain4j.core.layer.impl.utility.InputLayer;
 import org.brain4j.core.loss.impl.MeanSquaredError;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.model.ModelSpecs;
-import org.brain4j.core.training.Trainer;
+import org.brain4j.core.training.impl.DefaultTrainer;
 import org.brain4j.core.training.TrainingConfig;
 import org.brain4j.core.training.optimizer.impl.Adam;
 import org.brain4j.examples.core.emotion.registry.EmotionRegistry;
@@ -79,7 +79,7 @@ public class PADEmotionalModeler {
             samples.add(new Sample(trainingFeatures.get(i), trainingLabels.get(i)));
         }
         ListDataSource trainSource = new ListDataSource(samples, false, batchSize);
-        Trainer trainer = new Trainer(model, List.of(), config);
+        DefaultTrainer trainer = new DefaultTrainer(model, List.of(), config);
         System.out.println("Starting conceptual training...");
         for (int i = 0; i < epochs; i++) {
             trainer.fit(trainSource.clone(), 1);

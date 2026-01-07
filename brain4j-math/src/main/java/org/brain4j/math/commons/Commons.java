@@ -95,7 +95,7 @@ public class Commons {
         String emptyCharacter
     ) {
         if (percent < 0 || percent > 1) {
-            throw new IllegalArgumentException("Percent must be between 0 and 1!");
+            throw illegalArgument("Percentage must be between 0 and 1! Got %.2f", percent);
         }
 
         int fill = (int) Math.round(percent * characterCount);

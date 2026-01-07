@@ -3,17 +3,21 @@ package org.brain4j.math.gpu;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.gpu.device.DeviceUtils;
 import org.brain4j.math.gpu.memory.GpuQueue;
+import org.brain4j.math.tensor.impl.GpuTensor;
 import org.lwjgl.opencl.CL10;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GpuContext {
 
-    private static final Map<Device, Map<String, Long>> kernelCache = new HashMap<>();
+    public static final Map<Device, Map<String, Long>> KERNEL_CACHE = new HashMap<>();
+    public static final List<GpuTensor> RELEASE_QUEUE = new ArrayList<>();
 
     public static void register(Device device, String kernelName, long program) {
-        kernelCache.computeIfAbsent(device, d -> new HashMap<>())
+        KERNEL_CACHE.computeIfAbsent(device, d -> new HashMap<>())
             .compute(kernelName, (name, existingKernel) -> {
                 if (existingKernel != null) return existingKernel;
 
@@ -26,7 +30,7 @@ public class GpuContext {
     }
 
     public static long findKernel(Device device, String kernelName) {
-        Map<String, Long> deviceKernels = kernelCache.get(device);
+        Map<String, Long> deviceKernels = KERNEL_CACHE.get(device);
 
         if (deviceKernels == null) {
             throw new IllegalStateException("No kernels registered for device: " + device);

@@ -4,12 +4,11 @@ import org.brain4j.core.Brain4J;
 import org.brain4j.core.loss.LossFunction;
 import org.brain4j.core.model.Model;
 import org.brain4j.core.monitor.Monitor;
-import org.brain4j.core.training.Trainer;
+import org.brain4j.core.training.impl.DefaultTrainer;
 import org.brain4j.core.training.events.EpochEnd;
 import org.brain4j.core.training.events.TrainingEvent;
 import org.brain4j.core.training.wrappers.EvaluationResult;
 import org.brain4j.core.utils.Colored;
-import org.brain4j.math.commons.Commons;
 import org.brain4j.math.data.ListDataSource;
 
 public class EvalMonitor implements Monitor {
@@ -24,16 +23,16 @@ public class EvalMonitor implements Monitor {
     
     @Override
     public void onEvent(TrainingEvent event) {
-        if (event instanceof EpochEnd(Trainer trainer, int epoch, int total)) {
+        if (event instanceof EpochEnd(DefaultTrainer trainer, int epoch, int total)) {
             if ((epoch + 1) % evaluationDelay != 0) return;
             
             printEvaluation(trainer, epoch, total);
         }
     }
     
-    private void printEvaluation(Trainer trainer, int epoch, int epochs) {
-        Model model = trainer.model();
-        LossFunction lossFunction = trainer.config().loss();
+    private void printEvaluation(DefaultTrainer trainer, int epoch, int epochs) {
+        Model model = trainer.getModel();
+        LossFunction lossFunction = trainer.getConfig().loss();
         EvaluationResult result = model.evaluate(dataSource, lossFunction);
         
         double r2 = result.loss() / result.totalDeviation();

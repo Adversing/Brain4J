@@ -37,12 +37,11 @@ public class TempObject<T> {
     }
     
     public void release() {
-        if (refCount.get() == 0) {
+        int refs = refCount.decrementAndGet();
+
+        if (refs == 0) {
             cleanerTask.run();
-            return;
         }
-        
-        refCount.decrementAndGet();
     }
 
     static class CleanerTask implements Runnable {
