@@ -79,7 +79,7 @@ public class Sequential implements Model, ModelBlock {
 
         if (device != null && !cache.isTraining()) {
             GpuContext.finishAndRelease(device);
-            GpuContext.RELEASE_QUEUE.forEach(GpuTensor::release);
+            GpuContext.RELEASE_QUEUE.forEach(Runnable::run);
         }
 
         return buffer;

@@ -43,9 +43,7 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = device.createBuffer(flags, data);
 
         if (device.getQueue() != null) {
-            GpuContext.RELEASE_QUEUE.add(this);
-        } else {
-            System.out.println("Not releasing this tensor with shape " + Arrays.toString(shape));
+            GpuContext.RELEASE_QUEUE.add(this::release);
         }
     }
 
@@ -63,12 +61,12 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = device.createBuffer(CL_MEM_READ_WRITE, dataSize);
 
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer.value(), 0, 0, dataSize,
+            clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer.getValue(), 0, 0, dataSize,
                 null, null);
         }
 
         if (device.getQueue() != null) {
-            GpuContext.RELEASE_QUEUE.add(this);
+            GpuContext.RELEASE_QUEUE.add(this::release);
         }
     }
 
@@ -95,7 +93,7 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = dataBuffer;
 
         if (device.getQueue() != null) {
-            GpuContext.RELEASE_QUEUE.add(this);
+            GpuContext.RELEASE_QUEUE.add(this::release);
         }
     }
 
@@ -112,14 +110,14 @@ public class GpuTensor extends BaseTensor {
         this.dataBuffer = reference.dataBuffer;
 
         if (device.getQueue() != null) {
-            GpuContext.RELEASE_QUEUE.add(this);
+            GpuContext.RELEASE_QUEUE.add(this::release);
         }
     }
 
     public void release() {
-        this.shapeBuffer.release();
-        this.stridesBuffer.release();
-        this.dataBuffer.release();
+        this.shapeBuffer.release(true);
+        this.stridesBuffer.release(true);
+        this.dataBuffer.release(true);
     }
 
     public Device getDevice() {
@@ -127,15 +125,15 @@ public class GpuTensor extends BaseTensor {
     }
 
     public long getDataBuffer() {
-        return dataBuffer.value();
+        return dataBuffer.getValue();
     }
 
     public long getStridesBuffer() {
-        return stridesBuffer.value();
+        return stridesBuffer.getValue();
     }
 
     public long getShapeBuffer() {
-        return shapeBuffer.value();
+        return shapeBuffer.getValue();
     }
 
     public int size() {
@@ -223,7 +221,7 @@ public class GpuTensor extends BaseTensor {
 
     @Override
     public Tensor clone() {
-        return new GpuTensor(device, shape, dataBuffer.value());
+        return new GpuTensor(device, shape, dataBuffer.getValue());
     }
 
     @Override
@@ -706,7 +704,7 @@ public class GpuTensor extends BaseTensor {
         long queue = device.newCommandQueue();
 
         try {
-            clEnqueueReadBuffer(queue, dataBuffer.value(), true, 0, buffer, null, null);
+            clEnqueueReadBuffer(queue, dataBuffer.getValue(), true, 0, buffer, null, null);
         } finally {
             clFinish(queue);
             clReleaseCommandQueue(queue);

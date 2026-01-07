@@ -260,6 +260,8 @@ public class ListDataSource implements Cloneable, Iterable<Sample> {
     public ListDataSource to(Device device) {
         List<Sample> newSamples = new ArrayList<>(samples.size());
 
+        this.device = device;
+        
         for (Sample sample : samples) {
             Tensor[] inputs = sample.getInputs();
             Tensor[] labels = sample.getLabels();

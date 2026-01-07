@@ -23,7 +23,7 @@ public class TempObject<T> {
         return refCount;
     }
     
-    public T value() {
+    public T getValue() {
         return value;
     }
     
@@ -37,10 +37,18 @@ public class TempObject<T> {
     }
     
     public void release() {
-        int refs = refCount.decrementAndGet();
-
-        if (refs == 0) {
+        release(false);
+    }
+    
+    public void release(boolean instant) {
+        if (refCount.decrementAndGet() != 0) {
+            return;
+        }
+        
+        if (instant) {
             cleanerTask.run();
+        } else {
+            GpuContext.RELEASE_QUEUE.add(cleanerTask);
         }
     }
 

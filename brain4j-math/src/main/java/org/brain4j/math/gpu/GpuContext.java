@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public class GpuContext {
-
+    
     public static final Map<Device, Map<String, Long>> KERNEL_CACHE = new HashMap<>();
-    public static final List<GpuTensor> RELEASE_QUEUE = new ArrayList<>();
+    public static final List<Runnable> RELEASE_QUEUE = new ArrayList<>();
 
     public static void register(Device device, String kernelName, long program) {
         KERNEL_CACHE.computeIfAbsent(device, d -> new HashMap<>())
@@ -44,7 +44,7 @@ public class GpuContext {
 
         return kernel;
     }
-
+    
     public static GpuQueue getOrCreate(Device device) {
         GpuQueue queue = device.getQueue();
         
@@ -57,7 +57,7 @@ public class GpuContext {
     }
 
     public static void finishAndRelease(long commandQueue) {
-//      DeviceUtils.checkError("finish", CL10.clFinish(commandQueue));
+        DeviceUtils.checkError("finish", CL10.clFinish(commandQueue));
         DeviceUtils.checkError("release_command_queue", CL10.clReleaseCommandQueue(commandQueue));
     }
 

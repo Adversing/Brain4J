@@ -54,7 +54,7 @@ public class KernelFactory {
     }
 
     public KernelFactory addMemParam(TempBuffer memory) {
-        return addMemParam(memory.value());
+        return addMemParam(memory.getValue());
     }
 
     public void launch(GpuQueue queue, int workDim, long... globalWorkSize) {
@@ -64,13 +64,13 @@ public class KernelFactory {
     public void launch(GpuQueue queue, int workDim, long[] globalWorkSize, long... localWorkSize) {
         launch(queue.pointer(), workDim, globalWorkSize, localWorkSize);
     }
-
+    
     public void launch(long queue, int workDim, long... globalWorkSize) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             PointerBuffer globalWorkBuf = stack.mallocPointer(workDim);
             for (long g : globalWorkSize) globalWorkBuf.put(g);
             globalWorkBuf.flip();
-
+            
             int err = CL10.clEnqueueNDRangeKernel(queue, kernel, workDim, null, globalWorkBuf,
                 null, null, null);
             DeviceUtils.checkError("launch_kernel", err);

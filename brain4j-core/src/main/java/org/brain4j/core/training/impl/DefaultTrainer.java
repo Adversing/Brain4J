@@ -100,7 +100,7 @@ public class DefaultTrainer implements Trainer {
 
         if (device != null) {
             GpuContext.finishAndRelease(device);
-            GpuContext.RELEASE_QUEUE.forEach(GpuTensor::release);
+            GpuContext.RELEASE_QUEUE.forEach(Runnable::run);
         }
     }
 

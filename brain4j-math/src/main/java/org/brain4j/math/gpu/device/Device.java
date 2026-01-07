@@ -77,7 +77,9 @@ public class Device {
     }
 
     public String name() {
-        return DeviceUtils.deviceName(device);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            return DeviceUtils.deviceName(stack, device);
+        }
     }
 
     public TempBuffer createBuffer(long flags, float[] data) {
