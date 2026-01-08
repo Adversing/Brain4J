@@ -8,15 +8,17 @@ public class TempObject<T> {
     
     public static final Cleaner CLEANER = Cleaner.create();
     
-    private final AtomicInteger refCount = new AtomicInteger(1);
-
+    protected final AtomicInteger refCount = new AtomicInteger(1);
+    private CleanableTask cleanerTask;
     private T value;
-    private final Runnable cleanerTask;
     
-    public TempObject(T value, Runnable cleanerTask) {
+    public TempObject(T value) {
         this.value = value;
-        this.cleanerTask = cleanerTask;
-        CLEANER.register(this, new CleanerTask(cleanerTask, refCount));
+    }
+    
+    public void register(CleanableTask task) {
+        this.cleanerTask = task;
+        CLEANER.register(this, task);
     }
     
     public AtomicInteger refCount() {
@@ -41,34 +43,10 @@ public class TempObject<T> {
     }
     
     public void release(boolean instant) {
-        if (refCount.decrementAndGet() != 0) {
-            return;
-        }
-        
         if (instant) {
             cleanerTask.run();
         } else {
             GpuContext.RELEASE_QUEUE.add(cleanerTask);
-        }
-    }
-
-    static class CleanerTask implements Runnable {
-
-        private final AtomicBoolean released = new AtomicBoolean(false);
-        private final AtomicInteger refCount;
-        private final Runnable cleanerTask;
-
-        public CleanerTask(Runnable cleanerTask, AtomicInteger refCount) {
-            this.cleanerTask = cleanerTask;
-            this.refCount = refCount;
-        }
-
-        @Override
-        public void run() {
-            int count = refCount.decrementAndGet();
-            if (count == 0 && released.compareAndSet(false, true)) {
-                cleanerTask.run();
-            }
         }
     }
 }
