@@ -95,12 +95,13 @@ public class DefaultTrainer implements Trainer {
         }
 
         Tensor[] outputs = forward(cache, inputs);
-        backward(cache, batch, outputs);
-        resetGrad();
+      backward(cache, batch, outputs);
+      resetGrad();
 
         if (device != null) {
             GpuContext.finishAndRelease(device);
             GpuContext.RELEASE_QUEUE.forEach(Runnable::run);
+            GpuContext.RELEASE_QUEUE.clear();
         }
     }
 

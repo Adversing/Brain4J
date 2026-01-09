@@ -10,9 +10,9 @@ public class StatesCache {
     private final Map<Object, Tensor> tensorCache;
     private final Map<Object, Tensor[]> inputStates;
     private final Map<Object, Tensor[]> outputStates;
-    private final boolean training;
+    private final boolean keepCache;
 
-    public static StatesCache withTraining() {
+    public static StatesCache withKeepCache() {
         return new StatesCache(true);
     }
 
@@ -20,15 +20,15 @@ public class StatesCache {
         this(false);
     }
 
-    public StatesCache(boolean training) {
-        this.training = training;
+    public StatesCache(boolean keepCache) {
+        this.keepCache = keepCache;
         this.inputStates = new HashMap<>();
         this.outputStates = new HashMap<>();
         this.tensorCache = new HashMap<>();
     }
 
-    public boolean isTraining() {
-        return training;
+    public boolean isKeepCache() {
+        return keepCache;
     }
 
     public Tensor get(Object key) {

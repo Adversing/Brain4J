@@ -88,7 +88,7 @@ public class LLM implements InferenceProvider {
         List<String> tokens = tokenizer.splitTokens(prompt);
         Tensor input = tokenizer.encode(tokens);
 
-        StatesCache cache = StatesCache.withTraining();
+        StatesCache cache = StatesCache.withKeepCache();
         StringBuilder response = new StringBuilder(prompt);
 
         int bosToken = tokenizer.bosTokenId();

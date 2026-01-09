@@ -16,7 +16,6 @@ import org.brain4j.math.data.StatesCache;
 import org.brain4j.math.gpu.GpuContext;
 import org.brain4j.math.gpu.device.Device;
 import org.brain4j.math.tensor.Tensor;
-import org.brain4j.math.tensor.impl.GpuTensor;
 import org.brain4j.math.tensor.index.Range;
 
 import java.text.DecimalFormat;
@@ -54,7 +53,7 @@ public class Sequential implements Model, ModelBlock {
     public Tensor[] predict(StatesCache cache, Tensor... inputs) {
         Tensor[] buffer = new Tensor[inputs.length];
 
-        if (device != null && !cache.isTraining()) {
+        if (device != null && !cache.isKeepCache()) {
             device.createQueue();
         }
 
@@ -69,7 +68,7 @@ public class Sequential implements Model, ModelBlock {
                 input = input.reshape(1, input.elements()); // reshape to [batch, input_size]
             }
 
-            Tensor chosen = cache.isTraining() ? input.withGrad() : input;
+            Tensor chosen = cache.isKeepCache() ? input.withGrad() : input;
             buffer[i] = chosen.to(device);
         }
 
@@ -77,9 +76,10 @@ public class Sequential implements Model, ModelBlock {
             buffer = layer.forward(cache, buffer);
         }
 
-        if (device != null && !cache.isTraining()) {
+        if (device != null && !cache.isKeepCache()) {
             GpuContext.finishAndRelease(device);
             GpuContext.RELEASE_QUEUE.forEach(Runnable::run);
+            GpuContext.RELEASE_QUEUE.clear();
         }
 
         return buffer;
@@ -166,7 +166,11 @@ public class Sequential implements Model, ModelBlock {
         Tensor[] inputs = batch.getFirst();
         Tensor[] labels = batch.getSecond();
 
-        Tensor[] outputs = predict(new StatesCache(false), inputs);
+        if (device != null) {
+            device.createQueue();
+        }
+        
+        Tensor[] outputs = predict(new StatesCache(true), inputs);
 
         for (Tensor input : inputs) {
             int batchSize = input.shapeAt(0);
@@ -174,7 +178,7 @@ public class Sequential implements Model, ModelBlock {
             for (int i = 0; i < outputs.length; i++) {
                 Tensor output = outputs[i].to(null); // GPU -> CPU
                 Tensor label = labels[i].to(null);   // GPU -> CPU
-
+                
                 for (int b = 0; b < batchSize; b++) {
                     Range range = Range.point(b);
 
@@ -198,6 +202,12 @@ public class Sequential implements Model, ModelBlock {
                     predictions.set(pred + 1, predIndex);
                 }
             }
+        }
+        
+        if (device != null) {
+            GpuContext.finishAndRelease(device);
+            GpuContext.RELEASE_QUEUE.forEach(Runnable::run);
+            GpuContext.RELEASE_QUEUE.clear();
         }
     }
 

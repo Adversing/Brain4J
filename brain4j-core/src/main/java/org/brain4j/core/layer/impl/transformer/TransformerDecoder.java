@@ -63,7 +63,7 @@ public class TransformerDecoder extends TransformerEncoder {
         Tensor norm1 = normalizer1.forward(cache, input);
         Tensor attended = attention.forward(cache, norm1);
 
-        if (cache.isTraining()) {
+        if (cache.isKeepCache()) {
             attended = dropout.forward(cache, attended);
         }
 
@@ -91,7 +91,7 @@ public class TransformerDecoder extends TransformerEncoder {
 
         cache.set(downProjection, downProjected);
 
-        if (cache.isTraining()) {
+        if (cache.isKeepCache()) {
             downProjected = dropout.forward(cache, downProjected);
         }
 

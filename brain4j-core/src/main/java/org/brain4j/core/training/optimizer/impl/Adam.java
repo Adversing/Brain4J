@@ -64,7 +64,7 @@ public class Adam extends Optimizer {
 
                 GpuTensor gpuFirst = (GpuTensor) first;
                 GpuTensor gpuSecond = (GpuTensor) second;
-
+                
                 gpuFirst.getDataBuffer().retain();
                 gpuSecond.getDataBuffer().retain();
             }

@@ -48,7 +48,7 @@ public class DropoutLayer extends Layer {
 
     @Override
     public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-        if (!cache.isTraining()) return inputs;
+        if (!cache.isKeepCache()) return inputs;
         
         Tensor[] result = new Tensor[inputs.length];
         

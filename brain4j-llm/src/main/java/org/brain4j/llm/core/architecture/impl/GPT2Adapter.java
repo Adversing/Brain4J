@@ -114,7 +114,7 @@ public class GPT2Adapter implements ArchitectureAdapter {
     static class TokenSelectionLayer extends Layer {
         @Override
         public Tensor[] forward(StatesCache cache, Tensor... inputs) {
-            if (cache.isTraining()) return inputs;
+            if (cache.isKeepCache()) return inputs;
             
             Tensor input = inputs[0]; // [batch, seq_len, dim]
             int seqLength = input.shapeAt(1);

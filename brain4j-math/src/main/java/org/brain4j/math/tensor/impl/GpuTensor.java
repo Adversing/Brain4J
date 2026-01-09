@@ -34,16 +34,12 @@ public class GpuTensor extends BaseTensor {
         long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
         long flags = CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR;
 
-        if (data.length == 0) {
-            data = new float[size];
-        }
+        if (data.length == 0) data = new float[size];
 
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = device.createBuffer(flags, data);
         
-        System.out.println("creating buffer data with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
-
         if (device.getQueue() != null) {
             GpuContext.RELEASE_QUEUE.add(this::release);
         }
@@ -62,13 +58,31 @@ public class GpuTensor extends BaseTensor {
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = device.createBuffer(CL_MEM_READ_WRITE, dataSize);
         
-        System.out.println("copy buffer data with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
-
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
-            clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer.getValue(), 0, 0, dataSize,
+            int err = clEnqueueCopyBuffer(queue.pointer(), otherBuffer, dataBuffer.getValue(), 0, 0, dataSize,
                 null, null);
+            DeviceUtils.checkError("enqueue_copy_buffer", err);
         }
 
+        if (device.getQueue() != null) {
+            GpuContext.RELEASE_QUEUE.add(this::release);
+        }
+    }
+    
+    public GpuTensor(GpuTensor reference, int[] shape) {
+        this.device = reference.device;
+        this.size = Tensors.computeSize(shape);
+        this.shape = shape;
+        this.strides = Tensors.computeStrides(shape);
+        
+        long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
+        
+        reference.dataBuffer.retain();
+        
+        this.shapeBuffer = device.createBuffer(readFlag, this.shape);
+        this.stridesBuffer = device.createBuffer(readFlag, strides);
+        this.dataBuffer = reference.dataBuffer;
+        
         if (device.getQueue() != null) {
             GpuContext.RELEASE_QUEUE.add(this::release);
         }
@@ -95,35 +109,13 @@ public class GpuTensor extends BaseTensor {
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = dataBuffer;
-        System.out.println("creating buffer data (ss) with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
-
-        if (device.getQueue() != null) {
-            GpuContext.RELEASE_QUEUE.add(this::release);
-        }
-    }
-
-    public GpuTensor(GpuTensor reference, int[] newShape) {
-        this.device = reference.device;
-        this.size = Tensors.computeSize(newShape);
-        this.shape = newShape;
-        this.strides = Tensors.computeStrides(newShape);
-
-        long readFlag = CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR;
-
-        reference.dataBuffer.retain();
         
-        this.shapeBuffer = device.createBuffer(readFlag, shape);
-        this.stridesBuffer = device.createBuffer(readFlag, strides);
-        this.dataBuffer = reference.dataBuffer;
-        System.out.println("inheriting buffer data with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
-
         if (device.getQueue() != null) {
             GpuContext.RELEASE_QUEUE.add(this::release);
         }
     }
 
     public void release() {
-        System.out.println("releasing buffer with shape " + Arrays.toString(shape) + " and data buffer: " + dataBuffer.getValue());
         this.shapeBuffer.release(true);
         this.stridesBuffer.release(true);
         this.dataBuffer.release(true);
@@ -456,10 +448,6 @@ public class GpuTensor extends BaseTensor {
         TempBuffer memoryB = device.createBuffer(flags, offsetsB);
         TempBuffer memoryC = device.createBuffer(flags, offsetsC);
         
-        System.out.println("a data buf = " + dataBuffer.getValue());
-        System.out.println("b data buf = " + B.dataBuffer.getValue());
-        System.out.println("c data buf = " + result.dataBuffer.getValue());
-        
         try (GpuQueue queue = GpuContext.getOrCreate(device)) {
             KernelFactory.create(device, "matmul_batched")
                 .addMemParam(dataBuffer)
@@ -718,7 +706,8 @@ public class GpuTensor extends BaseTensor {
         long queue = device.newCommandQueue();
 
         try {
-            clEnqueueReadBuffer(queue, dataBuffer.getValue(), true, 0, buffer, null, null);
+            int err = clEnqueueReadBuffer(queue, dataBuffer.getValue(), true, 0, buffer, null, null);
+            DeviceUtils.checkError("enqueue_read_buffer", err);
         } finally {
             clFinish(queue);
             clReleaseCommandQueue(queue);

@@ -98,7 +98,7 @@ public class GraphModel implements Model {
             outputs[i] = computed.get(outputNames.get(i));
         }
 
-        if (device != null && !cache.isTraining()) {
+        if (device != null && !cache.isKeepCache()) {
             GpuContext.finishAndRelease(device);
         }
 
