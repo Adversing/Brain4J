@@ -15,7 +15,7 @@ public class TempBuffer extends TempObject<Long> {
         register(new CleanableTask(refCount) {
             @Override
             public void clean() {
-                System.out.println("releasing: " + value);
+                System.out.println("released " + value);
                 CL10.clReleaseMemObject(value);
             }
         });

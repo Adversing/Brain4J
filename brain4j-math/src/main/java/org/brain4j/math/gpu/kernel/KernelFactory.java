@@ -32,7 +32,8 @@ public class KernelFactory {
     public KernelFactory addIntParam(int variable) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer buf = stack.ints(variable);
-            CL10.clSetKernelArg(kernel, arguments++, buf);
+            int res = CL10.clSetKernelArg(kernel, arguments++, buf);
+            DeviceUtils.checkError("add_int_param", res);
         }
         return this;
     }
@@ -40,7 +41,8 @@ public class KernelFactory {
     public KernelFactory addFloatParam(float variable) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buf = stack.floats(variable);
-            CL10.clSetKernelArg(kernel, arguments++, buf);
+            int res = CL10.clSetKernelArg(kernel, arguments++, buf);
+            DeviceUtils.checkError("add_float_param", res);
         }
         return this;
     }
@@ -48,7 +50,8 @@ public class KernelFactory {
     public KernelFactory addMemParam(long memory) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             PointerBuffer buf = stack.pointers(memory);
-            CL10.clSetKernelArg(kernel, arguments++, buf);
+            int res = CL10.clSetKernelArg(kernel, arguments++, buf);
+            DeviceUtils.checkError("add_mem_param", res);
         }
         return this;
     }

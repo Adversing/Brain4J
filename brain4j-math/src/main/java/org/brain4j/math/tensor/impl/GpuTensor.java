@@ -42,9 +42,8 @@ public class GpuTensor extends BaseTensor {
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = device.createBuffer(flags, data);
         
-        System.out.println("queue status: " + device.getQueue());
         System.out.println("creating buffer data with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
-        
+
         if (device.getQueue() != null) {
             GpuContext.RELEASE_QUEUE.add(this::release);
         }
@@ -96,7 +95,7 @@ public class GpuTensor extends BaseTensor {
         this.shapeBuffer = device.createBuffer(readFlag, shape);
         this.stridesBuffer = device.createBuffer(readFlag, strides);
         this.dataBuffer = dataBuffer;
-        System.out.println("inheriting buffer data with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
+        System.out.println("creating buffer data (ss) with value " + dataBuffer.getValue() + " and shape " + Arrays.toString(shape));
 
         if (device.getQueue() != null) {
             GpuContext.RELEASE_QUEUE.add(this::release);
@@ -124,6 +123,7 @@ public class GpuTensor extends BaseTensor {
     }
 
     public void release() {
+        System.out.println("releasing buffer with shape " + Arrays.toString(shape) + " and data buffer: " + dataBuffer.getValue());
         this.shapeBuffer.release(true);
         this.stridesBuffer.release(true);
         this.dataBuffer.release(true);
@@ -133,16 +133,16 @@ public class GpuTensor extends BaseTensor {
         return device;
     }
 
-    public long getDataBuffer() {
-        return dataBuffer.getValue();
+    public TempBuffer getDataBuffer() {
+        return dataBuffer;
     }
 
-    public long getStridesBuffer() {
-        return stridesBuffer.getValue();
+    public TempBuffer getStridesBuffer() {
+        return stridesBuffer;
     }
 
-    public long getShapeBuffer() {
-        return shapeBuffer.getValue();
+    public TempBuffer getShapeBuffer() {
+        return shapeBuffer;
     }
 
     public int size() {
@@ -264,6 +264,7 @@ public class GpuTensor extends BaseTensor {
 
         view.dataBuffer = dataBuffer;
         view.transposed = !transposed;
+        view.dataBuffer.retain();
 
         return view;
     }
